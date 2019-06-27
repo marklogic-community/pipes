@@ -209,7 +209,7 @@
 
             for(let model of graph.models) {
               let newBlock = this.createGraphNodeFromModel(model);
-              LiteGraph.registerNodeType(model.collection, newBlock);
+              LiteGraph.registerNodeType(model.source + "/" + model.collection, newBlock);
             }
             this.models = graph.models
 
@@ -1116,6 +1116,44 @@
             "function":{
               "ref":null,
               "code" :""
+            }
+
+          },
+          {
+            "functionName" : "addProperty",
+            "blockName" : "Add property",
+            "library" : "transform",
+            "inputs":[
+              {
+                "name": "doc",
+                "type":"node"
+              },
+               {
+                "name": "value",
+                "type": null
+              }
+
+            ],
+
+          "properties" : [
+          {
+            name:"propertyName",
+            type:"Property name"}
+
+        ],
+            "outputs":[
+
+              {
+                name:"doc",
+                type:"node"}
+            ],
+            "function":{
+              "ref":null,
+              "code" : "let doc = (this.getInputData(0)!=undefined)?this.getInputData(0):''; \
+                        let val = (this.getInputData(1)!=undefined)?this.getInputData(1):'';\
+                        let propertyName = this.properties['propertyName'];\
+                        doc[propertyName] = val;\
+                        this.setOutputData( 0, doc);"
             }
 
           }
