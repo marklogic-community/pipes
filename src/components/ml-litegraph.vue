@@ -420,7 +420,7 @@
           "\n" +
           "  let gHelper  = require(\"/custom-modules/graphHelper\")\n" +
           "\n" +
-          "  instance = gHelper.executeGraphStep(doc,id,getGraphDefinition())\n" +
+          "  instance = gHelper.executeGraphStep(doc,id,getGraphDefinition(),context)\n" +
           "\n" +
           "  //form our envelope here now, specifying our output format\n" +
           " // let envelope = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);\n" +
@@ -431,6 +431,7 @@
           "  //assign the uri we want, in this case the same\n" +
           "  content.uri = (instance.uri!=null)?instance.uri:id;\n" +
           "\n" +
+          "context.collections = (instance.collections!=null)?instance.collections:context.collections;" +
           "  //assign the context we want\n" +
           "  content.context = context;\n" +
           "\n" +
