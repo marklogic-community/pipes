@@ -25,6 +25,7 @@ function createGraphNodeFromModel(blockDef) {
           { label: 'Create fields outputs', value: 'fieldsOutputs' }
     *
     * */
+
     let nodeCode = "";
     let ioSetup = {
         inputs: {
@@ -103,9 +104,9 @@ function createGraphNodeFromModel(blockDef) {
         execCode += 'this.setOutputData(' + ioSetup.outputs["Node"] + ', doc);';
     }
     execCode += '}'
-    console.log(blockDef)
-    console.log(ioSetup)
-    console.log(execCode)
+    //console.log(blockDef)
+    //console.log(ioSetup)
+    //console.log(execCode)
     node.prototype.onExecute = new Function(execCode)
 
     node.title = blockDef.collection;
@@ -160,7 +161,7 @@ function executeGraphFromJson(jsonGraph,uri, input){
     graph.setGlobalInputData("input",input)
     graph.setGlobalInputData("uri",uri)
     graph.start();
-
+    xdmp.log(graph.getGlobalOutputData("uri"))
     return {
         output: graph.getGlobalOutputData("output"),
         uri : graph.getGlobalOutputData("uri")//graph.global_outputs

@@ -8340,7 +8340,7 @@ if(typeof(exports) != "undefined")
         this.size = [120,80];
 
         //create inner graph
-        this.subgraph = new LGraph();
+        this.subgraph = new LiteGraph.LGraph();
         this.subgraph._subgraph_node = this;
         this.subgraph._is_subgraph = true;
 
@@ -8395,7 +8395,7 @@ if(typeof(exports) != "undefined")
     Subgraph.prototype.onSubgraphNewGlobalInput = function(name, type)
     {
         //add input to the node
-        this.addInput(name, type);
+        //this.addInput(name, type);
     }
 
     Subgraph.prototype.onSubgraphRenamedGlobalInput = function(oldname, name)
@@ -8420,7 +8420,7 @@ if(typeof(exports) != "undefined")
     Subgraph.prototype.onSubgraphNewGlobalOutput = function(name, type)
     {
         //add output to the node
-        this.addOutput(name, type);
+        //this.addOutput(name, type);
     }
 
 
@@ -8509,7 +8509,7 @@ if(typeof(exports) != "undefined")
 
     LiteGraph.registerNodeType("graph/subgraph", Subgraph );
 
-    //NEW
+//NEW
     //Subgraph: a node that contains a graph
     function SubgraphLoop()
     {
@@ -8517,7 +8517,7 @@ if(typeof(exports) != "undefined")
         this.size = [120,80];
 
         //create inner graph
-        this.subgraph = new LGraph();
+        this.subgraph = new  LiteGraph.LGraph();
         this.subgraph._subgraph_node = this;
         this.subgraph._is_subgraph = true;
 
@@ -8654,9 +8654,10 @@ if(typeof(exports) != "undefined")
         var input = this.inputs[0];
         for (let value of this.getInputData(0)){
 
-
+            //xdmp.log(value)
             this.subgraph.setGlobalInputData( input.name, value );
-            this.subgraph.runStep();
+            //this.subgraph.runStep();
+            this.subgraph.runStep() //.start();
 
             if(this.outputs)
                 for(var i = 0; i < this.outputs.length; i++)
@@ -8665,51 +8666,50 @@ if(typeof(exports) != "undefined")
                     let value = this.subgraph.getGlobalOutputData( output.name );
                     tmpOutputs[i].push(value);
                 }
-
-
         }
 
-        console.log(tmpOutputs)
+        //xdmp.log(tmpOutputs.length)
         for(var i = 0; i < this.outputs.length; i++)
         {
+            xdmp.log(tmpOutputs[i].length)
             this.setOutputData(i, tmpOutputs[i])
         }
 
 
         /*
 
-        //send inputs to subgraph global inputs
-        if(this.inputs)
-            for(var i = 0; i < this.inputs.length; i++)
-            {
-                var input = this.inputs[i];
-                var value = this.getInputData(i);
-                this.subgraph.setGlobalInputData( input.name, value );
-            }
+            //send inputs to subgraph global inputs
+            if(this.inputs)
+                for(var i = 0; i < this.inputs.length; i++)
+                {
+                    var input = this.inputs[i];
+                    var value = this.getInputData(i);
+                    this.subgraph.setGlobalInputData( input.name, value );
+                }
 
-        //execute
-        this.subgraph.runStep();
+            //execute
+            this.subgraph.runStep();
 
-        //send subgraph global outputs to outputs
-        if(this.outputs)
-            for(var i = 0; i < this.outputs.length; i++)
-            {
-                var output = this.outputs[i];
-                var value = this.subgraph.getGlobalOutputData( output.name );
-                this.setOutputData(i, value);
-            }
-            */
+            //send subgraph global outputs to outputs
+            if(this.outputs)
+                for(var i = 0; i < this.outputs.length; i++)
+                {
+                    var output = this.outputs[i];
+                    var value = this.subgraph.getGlobalOutputData( output.name );
+                    this.setOutputData(i, value);
+                }
+                */
     }
 
     SubgraphLoop.prototype.configure = function(o)
     {
-        LGraphNode.prototype.configure.call(this, o);
+        LiteGraph.LGraphNode.prototype.configure.call(this, o);
         //this.subgraph.configure(o.graph);
     }
 
     SubgraphLoop.prototype.serialize = function()
     {
-        var data = LGraphNode.prototype.serialize.call(this);
+        var data = LiteGraph.LGraphNode.prototype.serialize.call(this);
         data.subgraph = this.subgraph.serialize();
         return data;
     }
@@ -8728,9 +8728,158 @@ if(typeof(exports) != "undefined")
 
     LiteGraph.registerNodeType("graph/subgraphLoop", SubgraphLoop );
     //END NEW
-
 //Input for a subgraph
     function GlobalInput()
+    {
+
+        //random name to avoid problems with other outputs when added
+        var input_name = "input";
+        var input_uri ="uri"
+
+        this.addOutput(input_name, null );
+
+
+        this.properties = { name: input_name, type: null, uri:input_uri };
+
+        var that = this;
+
+        Object.defineProperty( this.properties, "name", {
+            get: function() {
+                return input_name;
+            },
+            set: function(v) {
+                if(v == "")
+                    return;
+
+                var info = that.getOutputInfo(0);
+                if(info.name == v)
+                    return;
+                info.name = v;
+                if(that.graph)
+                    that.graph.renameGlobalInput(input_name, v);
+                input_name = v;
+            },
+            enumerable: true
+        });
+
+
+
+        Object.defineProperty( this.properties, "type", {
+            get: function() { return that.outputs[0].type; },
+            set: function(v) {
+                that.outputs[0].type = v;
+                if(that.graph)
+                    that.graph.changeGlobalInputType(input_name, that.outputs[0].type);
+            },
+            enumerable: true
+        });
+    }
+
+    GlobalInput.title = "Input";
+    GlobalInput.desc = "Input of the graph";
+
+//When added to graph tell the graph this is a new global input
+    GlobalInput.prototype.onAdded = function()
+    {
+        this.graph.addGlobalInput( this.properties.name, this.properties.type );
+
+    }
+
+    GlobalInput.prototype.onExecute = function()
+    {
+        var name = this.properties.name;
+
+
+        //read from global input
+        var	data = this.graph.global_inputs[name];
+
+        if(!data) return;
+
+        //put through output
+        this.setOutputData(0,data.value);
+
+    }
+
+    LiteGraph.registerNodeType("graph/Input", GlobalInput);
+
+
+
+//Output for a subgraph
+    function GlobalOutput()
+    {
+        //random name to avoid problems with other outputs when added
+        var output_name = "output";
+
+
+        this.addInput(output_name, null);
+
+
+        this._value = null;
+        this._uri = null;
+
+        this.properties = {name: output_name, type: null};
+
+        var that = this;
+
+        Object.defineProperty(this.properties, "name", {
+            get: function() {
+                return output_name;
+            },
+            set: function(v) {
+                if(v == "")
+                    return;
+
+                var info = that.getInputInfo(0);
+                if(info.name == v)
+                    return;
+                info.name = v;
+                if(that.graph)
+                    that.graph.renameGlobalOutput(output_name, v);
+                output_name = v;
+            },
+            enumerable: true
+        });
+
+
+
+        Object.defineProperty(this.properties, "type", {
+            get: function() { return that.inputs[0].type; },
+            set: function(v) {
+                that.inputs[0].type = v;
+                if(that.graph)
+                    that.graph.changeGlobalInputType( output_name, that.inputs[0].type );
+            },
+            enumerable: true
+        });
+    }
+
+    GlobalOutput.title = "Output";
+    GlobalOutput.desc = "Output of the graph";
+
+    GlobalOutput.prototype.onAdded = function()
+    {
+        var name = this.graph.addGlobalOutput( this.properties.name, this.properties.type );
+
+    }
+
+    GlobalOutput.prototype.getValue = function()
+    {
+        return this._value;
+    }
+
+
+
+    GlobalOutput.prototype.onExecute = function()
+    {
+        this._value = this.getInputData(0);
+
+        this.graph.setGlobalOutputData( this.properties.name, this._value );
+
+    }
+
+    LiteGraph.registerNodeType("graph/Output", GlobalOutput);
+//Input for a subgraph
+    function GlobalInputDHF()
     {
 
         //random name to avoid problems with other outputs when added
@@ -8793,17 +8942,17 @@ if(typeof(exports) != "undefined")
         });
     }
 
-    GlobalInput.title = "Input";
-    GlobalInput.desc = "Input of the graph";
+    GlobalInputDHF.title = "Input";
+    GlobalInputDHF.desc = "Input of the graph";
 
 //When added to graph tell the graph this is a new global input
-    GlobalInput.prototype.onAdded = function()
+    GlobalInputDHF.prototype.onAdded = function()
     {
         this.graph.addGlobalInput( this.properties.name, this.properties.type );
         this.graph.addGlobalInput( this.properties.uri, "xs:string" );
     }
 
-    GlobalInput.prototype.onExecute = function()
+    GlobalInputDHF.prototype.onExecute = function()
     {
         var name = this.properties.name;
         var uri = this.properties.uri;
@@ -8818,21 +8967,25 @@ if(typeof(exports) != "undefined")
         this.setOutputData(1,data_uri.value);
     }
 
-    LiteGraph.registerNodeType("dhf/StepInput", GlobalInput);
+    LiteGraph.registerNodeType("dhf/StepInput", GlobalInputDHF);
 
 
 
 //Output for a subgraph
-    function GlobalOutput()
+    function GlobalOutputDHF()
     {
         //random name to avoid problems with other outputs when added
         var output_name = "output";
+        var output_uri = "uri";
 
         this.addInput(output_name, null);
+        this.addInput(output_uri, null);
+        this.addInput("withPROV-O*", null);
 
         this._value = null;
+        this._uri = null;
 
-        this.properties = {name: output_name, type: null };
+        this.properties = {name: output_name, type: null, uri: output_uri};
 
         var that = this;
 
@@ -8855,6 +9008,25 @@ if(typeof(exports) != "undefined")
             enumerable: true
         });
 
+        Object.defineProperty(this.properties, "uri", {
+            get: function() {
+                return output_uri;
+            },
+            set: function(v) {
+                if(v == "")
+                    return;
+
+                var info = that.getInputInfo(1);
+                if(info.name == v)
+                    return;
+                info.name = v;
+                if(that.graph)
+                    that.graph.renameGlobalOutput(output_uri, v);
+                output_uri = v;
+            },
+            enumerable: true
+        });
+
         Object.defineProperty(this.properties, "type", {
             get: function() { return that.inputs[0].type; },
             set: function(v) {
@@ -8866,26 +9038,34 @@ if(typeof(exports) != "undefined")
         });
     }
 
-    GlobalOutput.title = "Output";
-    GlobalOutput.desc = "Output of the graph";
+    GlobalOutputDHF.title = "Output";
+    GlobalOutputDHF.desc = "Output of the graph";
 
-    GlobalOutput.prototype.onAdded = function()
+    GlobalOutputDHF.prototype.onAdded = function()
     {
         var name = this.graph.addGlobalOutput( this.properties.name, this.properties.type );
+        var uri = this.graph.addGlobalOutput( this.properties.uri, "xs:string" );
     }
 
-    GlobalOutput.prototype.getValue = function()
+    GlobalOutputDHF.prototype.getValue = function()
     {
         return this._value;
     }
 
-    GlobalOutput.prototype.onExecute = function()
+    GlobalOutputDHF.prototype.getUri = function()
     {
-        this._value = this.getInputData(0);
-        this.graph.setGlobalOutputData( this.properties.name, this._value );
+        return this._uri;
     }
 
-    LiteGraph.registerNodeType("dhf/StepOutput", GlobalOutput);
+    GlobalOutputDHF.prototype.onExecute = function()
+    {
+        this._value = this.getInputData(0);
+        this._uri = this.getInputData(1);
+        this.graph.setGlobalOutputData( this.properties.name, this._value );
+        this.graph.setGlobalOutputData( this.properties.uri, this._uri );
+    }
+
+    LiteGraph.registerNodeType("dhf/StepOutput", GlobalOutputDHF);
 
 
 
@@ -9608,7 +9788,59 @@ if(typeof(exports) != "undefined")
             ],
             "function":{
                 "ref":null,
-                "code" :""
+                "code" :"\
+                let docNode = (this.getInputData(0)!=undefined)?this.getInputData(0):xdmp.toJSON({});\
+                let headers = docNode.xpath('//headers');\
+                let triples = docNode.xpath('//triples');\
+                let instance = docNode.xpath('//instance');\
+                let attachments = docNode.xpath('//attachments');\
+                this.setOutputData( 0, headers);\
+                this.setOutputData( 1, triples);\
+                this.setOutputData(2, instance);\
+                this.setOutputData( 3, attachments);"
+
+
+            }
+
+        },
+        {
+            "functionName" : "addProperty",
+            "blockName" : "Add property",
+            "library" : "transform",
+            "inputs":[
+                {
+                    "name": "doc",
+                    "type":"node"
+                },
+                {
+                    "name": "value",
+                    "type": null
+                }
+
+            ],
+
+            "properties" : [
+                {
+                    name:"propertyName",
+                    type:"Property name"}
+
+            ],
+            "outputs":[
+
+                {
+                    name:"doc",
+                    type:"node"}
+            ],
+            "function":{
+                "ref":null,
+                "code" : "let doc = (this.getInputData(0)!=undefined)?this.getInputData(0):{}; \
+                        let val = (this.getInputData(1)!=undefined)?this.getInputData(1):'';\
+                        let propertyName = this.properties['propertyName'];\
+                        if (xdmp.nodeKind(doc) == 'document' && doc.documentFormat == 'JSON') {\
+                              doc=doc.toObject();\
+                        }\
+                        doc[propertyName] = val;\
+                        this.setOutputData( 0, doc);"
             }
 
         }
@@ -9662,16 +9894,18 @@ if(typeof(exports) != "undefined")
     {
         //random name to avoid problems with other outputs when added
         var output_name = "output";
+        var output_uri = "uri";
 
         this.addInput("output", null );
         this.addInput("headers", null );
         this.addInput("triples", null );
         this.addInput("instance", null );
         this.addInput("attachments", null );
+        this.addInput("uri", null );
 
         this._value = null;
 
-        this.properties = {name: output_name, type: null };
+        this.properties = {name: output_name, type: null,uri: output_uri };
 
         var that = this;
 
@@ -9694,6 +9928,25 @@ if(typeof(exports) != "undefined")
             enumerable: true
         });
 
+        Object.defineProperty(this.properties, "uri", {
+            get: function() {
+                return output_uri;
+            },
+            set: function(v) {
+                if(v == "")
+                    return;
+
+                var info = that.getInputInfo(5);
+                if(info.name == v)
+                    return;
+                info.name = v;
+                if(that.graph)
+                    that.graph.renameGlobalOutput(output_uri, v);
+                output_uri = v;
+            },
+            enumerable: true
+        });
+
         Object.defineProperty(this.properties, "type", {
             get: function() { return that.inputs[0].type; },
             set: function(v) {
@@ -9711,6 +9964,7 @@ if(typeof(exports) != "undefined")
     GlobalEnvelopeOutput.prototype.onAdded = function()
     {
         var name = this.graph.addGlobalOutput( this.properties.name, this.properties.type );
+        var uri = this.graph.addGlobalOutput( this.properties.uri, this.properties.type );
     }
 
     GlobalEnvelopeOutput.prototype.getValue = function()
@@ -9725,12 +9979,13 @@ if(typeof(exports) != "undefined")
         result.envelope.triples = (this.getInputData(2)!=undefined)?this.getInputData(2):{};
         result.envelope.instance = (this.getInputData(3)!=undefined)?this.getInputData(3):{};
         result.envelope.attachments  = (this.getInputData(4)!=undefined)?this.getInputData(4):{};
+        let uri  = (this.getInputData(5)!=undefined)?this.getInputData(5):null;
 
         this.graph.setGlobalOutputData( this.properties.name, result );
+        this.graph.setGlobalOutputData( this.properties.uri, uri );
     }
 
     LiteGraph.registerNodeType("dhf/StepEnvelopeOutput", GlobalEnvelopeOutput);
-
 
 
     /*
@@ -10404,6 +10659,9 @@ if(typeof(exports) != "undefined")
 
 
     LiteGraph.registerNodeType("string/Templating", stringTemplate );
+
+
+
 
 })(this);
 
