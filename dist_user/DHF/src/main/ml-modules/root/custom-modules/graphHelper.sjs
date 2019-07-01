@@ -133,16 +133,16 @@ function createGraphNodeFromModel(model){
 }
 */
 
-function executeGraphStep(doc,uri,config){
+function executeGraphStep(doc,uri,config,context){
 
 
 
-    return executeGraphFromJson(config,uri,doc)
+    return executeGraphFromJson(config,uri,doc,context)
 
 }
 
 
-function executeGraphFromJson(jsonGraph,uri, input){
+function executeGraphFromJson(jsonGraph,uri, input,context){
 
 
 
@@ -158,13 +158,21 @@ function executeGraphFromJson(jsonGraph,uri, input){
     var graph = new LiteGraph.LGraph();
 
     graph.configure(jsonGraph.executionGraph)
-    graph.setGlobalInputData("input",input)
-    graph.setGlobalInputData("uri",uri)
+    graph.addInput("input", "");
+    graph.addInput("uri", "");
+    graph.addInput("collections", "");
+    graph.addOutput("output", "");
+    graph.addOutput("uri", "");
+    graph.addOutput("collections", "");
+    graph.setInputData("input",input)
+    graph.setInputData("uri",uri)
+    graph.setInputData("collections",context.collections)
     graph.start();
-    xdmp.log(graph.getGlobalOutputData("uri"))
+
     return {
-        output: graph.getGlobalOutputData("output"),
-        uri : graph.getGlobalOutputData("uri")//graph.global_outputs
+        output: graph.getOutputData("output"),
+        uri : graph.getOutputData("uri"),//graph.global_outputs,
+        collections : graph.getOutputData("collections")
     }
     }//graph.global_outputs
 
