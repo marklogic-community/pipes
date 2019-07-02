@@ -150,6 +150,9 @@ function executeGraphFromJson(jsonGraph,uri, input,context){
 
 
     var LiteGraph = require("/custom-modules/litegraph").LiteGraph;
+    var userBlocks = require("/custom-modules/userblockDefs");
+
+    userBlocks.initUserBlocks(LiteGraph);
 
     for(let model of jsonGraph.models)
         LiteGraph.registerNodeType(model.source + "/" + model.collection, createGraphNodeFromModel(model));

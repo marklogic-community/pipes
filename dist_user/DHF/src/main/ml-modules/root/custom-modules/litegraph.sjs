@@ -12795,9 +12795,13 @@ if (typeof exports != "undefined") {
         this.addInput("v1");
         this.addInput("v2");
         this.addInput("v3");
-        this.addInput("v4");
         this.addOutput("newString","xs:string");
-        this.addProperty( "Template", "${v1} ${v2} ${v3} ${v4}" );
+
+        this.v4 = this.addWidget("text","v4", "v4", function(v){}, {} );
+        this.v5 = this.addWidget("text","v5", "v5", function(v){}, {} );
+        this.template = this.addWidget("text","template", "${v1} ${v2} ${v3} ${v4}", function(v){}, {} );
+        this.size = [230, 160];
+        this.serialize_widgets = true;
 
     }
 
@@ -12812,11 +12816,12 @@ if (typeof exports != "undefined") {
 
     stringTemplate.prototype.onExecute = function()
     {
-        let v1= (this.getInputData(0)!=undefined)?this.getInputData(0):''
-        let v2= (this.getInputData(1)!=undefined)?this.getInputData(1):''
-        let v3= (this.getInputData(2)!=undefined)?this.getInputData(2):''
-        let v4= (this.getInputData(3)!=undefined)?this.getInputData(3):''
-        let template = "`"+ this.properties["Template"] +"`"
+        let v1= this.getInputData(0)
+        let v2= this.getInputData(1)
+        let v3= this.getInputData(2)
+        let v4 = this.v4.value
+        let v5 = this.v5.value
+        let template = "`"+ this.template.value +"`"
         let result = eval(template)
         this.setOutputData(0, result );
     }
@@ -12825,6 +12830,61 @@ if (typeof exports != "undefined") {
     LiteGraph.registerNodeType("string/Templating", stringTemplate );
 
 
+
+
+    function multicast()
+    {
+        this.addInput("v1");
+        this.addInput("v2");
+        this.addInput("v3");
+        this.addInput("v4");
+        this.addOutput("v1");
+        this.addOutput("v2");
+        this.addOutput("v3");
+        this.addOutput("v4");
+
+
+        this.type1 = this.addWidget("combo","type1", "string", function(v){}, { values:["string","int","float"]} );
+        this.type2 = this.addWidget("combo","type2", "string", function(v){}, { values:["string","int","float"]} );
+        this.type3 = this.addWidget("combo","type3", "string", function(v){}, { values:["string","int","float"]} );
+        this.type4 = this.addWidget("combo","type4", "string", function(v){}, { values:["string","int","float"]} );
+        this.size = [230, 160];
+        this.serialize_widgets = true;
+
+    }
+
+    multicast.title = "Multicast";
+    multicast.desc = "Cast input to type";
+
+    multicast.prototype.onExecute = function()
+    {
+
+        for(let i=0;i<5;i++) {
+            if (this.getInputData(i) != undefined) {
+                switch (this["type" + i].value) {
+                    case "string":
+                        this.setOutputData(i, String(this.getInputData(i)) )
+                        break;
+                    case "int":
+                        this.setOutputData(i, parseInt(this.getInputData(i)) )
+                        break;
+                    case "float":
+                        this.setOutputData(i, parseFloat(this.getInputData(i)) )
+                        break;
+                    case "date":
+                        this.setOutputData(i, new date(this.getInputData(i)) )
+                        break;
+                    default:
+                        this.setOutputData(i, this.getInputData(i))
+                }
+
+            }
+
+
+        }
+
+    }
+    LiteGraph.registerNodeType("basic/multicast", multicast );
 
 
 })(this);
