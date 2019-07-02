@@ -1,0 +1,23 @@
+[
+  {
+    "functionName": "myBlock",
+    "blockName": "myBlock",
+    "library": "user",
+    "inputs": [
+      {
+        "name": "MyInput1",
+        "type": "xs:string"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "myOutput1",
+        "type": "xs:string"
+      }
+    ],
+    "function": {
+      "ref": null,
+      "code": null
+    }
+  }
+]
