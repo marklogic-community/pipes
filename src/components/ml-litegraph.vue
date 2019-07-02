@@ -510,8 +510,10 @@
           code += "function "+ config.functionName + "(){"
           code += config.inputs.map((input) => { return "this.addInput('" + input.name +  ((input.type)?"','" + input.type + "');":"');")}).join("")
           code += config.outputs.map((output) => { return "this.addOutput('" + output.name +  ((output.type)?"','" + output.type + "');":"');")}).join("")
-          code += (config.properties!=null)?config.properties.map((property) => { return "this.addProperty('" + property.name +  ((property.type)?"'," + JSON.stringify(property.type) + ");":"');")}).join(""):null
-
+          code += (config.properties!=null)?config.properties.map((property) => { return "this.addProperty('" + property.name +  ((property.type)?"'," + JSON.stringify(property.type) + ");":"');")}).join(""):""
+          code += (config.widgets!=null)?config.widgets.map((widget) => { return "this.addWidget('" + widget.type + "','" + widget.name + "','" + widget.default + "', function(v){}, { values:[" + JSON.stringify(widget.values) + "]} );"}).join(""):"";
+          code += "    this.size = [" + config.width +"," + config.height + "];\n" +
+            "    this.serialize_widgets = true;"
 
           //code += (config.properties)?"config.properties = " +  config.properties +";":"";
           code += "};"

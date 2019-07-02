@@ -6,6 +6,7 @@ function initUserBlocks(LiteGraph){
     {
         this.addInput("MyInput1");
         this.addOutput("myOutput1");
+        this.widgetName = this.addWidget("text","widgetName", "defaultValue", function(v){}, { values:[]} );
     }
 
     myBlock.title = "myBlock";
