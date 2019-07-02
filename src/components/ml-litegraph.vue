@@ -45,32 +45,12 @@
     </q-dialog>
 
   <q-dialog v-model="savePopUpOpened" :content-css="{minWidth: '30vw', minHeight: '40vh'}" >
-    <q-layout>
-      <q-toolbar slot="header">
-        <q-btn
-          flat
-          round
-          dense
-          v-close-overlay
+    <q-layout container class="bg-white">
 
-        />
-        <q-toolbar-title>
-          Save current graph
-        </q-toolbar-title>
-      </q-toolbar>
 
-      <q-toolbar slot="header">
-
-      </q-toolbar>
-
-      <q-toolbar slot="footer">
-        <q-toolbar-title>
-
-        </q-toolbar-title>
-      </q-toolbar>
 
       <div class="layout-padding">
-
+        <q-item-label :header="true">Save current graph</q-item-label>
         <div>
           <q-input  v-model="graphName" stack-label="Graph name" />
         </div>
@@ -93,37 +73,22 @@
 
 
   <q-dialog v-model="loadPopUpOpened" :content-css="{minWidth: '30vw', minHeight: '40vh'}" >
-    <q-layout>
-      <q-toolbar slot="header">
-        <q-btn
-          flat
-          round
-          dense
-          v-close-overlay
-
-        />
-        <q-toolbar-title>
-          Save current graph
-        </q-toolbar-title>
-      </q-toolbar>
+    <q-layout  container class="bg-white">
 
 
-      <q-toolbar slot="footer">
-        <q-toolbar-title>
 
-        </q-toolbar-title>
-      </q-toolbar>
+
 
       <div class="layout-padding">
 
         <q-list class="q-mt-md" link>
-          <q-list-header>List of saved graph</q-list-header>
+          <q-item-label :header="true">List of saved graph</q-item-label>
           <q-item tag="label" v-for="(item, index) in savedGraph" v-bind:key="item.name"  @click.native="getSavedGraph(item.uri)" >
 
-            <q-item-main>
-              <q-item-tile label>{{ item.name }}</q-item-tile>
+            <q-item-label>
+              <q-item-section label>{{ item.name }}</q-item-section>
 
-            </q-item-main>
+            </q-item-label>
           </q-item>
         </q-list>
 
@@ -420,7 +385,7 @@
           "\n" +
           "  let gHelper  = require(\"/custom-modules/graphHelper\")\n" +
           "\n" +
-          "  instance = gHelper.executeGraphStep(doc,id,getGraphDefinition())\n" +
+          "  instance = gHelper.executeGraphStep(doc,id,getGraphDefinition(),context)\n" +
           "\n" +
           "  //form our envelope here now, specifying our output format\n" +
           " // let envelope = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);\n" +
@@ -431,6 +396,7 @@
           "  //assign the uri we want, in this case the same\n" +
           "  content.uri = (instance.uri!=null)?instance.uri:id;\n" +
           "\n" +
+          "context.collections = (instance.collections!=null)?instance.collections:context.collections;" +
           "  //assign the context we want\n" +
           "  content.context = context;\n" +
           "\n" +
@@ -535,629 +501,8 @@
         }
 
       },
-      registerBlocksByConf(LiteGraph){
+      registerBlocksByConf(configs,LiteGraph){
 
-        let configs = [
-          {
-            "functionName" : "fn_doc",
-            "blockName" : "doc",
-            "library" : "fn",
-            "inputs":[
-              {
-                name:"uri",
-                type:"xs:string"}
-            ],
-            "outputs":[
-              {
-                "name": "doc",
-                "type":"node"
-              }
-            ],
-            "function":{
-              "ref":"fn.doc",
-              "code" :null
-            }
-
-
-          },
-          {
-            "functionName" : "fn_collection",
-            "blockName" : "collection",
-            "library" : "fn",
-            "inputs":[
-              {
-                name:"collectionName",
-                type:"xs:string"}
-            ],
-            "outputs":[
-              {
-                "name": "docs",
-                "type":"node()*"
-              }
-            ],
-            "function":{
-              "ref":"fn.collection",
-              "code" :null
-            }
-
-
-          },
-          {
-            "functionName" : "fn_baseUri",
-            "blockName" : "baseUri",
-            "library" : "fn",
-            "inputs":[
-              {
-                name:"node",
-                type:"node"}
-            ],
-            "outputs":[
-              {
-                "name": "uri",
-                "type":"xs:string"
-              }
-            ],
-            "function":{
-              "ref":"fn.baseUri",
-              "code" :null
-            }
-
-
-          },
-          {
-            "functionName" : "fn_head",
-            "blockName" : "head",
-            "library" : "fn",
-            "inputs":[
-              {
-                name:"nodes",
-                type:null}
-            ],
-            "outputs":[
-              {
-                "name": "node",
-                "type":null
-              }
-            ],
-            "function":{
-              "ref":"fn.head",
-              "code" :null
-            }
-
-
-          },
-          {
-            "functionName" : "fn_upperCase",
-            "blockName" : "UpperCase",
-            "library" : "string",
-            "inputs":[
-              {
-                name:"string",
-                type:"xs:string"}
-            ],
-            "outputs":[
-              {
-                "name": "STRING",
-                "type":"xs:string"
-              }
-            ],
-            "function":{
-              "ref":"fn.upperCase",
-              "code" :null
-            }
-
-
-          },
-          {
-            "functionName" : "fn_lowerCase",
-            "blockName" : "LowerCase",
-            "library" : "string",
-            "inputs":[
-              {
-                name:"STRING",
-                type:"xs:string"}
-            ],
-            "outputs":[
-              {
-                "name": "string",
-                "type":"xs:string"
-              }
-            ],
-            "function":{
-              "ref":"fn.lowerCase",
-              "code" :null
-            }
-
-
-          }
-          ,
-          {
-            "functionName" : "fn_count",
-            "blockName" : "count",
-            "library" : "fn",
-            "inputs":[
-              {
-                name:"list",
-                type:null}
-            ],
-            "outputs":[
-              {
-                "name": "nbItems",
-                "type":"number"
-              }
-            ],
-            "function":{
-              "ref":"fn.count",
-              "code" :null
-            }
-
-
-          },
-          {
-            "functionName" : "cts_andQuery",
-            "blockName" : "andQuery",
-            "library" : "cts",
-            "inputs":[
-              {
-                name:"query1",
-                type:"cts:query"},
-              {
-                name:"query2",
-                type:"cts:query"},
-              {
-                name:"query3",
-                type:"cts:query"},
-              {
-                name:"query4",
-                type:"cts:query"}
-            ],
-            "outputs":[
-              {
-                "name": "query",
-                "type":"cts:query"
-              }
-            ],
-            "function":{
-              "ref":null,
-              "code" :"let queries = [];" +
-                "    if(this.getInputData(0)!=undefined) queries.push(this.getInputData(0));" +
-                "    if(this.getInputData(1)!=undefined) queries.push(this.getInputData(1));" +
-                "    if(this.getInputData(2)!=undefined) queries.push(this.getInputData(2));" +
-                "    if(this.getInputData(3)!=undefined) queries.push(this.getInputData(3));" +
-                "    this.setOutputData( 0, cts.andQuery(queries));"
-            }
-
-
-          } ,
-          {
-            "functionName" : "cts_orQuery",
-            "blockName" : "orQuery",
-            "library" : "cts",
-            "inputs":[
-              {
-                name:"query1",
-                type:"cts:query"},
-              {
-                name:"query2",
-                type:"cts:query"},
-              {
-                name:"query3",
-                type:"cts:query"},
-              {
-                name:"query4",
-                type:"cts:query"}
-            ],
-            "outputs":[
-              {
-                "name": "query",
-                "type":"cts:query"
-              }
-            ],
-            "function":{
-              "ref":null,
-              "code" :"let queries = [];" +
-                "    if(this.getInputData(0)!=undefined) queries.push(this.getInputData(0));" +
-                "    if(this.getInputData(1)!=undefined) queries.push(this.getInputData(1));" +
-                "    if(this.getInputData(2)!=undefined) queries.push(this.getInputData(2));" +
-                "    if(this.getInputData(3)!=undefined) queries.push(this.getInputData(3));" +
-                "    this.setOutputData( 0, cts.orQuery(queries));"
-            }
-
-
-          },
-          {
-            "functionName" : "cts_search",
-            "blockName" : "search",
-            "library" : "cts",
-            "inputs":[
-              {
-                name:"query",
-                type:"cts:query"}
-            ],
-            "outputs":[
-              {
-                "name": "results",
-                "type":"node*"
-              }
-            ],
-            "function":{
-              "ref":"cts.search",
-              "code" :null
-            }
-
-
-          },
-          {
-            "functionName" : "fn_stringJoin",
-            "blockName" : "String join",
-            "library" : "string",
-            "inputs":[
-              {
-                name:"string*",
-                type:"xs:string*"}
-            ],
-            "properties" : [
-              {
-                name:"separator",
-                type:"xs:string"}
-
-            ],
-            "outputs":[
-              {
-                "name": "joinedString",
-                "type":"xs:string"
-              }
-            ],
-            "function":{
-              "ref":"fn.stringJoin",
-              "code" :null
-            }
-          },
-          {
-            "functionName" : "mapValues",
-            "blockName" : "Map values",
-            "library" : "string",
-            "inputs":[
-              {
-                name:"value",
-                type:"xs:string"}
-            ],
-            "properties" : [
-              {
-                name:"mapping",
-                type:[{"source":"srcVal","target": "targetVal"}]}
-
-            ],
-            "outputs":[
-              {
-                "name": "mappedValue",
-                "type":"xs:string"
-              }
-            ],
-            "function":{
-              "ref":null,
-              "code" : "\
-               let val = (this.getInputData(0)!=undefined)?this.getInputData(0):'';\
-               let mappedValue = this.properties['mapping'].filter(item => {return item.source==val});\
-                if(mappedValue.length >0) this.setOutputData( 0,mappedValue[0].target);\
-                                      else  this.setOutputData( 0,null);"
-
-
-            }
-          }
-          ,
-          {
-            "functionName" : "cts_collectionQuery",
-            "blockName" : "collectionQuery",
-            "library" : "cts",
-            "inputs":[
-              {
-                name:"collectionName",
-                type:"xs:string"}
-            ],
-            "outputs":[
-              {
-                "name": "query",
-                "type":"cts:query"
-              }
-            ],
-            "function":{
-              "ref":"cts.collectionQuery",
-              "code" :null
-            }
-
-
-          },
-          {
-            "functionName" : "json_validate",
-            "blockName" : "Json (schema) validate*",
-            "library" : "controls",
-            "inputs":[
-              {
-                name:"node",
-                type:"node"}
-            ],
-            "outputs":[
-              {
-                "name": "node",
-                "type":"node"
-              }
-            ],
-            "function":{
-              "ref":null,
-              "code" :null
-            }
-
-
-          },
-          {
-            "functionName" : "schematron_validate",
-            "blockName" : "Schematron validation*",
-            "library" : "controls",
-            "inputs":[
-              {
-                name:"doc",
-                type:null}
-            ],
-            "outputs":[
-              {
-                "name": "SVRL",
-                "type":"node"
-              }
-            ],
-            "function":{
-              "ref":null,
-              "code" :null
-            }
-
-
-          },
-          {
-            "functionName" : "isNumber",
-            "blockName" : "isNumber*",
-            "library" : "controls",
-            "inputs":[
-              {
-                name:"value",
-                type:null}
-            ],
-            "outputs":[
-              {
-                "name": "status",
-                "type":"bool"
-              }
-            ],
-            "function":{
-              "ref":null,
-              "code" :null
-            }
-
-
-          },
-          {
-            "functionName" : "isDate",
-            "blockName" : "isDate*",
-            "library" : "controls",
-            "inputs":[
-              {
-                name:"value",
-                type:null}
-            ],
-            "outputs":[
-              {
-                "name": "status",
-                "type":"bool"
-              }
-            ],
-            "function":{
-              "ref":null,
-              "code" :null
-            }
-
-
-          },
-          {
-            "functionName" : "isInDictionnary",
-            "blockName" : "isInDictionnary*",
-            "library" : "controls",
-            "inputs":[
-              {
-                name:"value",
-                type:null}
-            ],
-            "outputs":[
-              {
-                "name": "status",
-                "type":"bool"
-              }
-            ],
-            "function":{
-              "ref":null,
-              "code" :null
-            }
-
-
-          },
-          {
-            "functionName" :"checkRequiredFields",
-            "blockName" : "checkRequiredFields*",
-            "library" : "controls",
-            "inputs":[
-              {
-                name:"node",
-                type:null}
-            ],
-            "outputs":[
-              {
-                "name": "status",
-                "type":"bool"
-              }
-            ],
-            "function":{
-              "ref":null,
-              "code" :null
-            }
-
-
-          }
-          ,
-          {
-            "functionName" : "cts_jsonPropertyValueQuery",
-            "blockName" : "jsonPropertyValueQuery",
-            "library" : "cts",
-            "inputs":[
-              {
-                name:"property",
-                type:"xs:string"},
-              {
-                name:"value",
-                type:"xs:string"}
-            ],
-            "outputs":[
-              {
-                "name": "query",
-                "type":"cts:query"
-              }
-            ],
-            "function":{
-              "ref":"cts.jsonPropertyValueQuery",
-              "code" :null
-            }
-
-
-          }
-          ,
-          {
-            "functionName" : "toEnvelope",
-            "blockName" : "to Envelope",
-            "library" : "dhf",
-            "inputs":[
-              {
-                name:"headers",
-                type:"node"},
-              {
-                name:"triples",
-                type:"node"},
-              {
-                name:"instance",
-                type:"node"},
-              {
-                name:"attachments",
-                type:"node"}
-
-            ],
-            "outputs":[
-              {
-                "name": "doc",
-                "type":"node"
-              }
-            ],
-            "function":{
-              "ref":null,
-              "code" :"let result = {'envelope' : {}} ;" +
-                "    if(this.getInputData(0)!=undefined) result.envelope.headers = this.getInputData(0);" +
-                "    if(this.getInputData(1)!=undefined) result.envelope.triples = this.getInputData(1);" +
-                "    if(this.getInputData(2)!=undefined) result.envelope.instance = this.getInputData(2);" +
-                "    if(this.getInputData(3)!=undefined) result.envelope.attachments  = this.getInputData(3);" +
-                "    this.setOutputData( 0, result);"
-            }
-
-          }
-          ,
-          {
-            "functionName" : "fromEnvelope",
-            "blockName" : "from Envelope",
-            "library" : "dhf",
-            "inputs":[
-              {
-                "name": "doc",
-                "type":"node"
-              }
-
-            ],
-            "outputs":[
-
-              {
-                name:"headers",
-                type:"node"},
-              {
-                name:"triples",
-                type:"node"},
-              {
-                name:"instance",
-                type:"node"},
-              {
-                name:"attachments",
-                type:"node"}
-            ],
-            "function":{
-              "ref":null,
-              "code" :""
-            }
-
-          } ,
-          {
-            "functionName" : "applyXSLT",
-            "blockName" : "Apply XSLT*",
-            "library" : "transform",
-            "inputs":[
-              {
-                "name": "doc",
-                "type":"node"
-              }
-
-            ],
-            "outputs":[
-
-              {
-                name:"doc",
-                type:"node"}
-            ],
-            "function":{
-              "ref":null,
-              "code" :""
-            }
-
-          },
-          {
-            "functionName" : "addProperty",
-            "blockName" : "Add property",
-            "library" : "transform",
-            "inputs":[
-              {
-                "name": "doc",
-                "type":"node"
-              },
-               {
-                "name": "value",
-                "type": null
-              }
-
-            ],
-
-          "properties" : [
-          {
-            name:"propertyName",
-            type:"Property name"}
-
-        ],
-            "outputs":[
-
-              {
-                name:"doc",
-                type:"node"}
-            ],
-            "function":{
-              "ref":null,
-              "code" : "let doc = (this.getInputData(0)!=undefined)?this.getInputData(0):''; \
-                        let val = (this.getInputData(1)!=undefined)?this.getInputData(1):'';\
-                        let propertyName = this.properties['propertyName'];\
-                        doc[propertyName] = val;\
-                        this.setOutputData( 0, doc);"
-            }
-
-          }
-        ]
 
         let code=""
         for (let config of configs){
@@ -1165,8 +510,10 @@
           code += "function "+ config.functionName + "(){"
           code += config.inputs.map((input) => { return "this.addInput('" + input.name +  ((input.type)?"','" + input.type + "');":"');")}).join("")
           code += config.outputs.map((output) => { return "this.addOutput('" + output.name +  ((output.type)?"','" + output.type + "');":"');")}).join("")
-          code += (config.properties!=null)?config.properties.map((property) => { return "this.addProperty('" + property.name +  ((property.type)?"'," + JSON.stringify(property.type) + ");":"');")}).join(""):null
-
+          code += (config.properties!=null)?config.properties.map((property) => { return "this.addProperty('" + property.name +  ((property.type)?"'," + JSON.stringify(property.type) + ");":"');")}).join(""):""
+          code += (config.widgets!=null)?config.widgets.map((widget) => { return "this.addWidget('" + widget.type + "','" + widget.name + "','" + widget.default + "', function(v){}, { values:[" + JSON.stringify(widget.values) + "]} );"}).join(""):"";
+          code += "    this.size = [" + config.width +"," + config.height + "];\n" +
+            "    this.serialize_widgets = true;"
 
           //code += (config.properties)?"config.properties = " +  config.properties +";":"";
           code += "};"
@@ -1225,7 +572,640 @@
 
 
       var node_const = LiteGraph.createNode("basic/const");
-      this.registerBlocksByConf(LiteGraph)
+
+      let configs = [
+        {
+          "functionName" : "fn_doc",
+          "blockName" : "doc",
+          "library" : "fn",
+          "inputs":[
+            {
+              name:"uri",
+              type:"xs:string"}
+          ],
+          "outputs":[
+            {
+              "name": "doc",
+              "type":"node"
+            }
+          ],
+          "function":{
+            "ref":"fn.doc",
+            "code" :null
+          }
+
+
+        },
+        {
+          "functionName" : "fn_collection",
+          "blockName" : "collection",
+          "library" : "fn",
+          "inputs":[
+            {
+              name:"collectionName",
+              type:"xs:string"}
+          ],
+          "outputs":[
+            {
+              "name": "docs",
+              "type":"node()*"
+            }
+          ],
+          "function":{
+            "ref":"fn.collection",
+            "code" :null
+          }
+
+
+        },
+        {
+          "functionName" : "fn_baseUri",
+          "blockName" : "baseUri",
+          "library" : "fn",
+          "inputs":[
+            {
+              name:"node",
+              type:"node"}
+          ],
+          "outputs":[
+            {
+              "name": "uri",
+              "type":"xs:string"
+            }
+          ],
+          "function":{
+            "ref":"fn.baseUri",
+            "code" :null
+          }
+
+
+        },
+        {
+          "functionName" : "fn_head",
+          "blockName" : "head",
+          "library" : "fn",
+          "inputs":[
+            {
+              name:"nodes",
+              type:null}
+          ],
+          "outputs":[
+            {
+              "name": "node",
+              "type":null
+            }
+          ],
+          "function":{
+            "ref":"fn.head",
+            "code" :null
+          }
+
+
+        },
+        {
+          "functionName" : "fn_upperCase",
+          "blockName" : "UpperCase",
+          "library" : "string",
+          "inputs":[
+            {
+              name:"string",
+              type:"xs:string"}
+          ],
+          "outputs":[
+            {
+              "name": "STRING",
+              "type":"xs:string"
+            }
+          ],
+          "function":{
+            "ref":"fn.upperCase",
+            "code" :null
+          }
+
+
+        },
+        {
+          "functionName" : "fn_lowerCase",
+          "blockName" : "LowerCase",
+          "library" : "string",
+          "inputs":[
+            {
+              name:"STRING",
+              type:"xs:string"}
+          ],
+          "outputs":[
+            {
+              "name": "string",
+              "type":"xs:string"
+            }
+          ],
+          "function":{
+            "ref":"fn.lowerCase",
+            "code" :null
+          }
+
+
+        }
+        ,
+        {
+          "functionName" : "fn_count",
+          "blockName" : "count",
+          "library" : "fn",
+          "inputs":[
+            {
+              name:"list",
+              type:null}
+          ],
+          "outputs":[
+            {
+              "name": "nbItems",
+              "type":"number"
+            }
+          ],
+          "function":{
+            "ref":"fn.count",
+            "code" :null
+          }
+
+
+        },
+        {
+          "functionName" : "cts_andQuery",
+          "blockName" : "andQuery",
+          "library" : "cts",
+          "inputs":[
+            {
+              name:"query1",
+              type:"cts:query"},
+            {
+              name:"query2",
+              type:"cts:query"},
+            {
+              name:"query3",
+              type:"cts:query"},
+            {
+              name:"query4",
+              type:"cts:query"}
+          ],
+          "outputs":[
+            {
+              "name": "query",
+              "type":"cts:query"
+            }
+          ],
+          "function":{
+            "ref":null,
+            "code" :"let queries = [];" +
+              "    if(this.getInputData(0)!=undefined) queries.push(this.getInputData(0));" +
+              "    if(this.getInputData(1)!=undefined) queries.push(this.getInputData(1));" +
+              "    if(this.getInputData(2)!=undefined) queries.push(this.getInputData(2));" +
+              "    if(this.getInputData(3)!=undefined) queries.push(this.getInputData(3));" +
+              "    this.setOutputData( 0, cts.andQuery(queries));"
+          }
+
+
+        } ,
+        {
+          "functionName" : "cts_orQuery",
+          "blockName" : "orQuery",
+          "library" : "cts",
+          "inputs":[
+            {
+              name:"query1",
+              type:"cts:query"},
+            {
+              name:"query2",
+              type:"cts:query"},
+            {
+              name:"query3",
+              type:"cts:query"},
+            {
+              name:"query4",
+              type:"cts:query"}
+          ],
+          "outputs":[
+            {
+              "name": "query",
+              "type":"cts:query"
+            }
+          ],
+          "function":{
+            "ref":null,
+            "code" :"let queries = [];" +
+              "    if(this.getInputData(0)!=undefined) queries.push(this.getInputData(0));" +
+              "    if(this.getInputData(1)!=undefined) queries.push(this.getInputData(1));" +
+              "    if(this.getInputData(2)!=undefined) queries.push(this.getInputData(2));" +
+              "    if(this.getInputData(3)!=undefined) queries.push(this.getInputData(3));" +
+              "    this.setOutputData( 0, cts.orQuery(queries));"
+          }
+
+
+        },
+        {
+          "functionName" : "cts_search",
+          "blockName" : "search",
+          "library" : "cts",
+          "inputs":[
+            {
+              name:"query",
+              type:"cts:query"}
+          ],
+          "outputs":[
+            {
+              "name": "results",
+              "type":"node*"
+            }
+          ],
+          "function":{
+            "ref":"cts.search",
+            "code" :null
+          }
+
+
+        },
+        {
+          "functionName" : "fn_stringJoin",
+          "blockName" : "String join",
+          "library" : "string",
+          "inputs":[
+            {
+              name:"string*",
+              type:"xs:string*"}
+          ],
+          "properties" : [
+            {
+              name:"separator",
+              type:"xs:string"}
+
+          ],
+          "outputs":[
+            {
+              "name": "joinedString",
+              "type":"xs:string"
+            }
+          ],
+          "function":{
+            "ref":"fn.stringJoin",
+            "code" :null
+          }
+        },
+        {
+          "functionName" : "mapValues",
+          "blockName" : "Map values",
+          "library" : "string",
+          "inputs":[
+            {
+              name:"value",
+              type:"xs:string"}
+          ],
+          "properties" : [
+            {
+              name:"mapping",
+              type:[{"source":"srcVal","target": "targetVal"}]}
+
+          ],
+          "outputs":[
+            {
+              "name": "mappedValue",
+              "type":"xs:string"
+            }
+          ],
+          "function":{
+            "ref":null,
+            "code" : "\
+               let val = (this.getInputData(0)!=undefined)?this.getInputData(0):'';\
+               let mappedValue = this.properties['mapping'].filter(item => {return item.source==val});\
+                if(mappedValue.length >0) this.setOutputData( 0,mappedValue[0].target);\
+                                      else  this.setOutputData( 0,null);"
+
+
+          }
+        }
+        ,
+        {
+          "functionName" : "cts_collectionQuery",
+          "blockName" : "collectionQuery",
+          "library" : "cts",
+          "inputs":[
+            {
+              name:"collectionName",
+              type:"xs:string"}
+          ],
+          "outputs":[
+            {
+              "name": "query",
+              "type":"cts:query"
+            }
+          ],
+          "function":{
+            "ref":"cts.collectionQuery",
+            "code" :null
+          }
+
+
+        },
+        {
+          "functionName" : "json_validate",
+          "blockName" : "Json (schema) validate*",
+          "library" : "controls",
+          "inputs":[
+            {
+              name:"node",
+              type:"node"}
+          ],
+          "outputs":[
+            {
+              "name": "node",
+              "type":"node"
+            }
+          ],
+          "function":{
+            "ref":null,
+            "code" :null
+          }
+
+
+        },
+        {
+          "functionName" : "schematron_validate",
+          "blockName" : "Schematron validation*",
+          "library" : "controls",
+          "inputs":[
+            {
+              name:"doc",
+              type:null}
+          ],
+          "outputs":[
+            {
+              "name": "SVRL",
+              "type":"node"
+            }
+          ],
+          "function":{
+            "ref":null,
+            "code" :null
+          }
+
+
+        },
+        {
+          "functionName" : "isNumber",
+          "blockName" : "isNumber*",
+          "library" : "controls",
+          "inputs":[
+            {
+              name:"value",
+              type:null}
+          ],
+          "outputs":[
+            {
+              "name": "status",
+              "type":"bool"
+            }
+          ],
+          "function":{
+            "ref":null,
+            "code" :null
+          }
+
+
+        },
+        {
+          "functionName" : "isDate",
+          "blockName" : "isDate*",
+          "library" : "controls",
+          "inputs":[
+            {
+              name:"value",
+              type:null}
+          ],
+          "outputs":[
+            {
+              "name": "status",
+              "type":"bool"
+            }
+          ],
+          "function":{
+            "ref":null,
+            "code" :null
+          }
+
+
+        },
+        {
+          "functionName" : "isInDictionnary",
+          "blockName" : "isInDictionnary*",
+          "library" : "controls",
+          "inputs":[
+            {
+              name:"value",
+              type:null}
+          ],
+          "outputs":[
+            {
+              "name": "status",
+              "type":"bool"
+            }
+          ],
+          "function":{
+            "ref":null,
+            "code" :null
+          }
+
+
+        },
+        {
+          "functionName" :"checkRequiredFields",
+          "blockName" : "checkRequiredFields*",
+          "library" : "controls",
+          "inputs":[
+            {
+              name:"node",
+              type:null}
+          ],
+          "outputs":[
+            {
+              "name": "status",
+              "type":"bool"
+            }
+          ],
+          "function":{
+            "ref":null,
+            "code" :null
+          }
+
+
+        }
+        ,
+        {
+          "functionName" : "cts_jsonPropertyValueQuery",
+          "blockName" : "jsonPropertyValueQuery",
+          "library" : "cts",
+          "inputs":[
+            {
+              name:"property",
+              type:"xs:string"},
+            {
+              name:"value",
+              type:"xs:string"}
+          ],
+          "outputs":[
+            {
+              "name": "query",
+              "type":"cts:query"
+            }
+          ],
+          "function":{
+            "ref":"cts.jsonPropertyValueQuery",
+            "code" :null
+          }
+
+
+        },
+
+
+        {
+          "functionName" : "toEnvelope",
+          "blockName" : "to Envelope",
+          "library" : "dhf",
+          "inputs":[
+            {
+              name:"headers",
+              type:"node"},
+            {
+              name:"triples",
+              type:"node"},
+            {
+              name:"instance",
+              type:"node"},
+            {
+              name:"attachments",
+              type:"node"}
+
+          ],
+          "outputs":[
+            {
+              "name": "doc",
+              "type":"node"
+            }
+          ],
+          "function":{
+            "ref":null,
+            "code" :"let result = {'envelope' : {}} ;" +
+              "    if(this.getInputData(0)!=undefined) result.envelope.headers = this.getInputData(0);" +
+              "    if(this.getInputData(1)!=undefined) result.envelope.triples = this.getInputData(1);" +
+              "    if(this.getInputData(2)!=undefined) result.envelope.instance = this.getInputData(2);" +
+              "    if(this.getInputData(3)!=undefined) result.envelope.attachments  = this.getInputData(3);" +
+              "    this.setOutputData( 0, result);"
+          }
+
+        }
+        ,
+        {
+          "functionName" : "fromEnvelope",
+          "blockName" : "from Envelope",
+          "library" : "dhf",
+          "inputs":[
+            {
+              "name": "doc",
+              "type":"node"
+            }
+
+          ],
+          "outputs":[
+
+            {
+              name:"headers",
+              type:"node"},
+            {
+              name:"triples",
+              type:"node"},
+            {
+              name:"instance",
+              type:"node"},
+            {
+              name:"attachments",
+              type:"node"}
+          ],
+          "function":{
+            "ref":null,
+            "code" :""
+          }
+
+        } ,
+        {
+          "functionName" : "applyXSLT",
+          "blockName" : "Apply XSLT*",
+          "library" : "transform",
+          "inputs":[
+            {
+              "name": "doc",
+              "type":"node"
+            }
+
+          ],
+          "outputs":[
+
+            {
+              name:"doc",
+              type:"node"}
+          ],
+          "function":{
+            "ref":null,
+            "code" :""
+          }
+
+        },
+        {
+          "functionName" : "addProperty",
+          "blockName" : "Add property",
+          "library" : "transform",
+          "inputs":[
+            {
+              "name": "doc",
+              "type":"node"
+            },
+            {
+              "name": "value",
+              "type": null
+            }
+
+          ],
+
+          "properties" : [
+            {
+              name:"propertyName",
+              type:"Property name"}
+
+          ],
+          "outputs":[
+
+            {
+              name:"doc",
+              type:"node"}
+          ],
+          "function":{
+            "ref":null,
+            "code" : "let doc = (this.getInputData(0)!=undefined)?this.getInputData(0):''; \
+                        let val = (this.getInputData(1)!=undefined)?this.getInputData(1):'';\
+                        let propertyName = this.properties['propertyName'];\
+                        doc[propertyName] = val;\
+                        this.setOutputData( 0, doc);"
+          }
+
+        }
+      ]
+
+      this.registerBlocksByConf(configs, LiteGraph)
+
+      this.$axios.get('/statics/userblockDefs.json' )
+        .then((response) => {
+
+          this.registerBlocksByConf(response.data, LiteGraph)
+
+        })
+
+
       /*
        node_const.pos = [200,200];
        this.graph.add(node_const);

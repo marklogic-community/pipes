@@ -25,6 +25,7 @@ function createGraphNodeFromModel(blockDef) {
           { label: 'Create fields outputs', value: 'fieldsOutputs' }
     *
     * */
+
     let nodeCode = "";
     let ioSetup = {
         inputs: {
@@ -103,9 +104,9 @@ function createGraphNodeFromModel(blockDef) {
         execCode += 'this.setOutputData(' + ioSetup.outputs["Node"] + ', doc);';
     }
     execCode += '}'
-    console.log(blockDef)
-    console.log(ioSetup)
-    console.log(execCode)
+    //console.log(blockDef)
+    //console.log(ioSetup)
+    //console.log(execCode)
     node.prototype.onExecute = new Function(execCode)
 
     node.title = blockDef.collection;
@@ -132,16 +133,16 @@ function createGraphNodeFromModel(model){
 }
 */
 
-function executeGraphStep(doc,uri,config){
+function executeGraphStep(doc,uri,config,context){
 
 
 
-    return executeGraphFromJson(config,uri,doc)
+    return executeGraphFromJson(config,uri,doc,context)
 
 }
 
 
-function executeGraphFromJson(jsonGraph,uri, input){
+function executeGraphFromJson(jsonGraph,uri, input,context){
 
 
 
@@ -149,6 +150,9 @@ function executeGraphFromJson(jsonGraph,uri, input){
 
 
     var LiteGraph = require("/custom-modules/litegraph").LiteGraph;
+    var userBlocks = require("/custom-modules/userblockDefs");
+
+    userBlocks.initUserBlocks(LiteGraph);
 
     for(let model of jsonGraph.models)
         LiteGraph.registerNodeType(model.source + "/" + model.collection, createGraphNodeFromModel(model));
@@ -157,13 +161,21 @@ function executeGraphFromJson(jsonGraph,uri, input){
     var graph = new LiteGraph.LGraph();
 
     graph.configure(jsonGraph.executionGraph)
-    graph.setGlobalInputData("input",input)
-    graph.setGlobalInputData("uri",uri)
+    graph.addInput("input", "");
+    graph.addInput("uri", "");
+    graph.addInput("collections", "");
+    graph.addOutput("output", "");
+    graph.addOutput("uri", "");
+    graph.addOutput("collections", "");
+    graph.setInputData("input",input)
+    graph.setInputData("uri",uri)
+    graph.setInputData("collections",context.collections)
     graph.start();
 
     return {
-        output: graph.getGlobalOutputData("output"),
-        uri : graph.getGlobalOutputData("uri")//graph.global_outputs
+        output: graph.getOutputData("output"),
+        uri : graph.getOutputData("uri"),//graph.global_outputs,
+        collections : graph.getOutputData("collections")
     }
     }//graph.global_outputs
 
