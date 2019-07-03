@@ -491,7 +491,7 @@
         if(block)
         {
           console.log(block)
-          if(block.properties!=null) this.currentProperties= block.properties.mapping
+          if(block.node_over.properties!=null) this.currentProperties= block.node_over.properties.mapping
           this.editJson=true
 
 
@@ -512,8 +512,9 @@
           code += config.outputs.map((output) => { return "this.addOutput('" + output.name +  ((output.type)?"','" + output.type + "');":"');")}).join("")
           code += (config.properties!=null)?config.properties.map((property) => { return "this.addProperty('" + property.name +  ((property.type)?"'," + JSON.stringify(property.type) + ");":"');")}).join(""):""
           code += (config.widgets!=null)?config.widgets.map((widget) => { return "this.addWidget('" + widget.type + "','" + widget.name + "','" + widget.default + "', function(v){}, { values:[" + JSON.stringify(widget.values) + "]} );"}).join(""):"";
-          code += "    this.size = [" + config.width +"," + config.height + "];\n" +
-            "    this.serialize_widgets = true;"
+          if(config.width)
+            code += "    this.size = [" + config.width +"," + config.height + "];\n"
+            code += "    this.serialize_widgets = true;"
 
           //code += (config.properties)?"config.properties = " +  config.properties +";":"";
           code += "};"
