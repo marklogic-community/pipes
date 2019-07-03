@@ -3,11 +3,23 @@
     "functionName": "myBlock",
     "blockName": "myBlock",
     "library": "user",
+    "height" :180 ,
+    "width" : 230,
     "inputs": [
       {
         "name": "MyInput1",
         "type": "xs:string"
       }
+    ],
+    "widgets": [
+      {
+        "type": "text",
+        "name" : "widgetName",
+        "default" : "defaultValue",
+        "values" : []
+
+      }
+
     ],
     "outputs": [
       {
