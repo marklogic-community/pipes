@@ -1194,6 +1194,59 @@
                         this.setOutputData( 0, doc);"
           }
 
+        },
+        {
+          "functionName" : "provo",
+          "blockName" : "PROV-O structure",
+          "library" : "provenance",
+          "inputs":[
+            {
+              "name": "DerivedFrom1",
+              "type": null
+            },
+            {
+              "name": "DerivedFrom2",
+              "type": null
+            },
+            {
+              "name": "DerivedFrom3",
+              "type": null
+            },
+            {
+              "name": "GeneratedBy",
+              "type": null
+            },
+            {
+              "name": "createdOn",
+              "type": null
+            }
+
+          ],
+
+          "properties" : [
+          ],
+          "outputs":[
+
+            {
+              name:"PROV-O",
+              type:"node"}
+          ],
+          "function":{
+            "ref":null,
+            "code" : "let from1 = (this.getInputData(0)!=undefined)?this.getInputData(0):null; \
+                        let from2 = (this.getInputData(1)!=undefined)?this.getInputData(1):null;\
+                        let from3 = (this.getInputData(1)!=undefined)?this.getInputData(2):null;\
+                        let generatedBy = (this.getInputData(1)!=undefined)?this.getInputData(3):null;\
+                        let createdOn = (this.getInputData(1)!=undefined)?this.getInputData(4):null;\
+                        let doc = {derivedFrom:[]};\
+                        if(from1) doc.derivedFrom.push(from1);\
+                        if(from2) doc.derivedFrom.push(from2);\
+                        if(from3) doc.derivedFrom.push(from3);\
+                        doc.generatedBy = generatedBy;\
+                        doc.createdOn = createdOn;\
+                        this.setOutputData( 0, doc);"
+          }
+
         }
       ]
 

@@ -72,7 +72,7 @@ function createGraphNodeFromModel(blockDef) {
 
     let node = new Function('{' + nodeCode + '}')
 
-    let execCode = "{let doc = {};";
+    let execCode = "{let doc = { '" + blockDef.collection + "':{}};";
     if (blockDef.options.indexOf("nodeInput")>-1) {
 
         execCode += "if(this.getInputData(" + ioSetup.inputs["Node"] + ")!=null) {";
@@ -88,7 +88,7 @@ function createGraphNodeFromModel(blockDef) {
     if (blockDef.options.indexOf("fieldsInputs") > -1) {
         for (let i = 0; i < blockDef.fields.length; i++)
 
-            execCode += 'if(this.getInputData( ' + ioSetup.inputs[blockDef.fields[i]]  + ')!=null) doc["' + blockDef.fields[i] + '"]= this.getInputData( ' + ioSetup.inputs[blockDef.fields[i]]  + ');'
+            execCode += 'if(this.getInputData( ' + ioSetup.inputs[blockDef.fields[i]]  + ')!=null) doc["' + blockDef.collection + '"]["' + blockDef.fields[i] + '"]= this.getInputData( ' + ioSetup.inputs[blockDef.fields[i]]  + ');'
     }
 
     if (blockDef.options.indexOf("fieldsOutputs") > -1) {
