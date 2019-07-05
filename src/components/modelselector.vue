@@ -221,16 +221,31 @@
           message: 'Loading failed',
           icon: 'report_problem'
         })*/
-        let blockDef = {
 
-          label: this.blockName,
-          collection: (this.selectedCollection!=null && this.selectedCollection!="" )?this.selectedCollection.value :this.blockName,
-          source: "Sources",
-          fields: this.selectedFields,
-          options: this.blockOptions
+        if(this.blockName == null || this.blockName == "")
+        {
 
+          this.$q.notify({
+            color: 'negative',
+            position: 'top',
+            message: 'Please set the block name',
+            icon: 'report_problem'
+          })
         }
-        this.$root.$emit("blockRequested", blockDef);
+          else
+        {
+
+          let blockDef = {
+
+            label: this.blockName,
+            collection: this.blockName,
+            source: "Sources",
+            fields: this.selectedFields,
+            options: this.blockOptions
+
+          }
+          this.$root.$emit("blockRequested", blockDef);
+        }
       }
     },
     mounted() {
