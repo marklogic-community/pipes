@@ -257,7 +257,7 @@
                   this.addInput(field, "xs:string");
                 }
               }
-              //this["WithInstanceRoot"] = this.addWidget("toggle","WithInstanceRoot", true, function(v){}, { on: "enabled", off:"disabled"} );
+              this["WithInstanceRoot"] = this.addWidget("toggle","WithInstanceRoot", true, function(v){}, { on: "enabled", off:"disabled"} );
               this.serialize_widgets = true;
 
             }

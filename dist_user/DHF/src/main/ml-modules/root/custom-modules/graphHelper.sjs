@@ -67,7 +67,7 @@ function createGraphNodeFromModel(blockDef) {
         this.addInput(field, "xs:string");
       }
     }
-    this["With instance root"] = this.addWidget("toggle","With instance root", true, function(v){}, { on: "enabled", off:"disabled"} );
+    this["WithInstanceRoot"] = this.addWidget("toggle","WithInstanceRoot", true, function(v){}, { on: "enabled", off:"disabled"} );
     this.serialize_widgets = true;
   }
 
@@ -90,19 +90,20 @@ function createGraphNodeFromModel(blockDef) {
       if(this.getInputData(this.ioSetup.inputs["Uri"])!=null)
         this.input.doc = fn.head(fn.doc(this.getInputData(this.ioSetup.inputs["Uri"]))).toObject();
 
-    if (blockDef.options.indexOf("fieldsOutputs") > -1) {
-      let docNode = xdmp.toJSON(this.doc.input);
-      for (let i = 0; i < this.blockDef.fields.length; i++){
-        this.doc.output[this.blockDef.fields[i]] = docNode.xpath("//" + this.blockDef.fields[i]);
-        if(this.getInputData(this.ioSetup.inputs[blockDef.fields[i]])!=null)
-          this.doc.output[this.blockDef.fields[i]] = this.getInputData(this.ioSetup.inputs[this.blockDef.fields[i]]);
-        this.setOutputData(this.ioSetup.outputs[blockDef.fields[i]],this.doc.output[this.blockDef.fields[i]] );
-      }
+    // if (blockDef.options.indexOf("fieldsOutputs") > -1) {
+    let docNode = xdmp.toJSON(this.doc.input);
+    for (let i = 0; i < this.blockDef.fields.length; i++){
+      let v = docNode.xpath("//" + this.blockDef.fields[i]);
+      this.doc.output[this.blockDef.fields[i]] = (v!=null)?v:null;
+      if(this.getInputData(this.ioSetup.inputs[blockDef.fields[i]])!=null)
+        this.doc.output[this.blockDef.fields[i]] = this.getInputData(this.ioSetup.inputs[this.blockDef.fields[i]]);
+      this.setOutputData(this.ioSetup.outputs[blockDef.fields[i]],this.doc.output[this.blockDef.fields[i]] );
     }
+    //}
 
     if (blockDef.options.indexOf("nodeOutput") > -1) {
       let out = {};
-      if(this["With instance root"].value == true){
+      if(this["WithInstanceRoot"].value == true){
         out[this.blockDef.collection] = this.doc.output
       }
       else{
