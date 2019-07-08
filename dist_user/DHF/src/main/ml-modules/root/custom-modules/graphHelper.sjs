@@ -67,7 +67,7 @@ function createGraphNodeFromModel(blockDef) {
         this.addInput(field, "xs:string");
       }
     }
-    this.toggle = this.addWidget("toggle","With instance root", true, function(v){}, { on: "enabled", off:"disabled"} );
+    //this["With instance root"] = this.addWidget("toggle","With instance root", true, function(v){}, { on: "enabled", off:"disabled"} );
     this.serialize_widgets = true;
   }
 
@@ -101,7 +101,15 @@ function createGraphNodeFromModel(blockDef) {
     }
 
     if (blockDef.options.indexOf("nodeOutput") > -1) {
-      this.setOutputData(this.ioSetup.outputs["Node"], this.doc.output);
+      let out = {};
+      // if(this["With instance root"].value == true){
+      out[this.blockDef.collection] = this.doc.output
+      /*            }
+                  else{
+
+                      out= this.doc.output
+                  } */
+      this.setOutputData(this.ioSetup.outputs["Node"], out);
     }
 
   }
