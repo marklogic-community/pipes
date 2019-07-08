@@ -18,6 +18,20 @@
       label="Select a collection"
       stack-label
     />
+    <q-input bottom-slots v-model="newCustomFieldName" label="Add custom field" :dense="dense">
+
+      <template v-slot:append>
+        <q-btn round dense flat icon="add" @click="addCustomField()"/>
+      </template>
+    </q-input>
+
+    <div class="q-body-1"><p>Select the fields to add</p></div>
+    <q-tree
+      :nodes="collectionModel"
+      node-key="label"
+      tick-strategy="strict"
+      :ticked.sync="selectedFields"
+    />
 
 
     <div class="q-body-1">Select the generation options</div>
@@ -34,20 +48,7 @@
     ]"
     />
 
-    <q-input bottom-slots v-model="newCustomFieldName" label="Add custom field" :dense="dense">
 
-      <template v-slot:append>
-        <q-btn round dense flat icon="add" @click="addCustomField()"/>
-      </template>
-    </q-input>
-
-    <div class="q-body-1"><p>Select the fields to add</p></div>
-    <q-tree
-      :nodes="collectionModel"
-      node-key="label"
-      tick-strategy="strict"
-      :ticked.sync="selectedFields"
-    />
 
     <q-btn-group>
       <q-btn label="Create block" @click="notifyBlockRequested()">

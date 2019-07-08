@@ -207,98 +207,65 @@
           })
       },
       createGraphNodeFromModel(blockDef) {
-        /*
-        *
-        *       { label: 'Get doc by URI', value: 'getByUri' },
-              { label: 'Node as input', value: 'nodeInput' },
-              { label: 'Node as output', value: 'nodeOutput' },
-              { label: 'Create fields inputs', value: 'fieldsInputs' },
-              { label: 'Create fields outputs', value: 'fieldsOutputs' }
-        *
-        * */
-        let nodeCode = "";
-        let ioSetup = {
-          inputs: {
-            _count: 0
-          },
-          outputs: {
-            _count: 0
-          }
-        }
-
-        if (blockDef.options.indexOf("getByUri") > -1) {
-          ioSetup.inputs["Uri"] = ioSetup.inputs._count++;
-          nodeCode += 'this.addInput("Uri","Uri");'
-        }
-
-        if (blockDef.options.indexOf("nodeInput") > -1) {
-          ioSetup.inputs["Node"] = ioSetup.inputs._count++;
-          nodeCode += 'this.addInput("Node","Node");'
-        }
-
-        if (blockDef.options.indexOf("nodeOutput") > -1) {
-          ioSetup.outputs["Node"] = ioSetup.outputs._count++;
-          nodeCode += 'this.addOutput("Node","Node");'
-        }
-
-        if (blockDef.options.indexOf("fieldsOutputs") > -1) {
-          for (let field of blockDef.fields) {
-
-            ioSetup.outputs[field] = ioSetup.outputs._count++;
-            nodeCode += 'this.addOutput("' + field + '");'
-
-          }
-        }
-
-        if (blockDef.options.indexOf("fieldsInputs") > -1) {
-          for (let field of blockDef.fields) {
-
-            ioSetup.inputs[field] = ioSetup.inputs._count++;
-            nodeCode += 'this.addInput("' + field + '");'
-
-          }
-        }
 
 
-        let node = new Function('{' + nodeCode + '}')
-
-        let execCode = "{let doc = {};";
-        if (blockDef.options.indexOf("nodeInput")) {
-
-          execCode += "if(this.getInputData(" + ioSetup.inputs["Node"] + ")!=null) {";
-          execCode += "let inputNode = this.getInputData(" + ioSetup.inputs["Node"] + ");"
-          execCode += "if(xdmp.nodeKind(inputNode)=='document') inputNode = inputNode.toObject();"
-          execCode += "doc = inputNode;}";
-
-        }
-        if (blockDef.options.indexOf("Uri"))
-          execCode += "if(this.getInputData(" + ioSetup.inputs["Uri"] + ")!=null) doc = fn.doc(this.getInputData(" + ioSetup.inputs["Uri"] + ")).toObject();";
 
 
-        if (blockDef.options.indexOf("fieldsInputs") > -1) {
-          for (let i = 0; i < blockDef.fields.length; i++)
 
-            execCode += 'doc[blockDef.fields[i]]= this.getInputData( ' + ioSetup.inputs[blockDef.fields[i]]  + ');'
-        }
 
-        if (blockDef.options.indexOf("fieldsOutputs") > -1) {
-          execCode += 'let docNode = xdmp.toJSON(doc);';
-          for (let i = 0; i < blockDef.fields.length; i++)
+            let block = function () {
+              this.blockDef = Object.assign({}, blockDef, {})
+              this.doc = {
+                input: null,
+                output: null
+              }
 
-            execCode += 'this.setOutputData( ' + ioSetup.outputs[blockDef.fields[i]] + ', docNode.xpath("//' + blockDef.fields[i] + '"));'
-        }
-        execCode += '}'
+              this.ioSetup = {
+                inputs: {
+                  _count: 0
+                },
+                outputs: {
+                  _count: 0
+                }
+              }
 
-        if (blockDef.options.indexOf("nodeOutput") > -1) {
+              if (this.blockDef.options.indexOf("getByUri") > -1) {
+                this.ioSetup.inputs["Uri"] = this.ioSetup.inputs._count++;
+                this.addInput("Uri", "xs:string");
+              }
 
-          nodeCode += 'this.setOutputData(' + ioSetup.outputs["Node"] + ', doc);';
-        }
-        console.log(execCode)
-        node.prototype.onExecute = new Function(execCode)
+              if (this.blockDef.options.indexOf("nodeInput") > -1) {
+                this.ioSetup.inputs["Node"] = this.ioSetup.inputs._count++;
+                this.addInput("Node", "Node");
+              }
 
-        node.title = blockDef.collection;
-        node.nodeType = blockDef.collection;
-        return node
+              if (this.blockDef.options.indexOf("nodeOutput") > -1) {
+                this.ioSetup.outputs["Node"] = this.ioSetup.outputs._count++;
+                this.addOutput("Node", "Node");
+              }
+
+              if (this.blockDef.options.indexOf("fieldsOutputs") > -1) {
+                for (let field of blockDef.fields) {
+                  this.ioSetup.outputs[field] = this.ioSetup.outputs._count++;
+                  this.addOutput(field, "xs:string");
+                }
+              }
+
+              if (blockDef.options.indexOf("fieldsInputs") > -1) {
+                for (let field of blockDef.fields) {
+                  this.ioSetup.inputs[field] = this.ioSetup.inputs._count++;
+                  this.addInput(field, "xs:string");
+                }
+              }
+              this.toggle = this.addWidget("toggle","With instance root", true, function(v){}, { on: "enabled", off:"disabled"} );
+              this.serialize_widgets = true;
+            }
+
+            block.title = blockDef.collection;
+            block.nodeType = blockDef.collection;
+            return block
+
+
       },
       exportDHFModule(){
         console.log("export DHF module")
