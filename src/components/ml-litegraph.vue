@@ -259,6 +259,8 @@
               }
               this["WithInstanceRoot"] = this.addWidget("toggle","WithInstanceRoot", true, function(v){}, { on: "enabled", off:"disabled"} );
               this.serialize_widgets = true;
+              this.computeSize();
+              this.size=[this.size[0] + 50,this.size[1] + 30]
 
             }
 
