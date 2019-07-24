@@ -9,7 +9,7 @@ $ yarn global add quasar-cli
 
 or:
 
-$ npm install -g quasar-cli
+$ npm install -g @quasar-cli
 
 
 2. Download modules
