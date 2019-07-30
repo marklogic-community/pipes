@@ -19,10 +19,6 @@ function createGraphNodeFromModel(blockDef) {
 
 
 
-
-
-
-
   let block = function () {
     this.blockDef = Object.assign({}, blockDef, {})
     this.doc = {
@@ -80,6 +76,7 @@ function createGraphNodeFromModel(blockDef) {
 
     if (this.blockDef.options.indexOf("nodeInput")>-1) {
 
+
       if(this.getInputData(this.ioSetup.inputs["Node"] )!=null) {
         let inputNode = this.getInputData(this.ioSetup.inputs["Node"]);
         if(xdmp.nodeKind(inputNode)=='document') inputNode = inputNode.toObject();
@@ -92,12 +89,17 @@ function createGraphNodeFromModel(blockDef) {
 
     // if (blockDef.options.indexOf("fieldsOutputs") > -1) {
     let docNode = xdmp.toJSON(this.doc.input);
-    for (let i = 0; i < this.blockDef.fields.length; i++){
+    for (let i = 0; i < this.blockDef.fields.length; i++) {
       let v = docNode.xpath("//" + this.blockDef.fields[i]);
-      this.doc.output[this.blockDef.fields[i]] = (v!=null)?v:null;
-      if(this.getInputData(this.ioSetup.inputs[blockDef.fields[i]])!=null)
-        this.doc.output[this.blockDef.fields[i]] = this.getInputData(this.ioSetup.inputs[this.blockDef.fields[i]]);
-      this.setOutputData(this.ioSetup.outputs[blockDef.fields[i]],this.doc.output[this.blockDef.fields[i]] );
+      this.doc.output[this.blockDef.fields[i]] = (v != null) ? v : null;
+
+      if (this.blockDef.options.indexOf("fieldsInputs") > -1) {
+        if (this.getInputData(this.ioSetup.inputs[blockDef.fields[i]]) != null)
+          this.doc.output[this.blockDef.fields[i]] = this.getInputData(this.ioSetup.inputs[this.blockDef.fields[i]]);
+      }
+      if (this.blockDef.options.indexOf("fieldsOutputs") > -1)
+        this.setOutputData(this.ioSetup.outputs[blockDef.fields[i]], this.doc.output[this.blockDef.fields[i]]);
+
     }
     //}
 
