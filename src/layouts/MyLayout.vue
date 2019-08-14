@@ -43,6 +43,12 @@
             </q-tooltip>
 
           </q-btn>
+          <q-btn flat round dense icon="play_arrow" size="lg" @click.stop="exportDHFModule() //executeGraph()">
+            <q-tooltip>
+              Preview Execute Graph
+            </q-tooltip>
+
+          </q-btn>
           <q-btn flat round dense icon="cloud_upload" size="lg" @click.stop="saveGraph()">
             <q-tooltip>
               Save current grap to the staging DB
