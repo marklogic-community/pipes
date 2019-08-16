@@ -106,17 +106,53 @@
   </q-dialog>
 
 
+    <q-dialog v-model="showPreview">
+      <q-card>
+        <q-card-section class="row items-center">
+          <div class="text-h6">Preview</div>
+         </q-card-section>
+        <q-card-section class="row">
+          <div style="min-width: 250px; max-width: 300px">
 
+
+            <q-input filled v-model="collectionForPreview" label="Use collection as input" />
+          </div>
+
+          <q-toggle
+            v-model="randomDocPreview"
+            label="Random doc"
+          />
+
+          <div class="q-pa-md q-gutter-sm">
+
+            <q-btn color="primary" label="Execute Preview" @click="executeGraph()" />
+          </div>
+        </q-card-section>
+        <q-card-section>
+
+        <vue-json-pretty
+          :data="jsonFromPreview"
+         >
+        </vue-json-pretty>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </div>
+
+
+
 </template>
 <script>
 
   import {LiteGraph} from 'litegraph.js';
   import { saveAs } from 'file-saver';
-
+  import VueJsonPretty from 'vue-json-pretty';
 
 
   export default {
+    components: {
+      VueJsonPretty
+    },
     name: 'PageIndex',
     data() {
       return {
@@ -129,6 +165,10 @@
         graph: null,
         results: null,
         models: [],
+        showPreview:false,
+        collectionForPreview:"",
+        jsonFromPreview:{},
+        randomDocPreview:false,
         jsonSource:{test:"test"},
         savePopUpOpened:false,
         loadPopUpOpened:false,
@@ -414,26 +454,25 @@
 
       }
       ,
-      executeGraph(event) {
+      executeGraph() {
         console.log("executeGraph")
 
         let jsonGraph = this.graph.serialize()
         let request = {
-          models: (this.models != null) ? this.models : [],
-          executionGraph: jsonGraph
+          jsonGraph: {
+            models: (this.models != null) ? this.models : [],
+            executionGraph: jsonGraph
 
+          },
+          collection: this.collectionForPreview,
+          collectionRandom: this.collectionRandom
         }
 
         this.$axios.post('/v1/resources/executeGraph', request)
           .then((response) => {
-            this.results = response.data
-            this.$root.$emit("resultReceived",this.results);
-            this.$q.notify({
-              color: 'positive',
-              position: 'top',
-              message: JSON.stringify(this.results),
-              icon: 'code'
-            })
+
+            this.jsonFromPreview  = response.data
+
           })
           .catch(() => {
             this.$q.notify({
@@ -531,7 +570,7 @@
       console.log("mounted")
 
       this.$root.$on("registerModel", this.registerModel);
-      this.$root.$on("executeGraphCall", this.executeGraph);
+      this.$root.$on('executeGraphCall', function(){this.showPreview=true}.bind(this))
 
       this.$root.$on("saveGraphCall", this.saveGraph);
       this.$root.$on("loadGraphCall", this.loadGraph);
@@ -1265,10 +1304,9 @@
     ,
     created() {
       this.$root.$on('blockRequested', this.createBlock)
-    },
-    components: {
 
     }
+
   }
 </script>
 

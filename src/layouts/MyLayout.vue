@@ -43,7 +43,7 @@
             </q-tooltip>
 
           </q-btn>
-          <q-btn flat round dense icon="play_arrow" size="lg" @click.stop="exportDHFModule() //executeGraph()">
+          <q-btn flat round dense icon="play_arrow" size="lg" @click.stop="executeGraph()">
             <q-tooltip>
               Preview Execute Graph
             </q-tooltip>
@@ -120,7 +120,7 @@
     },
     executeGraph() {
       this.$root.$emit("executeGraphCall");
-      console.log("emit")
+
 
     },
     saveGraph() {

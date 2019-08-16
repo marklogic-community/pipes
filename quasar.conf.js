@@ -71,6 +71,7 @@ module.exports = function (ctx) {
         'QTd',
         'QPopupEdit',
         'QTooltip',
+        'QToggle'
 
       ],
 
