@@ -465,7 +465,7 @@
 
           },
           collection: this.collectionForPreview,
-          collectionRandom: this.collectionRandom
+          collectionRandom: this.randomDocPreview
         }
 
         this.$axios.post('/v1/resources/executeGraph', request)
