@@ -13,22 +13,11 @@
           aria-label="Sources"
         >
           <q-tooltip>
-            Create Block from staging sources (by collection)
-          </q-tooltip>
-          <q-icon name="extension"/>
-        </q-btn>
-        <q-btn
-          flat
-          dense
-          round
-          @click="rightDrawerOpen = !rightDrawerOpen"
-          aria-label="Entities"
-        >
-          <q-tooltip>
-            Create Block from DHF Entities
+            Create new Blocks
           </q-tooltip>
           <q-icon name="widgets"/>
         </q-btn>
+
 
         <q-toolbar-title>
           Designer 4 MarkLogic
@@ -72,24 +61,53 @@
       bordered
       content-class="bg-grey-2"
       side="left"
+      :width="500"
     >
+      <q-card>
+        <q-tabs
+          v-model="tab"
+          dense
+          class="text-grey"
+          active-color="primary"
+          indicator-color="primary"
+          align="justify"
+          narrow-indicator
+        >
+          <q-tab name="sources" label="From Sources" />
+          <q-tab name="entities" label="From Entities" />
+          <q-tab name="csv" label="From Csv" />
+        </q-tabs>
 
-      <modelselector></modelselector>
+        <q-separator />
+
+        <q-tab-panels v-model="tab" animated>
+          <q-tab-panel name="sources">
+
+            <modelselector></modelselector>
+          </q-tab-panel>
+
+          <q-tab-panel name="entities">
+
+            <entityselector></entityselector>
+          </q-tab-panel>
+
+          <q-tab-panel name="csv">
+
+           <csv-loader></csv-loader>
+          </q-tab-panel>
+        </q-tab-panels>
+      </q-card>
+
     </q-drawer>
 
-    <q-drawer side="right"
-              v-model="rightDrawerOpen"
-              elevated
-              bordered
-              :content-class="$q.theme === 'mat' ? 'bg-grey-2' : null"
-    >
 
-      <entityselector></entityselector>
+
+
 
 
     </q-drawer>
 
-    <q-page-container>
+    <q-page-container >
       <router-view />
     </q-page-container>
   </q-layout>
@@ -100,13 +118,15 @@
   import modelselector from '../components/modelselector.vue'
   import resultViewer from '../components/resultViewer.vue'
   import entityselector from '../components/entityselector.vue'
+  import csvLoader from '../components/csvLoader.vue'
 
   export default {
     name: 'MyLayout',
     data () {
       return {
         leftDrawerOpen: this.$q.platform.is.desktop,
-        rightDrawerOpen: this.$q.platform.is.desktop
+        rightDrawerOpen: this.$q.platform.is.desktop,
+        tab:"sources"
       }
     },
     methods: {
@@ -144,7 +164,8 @@
     components: {
       modelselector,
       resultViewer,
-      entityselector
+      entityselector,
+      csvLoader
     }
   }
 </script>

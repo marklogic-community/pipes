@@ -1,7 +1,12 @@
 <template>
   <div class="flex flex-center">
-  <canvas ref="mycanvas" width='1200' height='800' style='border: 1px solid' class="fixed"></canvas>
+    <canvas ref="mycanvas" width='1800' height='1000' style='border: 1px solid' class="fixed"></canvas>
+    <q-btn flat round dense icon="code" size="lg" @click.stop="createGraphFromMapping()">
+      <q-tooltip>
+        Export DHF custom step module
+      </q-tooltip>
 
+    </q-btn>
 
     <q-dialog v-model="editJson" persistent>
       <q-card>
@@ -22,100 +27,97 @@
                 <q-td key="source" :props="props">
                   {{ props.row.source }}
                   <q-popup-edit v-model="props.row.source" title="Update calories" buttons>
-                    <q-input type="string" v-model="props.row.source" dense autofocus />
+                    <q-input type="string" v-model="props.row.source" dense autofocus/>
                   </q-popup-edit>
                 </q-td>
                 <q-td key="target" :props="props">
                   {{ props.row.target }}
                   <q-popup-edit v-model="props.row.target" title="Update calories" buttons>
-                    <q-input type="string" v-model="props.row.target" dense autofocus />
+                    <q-input type="string" v-model="props.row.target" dense autofocus/>
                   </q-popup-edit>
                 </q-td>
 
               </q-tr>
             </template>
           </q-table>
-               </q-card-section>
+        </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat label="Add mapping" color="primary"  @click="addMapping()"/>
-          <q-btn flat label="OK" color="primary" v-close-popup />
+          <q-btn flat label="Add mapping" color="primary" @click="addMapping()"/>
+          <q-btn flat label="OK" color="primary" v-close-popup/>
         </q-card-actions>
       </q-card>
     </q-dialog>
 
-  <q-dialog v-model="savePopUpOpened" :content-css="{minWidth: '30vw', minHeight: '40vh'}" >
-    <q-layout container class="bg-white">
+    <q-dialog v-model="savePopUpOpened" :content-css="{minWidth: '30vw', minHeight: '40vh'}">
+      <q-layout container class="bg-white">
 
 
+        <div class="layout-padding">
+          <q-item-label :header="true">Save current graph</q-item-label>
+          <div>
+            <q-input v-model="graphName" stack-label="Graph name"/>
+          </div>
+          <div class="q-pa-sm">
+            <q-btn
+              color="primary"
+              @click="saveCurrentGraph()"
+              label="Save"
+            />
+            <q-btn
+              color="primary"
+              @click="savePopUpOpened = false"
+              label="Close"
+            />
+          </div>
 
-      <div class="layout-padding">
-        <q-item-label :header="true">Save current graph</q-item-label>
-        <div>
-          <q-input  v-model="graphName" stack-label="Graph name" />
         </div>
-        <div class="q-pa-sm">
-          <q-btn
-            color="primary"
-            @click="saveCurrentGraph()"
-            label="Save"
-          />
-          <q-btn
-            color="primary"
-            @click="savePopUpOpened = false"
-            label="Close"
-          />
+      </q-layout>
+    </q-dialog>
+
+
+    <q-dialog v-model="loadPopUpOpened" :content-css="{minWidth: '30vw', minHeight: '40vh'}">
+      <q-layout container class="bg-white">
+
+
+        <div class="layout-padding">
+
+          <q-list class="q-mt-md" link>
+            <q-item-label :header="true">List of saved graph</q-item-label>
+            <q-item tag="label" v-for="(item, index) in savedGraph" v-bind:key="item.name"
+                    @click.native="getSavedGraph(item.uri)">
+
+              <q-item-label>
+                <q-item-section label>{{ item.name }}</q-item-section>
+
+              </q-item-label>
+            </q-item>
+          </q-list>
+
+
+          <div class="q-pa-sm">
+
+            <q-btn
+              color="primary"
+              @click="loadPopUpOpened = false"
+              label="Close"
+            />
+          </div>
         </div>
-
-      </div>
-    </q-layout>
-  </q-dialog>
-
-
-  <q-dialog v-model="loadPopUpOpened" :content-css="{minWidth: '30vw', minHeight: '40vh'}" >
-    <q-layout  container class="bg-white">
-
-
-
-
-
-      <div class="layout-padding">
-
-        <q-list class="q-mt-md" link>
-          <q-item-label :header="true">List of saved graph</q-item-label>
-          <q-item tag="label" v-for="(item, index) in savedGraph" v-bind:key="item.name"  @click.native="getSavedGraph(item.uri)" >
-
-            <q-item-label>
-              <q-item-section label>{{ item.name }}</q-item-section>
-
-            </q-item-label>
-          </q-item>
-        </q-list>
-
-
-        <div class="q-pa-sm">
-
-          <q-btn
-            color="primary"
-            @click="loadPopUpOpened = false"
-            label="Close"
-          />
-        </div>
-      </div>
-    </q-layout>
-  </q-dialog>
+      </q-layout>
+    </q-dialog>
 
 
     <q-dialog v-model="showPreview">
       <q-card>
         <q-card-section class="row items-center">
           <div class="text-h6">Preview</div>
-         </q-card-section>
+        </q-card-section>
         <q-card-section class="row">
           <div style="min-width: 250px; max-width: 300px">
 
 
-            <q-input filled v-model="collectionForPreview" label="Use collection as input" />
+            <q-input filled v-model="collectionForPreview" label="Use collection as input"/>
           </div>
 
           <q-toggle
@@ -125,27 +127,26 @@
 
           <div class="q-pa-md q-gutter-sm">
 
-            <q-btn color="primary" label="Execute Preview" @click="executeGraph()" />
+            <q-btn color="primary" label="Execute Preview" @click="executeGraph()"/>
           </div>
         </q-card-section>
         <q-card-section>
 
-        <vue-json-pretty
-          :data="jsonFromPreview"
-         >
-        </vue-json-pretty>
+          <vue-json-pretty
+            :data="jsonFromPreview"
+          >
+          </vue-json-pretty>
         </q-card-section>
       </q-card>
     </q-dialog>
   </div>
 
 
-
 </template>
 <script>
 
   import {LiteGraph} from 'litegraph.js';
-  import { saveAs } from 'file-saver';
+  import {saveAs} from 'file-saver';
   import VueJsonPretty from 'vue-json-pretty';
 
 
@@ -156,26 +157,26 @@
     name: 'PageIndex',
     data() {
       return {
-        editJson :false,
+        editJson: false,
         columns: [
-          { name: 'source', align: 'left', label: 'Source', field: 'source', sortable: true },
-          { name: 'target', label: 'Target', field: 'target', sortable: true, align: 'left' },
+          {name: 'source', align: 'left', label: 'Source', field: 'source', sortable: true},
+          {name: 'target', label: 'Target', field: 'target', sortable: true, align: 'left'},
         ],
         opened: true,
         graph: null,
         results: null,
         models: [],
-        showPreview:false,
-        collectionForPreview:"",
-        jsonFromPreview:{},
-        randomDocPreview:false,
-        jsonSource:{test:"test"},
-        savePopUpOpened:false,
-        loadPopUpOpened:false,
-        graphName:"",
-        savedGraph:[],
-        currentProperties:[],
-        jsoneditor:null
+        showPreview: false,
+        collectionForPreview: "",
+        jsonFromPreview: {},
+        randomDocPreview: false,
+        jsonSource: {test: "test"},
+        savePopUpOpened: false,
+        loadPopUpOpened: false,
+        graphName: "",
+        savedGraph: [],
+        currentProperties: [],
+        jsoneditor: null
 
 
       }
@@ -203,8 +204,8 @@
         })
 
       },
-      addMapping(){
-        this.currentProperties.push({source:"val", target:"newVal"})
+      addMapping() {
+        this.currentProperties.push({source: "val", target: "newVal"})
       },
       getSavedGraph(uri) {
         //if(uri!=null)
@@ -212,7 +213,7 @@
           .then((response) => {
             let graph = response.data;
 
-            for(let model of graph.models) {
+            for (let model of graph.models) {
               let newBlock = this.createGraphNodeFromModel(model);
               LiteGraph.registerNodeType(model.source + "/" + model.collection, newBlock);
             }
@@ -246,71 +247,200 @@
             })
           })
       },
+      csvJSON(csv) {
+
+        var lines = csv.split("\n");
+
+        var result = [];
+
+        var headers = lines[0].split(";");
+
+
+        headers = headers.map(function (h) {
+          return h.trim();
+        });
+
+        for (var i = 1; i < lines.length; i++) {
+
+          var obj = {};
+          var currentline = lines[i].split(";");
+          if (currentline.length == headers.length)
+            for (var j = 0; j < headers.length; j++) {
+              obj[headers[j]] = currentline[j].trim();
+            }
+
+          result.push(obj);
+        }
+
+        return result; //JavaScript object
+        // return JSON.stringify(result); //JSON
+      },
+      createGraphFromMapping(csvData) {
+
+
+        // this.$axios.get('/statics/mappingRules.csv')
+        // .then((response) => {
+
+        //console.log(response.data)
+
+        let mappings = this.csvJSON(csvData)
+
+        /*mappings =[
+
+              {
+                source : "mySrc",
+                sourceField:"s1",
+                target:"myTarget",
+                targetField:"t1"
+              },
+              {
+                source : "mySrc",
+                sourceField:"s2",
+                target:"myTarget",
+                targetField:"t2"
+
+              }
+
+
+            ]*/
+        let blocks = {}
+        let inputs = {}
+        let inputIdCount = 0
+        let outputs = {}
+        let outputIdCount = 0
+
+        for (let map of mappings) {
+
+
+          if (map.source != null && blocks[map.source] == null)
+            blocks[map.source] = {
+              "label": map.source,
+              "collection": map.source,
+              "source": "Sources",
+              "fields": [],
+              "options": ["fieldsOutputs", "nodeInput"]
+            }
+
+          if (map.target != null && blocks[map.target] == null)
+            blocks[map.target] = {
+              "label": map.target,
+              "collection": map.target,
+              "source": "Entities",
+              "fields": [],
+              "options": ["fieldsInputs", "nodeOutput"]
+            }
+
+
+          if (map.sourceField != null && map.sourceField != "") blocks[map.source].fields.push(map.sourceField)
+          if (map.targetField != null && map.targetField != "") blocks[map.target].fields.push(map.targetField)
+
+        }
+
+        let ii = 0
+        let oi = 0
+        Object.keys(blocks).map(item => {
+
+          this.createBlock(blocks[item])
+          let tmpBlock = LiteGraph.createNode(blocks[item].source + "/" + blocks[item].collection);
+          tmpBlock.pos = [400 + (ii++) * 200, 200 + (ii++) * 200];
+          this.graph.add(tmpBlock);
+          blocks[item].block = tmpBlock;
+        })
+        /*
+            Object.keys(outputs).map(item => {
+
+              this.createBlock(outputs[item])
+              let tmpBlock = LiteGraph.createNode(outputs[item].source + "/" + outputs[item].collection);
+              tmpBlock.pos = [600, 200 + (oi++) * 200];
+              this.graph.add(tmpBlock);
+              outputs[item].block=tmpBlock;
+            })
+            */
+
+        for (let map of mappings) {
+
+
+          if (map.source != null && map.target != null && map.sourceField != null && map.targetField != null && map.source != "" && map.target != "" && map.sourceField != "" && map.targetField != "") {
+            console.log(map.sourceField)
+            console.log(blocks[map.source].block.ioSetup.outputs[map.sourceField])
+            blocks[map.source].block.connect(
+              blocks[map.source].block.ioSetup.outputs[map.sourceField],
+              blocks[map.target].block.id,
+              blocks[map.target].block.ioSetup.inputs[map.targetField])
+
+          }
+
+        }
+      }
+      //  })
+
+
+      //  }
+
+
+      ,
       createGraphNodeFromModel(blockDef) {
 
 
+        let block = function () {
+          this.blockDef = Object.assign({}, blockDef, {})
+          this.doc = {
+            input: null,
+            output: null
+          }
 
-
-
-
-            let block = function () {
-              this.blockDef = Object.assign({}, blockDef, {})
-              this.doc = {
-                input: null,
-                output: null
-              }
-
-              this.ioSetup = {
-                inputs: {
-                  _count: 0
-                },
-                outputs: {
-                  _count: 0
-                }
-              }
-
-              if (this.blockDef.options.indexOf("getByUri") > -1) {
-                this.ioSetup.inputs["Uri"] = this.ioSetup.inputs._count++;
-                this.addInput("Uri", "xs:string");
-              }
-
-              if (this.blockDef.options.indexOf("nodeInput") > -1) {
-                this.ioSetup.inputs["Node"] = this.ioSetup.inputs._count++;
-                this.addInput("Node", "Node");
-              }
-
-              if (this.blockDef.options.indexOf("nodeOutput") > -1) {
-                this.ioSetup.outputs["Node"] = this.ioSetup.outputs._count++;
-                this.addOutput("Node", "Node");
-              }
-
-              if (this.blockDef.options.indexOf("fieldsOutputs") > -1) {
-                for (let field of blockDef.fields) {
-                  this.ioSetup.outputs[field] = this.ioSetup.outputs._count++;
-                  this.addOutput(field, "xs:string");
-                }
-              }
-
-              if (blockDef.options.indexOf("fieldsInputs") > -1) {
-                for (let field of blockDef.fields) {
-                  this.ioSetup.inputs[field] = this.ioSetup.inputs._count++;
-                  this.addInput(field, "xs:string");
-                }
-              }
-              this["WithInstanceRoot"] = this.addWidget("toggle","WithInstanceRoot", true, function(v){}, { on: "enabled", off:"disabled"} );
-              this.serialize_widgets = true;
-              this.computeSize();
-              this.size=[this.size[0] + 50,this.size[1] + 30]
-
+          this.ioSetup = {
+            inputs: {
+              _count: 0
+            },
+            outputs: {
+              _count: 0
             }
+          }
 
-            block.title = blockDef.collection;
-            block.nodeType = blockDef.collection;
-            return block
+          if (this.blockDef.options.indexOf("getByUri") > -1) {
+            this.ioSetup.inputs["Uri"] = this.ioSetup.inputs._count++;
+            this.addInput("Uri", "xs:string");
+          }
+
+          if (this.blockDef.options.indexOf("nodeInput") > -1) {
+            this.ioSetup.inputs["Node"] = this.ioSetup.inputs._count++;
+            this.addInput("Node", "Node");
+          }
+
+          if (this.blockDef.options.indexOf("nodeOutput") > -1) {
+            this.ioSetup.outputs["Node"] = this.ioSetup.outputs._count++;
+            this.addOutput("Node");
+          }
+
+          if (this.blockDef.options.indexOf("fieldsOutputs") > -1) {
+            for (let field of blockDef.fields) {
+              this.ioSetup.outputs[field] = this.ioSetup.outputs._count++;
+              this.addOutput(field, "xs:string");
+            }
+          }
+
+          if (blockDef.options.indexOf("fieldsInputs") > -1) {
+            for (let field of blockDef.fields) {
+              this.ioSetup.inputs[field] = this.ioSetup.inputs._count++;
+              this.addInput(field, "xs:string");
+            }
+          }
+          this["WithInstanceRoot"] = this.addWidget("toggle", "WithInstanceRoot", true, function (v) {
+          }, {on: "enabled", off: "disabled"});
+          this.serialize_widgets = true;
+          this.computeSize();
+          this.size = [this.size[0] + 50, this.size[1] + 30]
+
+        }
+
+        block.title = blockDef.collection;
+        block.nodeType = blockDef.collection;
+        return block
 
 
       },
-      exportDHFModule(){
+      exportDHFModule() {
         console.log("export DHF module")
         let jsonGraph = this.graph.serialize()
         let request = {
@@ -327,7 +457,7 @@
           "\n" +
           "  return "
 
-        let  end ="}\n" +
+        let end = "}\n" +
           "\n" +
           "function main(content, options) {\n" +
           "\n" +
@@ -418,11 +548,14 @@
           "  main: main\n" +
           "};\n"
 
-        var blob = new Blob([begin +  JSON.stringify(request)+ end], {type: "text/plain;charset=utf-8",endings:"transparent"});
+        var blob = new Blob([begin + JSON.stringify(request) + end], {
+          type: "text/plain;charset=utf-8",
+          endings: "transparent"
+        });
         saveAs(blob, "main.sjs");
 
       },
-      saveCurrentGraph(){
+      saveCurrentGraph() {
 
         let jsonGraph = this.graph.serialize()
         let graphDef = {
@@ -471,7 +604,7 @@
         this.$axios.post('/v1/resources/executeGraph', request)
           .then((response) => {
 
-            this.jsonFromPreview  = response.data
+            this.jsonFromPreview = response.data
 
           })
           .catch(() => {
@@ -486,44 +619,51 @@
       },
       saveGraph(event) {
 
-        this.savePopUpOpened=true;
+        this.savePopUpOpened = true;
 
       },
       loadGraph(event) {
 
         this.loadSavedGraph()
-        this.loadPopUpOpened=true;
+        this.loadPopUpOpened = true;
 
       },
-      DblClickNode(block){
+      DblClickNode(block) {
 
-        if(block)
-        {
+        if (block) {
           console.log(block)
-          if(block.node_over.properties!=null) this.currentProperties= block.node_over.properties.mapping
-          this.editJson=true
+          if (block.node_over.properties != null) this.currentProperties = block.node_over.properties.mapping
+          this.editJson = true
 
 
-   console.log(this.$refs)
+          console.log(this.$refs)
 
 
         }
 
       },
-      registerBlocksByConf(configs,LiteGraph){
+      registerBlocksByConf(configs, LiteGraph) {
 
 
-        let code=""
-        for (let config of configs){
+        let code = ""
+        for (let config of configs) {
 
-          code += "function "+ config.functionName + "(){"
-          code += config.inputs.map((input) => { return "this.addInput('" + input.name +  ((input.type)?"','" + input.type + "');":"');")}).join("")
-          code += config.outputs.map((output) => { return "this.addOutput('" + output.name +  ((output.type)?"','" + output.type + "');":"');")}).join("")
-          code += (config.properties!=null)?config.properties.map((property) => { return "this.addProperty('" + property.name +  ((property.type)?"'," + JSON.stringify(property.type) + ");":"');")}).join(""):""
-          code += (config.widgets!=null)?config.widgets.map((widget) => { return "this.addWidget('" + widget.type + "','" + widget.name + "','" + widget.default + "', function(v){}, { values:[" + JSON.stringify(widget.values) + "]} );"}).join(""):"";
-          if(config.width)
-            code += "    this.size = [" + config.width +"," + config.height + "];\n"
-            code += "    this.serialize_widgets = true;"
+          code += "function " + config.functionName + "(){"
+          code += config.inputs.map((input) => {
+            return "this.addInput('" + input.name + ((input.type) ? "','" + input.type + "');" : "');")
+          }).join("")
+          code += config.outputs.map((output) => {
+            return "this.addOutput('" + output.name + ((output.type) ? "','" + output.type + "');" : "');")
+          }).join("")
+          code += (config.properties != null) ? config.properties.map((property) => {
+            return "this.addProperty('" + property.name + ((property.type) ? "'," + JSON.stringify(property.type) + ");" : "');")
+          }).join("") : ""
+          code += (config.widgets != null) ? config.widgets.map((widget) => {
+            return "this.addWidget('" + widget.type + "','" + widget.name + "','" + widget.default + "', function(v){}, { values:[" + JSON.stringify(widget.values) + "]} );"
+          }).join("") : "";
+          if (config.width)
+            code += "    this.size = [" + config.width + "," + config.height + "];\n"
+          code += "    this.serialize_widgets = true;"
 
           //code += (config.properties)?"config.properties = " +  config.properties +";":"";
           code += "};"
@@ -533,17 +673,18 @@
           code += config.functionName + ".prototype.onDblClick = function(e,pos,object){this.$root.$emit(\"nodeDblClicked\",object) }.bind(this);"
           code += config.functionName + ".prototype.onExecute = function(){  ";
 
-          if(config.function!=null && config.function.ref != null){
-            let i =0;
-            code += "this.setOutputData( 0, " + config.function.ref + "(" +   config.inputs.map((input) => { return "this.getInputData("+ i++ + ")" }).join(",") + "));"
-          }else
-          {
+          if (config.function != null && config.function.ref != null) {
+            let i = 0;
+            code += "this.setOutputData( 0, " + config.function.ref + "(" + config.inputs.map((input) => {
+              return "this.getInputData(" + i++ + ")"
+            }).join(",") + "));"
+          } else {
             code += config.function.code;
 
           }
           code += "};"
 //register in the syst em
-          code += "LiteGraph.registerNodeType('" + config.library + "/" + config.blockName +"', " + config.functionName + " );"
+          code += "LiteGraph.registerNodeType('" + config.library + "/" + config.blockName + "', " + config.functionName + " );"
         }
 
         //xdmp.log(code)
@@ -569,8 +710,11 @@
     mounted: function () {
       console.log("mounted")
 
+      this.$root.$on("csvLoadingRequested", this.createGraphFromMapping)
       this.$root.$on("registerModel", this.registerModel);
-      this.$root.$on('executeGraphCall', function(){this.showPreview=true}.bind(this))
+      this.$root.$on('executeGraphCall', function () {
+        this.showPreview = true
+      }.bind(this))
 
       this.$root.$on("saveGraphCall", this.saveGraph);
       this.$root.$on("loadGraphCall", this.loadGraph);
@@ -585,187 +729,198 @@
 
       let configs = [
         {
-          "functionName" : "fn_doc",
-          "blockName" : "doc",
-          "library" : "fn",
-          "inputs":[
+          "functionName": "fn_doc",
+          "blockName": "doc",
+          "library": "fn",
+          "inputs": [
             {
-              name:"uri",
-              type:"xs:string"}
+              name: "uri",
+              type: "xs:string"
+            }
           ],
-          "outputs":[
+          "outputs": [
             {
               "name": "doc",
-              "type":"node"
+              "type": "node"
             }
           ],
-          "function":{
-            "ref":"fn.doc",
-            "code" :null
+          "function": {
+            "ref": "fn.doc",
+            "code": null
           }
 
 
         },
         {
-          "functionName" : "fn_collection",
-          "blockName" : "collection",
-          "library" : "fn",
-          "inputs":[
+          "functionName": "fn_collection",
+          "blockName": "collection",
+          "library": "fn",
+          "inputs": [
             {
-              name:"collectionName",
-              type:"xs:string"}
+              name: "collectionName",
+              type: "xs:string"
+            }
           ],
-          "outputs":[
+          "outputs": [
             {
               "name": "docs",
-              "type":"node()*"
+              "type": "node()*"
             }
           ],
-          "function":{
-            "ref":"fn.collection",
-            "code" :null
+          "function": {
+            "ref": "fn.collection",
+            "code": null
           }
 
 
         },
         {
-          "functionName" : "fn_baseUri",
-          "blockName" : "baseUri",
-          "library" : "fn",
-          "inputs":[
+          "functionName": "fn_baseUri",
+          "blockName": "baseUri",
+          "library": "fn",
+          "inputs": [
             {
-              name:"node",
-              type:"node"}
+              name: "node",
+              type: "node"
+            }
           ],
-          "outputs":[
+          "outputs": [
             {
               "name": "uri",
-              "type":"xs:string"
+              "type": "xs:string"
             }
           ],
-          "function":{
-            "ref":"fn.baseUri",
-            "code" :null
+          "function": {
+            "ref": "fn.baseUri",
+            "code": null
           }
 
 
         },
         {
-          "functionName" : "fn_head",
-          "blockName" : "head",
-          "library" : "fn",
-          "inputs":[
+          "functionName": "fn_head",
+          "blockName": "head",
+          "library": "fn",
+          "inputs": [
             {
-              name:"nodes",
-              type:null}
+              name: "nodes",
+              type: null
+            }
           ],
-          "outputs":[
+          "outputs": [
             {
               "name": "node",
-              "type":null
+              "type": null
             }
           ],
-          "function":{
-            "ref":"fn.head",
-            "code" :null
+          "function": {
+            "ref": "fn.head",
+            "code": null
           }
 
 
         },
         {
-          "functionName" : "fn_upperCase",
-          "blockName" : "UpperCase",
-          "library" : "string",
-          "inputs":[
+          "functionName": "fn_upperCase",
+          "blockName": "UpperCase",
+          "library": "string",
+          "inputs": [
             {
-              name:"string",
-              type:"xs:string"}
+              name: "string",
+              type: "xs:string"
+            }
           ],
-          "outputs":[
+          "outputs": [
             {
               "name": "STRING",
-              "type":"xs:string"
+              "type": "xs:string"
             }
           ],
-          "function":{
-            "ref":"fn.upperCase",
-            "code" :null
+          "function": {
+            "ref": "fn.upperCase",
+            "code": null
           }
 
 
         },
         {
-          "functionName" : "fn_lowerCase",
-          "blockName" : "LowerCase",
-          "library" : "string",
-          "inputs":[
+          "functionName": "fn_lowerCase",
+          "blockName": "LowerCase",
+          "library": "string",
+          "inputs": [
             {
-              name:"STRING",
-              type:"xs:string"}
-          ],
-          "outputs":[
-            {
-              "name": "string",
-              "type":"xs:string"
+              name: "STRING",
+              type: "xs:string"
             }
           ],
-          "function":{
-            "ref":"fn.lowerCase",
-            "code" :null
+          "outputs": [
+            {
+              "name": "string",
+              "type": "xs:string"
+            }
+          ],
+          "function": {
+            "ref": "fn.lowerCase",
+            "code": null
           }
 
 
         }
         ,
         {
-          "functionName" : "fn_count",
-          "blockName" : "count",
-          "library" : "fn",
-          "inputs":[
+          "functionName": "fn_count",
+          "blockName": "count",
+          "library": "fn",
+          "inputs": [
             {
-              name:"list",
-              type:null}
-          ],
-          "outputs":[
-            {
-              "name": "nbItems",
-              "type":"number"
+              name: "list",
+              type: null
             }
           ],
-          "function":{
-            "ref":"fn.count",
-            "code" :null
+          "outputs": [
+            {
+              "name": "nbItems",
+              "type": "number"
+            }
+          ],
+          "function": {
+            "ref": "fn.count",
+            "code": null
           }
 
 
         },
         {
-          "functionName" : "cts_andQuery",
-          "blockName" : "andQuery",
-          "library" : "cts",
-          "inputs":[
+          "functionName": "cts_andQuery",
+          "blockName": "andQuery",
+          "library": "cts",
+          "inputs": [
             {
-              name:"query1",
-              type:"cts:query"},
+              name: "query1",
+              type: "cts:query"
+            },
             {
-              name:"query2",
-              type:"cts:query"},
+              name: "query2",
+              type: "cts:query"
+            },
             {
-              name:"query3",
-              type:"cts:query"},
+              name: "query3",
+              type: "cts:query"
+            },
             {
-              name:"query4",
-              type:"cts:query"}
-          ],
-          "outputs":[
-            {
-              "name": "query",
-              "type":"cts:query"
+              name: "query4",
+              type: "cts:query"
             }
           ],
-          "function":{
-            "ref":null,
-            "code" :"let queries = [];" +
+          "outputs": [
+            {
+              "name": "query",
+              "type": "cts:query"
+            }
+          ],
+          "function": {
+            "ref": null,
+            "code": "let queries = [];" +
               "    if(this.getInputData(0)!=undefined) queries.push(this.getInputData(0));" +
               "    if(this.getInputData(1)!=undefined) queries.push(this.getInputData(1));" +
               "    if(this.getInputData(2)!=undefined) queries.push(this.getInputData(2));" +
@@ -774,34 +929,38 @@
           }
 
 
-        } ,
+        },
         {
-          "functionName" : "cts_orQuery",
-          "blockName" : "orQuery",
-          "library" : "cts",
-          "inputs":[
+          "functionName": "cts_orQuery",
+          "blockName": "orQuery",
+          "library": "cts",
+          "inputs": [
             {
-              name:"query1",
-              type:"cts:query"},
+              name: "query1",
+              type: "cts:query"
+            },
             {
-              name:"query2",
-              type:"cts:query"},
+              name: "query2",
+              type: "cts:query"
+            },
             {
-              name:"query3",
-              type:"cts:query"},
+              name: "query3",
+              type: "cts:query"
+            },
             {
-              name:"query4",
-              type:"cts:query"}
-          ],
-          "outputs":[
-            {
-              "name": "query",
-              "type":"cts:query"
+              name: "query4",
+              type: "cts:query"
             }
           ],
-          "function":{
-            "ref":null,
-            "code" :"let queries = [];" +
+          "outputs": [
+            {
+              "name": "query",
+              "type": "cts:query"
+            }
+          ],
+          "function": {
+            "ref": null,
+            "code": "let queries = [];" +
               "    if(this.getInputData(0)!=undefined) queries.push(this.getInputData(0));" +
               "    if(this.getInputData(1)!=undefined) queries.push(this.getInputData(1));" +
               "    if(this.getInputData(2)!=undefined) queries.push(this.getInputData(2));" +
@@ -812,77 +971,82 @@
 
         },
         {
-          "functionName" : "cts_search",
-          "blockName" : "search",
-          "library" : "cts",
-          "inputs":[
+          "functionName": "cts_search",
+          "blockName": "search",
+          "library": "cts",
+          "inputs": [
             {
-              name:"query",
-              type:"cts:query"}
+              name: "query",
+              type: "cts:query"
+            }
           ],
-          "outputs":[
+          "outputs": [
             {
               "name": "results",
-              "type":"node*"
+              "type": "node*"
             }
           ],
-          "function":{
-            "ref":"cts.search",
-            "code" :null
+          "function": {
+            "ref": "cts.search",
+            "code": null
           }
 
 
         },
         {
-          "functionName" : "fn_stringJoin",
-          "blockName" : "String join",
-          "library" : "string",
-          "inputs":[
+          "functionName": "fn_stringJoin",
+          "blockName": "String join",
+          "library": "string",
+          "inputs": [
             {
-              name:"string*",
-              type:"xs:string*"}
+              name: "string*",
+              type: "xs:string*"
+            }
           ],
-          "properties" : [
+          "properties": [
             {
-              name:"separator",
-              type:"xs:string"}
+              name: "separator",
+              type: "xs:string"
+            }
 
           ],
-          "outputs":[
+          "outputs": [
             {
               "name": "joinedString",
-              "type":"xs:string"
+              "type": "xs:string"
             }
           ],
-          "function":{
-            "ref":"fn.stringJoin",
-            "code" :null
+          "function": {
+            "ref": "fn.stringJoin",
+            "code": null
           }
         },
         {
-          "functionName" : "mapValues",
-          "blockName" : "Map values",
-          "library" : "string",
-          "inputs":[
+          "functionName": "mapValues",
+          "blockName": "Map values",
+          "library": "string",
+          "inputs": [
             {
-              name:"value",
-              type:"xs:string"}
-          ],
-          "properties" : [
-            {
-              name:"mapping",
-              type:[{"source":"srcVal","target": "targetVal"}]}
-
-          ],
-          "outputs":[
-            {
-              "name": "mappedValue",
-              "type":"xs:string"
+              name: "value",
+              type: "xs:string"
             }
           ],
-          "function":{
-            "ref":null,
-            "code" : "\
+          "properties": [
+            {
+              name: "mapping",
+              type: [{"source": "srcVal", "target": "targetVal"}]
+            }
+
+          ],
+          "outputs": [
+            {
+              "name": "mappedValue",
+              "type": "xs:string"
+            }
+          ],
+          "function": {
+            "ref": null,
+            "code": "\
                let val = (this.getInputData(0)!=undefined)?this.getInputData(0):'';\
                let mappedValue = this.properties['mapping'].filter(item => {return item.source==val});\
                 if(mappedValue.length >0) this.setOutputData( 0,mappedValue[0].target);\
@@ -893,181 +1057,190 @@
         }
         ,
         {
-          "functionName" : "cts_collectionQuery",
-          "blockName" : "collectionQuery",
-          "library" : "cts",
-          "inputs":[
+          "functionName": "cts_collectionQuery",
+          "blockName": "collectionQuery",
+          "library": "cts",
+          "inputs": [
             {
-              name:"collectionName",
-              type:"xs:string"}
+              name: "collectionName",
+              type: "xs:string"
+            }
           ],
-          "outputs":[
+          "outputs": [
             {
               "name": "query",
-              "type":"cts:query"
+              "type": "cts:query"
             }
           ],
-          "function":{
-            "ref":"cts.collectionQuery",
-            "code" :null
+          "function": {
+            "ref": "cts.collectionQuery",
+            "code": null
           }
 
 
         },
         {
-          "functionName" : "json_validate",
-          "blockName" : "Json (schema) validate*",
-          "library" : "controls",
-          "inputs":[
+          "functionName": "json_validate",
+          "blockName": "Json (schema) validate*",
+          "library": "controls",
+          "inputs": [
             {
-              name:"node",
-              type:"node"}
+              name: "node",
+              type: "node"
+            }
           ],
-          "outputs":[
+          "outputs": [
             {
               "name": "node",
-              "type":"node"
+              "type": "node"
             }
           ],
-          "function":{
-            "ref":null,
-            "code" :null
+          "function": {
+            "ref": null,
+            "code": null
           }
 
 
         },
         {
-          "functionName" : "schematron_validate",
-          "blockName" : "Schematron validation*",
-          "library" : "controls",
-          "inputs":[
+          "functionName": "schematron_validate",
+          "blockName": "Schematron validation*",
+          "library": "controls",
+          "inputs": [
             {
-              name:"doc",
-              type:null}
+              name: "doc",
+              type: null
+            }
           ],
-          "outputs":[
+          "outputs": [
             {
               "name": "SVRL",
-              "type":"node"
+              "type": "node"
             }
           ],
-          "function":{
-            "ref":null,
-            "code" :null
+          "function": {
+            "ref": null,
+            "code": null
           }
 
 
         },
         {
-          "functionName" : "isNumber",
-          "blockName" : "isNumber*",
-          "library" : "controls",
-          "inputs":[
+          "functionName": "isNumber",
+          "blockName": "isNumber*",
+          "library": "controls",
+          "inputs": [
             {
-              name:"value",
-              type:null}
-          ],
-          "outputs":[
-            {
-              "name": "status",
-              "type":"bool"
+              name: "value",
+              type: null
             }
           ],
-          "function":{
-            "ref":null,
-            "code" :null
+          "outputs": [
+            {
+              "name": "status",
+              "type": "bool"
+            }
+          ],
+          "function": {
+            "ref": null,
+            "code": null
           }
 
 
         },
         {
-          "functionName" : "isDate",
-          "blockName" : "isDate*",
-          "library" : "controls",
-          "inputs":[
+          "functionName": "isDate",
+          "blockName": "isDate*",
+          "library": "controls",
+          "inputs": [
             {
-              name:"value",
-              type:null}
-          ],
-          "outputs":[
-            {
-              "name": "status",
-              "type":"bool"
+              name: "value",
+              type: null
             }
           ],
-          "function":{
-            "ref":null,
-            "code" :null
+          "outputs": [
+            {
+              "name": "status",
+              "type": "bool"
+            }
+          ],
+          "function": {
+            "ref": null,
+            "code": null
           }
 
 
         },
         {
-          "functionName" : "isInDictionnary",
-          "blockName" : "isInDictionnary*",
-          "library" : "controls",
-          "inputs":[
+          "functionName": "isInDictionnary",
+          "blockName": "isInDictionnary*",
+          "library": "controls",
+          "inputs": [
             {
-              name:"value",
-              type:null}
-          ],
-          "outputs":[
-            {
-              "name": "status",
-              "type":"bool"
+              name: "value",
+              type: null
             }
           ],
-          "function":{
-            "ref":null,
-            "code" :null
+          "outputs": [
+            {
+              "name": "status",
+              "type": "bool"
+            }
+          ],
+          "function": {
+            "ref": null,
+            "code": null
           }
 
 
         },
         {
-          "functionName" :"checkRequiredFields",
-          "blockName" : "checkRequiredFields*",
-          "library" : "controls",
-          "inputs":[
+          "functionName": "checkRequiredFields",
+          "blockName": "checkRequiredFields*",
+          "library": "controls",
+          "inputs": [
             {
-              name:"node",
-              type:null}
-          ],
-          "outputs":[
-            {
-              "name": "status",
-              "type":"bool"
+              name: "node",
+              type: null
             }
           ],
-          "function":{
-            "ref":null,
-            "code" :null
+          "outputs": [
+            {
+              "name": "status",
+              "type": "bool"
+            }
+          ],
+          "function": {
+            "ref": null,
+            "code": null
           }
 
 
         }
         ,
         {
-          "functionName" : "cts_jsonPropertyValueQuery",
-          "blockName" : "jsonPropertyValueQuery",
-          "library" : "cts",
-          "inputs":[
+          "functionName": "cts_jsonPropertyValueQuery",
+          "blockName": "jsonPropertyValueQuery",
+          "library": "cts",
+          "inputs": [
             {
-              name:"property",
-              type:"xs:string"},
+              name: "property",
+              type: "xs:string"
+            },
             {
-              name:"value",
-              type:"xs:string"}
-          ],
-          "outputs":[
-            {
-              "name": "query",
-              "type":"cts:query"
+              name: "value",
+              type: "xs:string"
             }
           ],
-          "function":{
-            "ref":"cts.jsonPropertyValueQuery",
-            "code" :null
+          "outputs": [
+            {
+              "name": "query",
+              "type": "cts:query"
+            }
+          ],
+          "function": {
+            "ref": "cts.jsonPropertyValueQuery",
+            "code": null
           }
 
 
@@ -1075,33 +1248,37 @@
 
 
         {
-          "functionName" : "toEnvelope",
-          "blockName" : "to Envelope",
-          "library" : "dhf",
-          "inputs":[
+          "functionName": "toEnvelope",
+          "blockName": "to Envelope",
+          "library": "dhf",
+          "inputs": [
             {
-              name:"headers",
-              type:"node"},
+              name: "headers",
+              type: "node"
+            },
             {
-              name:"triples",
-              type:"node"},
+              name: "triples",
+              type: "node"
+            },
             {
-              name:"instance",
-              type:"node"},
+              name: "instance",
+              type: "node"
+            },
             {
-              name:"attachments",
-              type:"node"}
+              name: "attachments",
+              type: "node"
+            }
 
           ],
-          "outputs":[
+          "outputs": [
             {
               "name": "doc",
-              "type":"node"
+              "type": "node"
             }
           ],
-          "function":{
-            "ref":null,
-            "code" :"let result = {'envelope' : {}} ;" +
+          "function": {
+            "ref": null,
+            "code": "let result = {'envelope' : {}} ;" +
               "    if(this.getInputData(0)!=undefined) result.envelope.headers = this.getInputData(0);" +
               "    if(this.getInputData(1)!=undefined) result.envelope.triples = this.getInputData(1);" +
               "    if(this.getInputData(2)!=undefined) result.envelope.instance = this.getInputData(2);" +
@@ -1112,68 +1289,73 @@
         }
         ,
         {
-          "functionName" : "fromEnvelope",
-          "blockName" : "from Envelope",
-          "library" : "dhf",
-          "inputs":[
+          "functionName": "fromEnvelope",
+          "blockName": "from Envelope",
+          "library": "dhf",
+          "inputs": [
             {
               "name": "doc",
-              "type":"node"
+              "type": "node"
             }
 
           ],
-          "outputs":[
+          "outputs": [
 
             {
-              name:"headers",
-              type:"node"},
+              name: "headers",
+              type: "node"
+            },
             {
-              name:"triples",
-              type:"node"},
+              name: "triples",
+              type: "node"
+            },
             {
-              name:"instance",
-              type:"node"},
+              name: "instance",
+              type: "node"
+            },
             {
-              name:"attachments",
-              type:"node"}
-          ],
-          "function":{
-            "ref":null,
-            "code" :""
-          }
-
-        } ,
-        {
-          "functionName" : "applyXSLT",
-          "blockName" : "Apply XSLT*",
-          "library" : "transform",
-          "inputs":[
-            {
-              "name": "doc",
-              "type":"node"
+              name: "attachments",
+              type: "node"
             }
-
           ],
-          "outputs":[
-
-            {
-              name:"doc",
-              type:"node"}
-          ],
-          "function":{
-            "ref":null,
-            "code" :""
+          "function": {
+            "ref": null,
+            "code": ""
           }
 
         },
         {
-          "functionName" : "addProperty",
-          "blockName" : "Add property",
-          "library" : "transform",
-          "inputs":[
+          "functionName": "applyXSLT",
+          "blockName": "Apply XSLT*",
+          "library": "transform",
+          "inputs": [
             {
               "name": "doc",
-              "type":"node"
+              "type": "node"
+            }
+
+          ],
+          "outputs": [
+
+            {
+              name: "doc",
+              type: "node"
+            }
+          ],
+          "function": {
+            "ref": null,
+            "code": ""
+          }
+
+        },
+        {
+          "functionName": "addProperty",
+          "blockName": "Add property",
+          "library": "transform",
+          "inputs": [
+            {
+              "name": "doc",
+              "type": "node"
             },
             {
               "name": "value",
@@ -1182,21 +1364,23 @@
 
           ],
 
-          "properties" : [
+          "properties": [
             {
-              name:"propertyName",
-              type:"Property name"}
+              name: "propertyName",
+              type: "Property name"
+            }
 
           ],
-          "outputs":[
+          "outputs": [
 
             {
-              name:"doc",
-              type:"node"}
+              name: "doc",
+              type: "node"
+            }
           ],
-          "function":{
-            "ref":null,
-            "code" : "let doc = (this.getInputData(0)!=undefined)?this.getInputData(0):''; \
+          "function": {
+            "ref": null,
+            "code": "let doc = (this.getInputData(0)!=undefined)?this.getInputData(0):''; \
                         let val = (this.getInputData(1)!=undefined)?this.getInputData(1):'';\
                         let propertyName = this.properties['propertyName'];\
                         doc[propertyName] = val;\
@@ -1205,10 +1389,10 @@
 
         },
         {
-          "functionName" : "provo",
-          "blockName" : "PROV-O structure",
-          "library" : "provenance",
-          "inputs":[
+          "functionName": "provo",
+          "blockName": "PROV-O structure",
+          "library": "provenance",
+          "inputs": [
             {
               "name": "DerivedFrom1",
               "type": null
@@ -1232,17 +1416,17 @@
 
           ],
 
-          "properties" : [
-          ],
-          "outputs":[
+          "properties": [],
+          "outputs": [
 
             {
-              name:"PROV-O",
-              type:"node"}
+              name: "PROV-O",
+              type: "node"
+            }
           ],
-          "function":{
-            "ref":null,
-            "code" : "let from1 = (this.getInputData(0)!=undefined)?this.getInputData(0):null; \
+          "function": {
+            "ref": null,
+            "code": "let from1 = (this.getInputData(0)!=undefined)?this.getInputData(0):null; \
                         let from2 = (this.getInputData(1)!=undefined)?this.getInputData(1):null;\
                         let from3 = (this.getInputData(1)!=undefined)?this.getInputData(2):null;\
                         let generatedBy = (this.getInputData(1)!=undefined)?this.getInputData(3):null;\
@@ -1261,7 +1445,7 @@
 
       this.registerBlocksByConf(configs, LiteGraph)
 
-      this.$axios.get('/statics/userblockDefs.json' )
+      this.$axios.get('/statics/userblockDefs.json')
         .then((response) => {
 
           this.registerBlocksByConf(response.data, LiteGraph)
@@ -1309,7 +1493,6 @@
 
   }
 </script>
-
 
 
 <style>
