@@ -1,12 +1,7 @@
 <template>
   <div class="flex flex-center">
     <canvas ref="mycanvas" width='1800' height='1000' style='border: 1px solid' class="fixed"></canvas>
-    <q-btn flat round dense icon="code" size="lg" @click.stop="createGraphFromMapping()">
-      <q-tooltip>
-        Export DHF custom step module
-      </q-tooltip>
 
-    </q-btn>
 
     <q-dialog v-model="editJson" persistent>
       <q-card>
