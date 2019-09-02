@@ -273,7 +273,7 @@
       createGraphFromMapping(csvData) {
 
 
-        // this.$axios.get('/statics/mappingRules.csv')
+        // this.$axios.get('/statics/mappingRulesFR.csv')
         // .then((response) => {
 
         //console.log(response.data)
@@ -815,6 +815,50 @@
 
 
         },
+
+        {
+          "functionName": "FormatDateAuto",
+          "blockName": "FormatDateAuto",
+          "library": "date",
+          "inputs": [
+            {
+              name: "inputDate",
+              type: "xs:string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "IsoDate",
+              "type": "xs:string"
+            }
+          ],
+          "function": {
+            "ref": null,
+            "code": null
+          }
+        },
+        {
+          "functionName": "FormatDateTimeAuto",
+          "blockName": "FormatDateTimeAuto",
+          "library": "date",
+          "inputs": [
+            {
+              name: "inputDateTime",
+              type: "xs:string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "IsoDateTime",
+              "type": "xs:string"
+            }
+          ],
+          "function": {
+            "ref": null,
+            "code": null
+          }
+        },
+
         {
           "functionName": "fn_upperCase",
           "blockName": "UpperCase",
