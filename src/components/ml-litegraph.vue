@@ -21,13 +21,13 @@
               <q-tr :props="props">
                 <q-td key="source" :props="props">
                   {{ props.row.source }}
-                  <q-popup-edit v-model="props.row.source" title="Update calories" buttons>
+                  <q-popup-edit v-model="props.row.source" title="Update mapping" buttons>
                     <q-input type="string" v-model="props.row.source" dense autofocus/>
                   </q-popup-edit>
                 </q-td>
                 <q-td key="target" :props="props">
                   {{ props.row.target }}
-                  <q-popup-edit v-model="props.row.target" title="Update calories" buttons>
+                  <q-popup-edit v-model="props.row.target" title="Update mapping" buttons>
                     <q-input type="string" v-model="props.row.target" dense autofocus/>
                   </q-popup-edit>
                 </q-td>
