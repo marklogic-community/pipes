@@ -19,3 +19,10 @@ yarn-error.log*
 *.ntvs*
 *.njsproj
 *.sln
+
+#DHF stuff
+.java-version
+dhf/gradle-local.properties
+dhf/gradle.properties
+dhf/src/
+
