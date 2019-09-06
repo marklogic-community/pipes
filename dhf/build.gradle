@@ -9,7 +9,7 @@
 
 task copyDhfDistro(type: Copy) {
     from "../dist_user/DHF/src/"
-    into "$buildDir/toArchive"
+    into "src"
 }
 
 
