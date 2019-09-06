@@ -52,3 +52,10 @@ Enter your MarkLogic username and password
 
 You should now have the repo installed on your container. Next, you need to initiate MarkLogic, via port 8041 on your local machine (which is mapped to the container's port 8001)
 
+## Setting up DHF (prerequisite to running the VPP UI)
+From the root of the project, run
+```./initHub.sh```
+
+It will create the DHF folder structure in the dhf/ folder and copy the VPP files into DHF folders.
+Next, configre gradle-local.properties to reflect your situation.
+
