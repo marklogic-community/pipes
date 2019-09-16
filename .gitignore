@@ -22,7 +22,8 @@ yarn-error.log*
 
 #DHF stuff
 .java-version
-dhf/gradle-local.properties
+dhf/gradle-*.properties
 dhf/gradle.properties
 dhf/src/
+dhf/marklogic-datahub-5.0.2.war
 
