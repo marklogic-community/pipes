@@ -1,6 +1,7 @@
 .quasar
 .DS_Store
 .thumbs.db
+.gradle
 node_modules
 /dist
 /src-cordova/node_modules
@@ -18,3 +19,11 @@ yarn-error.log*
 *.ntvs*
 *.njsproj
 *.sln
+
+#DHF stuff
+.java-version
+dhf/gradle-*.properties
+dhf/gradle.properties
+dhf/src/
+dhf/marklogic-datahub-5.0.2.war
+
