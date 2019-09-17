@@ -12,4 +12,16 @@ task copyDhfDistro(type: Copy) {
     into "src"
 }
 
+task copyDhfEntities(type: Copy) {
+    from "../dist_user/DHF/entities/"
+    into "entities"
+}
+
+task unpackSampleData(type: Copy) {
+    from zipTree("../dist_user/mock-data.csv.zip")
+    into "data"
+}
+
+
+
 
