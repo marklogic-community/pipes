@@ -26,4 +26,8 @@ dhf/gradle-*.properties
 dhf/gradle.properties
 dhf/src/
 dhf/marklogic-datahub-5.0.2.war
+dhf/.tmp
+dhf/build/
+dhf/data/
+dhf/entities/
 
