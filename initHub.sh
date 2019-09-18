@@ -9,3 +9,5 @@ dhf/gradlew copyDhfEntities -p dhf
 
 # unpack sample input data
 dhf/gradlew unpackSampleData -p dhf
+
+dhf/gradlew downloadFile -p dhf

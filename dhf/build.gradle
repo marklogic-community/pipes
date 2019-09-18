@@ -4,6 +4,9 @@
 
       // Data Hub plugin
       id 'com.marklogic.ml-data-hub' version '5.0.2'
+
+      // 
+      id "de.undercouch.download" version "4.0.0"
   }
 
 
@@ -20,6 +23,11 @@ task copyDhfEntities(type: Copy) {
 task unpackSampleData(type: Copy) {
     from zipTree("../dist_user/mock-data.csv.zip")
     into "data"
+}
+
+task downloadFile(type: Download) {
+    src 'https://github.com/marklogic/marklogic-data-hub/releases/download/v5.0.2/marklogic-datahub-5.0.2.war'
+    dest "."
 }
 
 
