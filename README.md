@@ -19,7 +19,9 @@ $ yarn install
 
 3. Make sure to override litegraph node_modules with the project one node_modules_override
 
-4. start dev server:
+4. Optional: update MarkLogic staging port if different from 8010. Proxy configuration is here: /quasar.conf.js line 114
+
+5. start dev server:
 $ quasar dev
 
 ## Set up in a Docker container
@@ -59,3 +61,4 @@ From the root of the project, run
 It will create the DHF folder structure in the dhf/ folder and copy the VPP files into DHF folders.
 Next, configre gradle-local.properties to reflect your situation.
 
+You can then start the UI dev server (see above quasar dev command)
