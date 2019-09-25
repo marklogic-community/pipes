@@ -20,6 +20,16 @@ task copyDhfEntities(type: Copy) {
     into "entities"
 }
 
+task copyDhfFlows(type: Copy) {
+    from "../dist_user/DHF/flows/"
+    into "flows"
+}
+
+task copyDhfStepDefinitons(type: Copy) {
+    from "../dist_user/DHF/step-definitions/"
+    into "step-definitions"
+}
+
 task unpackSampleData(type: Copy) {
     from zipTree("../dist_user/mock-data.csv.zip")
     into "data"
