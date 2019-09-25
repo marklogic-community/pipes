@@ -19,6 +19,10 @@ yarn-error.log*
 *.ntvs*
 *.njsproj
 *.sln
+package.json
+quasar.conf.js
+yarn.lock
+package-lock.json
 
 #DHF stuff
 .java-version
@@ -30,4 +34,6 @@ dhf/.tmp
 dhf/build/
 dhf/data/
 dhf/entities/
+dhf/flows/
+dhf/step-definitions/
 
