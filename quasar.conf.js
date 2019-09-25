@@ -130,8 +130,8 @@ module.exports = function (ctx) {
       // workboxPluginMode: 'InjectManifest',
       // workboxOptions: {}, // only for NON InjectManifest
       manifest: {
-        name: 'Designer 4 MarkLogic',
-        short_name: 'Designer4MarkLogic',
+        name: 'MarkLogic - Designer 4 Custom DHF Step',
+        short_name: 'Designer4CustomDHFStep',
         description: 'Visual programming UI for MarkLogic',
         display: 'standalone',
         orientation: 'portrait',

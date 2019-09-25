@@ -20,7 +20,7 @@
 
 
         <q-toolbar-title>
-          Designer 4 MarkLogic
+          MarkLogic - Designer 4 Custom DHF Step
           <div slot="subtitle">Draw your ideas</div>
         </q-toolbar-title>
 

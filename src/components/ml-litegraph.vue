@@ -400,7 +400,7 @@
 
           if (this.blockDef.options.indexOf("nodeInput") > -1) {
             this.ioSetup.inputs["Node"] = this.ioSetup.inputs._count++;
-            this.addInput("Node", "Node");
+            this.addInput("Node") //, "Node");
           }
 
           if (this.blockDef.options.indexOf("nodeOutput") > -1) {
@@ -645,10 +645,10 @@
 
           code += "function " + config.functionName + "(){"
           code += config.inputs.map((input) => {
-            return "this.addInput('" + input.name + ((input.type) ? "','" + input.type + "');" : "');")
+            return "this.addInput('" + input.name + ((input.type == "ee") ? "','" + input.type + "');" : "');")
           }).join("")
           code += config.outputs.map((output) => {
-            return "this.addOutput('" + output.name + ((output.type) ? "','" + output.type + "');" : "');")
+            return "this.addOutput('" + output.name + ((output.type== "ee") ? "','" + output.type + "');" : "');")
           }).join("")
           code += (config.properties != null) ? config.properties.map((property) => {
             return "this.addProperty('" + property.name + ((property.type) ? "'," + JSON.stringify(property.type) + ");" : "');")
@@ -1022,7 +1022,7 @@
           "outputs": [
             {
               "name": "results",
-              "type": "node*"
+              "type": ""
             }
           ],
           "function": {
