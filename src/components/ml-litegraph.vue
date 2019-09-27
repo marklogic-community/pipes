@@ -112,7 +112,8 @@
           <div style="min-width: 250px; max-width: 300px">
 
 
-            <q-input filled v-model="collectionForPreview" label="Use collection as input"/>
+
+            <q-select filled v-model="collectionForPreview" :options="availableCollections" label="Use collection as input" />
           </div>
 
           <q-toggle
@@ -607,7 +608,7 @@
             executionGraph: jsonGraph
 
           },
-          collection: this.collectionForPreview,
+          collection: this.collectionForPreview.value,
           collectionRandom: this.randomDocPreview
         }
 
