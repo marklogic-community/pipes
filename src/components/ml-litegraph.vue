@@ -740,6 +740,37 @@
 
       let configs = [
         {
+          "functionName": "GeoReproject",
+          "blockName": "GeoReproject",
+          "library": "feature",
+          "inputs": [
+            {
+              name: "srcCoordinateSystem",
+              type: "xs:string"
+            },
+            {
+              name: "targetCoordinateSystem",
+              type: "xs:string"
+            },
+            {
+              name: "strWKT",
+              type: "xs:string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "strWKT",
+              "type": "node"
+            }
+          ],
+          "function": {
+            "ref": "fn.doc",
+            "code": null
+          }
+
+
+        },
+        {
           "functionName": "fn_doc",
           "blockName": "doc",
           "library": "fn",
