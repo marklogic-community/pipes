@@ -79,8 +79,11 @@ function createGraphNodeFromModel(blockDef) {
 
       if(this.getInputData(this.ioSetup.inputs["Node"] )!=null) {
         let inputNode = this.getInputData(this.ioSetup.inputs["Node"]);
-        if(xdmp.nodeKind(inputNode)=='document') inputNode = inputNode.toObject();
+        //if(xdmp.nodeKind(inputNode)=='document') inputNode = inputNode.toObject();
+        //  if(xdmp.nodeKind(inputNode)!='document')  inputNode = xdmp.toJSON(inputNode);
         this.doc.input = inputNode;
+        if(fn.count(this.doc.input)==1 && xdmp.type(this.doc.input )=="untypedAtomic" && xdmp.nodeKind(this.doc.input)!="document")
+          this.doc.input=fn.head(xdmp.unquote(String(this.doc.input)))
       }
     }
     if (this.blockDef.options.indexOf("getByUri")>-1)
@@ -88,15 +91,24 @@ function createGraphNodeFromModel(blockDef) {
         this.input.doc = fn.head(fn.doc(this.getInputData(this.ioSetup.inputs["Uri"]))).toObject();
 
     // if (blockDef.options.indexOf("fieldsOutputs") > -1) {
-    let docNode = xdmp.toJSON(this.doc.input);
+
+    let docNode = this.doc.input //xdmp.toJSON(this.doc.input);
     for (let i = 0; i < this.blockDef.fields.length; i++) {
-      let v = docNode.xpath("//" + this.blockDef.fields[i]);
-      this.doc.output[this.blockDef.fields[i]] = (v != null) ? v : null;
+
+      if (this.blockDef.options.indexOf("nodeInput") > -1) {
+
+        let v = docNode.xpath("//" + this.blockDef.fields[i]);
+        if (fn.count(v) == 1 && v.constructor != Array) v = docNode.xpath("//" + this.blockDef.fields[i] + "/string()");
+        this.doc.output[this.blockDef.fields[i]] = (v != null) ? v : null;
+      }
 
       if (this.blockDef.options.indexOf("fieldsInputs") > -1) {
-        if (this.getInputData(this.ioSetup.inputs[blockDef.fields[i]]) != null)
+        if (this.getInputData(this.ioSetup.inputs[blockDef.fields[i]]) != null) {
+
+
           this.doc.output[this.blockDef.fields[i]] = this.getInputData(this.ioSetup.inputs[this.blockDef.fields[i]]);
-      }
+
+        }  }
       if (this.blockDef.options.indexOf("fieldsOutputs") > -1)
         this.setOutputData(this.ioSetup.outputs[blockDef.fields[i]], this.doc.output[this.blockDef.fields[i]]);
 
@@ -155,7 +167,7 @@ function executeGraphStep(doc,uri,config,context){
 function executeGraphFromJson(jsonGraph,uri, input,context){
 
 
-
+//console.log(context)
   // let markLogicNodes = require("/lib/marklogicNodes")
 
 

@@ -171,7 +171,8 @@
         graphName: "",
         savedGraph: [],
         currentProperties: [],
-        jsoneditor: null
+        jsoneditor: null,
+        availableCollections:[]
 
 
       }
@@ -232,6 +233,20 @@
           .then((response) => {
             this.savedGraph = response.data;
 
+          })
+          .catch(() => {
+            this.$q.notify({
+              color: 'negative',
+              position: 'top',
+              message: 'Loading failed',
+              icon: 'report_problem'
+            })
+          })
+      },
+      discoverCollections() {
+        this.$axios.get('/v1/resources/collectionsDiscovery')
+          .then((response) => {
+            this.availableCollections = response.data
           })
           .catch(() => {
             this.$q.notify({
@@ -395,7 +410,7 @@
 
           if (this.blockDef.options.indexOf("getByUri") > -1) {
             this.ioSetup.inputs["Uri"] = this.ioSetup.inputs._count++;
-            this.addInput("Uri", "xs:string");
+            this.addInput("Uri");
           }
 
           if (this.blockDef.options.indexOf("nodeInput") > -1) {
@@ -411,14 +426,14 @@
           if (this.blockDef.options.indexOf("fieldsOutputs") > -1) {
             for (let field of blockDef.fields) {
               this.ioSetup.outputs[field] = this.ioSetup.outputs._count++;
-              this.addOutput(field, "xs:string");
+              this.addOutput(field)
             }
           }
 
           if (blockDef.options.indexOf("fieldsInputs") > -1) {
             for (let field of blockDef.fields) {
               this.ioSetup.inputs[field] = this.ioSetup.inputs._count++;
-              this.addInput(field, "xs:string");
+              this.addInput(field);
             }
           }
           this["WithInstanceRoot"] = this.addWidget("toggle", "WithInstanceRoot", true, function (v) {
@@ -1522,7 +1537,7 @@
 
       //  this.viewer.appendChild(formatter.render());
 
-
+  this.discoverCollections()
     }
     ,
     created() {
