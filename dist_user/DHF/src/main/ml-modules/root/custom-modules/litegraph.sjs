@@ -13137,6 +13137,34 @@ if (typeof exports != "undefined") {
   LiteGraph.registerNodeType("geo/GeoReproject", GeoReproject );
 
 
+  function Array()
+  {
+    this.addInput("item1");
+    this.addInput("item2");
+    this.addInput("item3");
+    this.addInput("item4");
+    this.addInput("item5");
+    this.addOutput("array");
+  }
+
+  Array.title = "Array";
+  Array.desc = "Array";
+
+  Array.prototype.onExecute = function()
+  {
+    let result = []
+    for(let i=0;i<5;i++){
+      let value =  this.getInputData(i)
+      if(value != undefined && value!=null)
+        result.push(value)
+    }
+
+    this.setOutputData(0, result )
+
+  }
+  LiteGraph.registerNodeType("basic/Array", Array );
+
+
 })(this);
 
 

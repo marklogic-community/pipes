@@ -112,8 +112,8 @@
           <div style="min-width: 250px; max-width: 300px">
 
 
-
-            <q-select filled v-model="collectionForPreview" :options="availableCollections" label="Use collection as input" />
+            <q-select filled v-model="collectionForPreview" :options="availableCollections"
+                      label="Use collection as input"/>
           </div>
 
           <q-toggle
@@ -173,7 +173,7 @@
         savedGraph: [],
         currentProperties: [],
         jsoneditor: null,
-        availableCollections:[]
+        availableCollections: []
 
 
       }
@@ -537,21 +537,21 @@
           "  let gHelper  = require(\"/custom-modules/graphHelper\")\n" +
           "\n" +
           "  let results = gHelper.executeGraphStep(doc,id,getGraphDefinition(),context)\n" +
-         /* "\n" +
-          "  //form our envelope here now, specifying our output format\n" +
-          " // let envelope = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);\n" +
-          "\n" +
-          "  //assign our envelope value\n" +
-          "  content.value = instance.output;\n" +
-          "\n" +
-          "  //assign the uri we want, in this case the same\n" +
-          "  content.uri = (instance.uri!=null)?instance.uri:id;\n" +
-          "\n" +
-          "context.collections = (instance.collections!=null)?instance.collections:context.collections;" +
-          "  //assign the context we want\n" +
-          "  content.context = context;\n" +
-          "\n" +
-          "  //now let's return out our content to be written\n" +*/
+          /* "\n" +
+           "  //form our envelope here now, specifying our output format\n" +
+           " // let envelope = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);\n" +
+           "\n" +
+           "  //assign our envelope value\n" +
+           "  content.value = instance.output;\n" +
+           "\n" +
+           "  //assign the uri we want, in this case the same\n" +
+           "  content.uri = (instance.uri!=null)?instance.uri:id;\n" +
+           "\n" +
+           "context.collections = (instance.collections!=null)?instance.collections:context.collections;" +
+           "  //assign the context we want\n" +
+           "  content.context = context;\n" +
+           "\n" +
+           "  //now let's return out our content to be written\n" +*/
           "  return results;\n" +
           "}\n" +
           "\n" +
@@ -664,7 +664,7 @@
             return "this.addInput('" + input.name + ((input.type == "ee") ? "','" + input.type + "');" : "');")
           }).join("")
           code += config.outputs.map((output) => {
-            return "this.addOutput('" + output.name + ((output.type== "ee") ? "','" + output.type + "');" : "');")
+            return "this.addOutput('" + output.name + ((output.type == "ee") ? "','" + output.type + "');" : "');")
           }).join("")
           code += (config.properties != null) ? config.properties.map((property) => {
             return "this.addProperty('" + property.name + ((property.type) ? "'," + JSON.stringify(property.type) + ");" : "');")
@@ -1330,86 +1330,9 @@
           }
 
 
-        },
-
-
-        {
-          "functionName": "toEnvelope",
-          "blockName": "to Envelope",
-          "library": "dhf",
-          "inputs": [
-            {
-              name: "headers",
-              type: "node"
-            },
-            {
-              name: "triples",
-              type: "node"
-            },
-            {
-              name: "instance",
-              type: "node"
-            },
-            {
-              name: "attachments",
-              type: "node"
-            }
-
-          ],
-          "outputs": [
-            {
-              "name": "doc",
-              "type": "node"
-            }
-          ],
-          "function": {
-            "ref": null,
-            "code": "let result = {'envelope' : {}} ;" +
-              "    if(this.getInputData(0)!=undefined) result.envelope.headers = this.getInputData(0);" +
-              "    if(this.getInputData(1)!=undefined) result.envelope.triples = this.getInputData(1);" +
-              "    if(this.getInputData(2)!=undefined) result.envelope.instance = this.getInputData(2);" +
-              "    if(this.getInputData(3)!=undefined) result.envelope.attachments  = this.getInputData(3);" +
-              "    this.setOutputData( 0, result);"
-          }
-
         }
         ,
-        {
-          "functionName": "fromEnvelope",
-          "blockName": "from Envelope",
-          "library": "dhf",
-          "inputs": [
-            {
-              "name": "doc",
-              "type": "node"
-            }
 
-          ],
-          "outputs": [
-
-            {
-              name: "headers",
-              type: "node"
-            },
-            {
-              name: "triples",
-              type: "node"
-            },
-            {
-              name: "instance",
-              type: "node"
-            },
-            {
-              name: "attachments",
-              type: "node"
-            }
-          ],
-          "function": {
-            "ref": null,
-            "code": ""
-          }
-
-        },
         {
           "functionName": "applyXSLT",
           "blockName": "Apply XSLT*",
@@ -1475,26 +1398,59 @@
 
         },
         {
+          "functionName": "array",
+          "blockName": "Array",
+          "library": "basic",
+          "inputs": [
+
+            {
+              name: "item1",
+              type: null
+            }, {
+              name: "item2",
+              type: null
+            }, {
+              name: "item3",
+              type: null
+            }, {
+              name: "item4",
+              type: null
+            }, {
+              name: "item5",
+              type: null
+            }
+
+          ],
+          "outputs": [
+
+            {
+              name: "array",
+              type: null
+            }
+          ],
+          "function": {
+            "ref": null,
+            "code": ""
+          }
+
+        },
+        {
           "functionName": "uuidString",
           "blockName": "uuid",
           "library": "string",
-          "inputs": [
+          "inputs": [],
+
+          "widgets": [
+            {
+              "type": "text",
+              "name": "prefix",
+              "default": "/prefix/",
+              "values": []
+
+            }
 
           ],
-
-        "widgets": [
-        {
-          "type": "text",
-          "name" : "prefix",
-          "default" : "/prefix/",
-          "values" : []
-
-        }
-
-      ],
-          "properties": [
-
-          ],
+          "properties": [],
           "outputs": [
 
             {
@@ -1603,7 +1559,7 @@
 
       //  this.viewer.appendChild(formatter.render());
 
-  this.discoverCollections()
+      this.discoverCollections()
     }
     ,
     created() {
