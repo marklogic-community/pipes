@@ -119,6 +119,11 @@ function createGraphNodeFromModel(blockDef) {
       let out = {};
       if(this["WithInstanceRoot"].value == true){
         out[this.blockDef.collection] = this.doc.output
+        out["info"] = {
+          "title" : this.blockDef.collection,
+          "version" : "0.0.1" //TODO make it dynamic
+
+        }
       }
       else{
 
@@ -186,19 +191,15 @@ function executeGraphFromJson(jsonGraph,uri, input,context){
   graph.addInput("input", "");
   graph.addInput("uri", "");
   graph.addInput("collections", "");
+  graph.addInput("context", "");
   graph.addOutput("output", "");
-  graph.addOutput("uri", "");
-  graph.addOutput("collections", "");
   graph.setInputData("input",input)
   graph.setInputData("uri",uri)
-  graph.setInputData("collections",context.collections)
+  graph.setInputData("collections", xdmp.documentGetCollections(uri))
+  graph.setInputData("context",context)
   graph.start();
 
-  return {
-    output: graph.getOutputData("output"),
-    uri : graph.getOutputData("uri"),//graph.global_outputs,
-    collections : graph.getOutputData("collections")
-  }
+  return graph.getOutputData("output")
 }//graph.global_outputs
 
 

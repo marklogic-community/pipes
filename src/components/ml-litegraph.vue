@@ -536,8 +536,8 @@
           "\n" +
           "  let gHelper  = require(\"/custom-modules/graphHelper\")\n" +
           "\n" +
-          "  instance = gHelper.executeGraphStep(doc,id,getGraphDefinition(),context)\n" +
-          "\n" +
+          "  let results = gHelper.executeGraphStep(doc,id,getGraphDefinition(),context)\n" +
+         /* "\n" +
           "  //form our envelope here now, specifying our output format\n" +
           " // let envelope = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);\n" +
           "\n" +
@@ -551,8 +551,8 @@
           "  //assign the context we want\n" +
           "  content.context = context;\n" +
           "\n" +
-          "  //now let's return out our content to be written\n" +
-          "  return content;\n" +
+          "  //now let's return out our content to be written\n" +*/
+          "  return results;\n" +
           "}\n" +
           "\n" +
           "module.exports = {\n" +
@@ -742,7 +742,7 @@
         {
           "functionName": "GeoReproject",
           "blockName": "GeoReproject",
-          "library": "feature",
+          "library": "geo",
           "inputs": [
             {
               name: "srcCoordinateSystem",
@@ -1471,6 +1471,40 @@
                         let propertyName = this.properties['propertyName'];\
                         doc[propertyName] = val;\
                         this.setOutputData( 0, doc);"
+          }
+
+        },
+        {
+          "functionName": "uuidString",
+          "blockName": "uuid",
+          "library": "string",
+          "inputs": [
+
+          ],
+
+        "widgets": [
+        {
+          "type": "text",
+          "name" : "prefix",
+          "default" : "/prefix/",
+          "values" : []
+
+        }
+
+      ],
+          "properties": [
+
+          ],
+          "outputs": [
+
+            {
+              name: "uuid",
+              type: null
+            }
+          ],
+          "function": {
+            "ref": null,
+            "code": ""
           }
 
         },

@@ -11140,6 +11140,7 @@ if (typeof exports != "undefined") {
   function GraphInputDHF() {
     this.addOutput("input", "");
     this.addOutput("uri", "");
+    this.addOutput("collections", "");
 
     this.name_in_graph = "";
     this.properties = {};
@@ -11172,11 +11173,13 @@ if (typeof exports != "undefined") {
     //read from global input
     var input = this.graph.inputs["input"];
     var uri = this.graph.inputs["uri"];
+    var collections = this.graph.inputs["collections"];
 
 
     //put through output
     this.setOutputData(0, input.value);
     this.setOutputData(1, uri.value);
+    this.setOutputData(2, collections.value);
   };
 
   GraphInputDHF.prototype.onRemoved = function() {
@@ -11187,6 +11190,90 @@ if (typeof exports != "undefined") {
 
   LiteGraph.GraphInput = GraphInputDHF;
   LiteGraph.registerNodeType("dhf/input", GraphInputDHF);
+
+
+  //Output for a subgraph
+  function GraphOutputObjectDHF() {
+    this.addInput("output", null );
+    this.addInput("headers", null );
+    this.addInput("triples", null );
+    this.addInput("instance", null );
+    this.addInput("attachments", null );
+    this.addInput("uri", null );
+    this.addInput("collections", null );
+    this.addOutput("output", null );
+    this.name_in_graph = "";
+    this.properties = {};
+    var that = this;
+
+
+
+    this.size = [180, 60];
+  }
+
+  GraphOutputObjectDHF.title = "Output Object";
+  GraphOutputObjectDHF.desc = "DHF output object";
+
+  GraphOutputObjectDHF.prototype.onExecute = function() {
+
+
+
+    let result = {'envelope' : {}} ;
+    if(this.getInputData(0)==undefined) {
+      result.envelope.headers = (this.getInputData(1)!=undefined)?this.getInputData(1):{};
+      result.envelope.triples = (this.getInputData(2)!=undefined)?this.getInputData(2):{};
+      result.envelope.instance = (this.getInputData(3)!=undefined)?this.getInputData(3):{};
+      result.envelope.attachments  = (this.getInputData(4)!=undefined)?this.getInputData(4):{};
+
+      let defaultCollections = (this.graph.inputs["collections"]!=null)?this.graph.inputs["collections"].value:null
+      let defaultUri = (this.graph.inputs["uri"]!=null)?this.graph.inputs["uri"].value:sem.uuidString()
+      let defaultContext = (this.graph.inputs["context"]!=null)?this.graph.inputs["context"].value:{}
+
+      let uri  = (this.getInputData(5)!=undefined)?this.getInputData(5):defaultUri;
+      let collections  = (this.getInputData(6)!=undefined)?this.getInputData(6):defaultCollections;
+      let context = defaultContext
+
+      let content = {}
+      content.value = result;
+      content.uri = uri
+
+      context.collections = collections
+      content.context = context;
+
+      this.setOutputData(0,content)}
+    // this.graph.setOutputData( "output", content );}
+    else {
+      this.setOutputData(0,this.getInputData(0))
+      // this.graph.setOutputData( "output", this.getInputData(0) )
+    }
+
+
+
+
+  };
+
+  GraphOutputObjectDHF.prototype.onAction = function(action, param) {
+    if (this.properties.type == LiteGraph.ACTION) {
+      this.graph.trigger(this.properties.name, param);
+    }
+  };
+
+  GraphOutputObjectDHF.prototype.onRemoved = function() {
+    if (this.name_in_graph) {
+      this.graph.removeOutput(this.name_in_graph);
+    }
+  };
+
+  GraphOutputObjectDHF.prototype.getTitle = function() {
+    if (this.flags.collapsed) {
+      return this.properties.name;
+    }
+    return this.title;
+  };
+
+  //LiteGraph.GraphOutput = GraphOutputDHF;
+  LiteGraph.registerNodeType("dhf/outputObject", GraphOutputObjectDHF);
+
 
   //Output for a subgraph
   function GraphOutputDHF() {
@@ -11221,18 +11308,24 @@ if (typeof exports != "undefined") {
       result.envelope.instance = (this.getInputData(3)!=undefined)?this.getInputData(3):{};
       result.envelope.attachments  = (this.getInputData(4)!=undefined)?this.getInputData(4):{};
 
+      let uri  = (this.getInputData(5)!=undefined)?this.getInputData(5):this.graph.inputs["uri"].value;
+      let collections  = (this.getInputData(6)!=undefined)?this.getInputData(6):this.graph.inputs["collections"].value;
+      let context = this.graph.inputs["context"].value
 
-      this.graph.setOutputData( "output", result );}
+      let content = {}
+      content.value = result;
+      content.uri = uri
+
+      context.collections = collections
+      content.context = context;
+
+      this.graph.setOutputData( "output", content );}
     else {
 
       this.graph.setOutputData( "output", this.getInputData(0) )
     }
 
-    let uri  = (this.getInputData(5)!=undefined)?this.getInputData(5):null;
-    this.graph.setOutputData( "uri", uri );
 
-    let collections  = (this.getInputData(6)!=undefined)?this.getInputData(6):null;
-    this.graph.setOutputData( "collections", collections );
 
   };
 
@@ -12885,6 +12978,38 @@ if (typeof exports != "undefined") {
 
 
 
+  function uuidString()
+  {
+
+    this.addOutput("uuid");
+
+    this.prefix = this.addWidget("text","prefix", "/prefix/", function(v){}, {} );
+    this.size = [230, 160];
+    this.serialize_widgets = true;
+
+  }
+
+
+
+  uuidString.title = "UUID";
+  uuidString.desc = "Generate UUID with prefix";
+
+
+
+
+
+  uuidString.prototype.onExecute = function()
+  {
+
+
+    let prefix = this.prefix.value
+
+    this.setOutputData(0, prefix + sem.uuidString() );
+  }
+
+
+  LiteGraph.registerNodeType("string/uuid", uuidString );
+
 
   function multicast()
   {
@@ -12939,6 +13064,77 @@ if (typeof exports != "undefined") {
 
   }
   LiteGraph.registerNodeType("basic/multicast", multicast );
+
+
+
+  function wktReproject(s_srs,t_srs,inWkt) {
+    // get coords from inWkt and send to Esri project service, alternative is to setup something with ogr2ogr as a service (RFE: ogr/gdal in MarkLogic)
+    // this reproject here is not the right place, no exception/error handling and won't work with higher data volumes I guess
+    let outWkt = esriResponseToWKT(wktToEsriRequest(s_srs,t_srs,inWkt));
+    //let outWkt = fn.concat(makeWkt("LINESTRING",5)); // create dummy wkt data
+    return outWkt;
+  }
+
+  function wktToEsriRequest(s_srs,t_srs,inWkt) {
+    let coords = fn.substringBefore(fn.substringAfter(inWkt,"LINESTRING ("),")"); // TODO: improve to work for POINT and POLYGON WKT strings too
+    var i;
+    var pair;
+    var pairs = coords.split(",");
+    var esriPairs = '';
+    for (var i = 0; i < pairs.length; i++) {
+      pair = pairs[i].trim().split(" "); // TODO: now trims whitespaces from both ends of the string otherwise split on space fails, improve
+      esriPairs += fn.concat('{"x": ',pair[0],', "y": ',pair[1],'},');
+    }
+    esriPairs = esriPairs.substr(0, esriPairs.length-1); // cut of last trailing comma
+    let esriProjectService = "http://tasks.arcgisonline.com/arcgis/rest/services/Geometry/GeometryServer/project?";
+    let esriSR = fn.concat("inSR=+",s_srs,"&outSR=",t_srs,"&geometries=");
+    let esriGeometries = xdmp.urlEncode(fn.concat('{"geometryType":"esriGeometryPoint","geometries":[',esriPairs,']}'),false);
+    let esriOptions = "&transformation=&transformForward=true&f=pjson";
+    let esriRequest = fn.concat(esriProjectService,esriSR,esriGeometries,esriOptions);
+    let esriResponse = fn.subsequence(xdmp.httpGet(esriRequest),2,1); // get second part of the response to only return body part, not headers
+    return esriResponse;
+  }
+
+  function esriResponseToWKT(esriResponse) {
+    // from Esri json response to LINESTRING format, can't get the code right in MarkLogic to do it the json/array way.
+    // should be able to just get x and y values from geometries object, this is so q&d now...
+    let coords = fn.substringBefore(fn.substringAfter(esriResponse,'"geometries": ['),']');
+    coords = fn.replace(coords,"\\n","");
+    coords = fn.replace(coords,"\\r","");
+    coords = fn.replace(coords,"\\t","");
+    coords = fn.replace(coords,"\\},","xxx");
+    coords = fn.replace(coords,'\\{','');
+    coords = fn.replace(coords,'"x": ','');
+    coords = fn.replace(coords,'"y": ','');
+    coords = fn.replace(coords,'\\}','');
+    coords = fn.replace(coords,',',' ');
+    coords = fn.replace(coords,'xxx',',');
+    let reprojectedWkt = fn.concat("LINESTRING(",coords.trim(),")");
+    return reprojectedWkt;
+  }
+
+  function GeoReproject()
+  {
+    this.addInput("srcCoordinateSystem");
+    this.addInput("targetCoordinateSystem");
+    this.addInput("strWKT");
+    this.addOutput("strWKT");
+  }
+
+  GeoReproject.title = "GeoReproject";
+  GeoReproject.desc = "Geo Reproject";
+
+  GeoReproject.prototype.onExecute = function()
+  {
+
+    let srcCS = parseInt(this.getInputData(0))
+    let tgtCS = parseInt(this.getInputData(1))
+    let strWKT = this.getInputData(2)
+    let result = wktReproject(srcCS,tgtCS,strWKT)
+    this.setOutputData(0, result )
+
+  }
+  LiteGraph.registerNodeType("geo/GeoReproject", GeoReproject );
 
 
 })(this);
