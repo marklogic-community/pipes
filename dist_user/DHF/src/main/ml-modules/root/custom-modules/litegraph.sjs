@@ -12555,6 +12555,8 @@ if (typeof exports != "undefined") {
   LiteGraph.wrapFunctionAsNode('date/FormatDateAuto',formatDateAuto,
     ['xs:string'],'xs:string')
 
+
+
   function hashNode()
   {
     this.addInput("Node",null);
@@ -12959,8 +12961,6 @@ if (typeof exports != "undefined") {
 
 
 
-
-
   stringTemplate.prototype.onExecute = function()
   {
     let v1= this.getInputData(0)
@@ -12977,6 +12977,80 @@ if (typeof exports != "undefined") {
   LiteGraph.registerNodeType("string/Templating", stringTemplate );
 
 
+  function FormatDate()
+  {
+    this.addInput("inputDate");
+
+    this.addOutput("IsoDate");
+
+    this.format = this.addWidget("text","format", "DD/MM/YYYY", function(v){}, {} );
+    this.size = [230, 160];
+    this.serialize_widgets = true;
+
+  }
+
+
+
+  FormatDate.title = "Format date";
+  FormatDate.desc = "Format date with explicit format";
+
+
+
+  FormatDate.prototype.onExecute = function()
+  {
+    let moment = require("/custom-modules/moment-with-locales.min.sjs")
+    let inputDate= this.getInputData(0)
+    let format = this.format.value
+    this.setOutputData(0, fn.string(moment(inputDate, [format]).format('YYYY-MM-DD')) );
+  }
+
+
+  LiteGraph.registerNodeType("date/FormatDate", FormatDate );
+
+
+  function CreateTriple()
+  {
+    this.addInput("subject");
+    this.addInput("object");
+
+    this.addOutput("triple");
+
+
+    this.subjectIsIRI = this.addWidget("toggle","subjectIsIRI", true, function(v){}, {} );
+    this.predicate = this.addWidget("text","predicate", "myPredicate", function(v){}, {} );
+    this.objectIsIRI = this.addWidget("toggle","objectIsIRI", true, function(v){}, {} );
+    this.size = [230, 160];
+    this.serialize_widgets = true;
+
+  }
+
+
+
+  CreateTriple.title = "Create Triple";
+  CreateTriple.desc = "Create Triple";
+
+
+
+  CreateTriple.prototype.onExecute = function()
+  {
+
+    let subject = this.getInputData(0)
+    let object = this.getInputData(1)
+    let predicate = this.predicate.value
+
+    let subjectIsIRI = this.subjectIsIRI.value
+    let objectIsIRI = this.objectIsIRI.value
+
+
+    if(subjectIsIRI) subject=sem.iri(subject)
+    if(objectIsIRI) object=sem.iri(subject)
+    predicate = sem.iri(predicate)
+
+    this.setOutputData(0,sem.triple(subject,predicate,object));
+  }
+
+
+  LiteGraph.registerNodeType("triples/CreateTriple", CreateTriple );
 
   function uuidString()
   {

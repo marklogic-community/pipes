@@ -862,7 +862,89 @@
 
 
         },
+        {
+          "functionName": "FormatDate",
+          "blockName": "FormatDate",
+          "library": "date",
+          "inputs": [
+            {
+              name: "inputDate",
+              type: "xs:string"
+            }
+          ],
 
+          "widgets": [
+            {
+              "type": "text",
+              "name": "format",
+              "default": "DD/MM/YYYY",
+              "values": []
+
+            }
+
+          ],
+          "outputs": [
+            {
+              "name": "IsoDate",
+              "type": "xs:string"
+            }
+          ],
+          "function": {
+            "ref": null,
+            "code": null
+          }
+        },
+        {
+          "functionName": "CreateTriple",
+          "blockName": "CreateTriple",
+          "library": "triples",
+          "inputs": [
+            {
+              name: "subject",
+              type: "xs:string"
+            },
+            {
+              name: "object",
+              type: "xs:string"
+            }
+          ],
+
+          "widgets": [
+
+            {
+              "type": "toggle",
+              "name": "subjectIsIRI",
+              "default": true,
+              "values": []
+
+            },
+            {
+              "type": "text",
+              "name": "predicate",
+              "default": "myPredicate",
+              "values": []
+
+            },
+            {
+              "type": "toggle",
+              "name": "objectIsIRI",
+              "default": true,
+              "values": []
+
+            }
+
+          ],
+          "outputs": [
+            {
+              "name": "triple",
+              "type": null
+            }
+          ],
+          "function": {
+            "ref": null,
+            "code": null
+          }
+        },
         {
           "functionName": "FormatDateAuto",
           "blockName": "FormatDateAuto",
