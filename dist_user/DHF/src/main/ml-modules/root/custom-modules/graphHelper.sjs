@@ -96,10 +96,16 @@ function createGraphNodeFromModel(blockDef) {
     for (let i = 0; i < this.blockDef.fields.length; i++) {
 
       if (this.blockDef.options.indexOf("nodeInput") > -1) {
-
-        let v = docNode.xpath("//" + this.blockDef.fields[i]);
-        if (fn.count(v) == 1 && v.constructor != Array) v = docNode.xpath("//" + this.blockDef.fields[i] + "/string()");
-        this.doc.output[this.blockDef.fields[i]] = (v != null) ? v : null;
+        let v= null
+        let children = docNode.xpath("//" + this.blockDef.fields[i] + "//*")
+        if(fn.count(children)>1)
+          v= docNode.xpath("//" + this.blockDef.fields[i]);
+        else
+          v= docNode.xpath("//" + this.blockDef.fields[i] + "/string()");
+        this.doc.output[this.blockDef.fields[i]] = v
+        /* let v = docNode.xpath("//" + this.blockDef.fields[i]);
+         if (fn.count(v) == 1 && v.constructor != Array) v = docNode.xpath("//" + this.blockDef.fields[i] + "/string()");
+         this.doc.output[this.blockDef.fields[i]] = (v != null) ? v : null;*/
       }
 
       if (this.blockDef.options.indexOf("fieldsInputs") > -1) {

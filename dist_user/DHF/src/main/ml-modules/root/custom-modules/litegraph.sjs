@@ -10684,6 +10684,14 @@ LGraphNode.prototype.executeAction = function(action)
     this.subgraph.onAction(action, param);
   };
 
+
+  function isIterable(obj){
+    if(obj==null){
+      return false
+    }
+    return typeof obj[Symbol.iterator]==='function';
+  }
+
   Subgraph.prototype.onExecute = function() {
     this.enabled = this.getInputOrProperty("enabled");
     if (!this.enabled) {
@@ -10698,37 +10706,42 @@ LGraphNode.prototype.executeAction = function(action)
       // objArray = (objArray!= null && objArray.toObject) ? objArray.toObject() : objArray;
       var arrayInput = this.inputs[0];
 
-      // for (var j = 0; j < objArray.length; j++) {
-      for (let obj of objArray) {
+      if (isIterable(objArray)) {
 
-        this.subgraph.setInputData(arrayInput.name, obj);
+        // for (var j = 0; j < objArray.length; j++) {
+        for (let obj of objArray) {
 
-
-        for (var i = 1; i < this.inputs.length; i++) {
-          var input = this.inputs[i];
-          var value = this.getInputData(i);
-          this.subgraph.setInputData(input.name, value);
-        }
+          this.subgraph.setInputData(arrayInput.name, obj);
 
 
-        //execute
-        this.subgraph.start();
-
-        //send subgraph global outputs to outputs
-        if (this.outputs) {
-          for (var i = 0; i < this.outputs.length; i++) {
-            let output = this.outputs[i];
-            let value = this.subgraph.getOutputData(output.name) ;
-            if(typeof(value)=="object")
-              value=JSON.parse(JSON.stringify(value))
-            if(outputs[i]==null) outputs[i]=[];
-            outputs[i].push(value)
+          for (var i = 1; i < this.inputs.length; i++) {
+            var input = this.inputs[i];
+            var value = this.getInputData(i);
+            this.subgraph.setInputData(input.name, value);
           }
+
+
+          //execute
+          this.subgraph.start();
+
+          //send subgraph global outputs to outputs
+          if (this.outputs) {
+            for (var i = 0; i < this.outputs.length; i++) {
+              let output = this.outputs[i];
+              let value = this.subgraph.getOutputData(output.name);
+              if (typeof (value) == "object")
+                value = JSON.parse(JSON.stringify(value))
+              if (outputs[i] == null) outputs[i] = [];
+              outputs[i].push(value)
+            }
+          }
+          this.subgraph.clearTriggeredSlots()
+          this.subgraph.stop()
         }
-        this.subgraph.clearTriggeredSlots()
-        this.subgraph.stop()
+        Object.keys(outputs).map(item => {this.setOutputData(item, outputs[item])}
+      )
+        ;
       }
-      Object.keys(outputs).map(item => {this.setOutputData(item, outputs[item])});
     }
 
 
@@ -13229,8 +13242,8 @@ if (typeof exports != "undefined") {
     let result = []
     for(let i=0;i<5;i++){
       let value =  this.getInputData(i)
-      if(value != undefined && value!=null)
-        result.push(value)
+      if(value!=null)
+        result=result.concat(value)
     }
 
     this.setOutputData(0, result )
