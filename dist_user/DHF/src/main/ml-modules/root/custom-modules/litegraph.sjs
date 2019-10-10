@@ -11334,13 +11334,28 @@ if (typeof exports != "undefined") {
 
       this.graph.setOutputData( "output", content );}
     else {
-
-      this.graph.setOutputData( "output", this.getInputData(0) )
+      let output =  this.getInputData(0)
+      if(output.constructor === Array){
+        let globalArray = []
+        flattenArray(globalArray,output)
+        this.graph.setOutputData( "output",globalArray )
+      }
+      else
+        this.graph.setOutputData( "output",output )
     }
 
 
 
   };
+
+  function flattenArray(globalArray,value){
+    for(let v of value)
+      if(v.constructor === Array)
+        flattenArray(globalArray,v)
+      else
+        globalArray.push(v)
+
+  }
 
   GraphOutputDHF.prototype.onAction = function(action, param) {
     if (this.properties.type == LiteGraph.ACTION) {
@@ -12382,11 +12397,12 @@ if (typeof exports != "undefined") {
 
   function featureLookupBlock()
   {
-    this.addInput("lookupMap","xs:string");
-    this.addInput("value","xs:string");
-    this.addInput("searchKey","xs:string");
-    this.addInput("resultKey","xs:string");
-    this.addOutput("result","xs:string");
+    this.addInput("query");
+    this.addInput("var1");
+    this.addInput("var2");
+    this.addOutput("value");
+    this.query = this.addWidget("text","query", "", function(v){}, {} );
+    this.valuePath = this.addWidget("text","valuePath", "", function(v){}, {} );
 
   }
 
@@ -12394,25 +12410,32 @@ if (typeof exports != "undefined") {
   featureLookupBlock.title = "Lookup";
 
 //function to call when the node is executed
+
   featureLookupBlock.prototype.onExecute = function()
   {
     //let output = "lookup(" + this.getInputData(0) + "," + this.getInputData(1) + "," + this.getInputData(2) + ")"
 
-    let output = fn.head(cts.search(
-      cts.andQuery([
-        cts.collectionQuery(this.getInputData(0)),
-        cts.jsonPropertyValueQuery(this.getInputData(2),this.getInputData(1))
+    let query = this.getInputData(0)
 
-      ])
-    ))
-    if(output!=null) this.setOutputData( 0, output.toObject()[this.getInputData(3)])
+    if(query==undefined || query==null) {
+
+      let var1 = this.getInputData(1)
+      let var2 = this.getInputData(2)
+
+      let template = "`"+ this.query.value +"`"
+      let result = eval(template)
+      query = eval(result)
+    }
+
+    let foundDoc = fn.head(cts.search(query))
+    if(foundDoc!=null) this.setOutputData( 0, foundDoc.xpath(this.valuePath.value))
     //this.setOutputData( 0, output );
 
 
   }
 
 //register in the system
-  LiteGraph.registerNodeType("feature/lookup", featureLookupBlock );
+  LiteGraph.registerNodeType("feature/Lookup", featureLookupBlock );
 
 
   /*  function cts_search(query,options,qualityWeight,forestIds)

@@ -963,7 +963,55 @@
           ],
           "function": {
             "ref": null,
-            "code": null
+            "code": ""
+          }
+        },
+        {
+          "functionName": "Lookup",
+          "blockName": "Lookup",
+          "library": "feature",
+          "inputs": [
+            {
+              name: "query",
+              type: null
+            },
+            {
+              name: "var1",
+              type: null
+            },
+            {
+              name: "var2",
+              type: null
+            }
+
+          ],
+
+          "widgets": [
+            {
+              "type": "text",
+              "name": "query",
+              "default": 'cts.collectionQuery("${v1}")',
+              "values": []
+
+            },
+
+            {
+              "type": "text",
+              "name": "valuePath",
+              "default": '/path/to/value/string()")',
+              "values": []
+
+            }],
+
+          "outputs": [
+            {
+              "name": "value",
+              "type": null
+            }
+          ],
+          "function": {
+            "ref": null,
+            "code": ""
           }
         },
         {
