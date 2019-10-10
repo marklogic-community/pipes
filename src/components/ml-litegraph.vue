@@ -990,7 +990,7 @@
             {
               "type": "text",
               "name": "query",
-              "default": 'cts.collectionQuery("${v1}")',
+              "default": 'cts.collectionQuery("${var1}")',
               "values": []
 
             },
