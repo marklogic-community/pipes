@@ -61,7 +61,6 @@ module.exports = function (ctx) {
         'QSelect',
         'QOptionGroup',
         'QTable',
-        'QItemLabel',
         'QTree',
         'QDialog',
         'QCard',
