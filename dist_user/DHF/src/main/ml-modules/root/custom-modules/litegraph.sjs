@@ -13280,6 +13280,35 @@ if (typeof exports != "undefined") {
   LiteGraph.registerNodeType("basic/Array", Array );
 
 
+
+  function split()
+  {
+    this.addInput("string");
+    this.addOutput("v1");
+    this.addOutput("v2");
+    this.addOutput("v3");
+    this.addOutput("array");
+    this.splitChar = this.addWidget("string","splitChar", "/", function(v){} );
+  }
+
+  split.title = "Split";
+  split.desc = "Split";
+
+  split.prototype.onExecute = function()
+  {
+
+    let str = this.getInputData(0)
+
+    let result = fn.tokenize(str,this.splitChar.value).toArray()
+
+    for(let i=0;i<fn.max([result.length,3]);i++)
+      this.setOutputData(i, result[i] )
+    this.setOutputData(3, result )
+
+  }
+  LiteGraph.registerNodeType("string/Split", split );
+
+
 })(this);
 
 

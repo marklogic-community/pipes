@@ -946,6 +946,48 @@
           }
         },
         {
+          "functionName": "Split",
+          "blockName": "Split",
+          "library": "string",
+          "inputs": [
+            {
+              name: "string",
+              type: null
+            }
+          ],
+
+        "widgets": [
+        {
+          "type": "text",
+          "name": "splitChar",
+          "default": '/',
+          "values": []
+
+        }],
+          "outputs": [
+            {
+              "name": "v1",
+              "type": null
+            },
+            {
+              "name": "v2",
+              "type": null
+            },
+            {
+              "name": "v3",
+              "type": null
+            },
+            {
+              "name": "array",
+              "type": null
+            }
+          ],
+          "function": {
+            "ref": null,
+            "code": ""
+          }
+        },
+        {
           "functionName": "FormatDateAuto",
           "blockName": "FormatDateAuto",
           "library": "date",
