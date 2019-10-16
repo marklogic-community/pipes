@@ -204,19 +204,27 @@
       addMapping() {
         this.currentProperties.push({source: "val", target: "newVal"})
       },
+      loadGraphFromJson(graph){
+
+        for (let model of graph.models) {
+          let newBlock = this.createGraphNodeFromModel(model);
+          LiteGraph.registerNodeType(model.source + "/" + model.collection, newBlock);
+        }
+        this.models = graph.models
+
+        this.graph.configure(graph.executionGraph)
+
+
+      }
+
+      ,
       getSavedGraph(uri) {
         //if(uri!=null)
         this.$axios.get('/v1/resources/savedGraph?rs:uri=' + encodeURI(uri))
           .then((response) => {
             let graph = response.data;
 
-            for (let model of graph.models) {
-              let newBlock = this.createGraphNodeFromModel(model);
-              LiteGraph.registerNodeType(model.source + "/" + model.collection, newBlock);
-            }
-            this.models = graph.models
-
-            this.graph.configure(graph.executionGraph)
+             this.loadGraphFromJson(graph)
 
           })
           .catch(() => {
@@ -598,6 +606,17 @@
 
       }
       ,
+      resetDhfDefaultGraph(){
+
+
+        this.$axios.get('/statics/graph/dhfDefaultGraph.json')
+          .then((response) => {
+
+            this.loadGraphFromJson(response.data)
+
+          })
+      }
+      ,
       executeGraph() {
         console.log("executeGraph")
 
@@ -731,6 +750,7 @@
       this.$root.$on("loadGraphCall", this.loadGraph);
       this.$root.$on("exportGraphCall", this.exportDHFModule);
       this.$root.$on("nodeDblClicked", this.DblClickNode);
+      this.$root.$on("loadDHFDefaultGraphCall", this.resetDhfDefaultGraph);
 
       this.graph = new LiteGraph.LGraph();
       this.graph_canvas = new LiteGraph.LGraphCanvas(this.$refs["mycanvas"], this.graph);

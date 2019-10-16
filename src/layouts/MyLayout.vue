@@ -25,19 +25,16 @@
         </q-toolbar-title>
 
         <q-btn-group>
+
+          <q-btn flat round dense icon="folder_open" size="lg" @click.stop="loadDHFDefaultGraph()">
+            <q-tooltip>
+              Reset the graph with a default DHF config
+            </q-tooltip>
+
+          </q-btn>
           <!--  <q-btn flat round dense icon="play_arrow" size="lg" @click.stop="executeGraph()"/> -->
-          <q-btn flat round dense icon="code" size="lg" @click.stop="exportDHFModule()">
-            <q-tooltip>
-              Export DHF custom step module
-            </q-tooltip>
 
-          </q-btn>
-          <q-btn flat round dense icon="play_arrow" size="lg" @click.stop="executeGraph()">
-            <q-tooltip>
-              Preview Execute Graph
-            </q-tooltip>
 
-          </q-btn>
           <q-btn flat round dense icon="cloud_upload" size="lg" @click.stop="saveGraph()">
             <q-tooltip>
               Save current grap to the staging DB
@@ -48,6 +45,18 @@
             <q-tooltip>
               Load a graph from the staging DB
             </q-tooltip>
+          </q-btn>
+          <q-btn flat round dense icon="play_arrow" size="lg" @click.stop="executeGraph()">
+            <q-tooltip>
+              Preview Execute Graph
+            </q-tooltip>
+
+          </q-btn>
+          <q-btn flat round dense icon="code" size="lg" @click.stop="exportDHFModule()">
+            <q-tooltip>
+              Export DHF custom step module
+            </q-tooltip>
+
           </q-btn>
         </q-btn-group>
 
@@ -157,7 +166,13 @@
     exportDHFModule(){
 
       this.$root.$emit("exportGraphCall");
+    },
+    loadDHFDefaultGraph(){
+
+      this.$root.$emit("loadDHFDefaultGraphCall");
+      this.leftDrawerOpen = false
     }
+
 
 
   },
