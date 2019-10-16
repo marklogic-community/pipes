@@ -544,7 +544,7 @@
           "\n" +
           "  let gHelper  = require(\"/custom-modules/graphHelper\")\n" +
           "\n" +
-          "  let results = gHelper.executeGraphStep(doc,id,getGraphDefinition(),context)\n" +
+          "  let results = gHelper.executeGraphStep(doc,id,getGraphDefinition(),{collections: xdmp.documentGetCollections(id)})\n" +
           /* "\n" +
            "  //form our envelope here now, specifying our output format\n" +
            " // let envelope = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);\n" +
