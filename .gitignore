@@ -34,4 +34,8 @@ dhf/data/
 dhf/entities/
 dhf/flows/
 dhf/step-definitions/
-
+build/
+dhf/.project
+dhf/.settings/
+dhf/mappings/
+nohup.out
