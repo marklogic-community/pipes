@@ -1,9 +1,9 @@
 <template>
   <div class="flex flex-center">
-    <canvas ref="mycanvas" width='1800' height='1000' style='border: 1px solid' class="fixed"></canvas>
+    <canvas class="fixed" height='1000' ref="mycanvas" style='border: 1px solid' width='1800'></canvas>
 
 
-    <q-dialog v-model="editJson" persistent>
+    <q-dialog persistent v-model="editJson">
       <q-card>
         <q-card-section>
           <div class="text-h6">Edit data mapping</div>
@@ -11,24 +11,24 @@
 
         <q-card-section>
           <q-table
-            title="Mappings"
-            :data="currentProperties"
             :columns="columns"
-            row-key="name"
+            :data="currentProperties"
             binary-state-sort
+            row-key="name"
+            title="Mappings"
           >
             <template v-slot:body="props">
               <q-tr :props="props">
-                <q-td key="source" :props="props">
+                <q-td :props="props" key="source">
                   {{ props.row.source }}
-                  <q-popup-edit v-model="props.row.source" title="Update mapping" buttons>
-                    <q-input type="string" v-model="props.row.source" dense autofocus/>
+                  <q-popup-edit buttons title="Update mapping" v-model="props.row.source">
+                    <q-input autofocus dense type="string" v-model="props.row.source"/>
                   </q-popup-edit>
                 </q-td>
-                <q-td key="target" :props="props">
+                <q-td :props="props" key="target">
                   {{ props.row.target }}
-                  <q-popup-edit v-model="props.row.target" title="Update mapping" buttons>
-                    <q-input type="string" v-model="props.row.target" dense autofocus/>
+                  <q-popup-edit buttons title="Update mapping" v-model="props.row.target">
+                    <q-input autofocus dense type="string" v-model="props.row.target"/>
                   </q-popup-edit>
                 </q-td>
 
@@ -38,30 +38,30 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat label="Add mapping" color="primary" @click="addMapping()"/>
-          <q-btn flat label="OK" color="primary" v-close-popup/>
+          <q-btn @click="addMapping()" color="primary" flat label="Add mapping"/>
+          <q-btn color="primary" flat label="OK" v-close-popup/>
         </q-card-actions>
       </q-card>
     </q-dialog>
 
-    <q-dialog v-model="savePopUpOpened" :content-css="{minWidth: '30vw', minHeight: '40vh'}">
-      <q-layout container class="bg-white">
+    <q-dialog :content-css="{minWidth: '30vw', minHeight: '40vh'}" v-model="savePopUpOpened">
+      <q-layout class="bg-white" container>
 
 
         <div class="layout-padding">
           <q-item-label :header="true">Save current graph</q-item-label>
           <div>
-            <q-input v-model="graphName" stack-label="Graph name"/>
+            <q-input stack-label="Graph name" v-model="graphName"/>
           </div>
           <div class="q-pa-sm">
             <q-btn
-              color="primary"
               @click="saveCurrentGraph()"
+              color="primary"
               label="Save"
             />
             <q-btn
-              color="primary"
               @click="savePopUpOpened = false"
+              color="primary"
               label="Close"
             />
           </div>
@@ -71,16 +71,16 @@
     </q-dialog>
 
 
-    <q-dialog v-model="loadPopUpOpened" :content-css="{minWidth: '30vw', minHeight: '40vh'}">
-      <q-layout container class="bg-white">
+    <q-dialog :content-css="{minWidth: '30vw', minHeight: '40vh'}" v-model="loadPopUpOpened">
+      <q-layout class="bg-white" container>
 
 
         <div class="layout-padding">
 
           <q-list class="q-mt-md" link>
             <q-item-label :header="true">List of saved graph</q-item-label>
-            <q-item tag="label" v-for="(item, index) in savedGraph" v-bind:key="item.name"
-                    @click.native="getSavedGraph(item.uri)">
+            <q-item @click.native="getSavedGraph(item.uri)" tag="label" v-bind:key="item.name"
+                    v-for="(item, index) in savedGraph">
 
               <q-item-label>
                 <q-item-section label>{{ item.name }}</q-item-section>
@@ -93,8 +93,8 @@
           <div class="q-pa-sm">
 
             <q-btn
-              color="primary"
               @click="loadPopUpOpened = false"
+              color="primary"
               label="Close"
             />
           </div>
@@ -112,18 +112,18 @@
           <div style="min-width: 250px; max-width: 300px">
 
 
-            <q-select filled v-model="collectionForPreview" :options="availableCollections"
-                      label="Use collection as input"/>
+            <q-select :options="availableCollections" filled label="Use collection as input"
+                      v-model="collectionForPreview"/>
           </div>
 
           <q-toggle
-            v-model="randomDocPreview"
             label="Random doc"
+            v-model="randomDocPreview"
           />
 
           <div class="q-pa-md q-gutter-sm">
 
-            <q-btn color="primary" label="Execute Preview" @click="executeGraph()"/>
+            <q-btn @click="executeGraph()" color="primary" label="Execute Preview"/>
           </div>
         </q-card-section>
         <q-card-section>
@@ -135,6 +135,25 @@
         </q-card-section>
       </q-card>
     </q-dialog>
+
+
+
+    <q-dialog v-model="isExported">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Information</div>
+        </q-card-section>
+
+        <q-card-section>
+         The code of you Data Hub Custom step is now available in your browser downloads folder (main.sjs file).
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
   </div>
 
 
@@ -159,6 +178,7 @@
           {name: 'target', label: 'Target', field: 'target', sortable: true, align: 'left'},
         ],
         opened: true,
+        isExported:false,
         graph: null,
         results: null,
         models: [],
@@ -434,15 +454,17 @@
 
           if (this.blockDef.options.indexOf("fieldsOutputs") > -1) {
             for (let field of blockDef.fields) {
-              this.ioSetup.outputs[field] = this.ioSetup.outputs._count++;
-              this.addOutput(field)
+              //this.ioSetup.outputs[field] = this.ioSetup.outputs._count++;
+              this.ioSetup.outputs[field.path] = this.ioSetup.outputs._count++;
+              this.addOutput(field.field)
             }
           }
 
           if (blockDef.options.indexOf("fieldsInputs") > -1) {
             for (let field of blockDef.fields) {
-              this.ioSetup.inputs[field] = this.ioSetup.inputs._count++;
-              this.addInput(field);
+              this.ioSetup.inputs[field.path] = this.ioSetup.inputs._count++;
+              //this.ioSetup.inputs[field] = this.ioSetup.inputs._count++;
+              this.addInput(field.field);
             }
           }
           this["WithInstanceRoot"] = this.addWidget("toggle", "WithInstanceRoot", true, function (v) {
@@ -572,6 +594,7 @@
           endings: "transparent"
         });
         saveAs(blob, "main.sjs");
+        this.isExported=true
 
       },
       saveCurrentGraph() {
@@ -756,966 +779,19 @@
       this.graph_canvas = new LiteGraph.LGraphCanvas(this.$refs["mycanvas"], this.graph);
 
 
-      var node_const = LiteGraph.createNode("basic/const");
 
-      let configs = [
-        {
-          "functionName": "GeoReproject",
-          "blockName": "GeoReproject",
-          "library": "geo",
-          "inputs": [
-            {
-              name: "srcCoordinateSystem",
-              type: "xs:string"
-            },
-            {
-              name: "targetCoordinateSystem",
-              type: "xs:string"
-            },
-            {
-              name: "strWKT",
-              type: "xs:string"
-            }
-          ],
-          "outputs": [
-            {
-              "name": "strWKT",
-              "type": "node"
-            }
-          ],
-          "function": {
-            "ref": "fn.doc",
-            "code": null
-          }
 
 
-        },
-        {
-          "functionName": "fn_doc",
-          "blockName": "doc",
-          "library": "fn",
-          "inputs": [
-            {
-              name: "uri",
-              type: "xs:string"
-            }
-          ],
-          "outputs": [
-            {
-              "name": "doc",
-              "type": "node"
-            }
-          ],
-          "function": {
-            "ref": "fn.doc",
-            "code": null
-          }
-
-
-        },
-        {
-          "functionName": "fn_collection",
-          "blockName": "collection",
-          "library": "fn",
-          "inputs": [
-            {
-              name: "collectionName",
-              type: "xs:string"
-            }
-          ],
-          "outputs": [
-            {
-              "name": "docs",
-              "type": "node()*"
-            }
-          ],
-          "function": {
-            "ref": "fn.collection",
-            "code": null
-          }
-
-
-        },
-        {
-          "functionName": "fn_baseUri",
-          "blockName": "baseUri",
-          "library": "fn",
-          "inputs": [
-            {
-              name: "node",
-              type: "node"
-            }
-          ],
-          "outputs": [
-            {
-              "name": "uri",
-              "type": "xs:string"
-            }
-          ],
-          "function": {
-            "ref": "fn.baseUri",
-            "code": null
-          }
-
-
-        },
-        {
-          "functionName": "fn_head",
-          "blockName": "head",
-          "library": "fn",
-          "inputs": [
-            {
-              name: "nodes",
-              type: null
-            }
-          ],
-          "outputs": [
-            {
-              "name": "node",
-              "type": null
-            }
-          ],
-          "function": {
-            "ref": "fn.head",
-            "code": null
-          }
-
-
-        },
-        {
-          "functionName": "FormatDate",
-          "blockName": "FormatDate",
-          "library": "date",
-          "inputs": [
-            {
-              name: "inputDate",
-              type: "xs:string"
-            }
-          ],
-
-          "widgets": [
-            {
-              "type": "text",
-              "name": "format",
-              "default": "DD/MM/YYYY",
-              "values": []
-
-            }
-
-          ],
-          "outputs": [
-            {
-              "name": "IsoDate",
-              "type": "xs:string"
-            }
-          ],
-          "function": {
-            "ref": null,
-            "code": null
-          }
-        },
-        {
-          "functionName": "CreateTriple",
-          "blockName": "CreateTriple",
-          "library": "triples",
-          "inputs": [
-            {
-              name: "subject",
-              type: "xs:string"
-            },
-            {
-              name: "object",
-              type: "xs:string"
-            }
-          ],
-
-          "widgets": [
-
-            {
-              "type": "toggle",
-              "name": "subjectIsIRI",
-              "default": true,
-              "values": []
-
-            },
-            {
-              "type": "text",
-              "name": "predicate",
-              "default": "myPredicate",
-              "values": []
-
-            },
-            {
-              "type": "toggle",
-              "name": "objectIsIRI",
-              "default": true,
-              "values": []
-
-            }
-
-          ],
-          "outputs": [
-            {
-              "name": "triple",
-              "type": null
-            }
-          ],
-          "function": {
-            "ref": null,
-            "code": null
-          }
-        },
-        {
-          "functionName": "Split",
-          "blockName": "Split",
-          "library": "string",
-          "inputs": [
-            {
-              name: "string",
-              type: null
-            }
-          ],
-
-        "widgets": [
-        {
-          "type": "text",
-          "name": "splitChar",
-          "default": '/',
-          "values": []
-
-        }],
-          "outputs": [
-            {
-              "name": "v1",
-              "type": null
-            },
-            {
-              "name": "v2",
-              "type": null
-            },
-            {
-              "name": "v3",
-              "type": null
-            },
-            {
-              "name": "array",
-              "type": null
-            }
-          ],
-          "function": {
-            "ref": null,
-            "code": ""
-          }
-        },
-        {
-          "functionName": "FormatDateAuto",
-          "blockName": "FormatDateAuto",
-          "library": "date",
-          "inputs": [
-            {
-              name: "inputDate",
-              type: "xs:string"
-            }
-          ],
-          "outputs": [
-            {
-              "name": "IsoDate",
-              "type": "xs:string"
-            }
-          ],
-          "function": {
-            "ref": null,
-            "code": ""
-          }
-        },
-        {
-          "functionName": "Lookup",
-          "blockName": "Lookup",
-          "library": "feature",
-          "inputs": [
-            {
-              name: "query",
-              type: null
-            },
-            {
-              name: "var1",
-              type: null
-            },
-            {
-              name: "var2",
-              type: null
-            }
-
-          ],
-
-          "widgets": [
-            {
-              "type": "text",
-              "name": "query",
-              "default": 'cts.collectionQuery("${var1}")',
-              "values": []
-
-            },
-
-            {
-              "type": "text",
-              "name": "valuePath",
-              "default": '/path/to/value/string()")',
-              "values": []
-
-            }],
-
-          "outputs": [
-            {
-              "name": "value",
-              "type": null
-            }
-          ],
-          "function": {
-            "ref": null,
-            "code": ""
-          }
-        },
-        {
-          "functionName": "FormatDateTimeAuto",
-          "blockName": "FormatDateTimeAuto",
-          "library": "date",
-          "inputs": [
-            {
-              name: "inputDateTime",
-              type: "xs:string"
-            }
-          ],
-          "outputs": [
-            {
-              "name": "IsoDateTime",
-              "type": "xs:string"
-            }
-          ],
-          "function": {
-            "ref": null,
-            "code": null
-          }
-        },
-
-        {
-          "functionName": "fn_upperCase",
-          "blockName": "UpperCase",
-          "library": "string",
-          "inputs": [
-            {
-              name: "string",
-              type: "xs:string"
-            }
-          ],
-          "outputs": [
-            {
-              "name": "STRING",
-              "type": "xs:string"
-            }
-          ],
-          "function": {
-            "ref": "fn.upperCase",
-            "code": null
-          }
-
-
-        },
-        {
-          "functionName": "fn_lowerCase",
-          "blockName": "LowerCase",
-          "library": "string",
-          "inputs": [
-            {
-              name: "STRING",
-              type: "xs:string"
-            }
-          ],
-          "outputs": [
-            {
-              "name": "string",
-              "type": "xs:string"
-            }
-          ],
-          "function": {
-            "ref": "fn.lowerCase",
-            "code": null
-          }
-
-
-        }
-        ,
-        {
-          "functionName": "fn_count",
-          "blockName": "count",
-          "library": "fn",
-          "inputs": [
-            {
-              name: "list",
-              type: null
-            }
-          ],
-          "outputs": [
-            {
-              "name": "nbItems",
-              "type": "number"
-            }
-          ],
-          "function": {
-            "ref": "fn.count",
-            "code": null
-          }
-
-
-        },
-        {
-          "functionName": "cts_andQuery",
-          "blockName": "andQuery",
-          "library": "cts",
-          "inputs": [
-            {
-              name: "query1",
-              type: "cts:query"
-            },
-            {
-              name: "query2",
-              type: "cts:query"
-            },
-            {
-              name: "query3",
-              type: "cts:query"
-            },
-            {
-              name: "query4",
-              type: "cts:query"
-            }
-          ],
-          "outputs": [
-            {
-              "name": "query",
-              "type": "cts:query"
-            }
-          ],
-          "function": {
-            "ref": null,
-            "code": "let queries = [];" +
-              "    if(this.getInputData(0)!=undefined) queries.push(this.getInputData(0));" +
-              "    if(this.getInputData(1)!=undefined) queries.push(this.getInputData(1));" +
-              "    if(this.getInputData(2)!=undefined) queries.push(this.getInputData(2));" +
-              "    if(this.getInputData(3)!=undefined) queries.push(this.getInputData(3));" +
-              "    this.setOutputData( 0, cts.andQuery(queries));"
-          }
-
-
-        },
-        {
-          "functionName": "cts_orQuery",
-          "blockName": "orQuery",
-          "library": "cts",
-          "inputs": [
-            {
-              name: "query1",
-              type: "cts:query"
-            },
-            {
-              name: "query2",
-              type: "cts:query"
-            },
-            {
-              name: "query3",
-              type: "cts:query"
-            },
-            {
-              name: "query4",
-              type: "cts:query"
-            }
-          ],
-          "outputs": [
-            {
-              "name": "query",
-              "type": "cts:query"
-            }
-          ],
-          "function": {
-            "ref": null,
-            "code": "let queries = [];" +
-              "    if(this.getInputData(0)!=undefined) queries.push(this.getInputData(0));" +
-              "    if(this.getInputData(1)!=undefined) queries.push(this.getInputData(1));" +
-              "    if(this.getInputData(2)!=undefined) queries.push(this.getInputData(2));" +
-              "    if(this.getInputData(3)!=undefined) queries.push(this.getInputData(3));" +
-              "    this.setOutputData( 0, cts.orQuery(queries));"
-          }
-
-
-        },
-        {
-          "functionName": "cts_search",
-          "blockName": "search",
-          "library": "cts",
-          "inputs": [
-            {
-              name: "query",
-              type: "cts:query"
-            }
-          ],
-          "outputs": [
-            {
-              "name": "results",
-              "type": ""
-            }
-          ],
-          "function": {
-            "ref": "cts.search",
-            "code": null
-          }
-
-
-        },
-        {
-          "functionName": "fn_stringJoin",
-          "blockName": "String join",
-          "library": "string",
-          "inputs": [
-            {
-              name: "string*",
-              type: "xs:string*"
-            }
-          ],
-          "properties": [
-            {
-              name: "separator",
-              type: "xs:string"
-            }
-
-          ],
-          "outputs": [
-            {
-              "name": "joinedString",
-              "type": "xs:string"
-            }
-          ],
-          "function": {
-            "ref": "fn.stringJoin",
-            "code": null
-          }
-        },
-        {
-          "functionName": "mapValues",
-          "blockName": "Map values",
-          "library": "string",
-          "inputs": [
-            {
-              name: "value",
-              type: "xs:string"
-            }
-          ],
-          "properties": [
-            {
-              name: "mapping",
-              type: [{"source": "srcVal", "target": "targetVal"}]
-            }
-
-          ],
-          "outputs": [
-            {
-              "name": "mappedValue",
-              "type": "xs:string"
-            }
-          ],
-          "function": {
-            "ref": null,
-            "code": "\
-               let val = (this.getInputData(0)!=undefined)?this.getInputData(0):'';\
-               let mappedValue = this.properties['mapping'].filter(item => {return item.source==val});\
-                if(mappedValue.length >0) this.setOutputData( 0,mappedValue[0].target);\
-                                      else  this.setOutputData( 0,null);"
-
-
-          }
-        }
-        ,
-        {
-          "functionName": "cts_collectionQuery",
-          "blockName": "collectionQuery",
-          "library": "cts",
-          "inputs": [
-            {
-              name: "collectionName",
-              type: "xs:string"
-            }
-          ],
-          "outputs": [
-            {
-              "name": "query",
-              "type": "cts:query"
-            }
-          ],
-          "function": {
-            "ref": "cts.collectionQuery",
-            "code": null
-          }
-
-
-        },
-        {
-          "functionName": "json_validate",
-          "blockName": "Json (schema) validate*",
-          "library": "controls",
-          "inputs": [
-            {
-              name: "node",
-              type: "node"
-            }
-          ],
-          "outputs": [
-            {
-              "name": "node",
-              "type": "node"
-            }
-          ],
-          "function": {
-            "ref": null,
-            "code": null
-          }
-
-
-        },
-        {
-          "functionName": "schematron_validate",
-          "blockName": "Schematron validation*",
-          "library": "controls",
-          "inputs": [
-            {
-              name: "doc",
-              type: null
-            }
-          ],
-          "outputs": [
-            {
-              "name": "SVRL",
-              "type": "node"
-            }
-          ],
-          "function": {
-            "ref": null,
-            "code": null
-          }
-
-
-        },
-        {
-          "functionName": "isNumber",
-          "blockName": "isNumber*",
-          "library": "controls",
-          "inputs": [
-            {
-              name: "value",
-              type: null
-            }
-          ],
-          "outputs": [
-            {
-              "name": "status",
-              "type": "bool"
-            }
-          ],
-          "function": {
-            "ref": null,
-            "code": null
-          }
-
-
-        },
-        {
-          "functionName": "isDate",
-          "blockName": "isDate*",
-          "library": "controls",
-          "inputs": [
-            {
-              name: "value",
-              type: null
-            }
-          ],
-          "outputs": [
-            {
-              "name": "status",
-              "type": "bool"
-            }
-          ],
-          "function": {
-            "ref": null,
-            "code": null
-          }
-
-
-        },
-        {
-          "functionName": "isInDictionnary",
-          "blockName": "isInDictionnary*",
-          "library": "controls",
-          "inputs": [
-            {
-              name: "value",
-              type: null
-            }
-          ],
-          "outputs": [
-            {
-              "name": "status",
-              "type": "bool"
-            }
-          ],
-          "function": {
-            "ref": null,
-            "code": null
-          }
-
-
-        },
-        {
-          "functionName": "checkRequiredFields",
-          "blockName": "checkRequiredFields*",
-          "library": "controls",
-          "inputs": [
-            {
-              name: "node",
-              type: null
-            }
-          ],
-          "outputs": [
-            {
-              "name": "status",
-              "type": "bool"
-            }
-          ],
-          "function": {
-            "ref": null,
-            "code": null
-          }
-
-
-        }
-        ,
-        {
-          "functionName": "cts_jsonPropertyValueQuery",
-          "blockName": "jsonPropertyValueQuery",
-          "library": "cts",
-          "inputs": [
-            {
-              name: "property",
-              type: "xs:string"
-            },
-            {
-              name: "value",
-              type: "xs:string"
-            }
-          ],
-          "outputs": [
-            {
-              "name": "query",
-              "type": "cts:query"
-            }
-          ],
-          "function": {
-            "ref": "cts.jsonPropertyValueQuery",
-            "code": null
-          }
-
-
-        }
-        ,
-
-        {
-          "functionName": "applyXSLT",
-          "blockName": "Apply XSLT*",
-          "library": "transform",
-          "inputs": [
-            {
-              "name": "doc",
-              "type": "node"
-            }
-
-          ],
-          "outputs": [
-
-            {
-              name: "doc",
-              type: "node"
-            }
-          ],
-          "function": {
-            "ref": null,
-            "code": ""
-          }
-
-        },
-        {
-          "functionName": "addProperty",
-          "blockName": "Add property",
-          "library": "transform",
-          "inputs": [
-            {
-              "name": "doc",
-              "type": "node"
-            },
-            {
-              "name": "value",
-              "type": null
-            }
-
-          ],
-
-          "properties": [
-            {
-              name: "propertyName",
-              type: "Property name"
-            }
-
-          ],
-          "outputs": [
-
-            {
-              name: "doc",
-              type: "node"
-            }
-          ],
-          "function": {
-            "ref": null,
-            "code": "let doc = (this.getInputData(0)!=undefined)?this.getInputData(0):''; \
-                        let val = (this.getInputData(1)!=undefined)?this.getInputData(1):'';\
-                        let propertyName = this.properties['propertyName'];\
-                        doc[propertyName] = val;\
-                        this.setOutputData( 0, doc);"
-          }
-
-        },
-        {
-          "functionName": "array",
-          "blockName": "Array",
-          "library": "basic",
-          "inputs": [
-
-            {
-              name: "item1",
-              type: null
-            }, {
-              name: "item2",
-              type: null
-            }, {
-              name: "item3",
-              type: null
-            }, {
-              name: "item4",
-              type: null
-            }, {
-              name: "item5",
-              type: null
-            }
-
-          ],
-          "outputs": [
-
-            {
-              name: "array",
-              type: null
-            }
-          ],
-          "function": {
-            "ref": null,
-            "code": ""
-          }
-
-        },
-        {
-          "functionName": "uuidString",
-          "blockName": "uuid",
-          "library": "string",
-          "inputs": [],
-
-          "widgets": [
-            {
-              "type": "text",
-              "name": "prefix",
-              "default": "/prefix/",
-              "values": []
-
-            }
-
-          ],
-          "properties": [],
-          "outputs": [
-
-            {
-              name: "uuid",
-              type: null
-            }
-          ],
-          "function": {
-            "ref": null,
-            "code": ""
-          }
-
-        },
-        {
-          "functionName": "provo",
-          "blockName": "PROV-O structure",
-          "library": "provenance",
-          "inputs": [
-            {
-              "name": "DerivedFrom1",
-              "type": null
-            },
-            {
-              "name": "DerivedFrom2",
-              "type": null
-            },
-            {
-              "name": "DerivedFrom3",
-              "type": null
-            },
-            {
-              "name": "GeneratedBy",
-              "type": null
-            },
-            {
-              "name": "createdOn",
-              "type": null
-            }
-
-          ],
-
-          "properties": [],
-          "outputs": [
-
-            {
-              name: "PROV-O",
-              type: "node"
-            }
-          ],
-          "function": {
-            "ref": null,
-            "code": "let from1 = (this.getInputData(0)!=undefined)?this.getInputData(0):null; \
-                        let from2 = (this.getInputData(1)!=undefined)?this.getInputData(1):null;\
-                        let from3 = (this.getInputData(1)!=undefined)?this.getInputData(2):null;\
-                        let generatedBy = (this.getInputData(1)!=undefined)?this.getInputData(3):null;\
-                        let createdOn = (this.getInputData(1)!=undefined)?this.getInputData(4):null;\
-                        let doc = {derivedFrom:[]};\
-                        if(from1) doc.derivedFrom.push(from1);\
-                        if(from2) doc.derivedFrom.push(from2);\
-                        if(from3) doc.derivedFrom.push(from3);\
-                        doc.generatedBy = generatedBy;\
-                        doc.createdOn = createdOn;\
-                        this.setOutputData( 0, doc);"
-          }
-
-        }
-      ]
-
-      this.registerBlocksByConf(configs, LiteGraph)
-
-      this.$axios.get('/statics/userblockDefs.json')
+      this.$axios.get('/statics/library/core.json')
         .then((response) => {
+          console.log(response.data)
+          this.registerBlocksByConf(response.data, LiteGraph)
 
+        })
+
+      this.$axios.get('/statics/library/user.json')
+        .then((response) => {
+console.log(response.data)
           this.registerBlocksByConf(response.data, LiteGraph)
 
         })

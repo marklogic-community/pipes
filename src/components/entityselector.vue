@@ -112,7 +112,12 @@ export default {
               label: entity.label,
               collection: entity.label,
               source:"Entities",
-              fields : this.entityModel.children.map(item => { return item.label}),
+              fields : this.entityModel.children.map(item => { return  {
+                  "label" : item.label,
+                  "field" : item.label,
+                  "path":  "//"  + item.label
+                }
+              }),
               options : ["fieldsInputs","nodeOutput"]
 
           }

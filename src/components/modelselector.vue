@@ -18,7 +18,7 @@
       label="Select a collection"
       stack-label
     />
-    <q-input bottom-slots v-model="newCustomFieldName" label="Add custom field" :dense="dense">
+    <q-input bottom-slots v-model="newCustomFieldName" label="Add custom field" >
 
       <template v-slot:append>
         <q-btn round dense flat icon="add" @click="addCustomField()"/>
@@ -27,10 +27,13 @@
 
     <div class="q-body-1"><p>Select the fields to add</p></div>
     <q-tree
+      ref="selectionTree"
       :nodes="collectionModel"
       node-key="label"
       tick-strategy="strict"
       :ticked.sync="selectedFields"
+
+
     />
 
 
@@ -70,10 +73,10 @@
       <q-item tag="label" v-for="(item, index) in savedBlocks" v-bind:key="item.name"
               @click.native="getSavedBlock(item.uri)">
 
-        <q-item-main>
-          <q-item-tile label>{{ item.name }}</q-item-tile>
+        <q-item-label>
+          <q-item-section label>{{ item.name }}</q-item-section>
 
-        </q-item-main>
+        </q-item-label>
       </q-item>
     </q-list>
 
@@ -90,6 +93,7 @@
       return {
         selectedCollection: "",
         selectedFields: null,
+        selectedFieldsNodes:null,
         selectedCollection: null,
         availableCollections: [],
         collectionModel: [
@@ -112,6 +116,11 @@
       }
     },
     methods: {
+      selectFieldPath(node){
+
+        console.log(node)
+      }
+      ,
       collectionChanged() {
         console.log(this.selectedCollection)
         this.discoverModel(this.selectedCollection)
@@ -241,7 +250,7 @@
             label: this.blockName,
             collection: this.blockName,
             source: "Sources",
-            fields: this.selectedFields,
+            fields: this.$refs["selectionTree"].getTickedNodes(), //this.selectedFields,
             options: this.blockOptions
 
           }

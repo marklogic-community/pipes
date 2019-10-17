@@ -52,15 +52,15 @@ function createGraphNodeFromModel(blockDef) {
 
     if (this.blockDef.options.indexOf("fieldsOutputs") > -1) {
       for (let field of blockDef.fields) {
-        this.ioSetup.outputs[field] = this.ioSetup.outputs._count++;
-        this.addOutput(field, "xs:string");
+        this.ioSetup.outputs[field.path] = this.ioSetup.outputs._count++;
+        this.addOutput(field.field, "xs:string");
       }
     }
 
     if (blockDef.options.indexOf("fieldsInputs") > -1) {
       for (let field of blockDef.fields) {
-        this.ioSetup.inputs[field] = this.ioSetup.inputs._count++;
-        this.addInput(field, "xs:string");
+        this.ioSetup.inputs[field.path] = this.ioSetup.inputs._count++;
+        this.addInput(field.field, "xs:string");
       }
     }
     this["WithInstanceRoot"] = this.addWidget("toggle","WithInstanceRoot", true, function(v){}, { on: "enabled", off:"disabled"} );
@@ -97,26 +97,26 @@ function createGraphNodeFromModel(blockDef) {
 
       if (this.blockDef.options.indexOf("nodeInput") > -1) {
         let v= null
-        let children = docNode.xpath("//" + this.blockDef.fields[i] + "//*")
+        let children = docNode.xpath( this.blockDef.fields[i].path + "//*")
         if(fn.count(children)>1)
-          v= docNode.xpath("//" + this.blockDef.fields[i]);
+          v= docNode.xpath(this.blockDef.fields[i].path);
         else
-          v= docNode.xpath("//" + this.blockDef.fields[i] + "/string()");
-        this.doc.output[this.blockDef.fields[i]] = v
+          v= docNode.xpath(this.blockDef.fields[i].path + "/string()");
+        this.doc.output[this.blockDef.fields[i].field] = v
         /* let v = docNode.xpath("//" + this.blockDef.fields[i]);
          if (fn.count(v) == 1 && v.constructor != Array) v = docNode.xpath("//" + this.blockDef.fields[i] + "/string()");
          this.doc.output[this.blockDef.fields[i]] = (v != null) ? v : null;*/
       }
 
       if (this.blockDef.options.indexOf("fieldsInputs") > -1) {
-        if (this.getInputData(this.ioSetup.inputs[blockDef.fields[i]]) != null) {
+        if (this.getInputData(this.ioSetup.inputs[blockDef.fields[i].path]) != null) {
 
 
-          this.doc.output[this.blockDef.fields[i]] = this.getInputData(this.ioSetup.inputs[this.blockDef.fields[i]]);
+          this.doc.output[this.blockDef.fields[i].field] = this.getInputData(this.ioSetup.inputs[this.blockDef.fields[i].path]);
 
         }  }
       if (this.blockDef.options.indexOf("fieldsOutputs") > -1)
-        this.setOutputData(this.ioSetup.outputs[blockDef.fields[i]], this.doc.output[this.blockDef.fields[i]]);
+        this.setOutputData(this.ioSetup.outputs[blockDef.fields[i].path], this.doc.output[this.blockDef.fields[i].field]);
 
     }
     //}
