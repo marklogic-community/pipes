@@ -128,7 +128,14 @@
       },
       addCustomField(){
 
-        this.collectionModel[1].children.push({label:this.newCustomFieldName,children:[]})
+        this.collectionModel[1].children.push({
+            "label":this.newCustomFieldName,
+             "children":[],
+            "field" : this.newCustomFieldName,
+            "path":  "//"  + this.newCustomFieldName
+
+
+        })
 
       },
       discoverCollections() {
