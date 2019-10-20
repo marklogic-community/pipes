@@ -111,9 +111,21 @@
         <q-card-section class="row">
           <div style="min-width: 250px; max-width: 300px">
 
+            <q-select :options="availableDatabases" filled label="Use Database for input"
+                      v-model="selectedDatabase">
 
+              <template v-slot:prepend>
+                <q-icon name="fas fa-database" @click.stop />
+              </template>
+
+            </q-select>
             <q-select :options="availableCollections" filled label="Use collection as input"
-                      v-model="collectionForPreview"/>
+                      v-model="collectionForPreview">
+
+              <template v-slot:prepend>
+                <q-icon name="fas fa-tags" @click.stop />
+              </template>
+            </q-select>
           </div>
 
           <q-toggle
@@ -193,7 +205,9 @@
         savedGraph: [],
         currentProperties: [],
         jsoneditor: null,
-        availableCollections: []
+        availableCollections: [],
+        selectedDatabase:null,
+        availableDatabases:[]
 
 
       }
@@ -273,18 +287,23 @@
           })
       },
       discoverCollections() {
-        this.$axios.get('/v1/resources/collectionsDiscovery')
-          .then((response) => {
-            this.availableCollections = response.data
-          })
-          .catch(() => {
-            this.$q.notify({
-              color: 'negative',
-              position: 'top',
-              message: 'Loading failed',
-              icon: 'report_problem'
+        let dbOption =""
+        if(this.selectedDatabase!=null && this.selectedDatabase!="") {
+          dbOption += "&rs:database=" + this.selectedDatabase.value
+
+          this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionDetails' + dbOption)
+            .then((response) => {
+              this.availableCollections = response.data
             })
-          })
+            .catch(() => {
+              this.$q.notify({
+                color: 'negative',
+                position: 'top',
+                message: 'Loading failed',
+                icon: 'report_problem'
+              })
+            })
+        }
       },
       csvJSON(csv) {
 
@@ -370,8 +389,26 @@
             }
 
 
-          if (map.sourceField != null && map.sourceField != "") blocks[map.source].fields.push(map.sourceField)
-          if (map.targetField != null && map.targetField != "") blocks[map.target].fields.push(map.targetField)
+          if (map.sourceField != null && map.sourceField != "") blocks[map.source].fields.push(
+
+          {
+            "label": map.sourceField,
+            "field" :  map.sourceField,
+            "path":  "//"  +  map.sourceField
+          }
+
+
+
+          )
+          if (map.targetField != null && map.targetField != "") blocks[map.target].fields.push(
+
+
+          {
+            "label": map.targetField,
+            "field" :  map.targetField,
+            "path":  "//"  +  map.targetField
+          }
+          )
 
         }
 
@@ -401,11 +438,11 @@
 
           if (map.source != null && map.target != null && map.sourceField != null && map.targetField != null && map.source != "" && map.target != "" && map.sourceField != "" && map.targetField != "") {
             console.log(map.sourceField)
-            console.log(blocks[map.source].block.ioSetup.outputs[map.sourceField])
+            console.log(blocks[map.target].block.ioSetup)
             blocks[map.source].block.connect(
-              blocks[map.source].block.ioSetup.outputs[map.sourceField],
+              blocks[map.source].block.ioSetup.outputs["//" + map.sourceField],
               blocks[map.target].block.id,
-              blocks[map.target].block.ioSetup.inputs[map.targetField])
+              blocks[map.target].block.ioSetup.inputs["//" + map.targetField])
 
           }
 
@@ -641,7 +678,16 @@
       }
       ,
       executeGraph() {
-        console.log("executeGraph")
+
+        let dbOption =""
+        if(this.selectedDatabase!=null && this.selectedDatabase!="") {
+          dbOption += "?rs:database=" + this.selectedDatabase.value
+          this.$root.$emit("databaseChanged",
+            {selectedDatabase: this.selectedDatabase,availableDatabases:this.availableDatabases
+            }
+
+          );
+        }
 
         let jsonGraph = this.graph.serialize()
         let request = {
@@ -654,7 +700,7 @@
           collectionRandom: this.randomDocPreview
         }
 
-        this.$axios.post('/v1/resources/executeGraph', request)
+        this.$axios.post('/v1/resources/executeGraph' + dbOption , request)
           .then((response) => {
 
             this.jsonFromPreview = response.data
@@ -683,16 +729,23 @@
       },
       DblClickNode(block) {
 
-        if (block) {
-          console.log(block)
+        if (block.node_over.title=="Map values") {
+
           if (block.node_over.properties != null) this.currentProperties = block.node_over.properties.mapping
           this.editJson = true
 
 
-          console.log(this.$refs)
-
+          //console.log(this.$refs)
 
         }
+
+
+      },
+      setCurrrentDatabase(db){
+
+        this.selectedDatabase=db.selectedDatabase;
+        this.availableDatabases=db.availableDatabases;
+        this.discoverCollections()
 
       },
       registerBlocksByConf(configs, LiteGraph) {
@@ -768,7 +821,7 @@
       this.$root.$on('executeGraphCall', function () {
         this.showPreview = true
       }.bind(this))
-
+      this.$root.$on("databaseChanged", this.setCurrrentDatabase);
       this.$root.$on("saveGraphCall", this.saveGraph);
       this.$root.$on("loadGraphCall", this.loadGraph);
       this.$root.$on("exportGraphCall", this.exportDHFModule);
@@ -784,14 +837,14 @@
 
       this.$axios.get('/statics/library/core.json')
         .then((response) => {
-          console.log(response.data)
+          //console.log(response.data)
           this.registerBlocksByConf(response.data, LiteGraph)
 
         })
 
       this.$axios.get('/statics/library/user.json')
         .then((response) => {
-console.log(response.data)
+//console.log(response.data)
           this.registerBlocksByConf(response.data, LiteGraph)
 
         })

@@ -6,18 +6,39 @@
 
     <q-input v-model="blockName" stack-label label="Block name"/>
 
+    <q-select
+      name="databaseSelector"
+      v-model="selectedDatabase"
+      :options.sync="availableDatabases"
+      @input="databaseChanged"
+      filled
+
+      separator
+      label="Select a database"
+      stack-label
+    >
+      <template v-slot:prepend>
+        <q-icon name="fas fa-database" @click.stop />
+      </template>
+
+    </q-select>
 
     <q-select
       name="collectionSelector"
       v-model="selectedCollection"
       :options.sync="availableCollections"
       @input="collectionChanged"
-      inverted
-      class="bg-secondary"
+      filled
+
       separator
       label="Select a collection"
       stack-label
-    />
+    >
+      <template v-slot:prepend>
+        <q-icon name="fas fa-tags" @click.stop />
+      </template>
+
+    </q-select>
     <q-input bottom-slots v-model="newCustomFieldName" label="Add custom field" >
 
       <template v-slot:append>
@@ -92,10 +113,12 @@
     data() {
       return {
         selectedCollection: "",
+        selectedDatabase:null,
         selectedFields: null,
         selectedFieldsNodes:null,
         selectedCollection: null,
         availableCollections: [],
+        availableDatabases: [],
         collectionModel: [
           {
           label: 'source',
@@ -139,9 +162,33 @@
 
       },
       discoverCollections() {
-        this.$axios.get('/v1/resources/collectionsDiscovery')
+        let dbOption =""
+        if(this.selectedDatabase!=null && this.selectedDatabase!="") {
+          dbOption += "&rs:database=" + this.selectedDatabase.value
+          this.$root.$emit("databaseChanged",
+            {selectedDatabase: this.selectedDatabase,availableDatabases:this.availableDatabases
+            }
+
+            );
+        }
+
+          this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionDetails' + dbOption )
           .then((response) => {
             this.availableCollections = response.data
+          })
+          .catch(() => {
+            this.$q.notify({
+              color: 'negative',
+              position: 'top',
+              message: 'Loading failed',
+              icon: 'report_problem'
+            })
+          })
+      },
+      discoverDatabases() {
+        this.$axios.get('/v1/resources/vppBackendServices?rs:action=databasesDetails')
+          .then((response) => {
+            this.availableDatabases = response.data
           })
           .catch(() => {
             this.$q.notify({
@@ -215,7 +262,17 @@
           })
       },
       discoverModel(collection) {
-        this.$axios.get('/v1/resources/modelDiscovery?rs:collection=' + collection.value)
+        let dbOption =""
+        if(this.selectedDatabase!=null && this.selectedDatabase!="") {
+          dbOption += "&rs:database=" + this.selectedDatabase.value
+          this.$root.$emit("databaseChanged",
+            {selectedDatabase: this.selectedDatabase,availableDatabases:this.availableDatabases
+            }
+
+          );
+        }
+        //this.$axios.get('/v1/resources/modelDiscovery?rs:collection=' + collection.value)
+        this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionModel&rs:collection=' + collection.value + dbOption)
           .then((response) => {
             this.collectionModel[0].children = response.data
           })
@@ -228,7 +285,10 @@
             })
           })
       },
+      databaseChanged(){
 
+        this.discoverCollections()
+      },
 
       notifyBlockRequested() {
 
@@ -267,7 +327,8 @@
     },
     mounted() {
       console.log('Nothing gets called before me!')
-      this.discoverCollections()
+      this.discoverDatabases()
+      //this.discoverCollections()
       //Vue.set(vm.userProfile, 'age', 27)
       this.loadSavedBlocks();
     }

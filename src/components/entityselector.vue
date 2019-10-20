@@ -7,8 +7,7 @@
           v-model="selectedEntity"
           :options.sync="availableEntities"
           @input="entityChanged"
-          inverted
-          class="bg-secondary"
+          filled
           separator
           stack-label
           label="Select an entity"
