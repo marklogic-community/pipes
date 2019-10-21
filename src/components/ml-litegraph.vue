@@ -785,8 +785,8 @@
       },
       setCurrrentDatabase(db){
 
-        this.selectedDatabase=db.selectedDatabase;
-        this.availableDatabases=db.availableDatabases;
+        this.selectedDB=db.selectedDatabase;
+        this.availableDB=db.availableDatabases;
         this.discoverCollections()
 
       },

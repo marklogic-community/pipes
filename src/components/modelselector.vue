@@ -288,6 +288,11 @@
       databaseChanged(){
 
         this.discoverCollections()
+         this.$root.$emit("databaseChanged",
+           {selectedDatabase: this.selectedDatabase,availableDatabases:this.availableDatabases
+           }
+
+          );
       },
 
       notifyBlockRequested() {
