@@ -11240,7 +11240,7 @@ if (typeof exports != "undefined") {
 
       let defaultCollections = (this.graph.inputs["collections"]!=null)?this.graph.inputs["collections"].value:null
       let defaultUri = (this.graph.inputs["uri"]!=null)?this.graph.inputs["uri"].value:sem.uuidString()
-      let defaultContext = (this.graph.inputs["context"]!=null)?this.graph.inputs["context"].value:{}
+      let defaultContext = (this.graph.inputs["context"]!=null)?JSON.parse(JSON.stringify(this.graph.inputs["context"].value)):{}
 
       let uri  = (this.getInputData(5)!=undefined)?this.getInputData(5):defaultUri;
       let collections  = (this.getInputData(6)!=undefined)?this.getInputData(6):defaultCollections;
