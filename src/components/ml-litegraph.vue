@@ -111,8 +111,8 @@
         <q-card-section class="row">
           <div style="min-width: 250px; max-width: 300px">
 
-            <q-select :options="availableDatabases" filled label="Use Database for input"
-                      v-model="selectedDatabase">
+            <q-select :options="availableDB"  filled label="Use Database for input"
+                      v-model="selectedDB" @input="dbChanged()">
 
               <template v-slot:prepend>
                 <q-icon name="fas fa-database" @click.stop />
@@ -206,8 +206,8 @@
         currentProperties: [],
         jsoneditor: null,
         availableCollections: [],
-        selectedDatabase:null,
-        availableDatabases:[]
+        selectedDB:null,
+        availableDB:[]
 
 
       }
@@ -286,10 +286,14 @@
             })
           })
       },
+      dbChanged(){
+
+        this.discoverCollections()
+      },
       discoverCollections() {
         let dbOption =""
-        if(this.selectedDatabase!=null && this.selectedDatabase!="") {
-          dbOption += "&rs:database=" + this.selectedDatabase.value
+        if(this.selectedDB!=null && this.selectedDB!="") {
+          dbOption += "&rs:database=" + this.selectedDB.value
 
           this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionDetails' + dbOption)
             .then((response) => {
@@ -680,13 +684,13 @@
       executeGraph() {
 
         let dbOption =""
-        if(this.selectedDatabase!=null && this.selectedDatabase!="") {
-          dbOption += "?rs:database=" + this.selectedDatabase.value
-          this.$root.$emit("databaseChanged",
-            {selectedDatabase: this.selectedDatabase,availableDatabases:this.availableDatabases
-            }
+        if(this.selectedDB!=null && this.selectedDB!="") {
+          dbOption += "?rs:database=" + this.selectedDB.value
+          //this.$root.$emit("databaseChanged",
+           // {selectedDatabase: this.selectedDatabase,availableDatabases:this.availableDatabases
+           // }
 
-          );
+          //);
         }
 
         let jsonGraph = this.graph.serialize()
@@ -730,7 +734,31 @@
       discoverDatabases() {
         this.$axios.get('/v1/resources/vppBackendServices?rs:action=databasesDetails')
           .then((response) => {
-            this.availableDatabases = response.data
+            this.availableDB = response.data
+          })
+          .catch(() => {
+            this.$q.notify({
+              color: 'negative',
+              position: 'top',
+              message: 'Loading failed',
+              icon: 'report_problem'
+            })
+          })
+      },
+      discoverCollections() {
+        let dbOption =""
+        if(this.selectedDB!=null && this.selectedDB!="") {
+          dbOption += "&rs:database=" + this.selectedDB.value
+         // this.$root.$emit("databaseChanged",
+         //   {selectedDatabase: this.selectedDatabase,availableDatabases:this.availableDatabases
+         //   }
+
+         // );
+        }
+
+        this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionDetails' + dbOption )
+          .then((response) => {
+            this.availableCollections = response.data
           })
           .catch(() => {
             this.$q.notify({

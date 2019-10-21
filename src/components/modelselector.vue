@@ -165,11 +165,11 @@
         let dbOption =""
         if(this.selectedDatabase!=null && this.selectedDatabase!="") {
           dbOption += "&rs:database=" + this.selectedDatabase.value
-          this.$root.$emit("databaseChanged",
+        /*  this.$root.$emit("databaseChanged",
             {selectedDatabase: this.selectedDatabase,availableDatabases:this.availableDatabases
             }
 
-            );
+            );*/
         }
 
           this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionDetails' + dbOption )
@@ -265,11 +265,11 @@
         let dbOption =""
         if(this.selectedDatabase!=null && this.selectedDatabase!="") {
           dbOption += "&rs:database=" + this.selectedDatabase.value
-          this.$root.$emit("databaseChanged",
-            {selectedDatabase: this.selectedDatabase,availableDatabases:this.availableDatabases
-            }
+         // this.$root.$emit("databaseChanged",
+         //   {selectedDatabase: this.selectedDatabase,availableDatabases:this.availableDatabases
+         //   }
 
-          );
+        //  );
         }
         //this.$axios.get('/v1/resources/modelDiscovery?rs:collection=' + collection.value)
         this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionModel&rs:collection=' + collection.value + dbOption)
