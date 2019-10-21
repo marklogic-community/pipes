@@ -727,6 +727,20 @@
         this.loadPopUpOpened = true;
 
       },
+      discoverDatabases() {
+        this.$axios.get('/v1/resources/vppBackendServices?rs:action=databasesDetails')
+          .then((response) => {
+            this.availableDatabases = response.data
+          })
+          .catch(() => {
+            this.$q.notify({
+              color: 'negative',
+              position: 'top',
+              message: 'Loading failed',
+              icon: 'report_problem'
+            })
+          })
+      },
       DblClickNode(block) {
 
         if (block.node_over.title=="Map values") {
@@ -827,7 +841,7 @@
       this.$root.$on("exportGraphCall", this.exportDHFModule);
       this.$root.$on("nodeDblClicked", this.DblClickNode);
       this.$root.$on("loadDHFDefaultGraphCall", this.resetDhfDefaultGraph);
-
+      this.discoverDatabases()
       this.graph = new LiteGraph.LGraph();
       this.graph_canvas = new LiteGraph.LGraphCanvas(this.$refs["mycanvas"], this.graph);
 
