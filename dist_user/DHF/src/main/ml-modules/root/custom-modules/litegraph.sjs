@@ -13084,7 +13084,7 @@ if (typeof exports != "undefined") {
 
 
     if(subjectIsIRI) subject=sem.iri(subject)
-    if(objectIsIRI) object=sem.iri(subject)
+    if(objectIsIRI) object=sem.iri(object)
     predicate = sem.iri(predicate)
 
     this.setOutputData(0,sem.triple(subject,predicate,object));

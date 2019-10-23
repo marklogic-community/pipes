@@ -771,7 +771,7 @@
       },
       DblClickNode(block) {
 
-        if (block.node_over.title=="Map values") {
+        if (block.node_over && block.node_over.properties && block.node_over.properties.mapping) {
 
           if (block.node_over.properties != null) this.currentProperties = block.node_over.properties.mapping
           this.editJson = true
