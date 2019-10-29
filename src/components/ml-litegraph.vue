@@ -104,11 +104,11 @@
 
 
     <q-dialog v-model="showPreview">
-      <q-card>
+      <q-card >
         <q-card-section class="row items-center">
           <div class="text-h6">Preview</div>
         </q-card-section>
-        <q-card-section class="row">
+        <q-card-section class="row"  >
           <div style="min-width: 250px; max-width: 300px">
 
             <q-select :options="availableDB"  filled label="Use Database for input"
@@ -139,11 +139,14 @@
           </div>
         </q-card-section>
         <q-card-section>
-
+          <q-scroll-area style="height: 500px; max-width: 500px;">
+            <div v-for="n in 100" :key="n" class="q-py-xs">
           <vue-json-pretty
             :data="jsonFromPreview"
           >
           </vue-json-pretty>
+            </div>
+          </q-scroll-area>
         </q-card-section>
       </q-card>
     </q-dialog>
