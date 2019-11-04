@@ -86,7 +86,7 @@
           align="justify"
           narrow-indicator
         >
-          <q-tab name="metadata" label="Metadata" />
+          <q-tab name="metadata" label="Step details" />
           <q-tab name="sources" label="From Sources" />
           <q-tab name="entities" label="From Entities" />
           <q-tab name="file" label="From File" />
@@ -98,21 +98,21 @@
           <q-tab-panel name="metadata">
 
             <div class="q-gutter-md" style="max-width: 300px">
-              <q-input v-model="graphMetadata.title" filled label="Graph title" />
+              <q-input v-model="graphMetadata.title" filled label="Title" />
               <q-input
                 filled
                 v-model="graphMetadata.version"
-                label="Graph version"
+                label="Version"
                 mask="##.##"
                 fill-mask
                 hint="Mask: major.minor"
               />
-              <q-input v-model="graphMetadata.author" filled label="Graph author" />
+              <q-input v-model="graphMetadata.author" filled label="Author" />
               <q-input
                 v-model="graphMetadata.description"
                 filled
                 type="textarea"
-                label="Graph description"
+                label="Description"
               />
             </div>
 

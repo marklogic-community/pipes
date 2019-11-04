@@ -3,7 +3,7 @@
 
     <vue-dropzone ref="myVueDropzone" id="dropzone" :options="dropzoneOptions" v-on:vdropzone-files-added="added" :useCustomSlot=true>
       <div class="dropzone-custom-content">
-        <h5 class="dropzone-custom-title">Upload full graph or CSV</h5>
+        <h5 class="dropzone-custom-title">Drop a file to upload full graph or CSV</h5>
         <div class="subtitle">CSV format is: source;sourceField;target;targetField;type</div>
       </div>
     </vue-dropzone>
