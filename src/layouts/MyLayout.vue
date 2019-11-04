@@ -26,7 +26,7 @@
 
         <q-btn-group>
 
-          <q-btn flat round dense icon="folder_open" size="lg" @click.stop="loadDHFDefaultGraph()">
+          <q-btn flat round dense icon="fas fa-file" size="lg" @click.stop="loadDHFDefaultGraph()">
             <q-tooltip>
               Reset the graph with a default DHF config
             </q-tooltip>
@@ -34,7 +34,7 @@
           </q-btn>
           <!--  <q-btn flat round dense icon="play_arrow" size="lg" @click.stop="executeGraph()"/> -->
 
-          <q-btn flat round dense icon="insert_drive_file" size="lg" @click.stop="downloadGraph()">
+          <q-btn flat round dense icon="fas fa-file-download" size="lg" @click.stop="downloadGraph()">
             <q-tooltip>
               Download a copy of the current graph locally
             </q-tooltip>
@@ -50,13 +50,13 @@
               Load a graph from the staging DB
             </q-tooltip>
           </q-btn>
-          <q-btn flat round dense icon="play_arrow" size="lg" @click.stop="executeGraph()">
+          <q-btn flat round dense icon="fas fa-play" size="lg" @click.stop="executeGraph()">
             <q-tooltip>
               Preview Execute Graph
             </q-tooltip>
 
           </q-btn>
-          <q-btn flat round dense icon="code" size="lg" @click.stop="exportDHFModule()">
+          <q-btn flat round dense icon="fas fa-file-code" size="lg" @click.stop="exportDHFModule()">
             <q-tooltip>
               Export DHF custom step module
             </q-tooltip>
