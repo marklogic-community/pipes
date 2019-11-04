@@ -2,7 +2,7 @@
   "name": "DataHubVisualProgrammingPlugin",
   "version": "0.1.0",
   "description": "A Quasar Framework app",
-  "productName": "executiongraphfront",
+  "productName": "Visual Programming Plugin",
   "cordovaId": "",
   "author": "epoilvet <#XB0m2019&>",
   "private": true,
