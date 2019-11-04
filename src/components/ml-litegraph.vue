@@ -140,7 +140,7 @@
         </q-card-section>
         <q-card-section>
           <q-scroll-area style="height: 500px; max-width: 500px;">
-            <div v-for="n in 100" :key="n" class="q-py-xs">
+            <div class="q-py-xs">
           <vue-json-pretty
             :data="jsonFromPreview"
           >
@@ -188,6 +188,12 @@
     data() {
       return {
         editJson: false,
+        graphMetadata:{
+          title:"",
+          version:"00.01",
+          author:"",
+          description:""
+        },
         columns: [
           {name: 'source', align: 'left', label: 'Source', field: 'source', sortable: true},
           {name: 'target', label: 'Target', field: 'target', sortable: true, align: 'left'},
@@ -251,6 +257,13 @@
 
         this.graph.configure(graph.executionGraph)
 
+
+
+          if(graph.metadata && graph.metadata.title !=null) this.graphMetadata.title = graph.metadata.title; else this.graphMetadata.title =""
+          if(graph.metadata && graph.metadata.author !=null) this.graphMetadata.author = graph.metadata.author; else this.graphMetadata.author =""
+          if(graph.metadata && graph.metadata.version !=null) this.graphMetadata.version = graph.metadata.version;else this.graphMetadata.version =""
+          if(graph.metadata && graph.metadata.description !=null) this.graphMetadata.description = graph.description; else this.graphMetadata.description =""
+          this.$root.$emit("initGraphMetadata",this.graphMetadata)
 
       }
 
@@ -401,7 +414,7 @@
           {
             "label": map.sourceField,
             "field" :  map.sourceField,
-            "path":  "//"  +  map.sourceField
+            "path":  "//text('"  +  map.sourceField + "')"
           }
 
 
@@ -413,7 +426,7 @@
           {
             "label": map.targetField,
             "field" :  map.targetField,
-            "path":  "//"  +  map.targetField
+            "path":  "//text('"  +  map.targetField + "')"
           }
           )
 
@@ -421,13 +434,14 @@
 
         let ii = 0
         let oi = 0
+        let blockCache ={}
         Object.keys(blocks).map(item => {
 
           this.createBlock(blocks[item])
           let tmpBlock = LiteGraph.createNode(blocks[item].source + "/" + blocks[item].collection);
           tmpBlock.pos = [400 + (ii++) * 200, 200 + (ii++) * 200];
           this.graph.add(tmpBlock);
-          blocks[item].block = tmpBlock;
+          blockCache[item] = tmpBlock;
         })
         /*
             Object.keys(outputs).map(item => {
@@ -440,16 +454,16 @@
             })
             */
 
-        for (let map of mappings) {
+     for (let map of mappings) {
 
 
           if (map.source != null && map.target != null && map.sourceField != null && map.targetField != null && map.source != "" && map.target != "" && map.sourceField != "" && map.targetField != "") {
-            console.log(map.sourceField)
-            console.log(blocks[map.target].block.ioSetup)
-            blocks[map.source].block.connect(
-              blocks[map.source].block.ioSetup.outputs["//" + map.sourceField],
-              blocks[map.target].block.id,
-              blocks[map.target].block.ioSetup.inputs["//" + map.targetField])
+           // console.log(map.sourceField)
+           // console.log(blocks[map.target].block.ioSetup)
+            blockCache[map.source].connect(
+              blockCache[map.source].ioSetup.outputs["//text('" + map.sourceField +"')"],
+              blockCache[map.target].id,
+              blockCache[map.target].ioSetup.inputs["//text('" + map.targetField +"')"])
 
           }
 
@@ -525,8 +539,31 @@
 
 
       },
+      downloadGraph(){
+
+
+        let jsonGraph = this.graph.serialize()
+        let graphDef = {
+          models: (this.models != null) ? this.models : [],
+          executionGraph: jsonGraph,
+          name: this.graphName,
+          metadata: this.graphMetadata
+
+        }
+
+
+        var blob = new Blob([JSON.stringify(graphDef)], {
+          type: "text/plain;charset=utf-8",
+          endings: "transparent"
+        });
+        let name =""
+        if(this.graphMetadata && this.graphMetadata.title!=null && this.graphMetadata.title!="") name +=this.graphMetadata.title; else name += "currentGraph"
+        if(this.graphMetadata && this.graphMetadata.version!=null && this.graphMetadata.version!="") name += "-" + this.graphMetadata.version
+        saveAs(blob, name  + ".json");
+
+      },
       exportDHFModule() {
-        console.log("export DHF module")
+        //console.log("export DHF module")
         let jsonGraph = this.graph.serialize()
         let request = {
           models: (this.models != null) ? this.models : [],
@@ -647,7 +684,8 @@
         let graphDef = {
           models: (this.models != null) ? this.models : [],
           executionGraph: jsonGraph,
-          name: this.graphName
+          name: this.graphName,
+          metadata: this.graphMetadata
 
         }
 
@@ -706,21 +744,21 @@
           collection: this.collectionForPreview.value,
           collectionRandom: this.randomDocPreview
         }
-
+        console.log(jsonGraph)
         this.$axios.post('/v1/resources/executeGraph' + dbOption , request)
           .then((response) => {
 
             this.jsonFromPreview = response.data
 
           })
-          .catch(() => {
+        /*  .catch(() => {
             this.$q.notify({
               color: 'negative',
               position: 'top',
               message: 'Graph execution failed',
               icon: 'report_problem'
             })
-          })
+          })*/
 
       },
       saveGraph(event) {
@@ -868,7 +906,9 @@
       }.bind(this))
       this.$root.$on("databaseChanged", this.setCurrrentDatabase);
       this.$root.$on("saveGraphCall", this.saveGraph);
+      this.$root.$on("downloadGraphCall", this.downloadGraph);
       this.$root.$on("loadGraphCall", this.loadGraph);
+      this.$root.$on("loadGraphJsonCall", this.loadGraphFromJson);
       this.$root.$on("exportGraphCall", this.exportDHFModule);
       this.$root.$on("nodeDblClicked", this.DblClickNode);
       this.$root.$on("loadDHFDefaultGraphCall", this.resetDhfDefaultGraph);
@@ -890,10 +930,12 @@
       this.$axios.get('/statics/library/user.json')
         .then((response) => {
 //console.log(response.data)
+
           this.registerBlocksByConf(response.data, LiteGraph)
 
         })
-
+      console.log("emit init")
+      this.$root.$emit("initGraphMetadata",this.graphMetadata)
 
       /*
        node_const.pos = [200,200];

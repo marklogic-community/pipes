@@ -13,7 +13,7 @@
           aria-label="Sources"
         >
           <q-tooltip>
-            Create new Blocks
+            Settings
           </q-tooltip>
           <q-icon name="widgets"/>
         </q-btn>
@@ -34,7 +34,11 @@
           </q-btn>
           <!--  <q-btn flat round dense icon="play_arrow" size="lg" @click.stop="executeGraph()"/> -->
 
-
+          <q-btn flat round dense icon="insert_drive_file" size="lg" @click.stop="downloadGraph()">
+            <q-tooltip>
+              Download a copy of the current graph locally
+            </q-tooltip>
+          </q-btn>
           <q-btn flat round dense icon="cloud_upload" size="lg" @click.stop="saveGraph()">
             <q-tooltip>
               Save current grap to the staging DB
@@ -70,7 +74,7 @@
       bordered
       content-class="bg-grey-2"
       side="left"
-      :width="500"
+      :width="600"
     >
       <q-card>
         <q-tabs
@@ -82,14 +86,38 @@
           align="justify"
           narrow-indicator
         >
+          <q-tab name="metadata" label="Metadata" />
           <q-tab name="sources" label="From Sources" />
           <q-tab name="entities" label="From Entities" />
-          <q-tab name="csv" label="From Csv" />
+          <q-tab name="file" label="From File" />
         </q-tabs>
 
         <q-separator />
 
         <q-tab-panels v-model="tab" animated>
+          <q-tab-panel name="metadata">
+
+            <div class="q-gutter-md" style="max-width: 300px">
+              <q-input v-model="graphMetadata.title" filled label="Graph title" />
+              <q-input
+                filled
+                v-model="graphMetadata.version"
+                label="Graph version"
+                mask="##.##"
+                fill-mask
+                hint="Mask: major.minor"
+              />
+              <q-input v-model="graphMetadata.author" filled label="Graph author" />
+              <q-input
+                v-model="graphMetadata.description"
+                filled
+                type="textarea"
+                label="Graph description"
+              />
+            </div>
+
+
+          </q-tab-panel>
           <q-tab-panel name="sources">
 
             <modelselector></modelselector>
@@ -100,7 +128,7 @@
             <entityselector></entityselector>
           </q-tab-panel>
 
-          <q-tab-panel name="csv">
+          <q-tab-panel name="file">
 
            <csv-loader></csv-loader>
           </q-tab-panel>
@@ -135,7 +163,13 @@
       return {
         leftDrawerOpen: this.$q.platform.is.desktop,
         rightDrawerOpen: this.$q.platform.is.desktop,
-        tab:"sources"
+        tab:"sources",
+        graphMetadata:{
+          title:"",
+          version:"00.01",
+          author:"",
+          description:""
+        }
       }
     },
     methods: {
@@ -156,6 +190,10 @@
       this.$root.$emit("saveGraphCall");
 
 
+    },
+    downloadGraph() {
+      this.$root.$emit("downloadGraphCall");
+
     }
   ,
     loadGraph() {
@@ -171,6 +209,10 @@
 
       this.$root.$emit("loadDHFDefaultGraphCall");
       this.leftDrawerOpen = false
+    },
+    setGraphMetadata(meta){
+      console.log(meta)
+      this.graphMetadata = meta
     }
 
 
@@ -181,6 +223,14 @@
       resultViewer,
       entityselector,
       csvLoader
+    },
+    beforeMount:function(){
+
+      console.log("init receive")
+      this.$root.$on("initGraphMetadata", this.setGraphMetadata );
+    },
+    mounted: function () {
+
     }
   }
 </script>
