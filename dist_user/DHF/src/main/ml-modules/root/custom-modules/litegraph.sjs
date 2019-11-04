@@ -12005,39 +12005,54 @@ if (typeof exports != "undefined") {
 
 
     },
-    {
-      "functionName" : "mapValues",
-      "blockName" : "Map values",
-      "library" : "string",
-      "inputs":[
-        {
-          name:"value",
-          type:"xs:string"}
-      ],
-      "properties" : [
-        {
-          name:"mapping",
-          type:[{"source":"srcVal","target": "targetVal"}]}
+    /* {
+            "functionName" : "mapValues",
+            "blockName" : "Map values",
+            "library" : "string",
+            "inputs":[
+                {
+                    name:"value",
+                    type:"xs:string"}
+            ],
+            "properties" : [
+                {
+                    name:"mapping",
+                    type:[{"source":"srcVal","target": "targetVal"}]}
 
-      ],
-      "outputs":[
-        {
-          "name": "mappedValue",
-          "type":"xs:string"
-        }
-      ],
-      "function":{
-        "ref":null,
-        "code" : "\
+            ],
+            "widgets": [
+                {
+                    "type": "combo",
+                    "name": "cast",
+                    "default": "string",
+                    "values": ["string","bool","date","int","float"]
+
+                }
+
+            ],
+            "outputs":[
+                {
+                    "name": "mappedValue",
+                    "type":"xs:string"
+                }
+            ],
+            "function":{
+                "ref":null,
+                "code" : "\
                let val = (this.getInputData(0)!=undefined)?this.getInputData(0):'';\
                let mappedValue = this.properties['mapping'].filter(item => {return item.source==val});\
+               if (this.cast.value=='bool'){\
+               if(mappedValue==\"true\") mappedValue=true;\
+               if(mappedValue==\"false\") mappedValue=false;\
+               }\
+               \
                 if(mappedValue.length >0) this.setOutputData( 0,mappedValue[0].target);\
                                       else  this.setOutputData( 0,null);"
 
 
-      }
-    }
-    ,
+            }
+        }
+        , */
     {
       "functionName" : "toEnvelope",
       "blockName" : "to Envelope",
@@ -12168,7 +12183,7 @@ if (typeof exports != "undefined") {
     code += config.inputs.map((input) => { return "this.addInput('" + input.name +  ((input.type)?"','" + input.type + "');":"');")}).join("")
     code += config.outputs.map((output) => { return "this.addOutput('" + output.name +  ((output.type)?"','" + output.type + "');":"');")}).join("")
     code += (config.properties!=null)?config.properties.map((property) => { return "this.addProperty('" + property.name +  ((property.type)?"','" + property.type + "');":"');")}).join(""):null;
-    code += (config.widgets!=null)?config.widgets.map((widget) => { return "this.addWidget('" + widget.type + "','" + widget.name + "','" + widget.default + "', function(v){}, { values:[" + JSON.stringify(widget.values) + "]} );"}).join(""):"";
+    code += (config.widgets!=null)?config.widgets.map((widget) => { return "this.addWidget('" + widget.type + "','" + widget.name + "','" + widget.default + "', function(v){}, { values:" + JSON.stringify(widget.values) + "} );"}).join(""):"";
 
     //code += "    this.serialize_widgets = true;"
 
@@ -12441,6 +12456,43 @@ if (typeof exports != "undefined") {
 
 //register in the system
   LiteGraph.registerNodeType("feature/Lookup", featureLookupBlock );
+
+
+
+  function mapValueBlock()
+  {
+    this.addInput("value");
+    this.addOutput("mappedValue");
+    this.mapping = this.addProperty("mapping" );
+    this.castOutput = this.addWidget("combo","castOutput", "string", function(v){},  { values:["string","bool","date","int","float"]} );
+
+  }
+
+//name to show
+  mapValueBlock.title = "mapValues";
+
+//function to call when the node is executed
+
+  mapValueBlock.prototype.onExecute = function()
+  {
+    let val = (this.getInputData(0)!=undefined)?this.getInputData(0):'';
+    let mappedValue = this.properties['mapping'].filter(item => {return item.source==val});
+    let output= mappedValue[0].target
+    if (this.castOutput.value=='bool'){
+      if(output=="true") output=true;
+      if(output=="false") output=false;
+    }
+
+    if(mappedValue.length >0) this.setOutputData( 0,output);
+    else  this.setOutputData( 0,null);
+
+
+  }
+
+//register in the system
+  LiteGraph.registerNodeType("string/Map values", mapValueBlock );
+
+
 
 
   /*  function cts_search(query,options,qualityWeight,forestIds)

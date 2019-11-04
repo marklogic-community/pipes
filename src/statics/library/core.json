@@ -546,6 +546,16 @@
       }
 
     ],
+    "widgets": [
+      {
+        "type": "combo",
+        "name": "castOutput",
+        "default": "string",
+        "values": ["string","bool"]
+
+      }
+
+    ],
     "outputs": [
       {
         "name": "mappedValue",

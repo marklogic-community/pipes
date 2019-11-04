@@ -93,9 +93,15 @@ function createGraphNodeFromModel(blockDef) {
     // if (blockDef.options.indexOf("fieldsOutputs") > -1) {
 
     let docNode = this.doc.input //xdmp.toJSON(this.doc.input);
+
     for (let i = 0; i < this.blockDef.fields.length; i++) {
 
+
       if (this.blockDef.options.indexOf("nodeInput") > -1) {
+        let docNodeRoot = docNode.xpath("/*/name(.)")
+        let start = this.blockDef.fields[i].path.indexOf("/" + docNodeRoot)
+        this.blockDef.fields[i].path=this.blockDef.fields[i].path.substring(start)
+
         let v= null
         let children = docNode.xpath( this.blockDef.fields[i].path + "//*")
         if(fn.count(children)>1)
@@ -184,6 +190,15 @@ function executeGraphFromJson(jsonGraph,uri, input,context){
 
   var LiteGraph = require("/custom-modules/litegraph").LiteGraph;
   var userBlocks = require("/custom-modules/userblockDefs");
+
+  /*
+  Library refactoring
+  var core = require("/custom-modules/core");
+  var user = require("/custom-modules/user");
+  core.init(LiteGraph);
+  user.init(LiteGraph);
+  */
+
 
   userBlocks.initUserBlocks(LiteGraph);
 

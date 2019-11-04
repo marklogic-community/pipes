@@ -716,8 +716,9 @@
 
         this.$axios.get('/statics/graph/dhfDefaultGraph.json')
           .then((response) => {
-
-            this.loadGraphFromJson(response.data)
+            let defaultGraph = response.data
+              defaultGraph.models = this.models
+            this.loadGraphFromJson(defaultGraph)
 
           })
       }
@@ -848,7 +849,7 @@
             return "this.addProperty('" + property.name + ((property.type) ? "'," + JSON.stringify(property.type) + ");" : "');")
           }).join("") : ""
           code += (config.widgets != null) ? config.widgets.map((widget) => {
-            return "this.addWidget('" + widget.type + "','" + widget.name + "','" + widget.default + "', function(v){}, { values:[" + JSON.stringify(widget.values) + "]} );"
+            return "this.addWidget('" + widget.type + "','" + widget.name + "','" + widget.default + "', function(v){}, { values:" + JSON.stringify(widget.values) + "} );"
           }).join("") : "";
           if (config.width)
             code += "    this.size = [" + config.width + "," + config.height + "];\n"
