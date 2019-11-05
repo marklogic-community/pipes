@@ -209,6 +209,7 @@
     name: 'PageIndex',
     data() {
       return {
+        currentCtsQuery:"",
         editQuery:false,
         editJson: false,
         graphMetadata:{
@@ -800,6 +801,27 @@
         this.$axios.get('/v1/resources/vppBackendServices?rs:action=databasesDetails')
           .then((response) => {
             this.availableDB = response.data
+
+            this.$axios.get('/statics/library/core.json')
+              .then((response) => {
+                //console.log(response.data)
+                this.registerBlocksByConf(response.data, LiteGraph)
+
+              })
+
+            this.$axios.get('/statics/library/user.json')
+              .then((response) => {
+//console.log(response.data)
+
+                this.registerBlocksByConf(response.data, LiteGraph)
+
+              })
+            console.log("emit init")
+            this.$root.$emit("initGraphMetadata",this.graphMetadata)
+
+            this.discoverCollections()
+
+
           })
           .catch(() => {
             this.$q.notify({
@@ -954,22 +976,7 @@
 
 
 
-      this.$axios.get('/statics/library/core.json')
-        .then((response) => {
-          //console.log(response.data)
-          this.registerBlocksByConf(response.data, LiteGraph)
 
-        })
-
-      this.$axios.get('/statics/library/user.json')
-        .then((response) => {
-//console.log(response.data)
-
-          this.registerBlocksByConf(response.data, LiteGraph)
-
-        })
-      console.log("emit init")
-      this.$root.$emit("initGraphMetadata",this.graphMetadata)
 
       /*
        node_const.pos = [200,200];
@@ -1001,7 +1008,6 @@
 
       //  this.viewer.appendChild(formatter.render());
 
-      this.discoverCollections()
     }
     ,
     created() {

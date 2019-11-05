@@ -163,7 +163,7 @@
       return {
         leftDrawerOpen: this.$q.platform.is.desktop,
         rightDrawerOpen: this.$q.platform.is.desktop,
-        tab:"sources",
+        tab:"metadata",
         graphMetadata:{
           title:"",
           version:"00.01",
