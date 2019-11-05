@@ -12423,6 +12423,7 @@ if (typeof exports != "undefined") {
     this.addOutput("value");
     this.query = this.addWidget("text","query", "", function(v){}, {} );
     this.valuePath = this.addWidget("text","valuePath", "", function(v){}, {} );
+    this.ctsQuery = this.addProperty("ctsQuery" );
 
   }
 
@@ -12442,7 +12443,11 @@ if (typeof exports != "undefined") {
       let var1 = this.getInputData(1)
       let var2 = this.getInputData(2)
 
-      let template = "`"+ this.query.value +"`"
+      let template =""
+      if(this.properties.ctsQuery!=null)
+        template = "`"+ this.properties.ctsQuery +"`"
+      else
+        template = "`"+ this.query.value +"`"
       let result = eval(template)
       query = eval(result)
     }

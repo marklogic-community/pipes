@@ -3,6 +3,28 @@
     <canvas class="fixed" height='1000' ref="mycanvas" style='border: 1px solid' width='1800'></canvas>
 
 
+    <q-dialog persistent v-model="editQuery">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Edit Lookup Query</div>
+        </q-card-section>
+
+        <q-card-section>
+          <div class="q-pa-md" style="max-width: 600px;min-width:500px">
+            <q-input
+              v-model="currentCtsQuery"
+              filled
+              type="textarea"
+            />
+          </div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn color="primary" flat label="OK" v-close-popup/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
     <q-dialog persistent v-model="editJson">
       <q-card>
         <q-card-section>
@@ -187,6 +209,7 @@
     name: 'PageIndex',
     data() {
       return {
+        editQuery:false,
         editJson: false,
         graphMetadata:{
           title:"",
@@ -817,6 +840,16 @@
 
           if (block.node_over.properties != null) this.currentProperties = block.node_over.properties.mapping
           this.editJson = true
+
+
+          //console.log(this.$refs)
+
+        }
+
+        if (block.node_over && block.node_over.properties && block.node_over.properties.ctsQuery) {
+
+          if (block.node_over.properties != null) this.currentCtsQuery = block.node_over.properties.ctsQuery
+          this.editQuery = true
 
 
           //console.log(this.$refs)
