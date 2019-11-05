@@ -646,9 +646,9 @@
           "  let doc = content.value;\n" +
           "\n" +
           "  // let's just grab the root of the document if its a Document and not a type of Node (ObjectNode or XMLNode)\n" +
-          "  if (doc && (doc instanceof Document || doc instanceof XMLDocument)) {\n" +
-          "    doc = fn.head(doc.root);\n" +
-          "  }\n" +
+          "  //if (doc && (doc instanceof Document || doc instanceof XMLDocument)) {\n" +
+          "  //  doc = fn.head(doc.root);\n" +
+          "  //}\n" +
           "\n" +
           "  /*\n" +
           "  //get our instance, default shape of envelope is envelope/instance, else it'll return an empty object/array\n" +
