@@ -12640,7 +12640,11 @@ if (typeof exports != "undefined") {
   function formatDateTimeAuto(srcDate)
   {
     let moment = require("/custom-modules/moment-with-locales.min.sjs")
-    return moment(srcDate).format();
+    let result =  moment(srcDate).format();
+    if(result=="Invalid date")
+      return null;
+    else
+      return result
   }
   LiteGraph.wrapFunctionAsNode('feature/formatDateTimeAuto',formatDateTimeAuto,
     ['xs:string'],'xs:string')
@@ -12648,7 +12652,12 @@ if (typeof exports != "undefined") {
   function formatDateAuto(srcDate)
   {
     let moment = require("/custom-modules/moment-with-locales.min.sjs")
-    return moment(srcDate, ["MM-DD-YYYY", "YYYY-MM-DD","DD/MM/YYYY"]).format("YYYY-MM-DD");
+    let result = moment(srcDate, ["MM-DD-YYYY", "YYYY-MM-DD","DD/MM/YYYY"]).format("YYYY-MM-DD")
+    if(result=="Invalid date")
+      return null;
+    else
+      return result
+
   }
   LiteGraph.wrapFunctionAsNode('date/FormatDateAuto',formatDateAuto,
     ['xs:string'],'xs:string')
@@ -13099,7 +13108,9 @@ if (typeof exports != "undefined") {
     let moment = require("/custom-modules/moment-with-locales.min.sjs")
     let inputDate= this.getInputData(0)
     let format = this.format.value
-    this.setOutputData(0, fn.string(moment(inputDate, [format]).format('YYYY-MM-DD')) );
+    let result = fn.string(moment(inputDate, [format]).format('YYYY-MM-DD'))
+    if(result=="Invalid date") result = null;
+    this.setOutputData(0, result );
   }
 
 
