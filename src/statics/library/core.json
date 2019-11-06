@@ -933,5 +933,57 @@
       "ref": null,
       "code": ""
     }
+  },
+  {
+    "functionName": "selectCase",
+    "blockName": "selectCase",
+    "library": "feature",
+    "inputs": [
+      {
+        "name": "value2Test",
+        "type": null
+      },
+      {
+        "name": "input0",
+        "type": null
+      },
+      {
+        "name": "input1",
+        "type": null
+      },
+      {
+        "name": "input2",
+        "type": null
+      }
+
+    ],
+    "properties": [
+      {
+        "name": "testCases",
+        "type": "v1;0\nv2;1\nv3;2"
+      }
+    ],
+    "widgets": [
+      {
+        "type": "text",
+        "name": "nbInputs",
+        "default": "3",
+        "values": [],
+        "callback": "let nb = this.inputs.length;for(let i=0;i<nb;i++) {this.removeInput(0);} this.addInput('value2Test',null);for(let i=0;i<parseInt(v);i++) this.addInput('input' + i,null);"
+
+
+      }
+
+    ],
+    "outputs": [
+      {
+        "name": "value",
+        "type": "node"
+      }
+    ],
+    "function": {
+      "ref": null,
+      "code": ""
+    }
   }
 ]

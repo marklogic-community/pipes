@@ -13376,6 +13376,36 @@ if (typeof exports != "undefined") {
   }
   LiteGraph.registerNodeType("string/Split", split );
 
+  function selectCase()
+  {
+    this.addInput("value2Test",null);
+    this.addOutput("result","number");
+    this.addProperty("testCases");
+    var that = this;
+    this.slider = this.addWidget("text","nbInputs", 1, function(v){}, { min: 0, max: 1000} );
+    this.size = this.computeSize();
+    this.serialize_widgets = true;
+  }
+
+  selectCase.title = "selectCase";
+  selectCase.prototype.onExecute = function()
+  {
+
+    let value2test = String(this.getInputData(0));
+    let map2Output = {}
+    fn.tokenize(this.properties.testCases,"\n").toArray().map(item => {
+
+      item = fn.tokenize(item,";").toArray()
+      map2Output[item[0]]=parseInt(item[1])
+
+
+    })
+    let o = map2Output[value2test]
+
+    this.setOutputData(0, (o!=null)?this.getInputData(o + 1):value2test )
+
+  }
+  LiteGraph.registerNodeType("feature/selectCase", selectCase );
 
 })(this);
 

@@ -25,6 +25,28 @@
       </q-card>
     </q-dialog>
 
+    <q-dialog persistent v-model="editCases">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Edit Cases</div>
+        </q-card-section>
+
+        <q-card-section>
+          <div class="q-pa-md" style="max-width: 600px;min-width:500px">
+            <q-input
+              v-model="currentCases"
+              filled
+              type="textarea"
+            />
+          </div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn color="primary" flat label="OK" v-close-popup/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
     <q-dialog persistent v-model="editJson">
       <q-card>
         <q-card-section>
@@ -210,8 +232,10 @@
     data() {
       return {
         currentCtsQuery:"",
+        currentCases:"",
         editQuery:false,
         editJson: false,
+        editCases:false,
         graphMetadata:{
           title:"",
           version:"00.01",
@@ -877,6 +901,16 @@
           //console.log(this.$refs)
 
         }
+console.log(block.node_over.properties)
+        if (block.node_over && block.node_over.properties && block.node_over.properties.testCases) {
+
+          if (block.node_over.properties != null) this.currentCases = block.node_over.properties.testCases
+          this.editCases = true
+
+
+          //console.log(this.$refs)
+
+        }
 
 
       },
@@ -904,7 +938,7 @@
             return "this.addProperty('" + property.name + ((property.type) ? "'," + JSON.stringify(property.type) + ");" : "');")
           }).join("") : ""
           code += (config.widgets != null) ? config.widgets.map((widget) => {
-            return "this.addWidget('" + widget.type + "','" + widget.name + "','" + widget.default + "', function(v){}, { values:" + JSON.stringify(widget.values) + "} );"
+            return "this.addWidget('" + widget.type + "','" + widget.name + "','" + widget.default + "', function(v){"+ (widget.callback?widget.callback:"") +"}.bind(this), { values:" + JSON.stringify(widget.values) + "} );"
           }).join("") : "";
           if (config.width)
             code += "    this.size = [" + config.width + "," + config.height + "];\n"
