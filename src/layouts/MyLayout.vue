@@ -13,7 +13,7 @@
           aria-label="Sources"
         >
           <q-tooltip>
-            Settings
+            Settings and block creation
           </q-tooltip>
           <q-icon name="widgets"/>
         </q-btn>

@@ -1,9 +1,22 @@
 <template>
 
   <div class="column gutter-sm">
-    <div class="q-title">Create block from Sources</div>
 
 
+    <q-btn-group>
+      <q-btn label="Create block" @click="notifyBlockRequested()">
+        <q-tooltip>
+          Create and add the block top the library
+        </q-tooltip>
+      </q-btn>
+      <q-btn label="Save block" @click="saveBlock()">
+
+        <q-tooltip>
+          Save the block definition to the staging DB
+        </q-tooltip>
+      </q-btn>
+
+    </q-btn-group>
     <q-input v-model="blockName" stack-label label="Block name"/>
 
     <q-select
@@ -88,9 +101,9 @@
       </q-btn>
 
     </q-btn-group>
-
+    <q-input v-model="blockName" stack-label label="Block name"/>
     <q-list class="q-mt-md" link>
-      <q-item-label>Existing model definitions</q-item-label>
+      <q-item-label>Saved model definitions</q-item-label>
       <q-item tag="label" v-for="(item, index) in savedBlocks" v-bind:key="item.name"
               @click.native="getSavedBlock(item.uri)">
 
@@ -316,6 +329,17 @@
         }
           else
         {
+            if(this.blockName.indexOf(" - already saved")>=0)
+            {
+
+                this.$q.notify({
+                    color: 'negative',
+                    position: 'top',
+                    message: 'This name was already used, please check and reset if confirmed',
+                    icon: 'report_problem'
+                })
+            }
+            else{
 
           let blockDef = {
 
@@ -327,7 +351,8 @@
 
           }
           this.$root.$emit("blockRequested", blockDef);
-        }
+                this.blockName+=" - already saved"
+        }}
       }
     },
     mounted() {

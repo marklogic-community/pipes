@@ -1,7 +1,16 @@
 <template>
 
   <div class="column gutter-sm">
-    <div class="q-title">Create block from DHF Entities</div>
+
+    <q-btn-group>
+      <q-btn label="Create block" @click="notifyBlockRequested()">
+        <q-tooltip>
+          Create and add the block top the library (right click)
+        </q-tooltip>
+      </q-btn>
+
+
+    </q-btn-group>
   <q-select
           name="collectionSelector"
           v-model="selectedEntity"
@@ -19,15 +28,7 @@
             row-key="name"
     />
 
-      <q-btn-group>
-          <q-btn label="Create block" @click="notifyBlockRequested()">
-            <q-tooltip>
-              Create and add the block top the library (right click)
-            </q-tooltip>
-          </q-btn>
 
-
-      </q-btn-group>
   </div>
 </template>
 
