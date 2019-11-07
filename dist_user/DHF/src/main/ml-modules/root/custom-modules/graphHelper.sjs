@@ -233,6 +233,7 @@ function executeGraphFromJson(jsonGraph,uri, input,context){
   }
 
 
+  graph.stop()
 
 
   graph.addInput("input", "");
