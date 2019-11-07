@@ -82,8 +82,12 @@ function createGraphNodeFromModel(blockDef) {
         //if(xdmp.nodeKind(inputNode)=='document') inputNode = inputNode.toObject();
         //  if(xdmp.nodeKind(inputNode)!='document')  inputNode = xdmp.toJSON(inputNode);
         this.doc.input = inputNode;
-        if(fn.count(this.doc.input)==1 && xdmp.type(this.doc.input )=="untypedAtomic" && xdmp.nodeKind(this.doc.input)!="document")
-          this.doc.input=fn.head(xdmp.unquote(String(this.doc.input)))
+        //if(fn.count(this.doc.input)==1 && xdmp.type(this.doc.input )=="untypedAtomic" && xdmp.nodeKind(this.doc.input)!="document")
+
+        if(!this.doc.input.toObject) {
+
+          this.doc.input = fn.head(xdmp.unquote(String(this.doc.input)))
+        }
       }
     }
     if (this.blockDef.options.indexOf("getByUri")>-1)
@@ -98,16 +102,27 @@ function createGraphNodeFromModel(blockDef) {
 
 
       if (this.blockDef.options.indexOf("nodeInput") > -1) {
-        let docNodeRoot = docNode.xpath("/*/name(.)")
-        let start = this.blockDef.fields[i].path.indexOf("/" + docNodeRoot)
-        this.blockDef.fields[i].path=this.blockDef.fields[i].path.substring(start)
-
-        let v= null
-        let children = docNode.xpath( this.blockDef.fields[i].path + "//*")
+        //let docNodeRoot = docNode.xpath("/*/name(.)")
+        //let start = this.blockDef.fields[i].path.indexOf("/" + docNodeRoot)
+        //this.blockDef.fields[i].path=this.blockDef.fields[i].path.substring(start)
+        let path = "." + this.blockDef.fields[i].path
+        let v= docNode.xpath(path)
+        if(fn.count(v)==0) {
+          //let last = path.lastIndexOf("array-node()/object-node()")
+          if (fn.matches(path, "array-node\\('[\\s\\w]*'\\)/object-node\\(\\)")) {
+            let last = path.substring(path.lastIndexOf("array-node")).substring(path.indexOf("/object-node"))
+            path = "./" + path.substring(last + 12)
+            v = docNode.xpath(path)
+            if (fn.count(v) == 0) {
+              path = "./" + path.substring(path.lastIndexOf("/"))
+            }
+          }
+        }
+        let children = docNode.xpath( path + "//*")
         if(fn.count(children)>1)
-          v= docNode.xpath(this.blockDef.fields[i].path);
+          v= docNode.xpath(path).toArray();
         else
-          v= docNode.xpath(this.blockDef.fields[i].path + "/string()");
+          v=   docNode.xpath( path + "/string()");
         this.doc.output[this.blockDef.fields[i].field] = v
         /* let v = docNode.xpath("//" + this.blockDef.fields[i]);
          if (fn.count(v) == 1 && v.constructor != Array) v = docNode.xpath("//" + this.blockDef.fields[i] + "/string()");

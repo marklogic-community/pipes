@@ -237,22 +237,7 @@ function getDatabases() {
 
 }
 
-function getFieldsByCollection(collection) {
 
-  let doc = fn.head(fn.collection(collection))
-  let fields = []
-  for (let node of doc.xpath(".//*"))
-    fields.push(
-      {
-        label: node.xpath("name(.)"),
-        value: node.xpath("name(.)"),
-        type: node.nodeType
-      }
-    )
-
-  return fields
-
-}
 
 function getCollectionsModels(ctx) {
 
@@ -314,8 +299,12 @@ function getFieldsByCollection(collection) {
       for (let node of doc.xpath(".//*")
         ) {
         let path = xdmp.path(node)
-        path = fn.replace(path, "\\[\\d*\\]", "")
 
+        //path = fn.replace(path, "/object-node\\(\\)\\[\\d*\\]", "/object-node()")
+        path = fn.replace(path, "\\[\\d*\\]", "")
+        let parent = path.substring(0, path.lastIndexOf("/"))
+        if(fn.matches(parent,"array-node\\('[\\s\\w]*'\\)$"))
+          parent = parent.substring(0, parent.lastIndexOf("/"))
         if (fields[path] == null) fields[path] = {
           label: node.xpath("name(.)") + " [id" + i++ + "]",
           field: node.xpath("name(.)"),
@@ -323,7 +312,7 @@ function getFieldsByCollection(collection) {
           path: path,
           type: node.nodeType,
           children: [],
-          parent: path.substring(0, path.lastIndexOf("/"))
+          parent: parent
         }
         if (fields[path].parent == "") fields[path].parent = "/"
       }
@@ -332,6 +321,8 @@ function getFieldsByCollection(collection) {
       Object.keys(fields).map(item => {
         results.push(fields[item])
       })
+
+
       for (let path of Object.keys(fields)) {
 
         fields[path].children = results.filter(item => {

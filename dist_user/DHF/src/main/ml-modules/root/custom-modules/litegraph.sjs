@@ -10729,7 +10729,8 @@ LGraphNode.prototype.executeAction = function(action)
             for (var i = 0; i < this.outputs.length; i++) {
               let output = this.outputs[i];
               let value = this.subgraph.getOutputData(output.name);
-              if (typeof (value) == "object")
+
+              if (typeof (value) == "object" && !value.toObject)
                 value = JSON.parse(JSON.stringify(value))
               if (outputs[i] == null) outputs[i] = [];
               outputs[i].push(value)
