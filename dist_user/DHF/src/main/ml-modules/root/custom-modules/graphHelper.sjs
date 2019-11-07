@@ -1,3 +1,9 @@
+
+var LiteGraph = require("/custom-modules/litegraph").LiteGraph;
+var userBlocks = require("/custom-modules/userblockDefs");
+var registeredNodeType=false
+var graph =null
+
 function extractModelByCollectionMatch(collectionsRoot){
   let models =[]
   for (let coll of cts.collectionMatch(collectionsRoot + "*")){
@@ -196,6 +202,8 @@ function executeGraphStep(doc,uri,config,context){
 }
 
 
+
+
 function executeGraphFromJson(jsonGraph,uri, input,context){
 
 
@@ -203,8 +211,6 @@ function executeGraphFromJson(jsonGraph,uri, input,context){
   // let markLogicNodes = require("/lib/marklogicNodes")
 
 
-  var LiteGraph = require("/custom-modules/litegraph").LiteGraph;
-  var userBlocks = require("/custom-modules/userblockDefs");
 
   /*
   Library refactoring
@@ -215,15 +221,20 @@ function executeGraphFromJson(jsonGraph,uri, input,context){
   */
 
 
-  userBlocks.initUserBlocks(LiteGraph);
-
-  for(let model of jsonGraph.models)
-    LiteGraph.registerNodeType(model.source + "/" + model.collection, createGraphNodeFromModel(model));
 
 
-  var graph = new LiteGraph.LGraph();
+  if(registeredNodeType==false) {
+    for (let model of jsonGraph.models)
+      LiteGraph.registerNodeType(model.source + "/" + model.collection, createGraphNodeFromModel(model));
+    userBlocks.initUserBlocks(LiteGraph);
+    graph = new LiteGraph.LGraph();
+    graph.configure(jsonGraph.executionGraph)
+    registeredNodeType=true
+  }
 
-  graph.configure(jsonGraph.executionGraph)
+
+
+
   graph.addInput("input", "");
   graph.addInput("uri", "");
   graph.addInput("collections", "");

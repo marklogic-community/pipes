@@ -620,6 +620,7 @@
         }
 
         let begin = "const DataHub = require(\"/data-hub/5/datahub.sjs\");\n" +
+            "var gHelper  = require(\"/custom-modules/graphHelper\")\n" +
           "const datahub = new DataHub();\n" +
           "\n" +
           "\n" +
@@ -693,7 +694,6 @@
           "\n" +
           "  //insert code to manipulate the instance, triples, headers, uri, context metadata, etc.\n" +
           "\n" +
-          "  let gHelper  = require(\"/custom-modules/graphHelper\")\n" +
           "\n" +
           "  let results = gHelper.executeGraphStep(doc,id,getGraphDefinition(),{collections: xdmp.documentGetCollections(id)})\n" +
           /* "\n" +
