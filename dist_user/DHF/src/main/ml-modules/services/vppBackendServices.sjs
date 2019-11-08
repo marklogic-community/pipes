@@ -294,33 +294,34 @@ function getFieldsByCollection(collection) {
   return {
     FieldsByCollection: function FieldsByCollection() {
       let i = 0
+      let fields = {}
       let nbDocs = fn.count(fn.collection(collection))
-for(let j=0;j<10;j++) {
-  let doc = fn.head(fn.subsequence(fn.collection(collection), xdmp.random(nbDocs )))
-  //let doc = fn.head(fn.collection(collection))
-  let fields = {}
-  for (let node of doc.xpath(".//*")
-    ) {
-    let path = xdmp.path(node)
+      for(let j=0;j<10;j++) {
+        let doc = fn.head(fn.subsequence(fn.collection(collection), xdmp.random(nbDocs )))
+        //let doc = fn.head(fn.collection(collection))
 
-    //path = fn.replace(path, "/object-node\\(\\)\\[\\d*\\]", "/object-node()")
-    path = fn.replace(path, "\\[\\d*\\]", "")
-    let parent = path.substring(0, path.lastIndexOf("/"))
-    if (fn.matches(parent, "array-node\\('[\\s\\w]*'\\)$"))
-      parent = parent.substring(0, parent.lastIndexOf("/"))
-    path = path.replace(/array-node\('([\s\w]*)'\)/g, "$1").replace(/\/object-node\(\)/g, "")
-    if (fields[path] == null) fields[path] = {
-      label: node.xpath("name(.)") + " [id" + i++ + "]",
-      field: node.xpath("name(.)"),
-      value: node.xpath("name(.)"),
-      path: path,
-      type: node.nodeType,
-      children: [],
-      parent: parent
-    }
-    if (fields[path].parent == "") fields[path].parent = "/"
-  }
-}
+        for (let node of doc.xpath(".//*")
+          ) {
+          let path = xdmp.path(node)
+
+          //path = fn.replace(path, "/object-node\\(\\)\\[\\d*\\]", "/object-node()")
+          path = fn.replace(path, "\\[\\d*\\]", "")
+          let parent = path.substring(0, path.lastIndexOf("/"))
+          if (fn.matches(parent, "array-node\\('[\\s\\w]*'\\)$"))
+            parent = parent.substring(0, parent.lastIndexOf("/"))
+          path = path.replace(/array-node\('([\s\w]*)'\)/g, "$1").replace(/\/object-node\(\)/g, "")
+          if (fields[path] == null) fields[path] = {
+            label: node.xpath("name(.)") + " [id" + i++ + "]",
+            field: node.xpath("name(.)"),
+            value: node.xpath("name(.)"),
+            path: path,
+            type: node.nodeType,
+            children: [],
+            parent: parent
+          }
+          if (fields[path].parent == "") fields[path].parent = "/"
+        }
+      }
       let results = []
       Object.keys(fields).map(item => {
         results.push(fields[item])
