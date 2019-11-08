@@ -40,8 +40,12 @@ export default {
       fileReader.addEventListener("load", function () {
         console.log(fileReader.result)
 
-        if(fileReader.result.includes("executionGraph"))
-          this.$root.$emit("loadGraphJsonCall",JSON.parse(fileReader.result));
+        if(fileReader.result.includes("executionGraph")) {
+            let input =String(fileReader.result)
+            input= input.replace(/array-node\('([\s\w]*)'\)/g, "$1").replace(/\/object-node\(\)/g, "")
+            console.log(input)
+            this.$root.$emit("loadGraphJsonCall", JSON.parse(input));
+        }
         else {
           this.$root.$emit("csvLoadingRequested",fileReader.result);
         }

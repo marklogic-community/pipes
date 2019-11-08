@@ -95,7 +95,7 @@
         <div class="layout-padding">
           <q-item-label :header="true">Save current graph</q-item-label>
           <div>
-            <q-input stack-label="Graph name" v-model="graphName"/>
+            <q-input stack-label="true" label="Graph name" v-model="graphName"/>
           </div>
           <div class="q-pa-sm">
             <q-btn
