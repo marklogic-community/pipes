@@ -305,11 +305,12 @@ function getFieldsByCollection(collection) {
         let parent = path.substring(0, path.lastIndexOf("/"))
         if(fn.matches(parent,"array-node\\('[\\s\\w]*'\\)$"))
           parent = parent.substring(0, parent.lastIndexOf("/"))
+        path = path.replace(/array-node\('([\s\w]*)'\)/g,"$1").replace(/\/object-node\(\)/g,"")
         if (fields[path] == null) fields[path] = {
           label: node.xpath("name(.)") + " [id" + i++ + "]",
           field: node.xpath("name(.)"),
           value: node.xpath("name(.)"),
-          path: path.replace(/array-node\('([\s\w]*)'\)/g,"$1").replace(/\/object-node\(\)/g,""),
+          path: path,
           type: node.nodeType,
           children: [],
           parent: parent
