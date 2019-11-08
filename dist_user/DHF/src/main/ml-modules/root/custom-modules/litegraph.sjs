@@ -1100,7 +1100,9 @@
         node.constructor === LiteGraph.Subgraph &&
         eventname != "onExecute"
       ) {
+        //  fix ?
         if (node.mode == mode) {
+
           node.sendEventToAllNodes(eventname, params, mode);
         }
         continue;
@@ -10746,7 +10748,10 @@ LGraphNode.prototype.executeAction = function(action)
     }
 
 
+
   };
+
+
 
   Subgraph.prototype.sendEventToAllNodes = function(eventname, param, mode) {
     if (this.enabled) {
@@ -10853,6 +10858,12 @@ LGraphNode.prototype.executeAction = function(action)
     return data;
   };
 //no need to define node.configure, the default method detects node.subgraph and passes the object to node.subgraph.configure()
+
+  //fix ?
+  Subgraph.prototype.onStop= function (){
+
+    this.sendEventToAllNodes("onStop");
+  }
 
   Subgraph.prototype.clone = function() {
     var node = LiteGraph.createNode(this.type);
