@@ -113,16 +113,16 @@ function createGraphNodeFromModel(blockDef) {
         //this.blockDef.fields[i].path=this.blockDef.fields[i].path.substring(start)
         let path = "." + this.blockDef.fields[i].path
         let v= docNode.xpath(path)
-        if(fn.count(v)==0) {
+        if(v==null || fn.count(v)==0) {
           //let last = path.lastIndexOf("array-node()/object-node()")
-          if (fn.matches(path, "array-node\\('[\\s\\w]*'\\)/object-node\\(\\)")) {
-            let last = path.substring(path.lastIndexOf("array-node")).substring(path.indexOf("/object-node"))
-            path = "./" + path.substring(last + 12)
-            v = docNode.xpath(path)
-            if (fn.count(v) == 0) {
-              path = "./" + path.substring(path.lastIndexOf("/"))
-            }
+          // if (fn.matches(path, "array-node\\('[\\s\\w]*'\\)/object-node\\(\\)")) {
+          let last = path.substring(path.lastIndexOf("array-node")).substring(path.indexOf("/object-node"))
+          path = "./" + path.substring(last + 12)
+          v = docNode.xpath(path)
+          if (v==null || fn.count(v) == 0) {
+            path = "./" + path.substring(path.lastIndexOf("/"))
           }
+          //}
         }
         let children = docNode.xpath( path + "//*")
         if(fn.count(children)>1)

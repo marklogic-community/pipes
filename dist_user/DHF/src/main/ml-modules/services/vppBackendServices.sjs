@@ -309,7 +309,7 @@ function getFieldsByCollection(collection) {
           label: node.xpath("name(.)") + " [id" + i++ + "]",
           field: node.xpath("name(.)"),
           value: node.xpath("name(.)"),
-          path: path,
+          path: path.replace(/array-node\('([\s\w]*)'\)/g,"$1").replace(/\/object-node\(\)/g,""),
           type: node.nodeType,
           children: [],
           parent: parent
