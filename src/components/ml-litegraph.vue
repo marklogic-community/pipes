@@ -821,6 +821,28 @@
         this.loadPopUpOpened = true;
 
       },
+        selectNode(block){
+          console.log(block)
+            let message = null
+            if ( block.properties.testCases)
+                message= 'Double click the box to edit the test cases'
+
+
+            if ( block.properties.mapping)
+                message= 'Double click the box to edit the mapping rules'
+
+            if (block.properties.ctsQuery)
+                message= 'Double click the box to edit the lookup query'
+
+            if(message!=null)
+                this.$q.notify({
+                    color: 'secondary',
+                    position: 'center',
+                    message: message,
+                    icon: 'info',
+                    timeout:800
+                })
+        },
       discoverDatabases() {
         this.$axios.get('/v1/resources/vppBackendServices?rs:action=databasesDetails')
           .then((response) => {
@@ -901,7 +923,7 @@
           //console.log(this.$refs)
 
         }
-console.log(block.node_over.properties)
+
         if (block.node_over && block.node_over.properties && block.node_over.properties.testCases) {
 
           if (block.node_over.properties != null) this.currentCases = block.node_over.properties.testCases
@@ -948,7 +970,8 @@ console.log(block.node_over.properties)
           code += "};"
 
           code += config.functionName + ".title = '" + config.blockName + "';";
-
+          code += config.functionName + ".prototype.notify = function(node){this.$root.$emit(\"nodeSelected\",node)}.bind(this);";
+          code+= config.functionName + ".prototype.onSelected = function(){this.notify(this) };"
           code += config.functionName + ".prototype.onDblClick = function(e,pos,object){this.$root.$emit(\"nodeDblClicked\",object) }.bind(this);"
           code += config.functionName + ".prototype.onExecute = function(){  ";
 
@@ -1001,6 +1024,7 @@ console.log(block.node_over.properties)
       this.$root.$on("loadGraphJsonCall", this.loadGraphFromJson);
       this.$root.$on("exportGraphCall", this.exportDHFModule);
       this.$root.$on("nodeDblClicked", this.DblClickNode);
+        this.$root.$on("nodeSelected", this.selectNode);
       this.$root.$on("loadDHFDefaultGraphCall", this.resetDhfDefaultGraph);
       this.discoverDatabases()
       this.graph = new LiteGraph.LGraph();
