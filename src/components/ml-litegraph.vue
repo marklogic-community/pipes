@@ -170,12 +170,14 @@
                 <q-icon name="fas fa-tags" @click.stop />
               </template>
             </q-select>
+            <q-input v-if="!randomDocPreview"   v-model="docUri" label="Optional doc URI" />
           </div>
 
           <q-toggle
             label="Random doc"
             v-model="randomDocPreview"
           />
+
 
           <div class="q-pa-md q-gutter-sm">
 
@@ -264,7 +266,8 @@
         jsoneditor: null,
         availableCollections: [],
         selectedDB:null,
-        availableDB:[]
+        availableDB:[],
+          docUri:null
 
 
       }
@@ -791,7 +794,8 @@
 
           },
           collection: this.collectionForPreview.value,
-          collectionRandom: this.randomDocPreview
+          collectionRandom: this.randomDocPreview,
+            previewUri : this.docUri
         }
         console.log(jsonGraph)
         this.$axios.post('/v1/resources/executeGraph' + dbOption , request)

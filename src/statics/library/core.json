@@ -550,7 +550,9 @@
     "properties": [
       {
         "name": "mapping",
-        "type": [{"source": "srcVal", "target": "targetVal"}]
+        "type": [{"source": "#NULL#", "target": "#NULL#"},
+          {"source": "#EMPTY#", "target": "#EMPTY#"}
+        ]
       }
 
     ],

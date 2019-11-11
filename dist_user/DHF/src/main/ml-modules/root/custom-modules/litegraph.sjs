@@ -10696,6 +10696,12 @@ LGraphNode.prototype.executeAction = function(action)
 
   Subgraph.prototype.onExecute = function() {
     this.enabled = this.getInputOrProperty("enabled");
+
+    //reset all outputs
+    for (var i = 0; i < this.outputs.length; i++) {
+      this.setOutputData(i, undefined)
+    }
+
     if (!this.enabled) {
       return;
     }
@@ -10745,6 +10751,7 @@ LGraphNode.prototype.executeAction = function(action)
       )
         ;
       }
+
     }
 
 
@@ -12492,16 +12499,24 @@ if (typeof exports != "undefined") {
 
   mapValueBlock.prototype.onExecute = function()
   {
-    let val = (this.getInputData(0)!=undefined)?this.getInputData(0):'';
+    let val = this.getInputData(0);
+    if(val==undefined) val ="#NULL#"
+    if(val==null) val ="#NULL#"
+    if(val=="") val ="#EMPTY#"
     let mappedValue = this.properties['mapping'].filter(item => {return item.source==val});
-    let output= mappedValue[0].target
+
+    let output= val
+    if(mappedValue!=null && mappedValue.length>0) output=mappedValue[0].target
     if (this.castOutput.value=='bool'){
       if(output=="true") output=true;
       if(output=="false") output=false;
     }
 
-    if(mappedValue.length >0) this.setOutputData( 0,output);
-    else  this.setOutputData( 0,null);
+    if(output=="#NULL#") output = null
+    if(output=="#EMPTY#") output =""
+
+    this.setOutputData( 0,output);
+
 
 
   }

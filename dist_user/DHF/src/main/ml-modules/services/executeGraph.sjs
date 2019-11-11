@@ -1,17 +1,22 @@
+var gHelper  = require("/custom-modules/graphHelper")
 function InvokeExecuteGraph(input){
 
 
   return {
     execute: function execute() {
-      let gHelper  = require("/custom-modules/graphHelper")
+
       let execContext = input.toObject()
       let doc = null
       if(execContext.collectionRandom)
         doc= fn.head(fn.subsequence(fn.collection(execContext.collection),xdmp.random(fn.count(fn.collection(execContext.collection)) + 1)))
-      else
-        doc = fn.head(fn.collection(execContext.collection))
+      else {
+        if(execContext.previewUri==null || execContext.previewUri=="")
+          doc = fn.head(fn.collection(execContext.collection))
+        else
+          doc = cts.doc(execContext.previewUri)
+      }
       let uri = fn.baseUri(doc)
-      return gHelper.executeGraphFromJson(execContext.jsonGraph,uri, doc,{collections: xdmp.documentGetCollections(uri)});
+      return gHelper.executeGraphFromJson(execContext.jsonGraph,uri, doc,{collections: xdmp.documentGetCollections(uri)})
 
     }
   }
