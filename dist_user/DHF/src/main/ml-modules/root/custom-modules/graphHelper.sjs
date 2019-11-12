@@ -136,12 +136,12 @@ function createGraphNodeFromModel(blockDef) {
       }
 
       if (this.blockDef.options.indexOf("fieldsInputs") > -1) {
-        if (this.getInputData(this.ioSetup.inputs[blockDef.fields[i].path]) != null) {
+        //  if (this.getInputData(this.ioSetup.inputs[blockDef.fields[i].path]) != undefined) {
 
 
-          this.doc.output[this.blockDef.fields[i].field] = this.getInputData(this.ioSetup.inputs[this.blockDef.fields[i].path]);
+        this.doc.output[this.blockDef.fields[i].field] = this.getInputData(this.ioSetup.inputs[this.blockDef.fields[i].path]);
 
-        }  }
+      }  //}
       if (this.blockDef.options.indexOf("fieldsOutputs") > -1)
         this.setOutputData(this.ioSetup.outputs[blockDef.fields[i].path], this.doc.output[this.blockDef.fields[i].field]);
 

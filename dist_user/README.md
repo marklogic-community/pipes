@@ -19,7 +19,9 @@ File is ./proxy_rule.js
 
 ## Run from ./dist/DesignerUI
 
-$ quasar serve --proxy ../proxy_rule.js
+$ quasar serve --proxy ../proxy_rule.js     
+You can also use https with this option --https 
+
 
 
 ## For usage demo see:
