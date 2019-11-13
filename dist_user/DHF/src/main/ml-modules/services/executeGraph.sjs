@@ -29,7 +29,13 @@ function get(context, params) {
 
 
 };
-
+function isIterable(obj) {
+  // checks for null and undefined
+  if (obj == null) {
+    return false;
+  }
+  return typeof obj[Symbol.iterator] === 'function';
+}
 function post(context, params, input) {
 
   const invokeExecuteGraph = InvokeExecuteGraph(input)
@@ -37,15 +43,27 @@ function post(context, params, input) {
   let targetDb = (params.toDatabase != null) ? params.toDatabase : xdmp.database()
   let result =  xdmp.invokeFunction(invokeExecuteGraph.execute, {database: db})
 
-  if(params.save=="true" && fn.count(result) ==1) {
+  if(params.save=="true" ) {
 
-    let saveDoc = result.toObject()[0]
 
-    xdmp.invokeFunction(() => {
+    if(!isIterable(result) && !result.length) result =[result]
 
-      xdmp.documentInsert(saveDoc.uri, saveDoc.value, null, saveDoc.context.collections)
+    for(let r of result) {
 
-    }, {"database": targetDb, "update": "true"})
+      let saveDoc = r
+      if(saveDoc.toObject) saveDoc=saveDoc.toObject()
+      if(saveDoc.length) saveDoc =saveDoc[0]
+      let uri = (saveDoc.uri)?saveDoc.uri:sem.uuidString()
+      let doc = (saveDoc.value)?saveDoc.value:saveDoc
+      let collections =  (saveDoc.context && saveDoc.context.collections)? saveDoc.context.collections:"vpp"
+
+      xdmp.invokeFunction(() => {
+
+        xdmp.documentInsert(uri, doc, null, collections)
+
+      }, {"database": targetDb, "update": "true"}
+    )
+    }
   }
 
   return result
