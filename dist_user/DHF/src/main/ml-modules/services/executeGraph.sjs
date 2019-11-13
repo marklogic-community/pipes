@@ -33,7 +33,22 @@ function get(context, params) {
 function post(context, params, input) {
 
   const invokeExecuteGraph = InvokeExecuteGraph(input)
-  return xdmp.invokeFunction(invokeExecuteGraph.execute, {database: (params.database != null) ? params.database : xdmp.database()})
+  let db = (params.database != null) ? params.database : xdmp.database()
+  let targetDb = (params.toDatabase != null) ? params.toDatabase : xdmp.database()
+  let result =  xdmp.invokeFunction(invokeExecuteGraph.execute, {database: db})
+
+  if(params.save=="true" && fn.count(result) ==1) {
+
+    let saveDoc = result.toObject()[0]
+
+    xdmp.invokeFunction(() => {
+
+      xdmp.documentInsert(saveDoc.uri, saveDoc.value, null, saveDoc.context.collections)
+
+    }, {"database": targetDb, "update": "true"})
+  }
+
+  return result
 
 
 };

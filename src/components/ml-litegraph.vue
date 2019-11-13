@@ -170,12 +170,26 @@
                 <q-icon name="fas fa-tags" @click.stop />
               </template>
             </q-select>
+
+            <q-select v-if="saveToDB" :options="availableDB"  filled label="Save to Database"
+                      v-model="selectedTargetDB">
+
+              <template v-slot:prepend>
+                <q-icon name="fas fa-database" @click.stop />
+              </template>
+
+            </q-select>
             <q-input v-if="!randomDocPreview"   v-model="docUri" label="Optional doc URI" />
           </div>
 
           <q-toggle
             label="Random doc"
             v-model="randomDocPreview"
+          />
+
+          <q-toggle
+            label="Save to DB"
+            v-model="saveToDB"
           />
 
 
@@ -235,9 +249,11 @@
       return {
         currentCtsQuery:"",
         currentCases:"",
+          selectedTargetDB:null,
         editQuery:false,
         editJson: false,
         editCases:false,
+          saveToDB:false,
         graphMetadata:{
           title:"",
           version:"00.01",
@@ -786,6 +802,14 @@
           //);
         }
 
+        if(this.saveToDB){
+
+            if(dbOption!="")
+                dbOption += "&rs:toDatabase=" + this.selectedTargetDB.value + "&rs:save=true"
+else
+                dbOption += "?rs:toDatabase=" + this.selectedTargetDB.value+ "&rs:save=true"
+        }
+
         let jsonGraph = this.graph.serialize()
         let request = {
           jsonGraph: {
@@ -797,6 +821,9 @@
           collectionRandom: this.randomDocPreview,
             previewUri : this.docUri
         }
+
+
+
         console.log(jsonGraph)
         this.$axios.post('/v1/resources/executeGraph' + dbOption , request)
           .then((response) => {
