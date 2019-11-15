@@ -306,7 +306,8 @@ function getFieldsByCollection(collection) {
 
           //path = fn.replace(path, "/object-node\\(\\)\\[\\d*\\]", "/object-node()")
           path = fn.replace(path, "\\[\\d*\\]", "")
-          let parent = path.substring(0, path.lastIndexOf("/"))
+          let parent = path.replace(node.xpath("name(.)"),"")
+          parent= parent.substring(0, parent.lastIndexOf("/"))
           if (fn.matches(parent, "array-node\\('[\\s\\w]*'\\)$"))
             parent = parent.substring(0, parent.lastIndexOf("/"))
           path = path.replace(/array-node\('([\s\w]*)'\)/g, "$1").replace(/\/object-node\(\)/g, "")
@@ -322,11 +323,13 @@ function getFieldsByCollection(collection) {
           if (fields[path].parent == "") fields[path].parent = "/"
         }
       }
+
       let results = []
       Object.keys(fields).map(item => {
         results.push(fields[item])
       })
 
+      results=results.sort((a,b) => { return a.label.localeCompare(b.label)})
 
       for (let path of Object.keys(fields)) {
 
