@@ -10714,7 +10714,9 @@ LGraphNode.prototype.executeAction = function(action)
       // objArray = (objArray!= null && objArray.toObject) ? objArray.toObject() : objArray;
       var arrayInput = this.inputs[0];
 
-      if (isIterable(objArray)) {
+      if (objArray.toArray || Array.isArray(objArray)) {
+
+
 
         // for (var j = 0; j < objArray.length; j++) {
         for (let obj of objArray) {
@@ -10750,6 +10752,37 @@ LGraphNode.prototype.executeAction = function(action)
         Object.keys(outputs).map(item => {this.setOutputData(item, outputs[item])}
       )
         ;
+      }
+      else{
+
+        for (var i = 0; i < this.inputs.length; i++) {
+          var input = this.inputs[i];
+          var value = this.getInputData(i);
+          this.subgraph.setInputData(input.name, value);
+        }
+
+
+        //execute
+        this.subgraph.start();
+
+        //send subgraph global outputs to outputs
+        if (this.outputs) {
+          for (var i = 0; i < this.outputs.length; i++) {
+            let output = this.outputs[i];
+            let value = this.subgraph.getOutputData(output.name);
+
+            if (typeof (value) == "object" && !value.toObject)
+              value = JSON.parse(JSON.stringify(value))
+
+            outputs[i]=value
+          }
+        }
+
+        Object.keys(outputs).map(item => {this.setOutputData(item, outputs[item])})
+        this.subgraph.clearTriggeredSlots()
+        this.subgraph.stop()
+
+
       }
 
     }
