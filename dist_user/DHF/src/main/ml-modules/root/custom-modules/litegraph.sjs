@@ -12032,32 +12032,32 @@ if (typeof exports != "undefined") {
 
     }
     ,
-    {
-      "functionName" : "cts_jsonPropertyValueQuery",
-      "blockName" : "jsonPropertyValueQuery",
-      "library" : "cts",
-      "inputs":[
-        {
-          name:"property",
-          type:"xs:string"},
-        {
-          name:"value",
-          type:"xs:string"}
-      ],
-      "outputs":[
-        {
-          "name": "query",
-          "type":"cts:query"
-        }
-      ],
-      "function":{
-        "ref":"cts.jsonPropertyValueQuery",
-        "code" :null
-      }
-
-
-    },
     /* {
+            "functionName" : "cts_jsonPropertyValueQuery",
+            "blockName" : "jsonPropertyValueQuery",
+            "library" : "cts",
+            "inputs":[
+                {
+                    name:"property",
+                    type:"xs:string"},
+                {
+                    name:"value",
+                    type:"xs:string"}
+            ],
+            "outputs":[
+                {
+                    "name": "query",
+                    "type":"cts:query"
+                }
+            ],
+            "function":{
+                "ref":"cts.jsonPropertyValueQuery",
+                "code" :null
+            }
+
+
+        },
+        {
             "functionName" : "mapValues",
             "blockName" : "Map values",
             "library" : "string",
@@ -13468,6 +13468,46 @@ if (typeof exports != "undefined") {
 
   }
   LiteGraph.registerNodeType("string/Split", split );
+
+
+  function jsonPropertyValueQueryBlock()
+  {
+    this.addInput("property");
+    this.addInput("value");
+    this.addOutput("query");
+
+    this.case = this.addWidget("combo","case", "", function(v){} ,{ values:[]});
+    this.diacritic = this.addWidget("combo","diacritic", "", function(v){},{ values:[]});
+    this.punctuation = this.addWidget("combo","punctuation", "", function(v){} ,{ values:[]});
+    this.whitespace = this.addWidget("combo","whitespace", "", function(v){} ,{ values:[]});
+    this.stemming = this.addWidget("combo","stemming", "", function(v){} ,{ values:[]});
+    this.wildcard = this.addWidget("combo","wildcard", "", function(v){} ,{ values:[]});
+    this.exact = this.addWidget("combo","exact", "", function(v){} ,{ values:[]});
+  }
+
+  jsonPropertyValueQueryBlock.title = "jsonPropertyValueQuery";
+  jsonPropertyValueQueryBlock.desc = "jsonPropertyValueQuery";
+
+  jsonPropertyValueQueryBlock.prototype.onExecute = function()
+  {
+
+    let prop = this.getInputData(0)
+    let value = this.getInputData(1)
+
+    let options =[]
+    if(this.case.value != "") options.push(this.case.value)
+    if(this.diacritic.value != "") options.push(this.diacritic.value)
+    if(this.punctuation.value != "") options.push(this.punctuation.value)
+    if(this.whitespace.value != "") options.push(this.whitespace.value)
+    if(this.stemming.value != "") options.push(this.stemming.value)
+    if(this.wildcard.value != "") options.push(this.wildcard.value)
+    if(this.exact.value != "") options.push(this.exact.value)
+
+    this.setOutputData(0, cts.jsonPropertyValueQuery(prop,value,options) )
+
+
+  }
+  LiteGraph.registerNodeType("cts/jsonPropertyValueQuery", jsonPropertyValueQueryBlock );
 
   function selectCase()
   {

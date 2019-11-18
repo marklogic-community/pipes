@@ -790,7 +790,7 @@
   }
 ,
   {
-    "functionName": "cts_jsonPropertyValueQuery",
+    "functionName": "jsonPropertyValueQuery",
     "blockName": "jsonPropertyValueQuery",
     "library": "cts",
     "inputs": [
@@ -823,7 +823,7 @@
         "type": "combo",
         "name": "punctuation",
         "default": "",
-        "values": ["","punctuation-sensitive","punctuation-sensitive"]
+        "values": ["","punctuation-sensitive","punctuation-insensitive"]
 
       }, {
         "type": "combo",
@@ -840,7 +840,7 @@
       }, {
         "type": "combo",
         "name": "wildcard",
-        "default": "string",
+        "default": "",
         "values": [ "","wildcarded", "unwildcarded"]
 
 

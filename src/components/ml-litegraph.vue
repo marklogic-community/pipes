@@ -6,7 +6,7 @@
     <q-dialog persistent v-model="editQuery">
       <q-card>
         <q-card-section>
-          <div class="text-h6">Edit Lookup Query</div>
+          <div class="text-h6">Edit Query</div>
         </q-card-section>
 
         <q-card-section>
