@@ -12514,7 +12514,39 @@ if (typeof exports != "undefined") {
 //register in the system
   LiteGraph.registerNodeType("feature/Lookup", featureLookupBlock );
 
+  function featureQueryBuilderBlock()
+  {
 
+    this.addInput("value0");
+    this.addInput("value1");
+    this.ctsQuery = this.addProperty("ctsQuery" );
+
+  }
+
+//name to show
+  featureQueryBuilderBlock.title = "ExpertQueryBuilder";
+
+//function to call when the node is executed
+
+  featureQueryBuilderBlock.prototype.onExecute = function()
+  {
+    //let output = "lookup(" + this.getInputData(0) + "," + this.getInputData(1) + "," + this.getInputData(2) + ")"
+
+    let v0= this.getInputData(0)
+    let v1= this.getInputData(1)
+    let v2= this.getInputData(2)
+    let v4 = this.getInputData(3)
+    let v5 = this.getInputData(4)
+    let v6 = this.getInputData(5)
+    let v7 = this.getInputData(6)
+    let template = "`"+ this.properties.ctsQuery +"`"
+    let result = eval(eval(template))
+    this.setOutputData(0, result);
+
+  }
+
+//register in the system
+  LiteGraph.registerNodeType("cts/ExpertQueryBuilder", featureQueryBuilderBlock );
 
   function mapValueBlock()
   {
@@ -12532,6 +12564,7 @@ if (typeof exports != "undefined") {
 
   mapValueBlock.prototype.onExecute = function()
   {
+
     let val = this.getInputData(0);
     if(val==undefined) val ="#NULL#"
     if(val==null) val ="#NULL#"

@@ -12,7 +12,7 @@
         <q-card-section>
           <div class="q-pa-md" style="max-width: 600px;min-width:500px">
             <q-input
-              v-model="currentCtsQuery"
+              v-model="currentCtsQuery.ctsQuery"
               filled
               type="textarea"
             />
@@ -947,7 +947,7 @@ else
 
         if (block.node_over && block.node_over.properties && block.node_over.properties.ctsQuery) {
 
-          if (block.node_over.properties != null) this.currentCtsQuery = block.node_over.properties.ctsQuery
+          if (block.node_over.properties != null) this.currentCtsQuery = block.node_over.properties
           this.editQuery = true
 
 

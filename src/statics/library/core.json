@@ -325,6 +325,53 @@
     }
   },
   {
+    "functionName": "ExpertQueryBuilder",
+    "blockName": "ExpertQueryBuilder",
+    "library": "cts",
+    "inputs": [
+      {
+        "name": "v0",
+        "type": null
+      },
+      {
+        "name": "v1",
+        "type": null
+      }
+
+    ],
+    "properties": [
+
+      {
+        "name": "ctsQuery",
+        "type": "cts.collectionQuery(\"${v0}\")"
+      }
+
+    ],
+
+    "widgets": [
+      {
+        "type": "text",
+        "name": "nbInputs",
+        "default": "2",
+        "values": [],
+        "callback": "let nb = this.inputs.length;for(let i=0;i<nb;i++) {this.removeInput(0);};for(let i=0;i<parseInt(v);i++) this.addInput('v' + i,null);"
+
+
+      }
+     ],
+
+    "outputs": [
+      {
+        "name": "ctsQuery",
+        "type": null
+      }
+    ],
+    "function": {
+      "ref": null,
+      "code": ""
+    }
+  },
+  {
     "functionName": "FormatDateTimeAuto",
     "blockName": "FormatDateTimeAuto",
     "library": "date",
@@ -754,6 +801,56 @@
       {
         "name": "value",
         "type": "xs:string"
+      }
+    ],
+
+
+    "widgets": [
+
+      {
+        "type": "combo",
+        "name": "case",
+        "default": "",
+        "values": ["","case-sensitive","case-insensitive"]
+
+      }, {
+        "type": "combo",
+        "name": "diacritic",
+        "default": "",
+        "values": ["","diacritic-sensitive","diacritic-insensitive"]
+
+      }, {
+        "type": "combo",
+        "name": "punctuation",
+        "default": "",
+        "values": ["","punctuation-sensitive","punctuation-sensitive"]
+
+      }, {
+        "type": "combo",
+        "name": "whitespace",
+        "default": "",
+        "values": [ "","whitespace-sensitive", "whitespace-sensitive"]
+
+      }, {
+        "type": "combo",
+        "name": "stemming",
+        "default": "",
+        "values": [ "","stemmed", "unstemmed"]
+
+      }, {
+        "type": "combo",
+        "name": "wildcard",
+        "default": "string",
+        "values": [ "","wildcarded", "unwildcarded"]
+
+
+
+      }, {
+        "type": "combo",
+        "name": "exact",
+        "default": "",
+        "values": [ "","exact"]
+
       }
     ],
     "outputs": [
