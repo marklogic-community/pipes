@@ -1119,7 +1119,7 @@
       {
         "type": "text",
         "name": "defaultCountry",
-        "default": "UK",
+        "default": "FR",
         "values": null
       },
       {
