@@ -26,6 +26,7 @@ function createGraphNodeFromModel(blockDef) {
 
 
   let block = function () {
+    this.prov=new Set()
     this.blockDef = Object.assign({}, blockDef, {})
     this.doc = {
       input: {},
@@ -53,7 +54,9 @@ function createGraphNodeFromModel(blockDef) {
 
     if (this.blockDef.options.indexOf("nodeOutput") > -1) {
       this.ioSetup.outputs["Node"] = this.ioSetup.outputs._count++;
+      this.ioSetup.outputs["Prov"] = this.ioSetup.outputs._count++;
       this.addOutput("Node", "Node");
+      this.addOutput("Prov", null);
     }
 
     if (this.blockDef.options.indexOf("fieldsOutputs") > -1) {
@@ -128,8 +131,12 @@ function createGraphNodeFromModel(blockDef) {
         if(fn.count(children)>1)
           v= docNode.xpath(path).toArray();
         else
-          v=   docNode.xpath( path + "/string()");
+          v=   docNode.xpath( path ) //+ "/string()");
         this.doc.output[this.blockDef.fields[i].field] = v
+
+
+
+
         /* let v = docNode.xpath("//" + this.blockDef.fields[i]);
          if (fn.count(v) == 1 && v.constructor != Array) v = docNode.xpath("//" + this.blockDef.fields[i] + "/string()");
          this.doc.output[this.blockDef.fields[i]] = (v != null) ? v : null;*/
@@ -138,8 +145,15 @@ function createGraphNodeFromModel(blockDef) {
       if (this.blockDef.options.indexOf("fieldsInputs") > -1) {
         //  if (this.getInputData(this.ioSetup.inputs[blockDef.fields[i].path]) != undefined) {
 
-
-        this.doc.output[this.blockDef.fields[i].field] = this.getInputData(this.ioSetup.inputs[this.blockDef.fields[i].path]);
+        let v = this.getInputData(this.ioSetup.inputs[this.blockDef.fields[i].path])
+        this.doc.output[this.blockDef.fields[i].field] = v ;
+        try {
+          let srcUri = fn.baseUri(v);
+          if(srcUri!=null) this.prov.add(String(srcUri))
+        }
+        catch(error) {
+          //this.prov.push(error)
+        }
 
       }  //}
       if (this.blockDef.options.indexOf("fieldsOutputs") > -1)
@@ -163,6 +177,8 @@ function createGraphNodeFromModel(blockDef) {
         out= this.doc.output
       }
       this.setOutputData(this.ioSetup.outputs["Node"], out);
+
+      this.setOutputData(this.ioSetup.outputs["Prov"], Array.from(this.prov));
     }
 
   }

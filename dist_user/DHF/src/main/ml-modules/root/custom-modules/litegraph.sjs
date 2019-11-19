@@ -13540,6 +13540,81 @@ if (typeof exports != "undefined") {
   }
   LiteGraph.registerNodeType("feature/selectCase", selectCase );
 
+
+  function checkPhoneNumber()
+  {
+    this.addInput("phoneNumber",null);
+    this.addInput("countryISO2",null);
+    this.addInput("uri",null);
+    this.addOutput("phoneNumber",null);
+    this.addOutput("countryCode",null);
+    this.addOutput("numberType",null);
+    this.addOutput("qualityResult",null);
+
+
+    this.outputFormat = this.addWidget("combo","outputFormat", "INTERNATIONAL", function(v){}, {values: ["NATIONAL","INTERNATIONAL","E164"] } );
+    this.defaultCountry = this.addWidget("string","defaultCountry", "UK", function(v){});
+    this.ifInvalid = this.addWidget("toggle","Output if invalid ?", true, function(v){});
+
+    this.serialize_widgets = true;
+  }
+
+  checkPhoneNumber.title = "CheckPhoneNumber";
+  checkPhoneNumber.prototype.onExecute = function()
+  {
+    this.setOutputData(0, "test")
+    const NumberType = [
+      "FIXED_LINE",
+      "MOBILE",
+      "FIXED_LINE_OR_MOBILE",
+      "TOLL_FREE",
+      "PREMIUM_RATE",
+      "SHARED_COST",
+      "VOIP",
+      "PERSONAL_NUMBER",
+      "PAGER",
+      "UAN",
+      "VOICEMAIL",
+      "UNKNOWN"
+    ]
+    const PNF = require('/custom-modules/google-libphonenumber.sjs').PhoneNumberFormat;
+    const phoneUtil = require('/custom-modules/google-libphonenumber.sjs').PhoneNumberUtil.getInstance();
+
+
+
+    let pn = this.getInputData(0)
+    let cc = this.getInputData(1)
+    if(cc==null || cc==undefined) cc= this.defaultCountry.value
+
+
+    const number = phoneUtil.parseAndKeepRawInput(pn, cc);
+    if(phoneUtil.isValidNumber(number)){
+      let output = phoneUtil.format(number, PNF[this.outputFormat.value])
+      this.setOutputData(0, output)
+      this.setOutputData(1, number.getCountryCode())
+      this.setOutputData(2, NumberType[phoneUtil.getNumberType(number)])
+    }
+    else{
+
+      if(this.ifInvalid)
+        this.setOutputData(0, pn)
+      let qualityStatus = {
+        "field" : "Phone Number",
+        "isValid" : phoneUtil.isValidNumber(number),
+        "isPossible" : phoneUtil.isPossibleNumber(number),
+        "Uri" : this.getInputData(2),
+        "message" :"The phone number is invalid"
+
+      }
+      this.setOutputData(3, qualityStatus)
+
+    }
+
+
+
+  }
+  LiteGraph.registerNodeType("controls/CheckPhoneNumber", checkPhoneNumber );
+
 })(this);
 
 

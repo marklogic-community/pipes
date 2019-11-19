@@ -573,8 +573,10 @@
           }
 
           if (this.blockDef.options.indexOf("nodeOutput") > -1) {
-            this.ioSetup.outputs["Node"] = this.ioSetup.outputs._count++;
-            this.addOutput("Node");
+              this.ioSetup.outputs["Node"] = this.ioSetup.outputs._count++;
+              this.ioSetup.outputs["Prov"] = this.ioSetup.outputs._count++;
+              this.addOutput("Node", "Node");
+              this.addOutput("Prov", null);
           }
 
           if (this.blockDef.options.indexOf("fieldsOutputs") > -1) {

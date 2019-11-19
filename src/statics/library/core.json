@@ -1084,5 +1084,73 @@
       "ref": null,
       "code": ""
     }
+  },
+  {
+    "functionName": "CheckPhoneNumber",
+    "blockName": "CheckPhoneNumber",
+    "library": "controls",
+    "inputs": [
+      {
+        "name": "phoneNumber",
+        "type": null
+      },
+      {
+        "name": "countryISO2",
+        "type": null
+      },
+      {
+        "name": "Uri",
+        "type": null
+      }
+
+
+
+    ],
+    "properties": [
+
+    ],
+    "widgets": [
+      {
+        "type": "combo",
+        "name": "outputFormat",
+        "default": "INTERNATIONAL",
+        "values": ["NATIONAL","INTERNATIONAL","E164"]
+      },
+      {
+        "type": "text",
+        "name": "defaultCountry",
+        "default": "UK",
+        "values": null
+      },
+      {
+        "type": "toggle",
+        "name": "Output if invalid ?",
+        "default": true,
+        "values": null
+      }
+
+    ],
+    "outputs": [
+      {
+        "name": "phoneNumber",
+        "type": null
+      },
+      {
+        "name": "countryCode",
+        "type": null
+      },
+      {
+        "name": "numberType",
+        "type": null
+      },
+      {
+        "name": "qualityResult",
+        "type": null
+      }
+    ],
+    "function": {
+      "ref": null,
+      "code": ""
+    }
   }
 ]
