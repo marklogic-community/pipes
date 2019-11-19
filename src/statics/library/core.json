@@ -829,7 +829,7 @@
         "type": "combo",
         "name": "whitespace",
         "default": "",
-        "values": [ "","whitespace-sensitive", "whitespace-sensitive"]
+        "values": [ "","whitespace-sensitive", "whitespace-insensitive"]
 
       }, {
         "type": "combo",
