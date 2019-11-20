@@ -651,19 +651,46 @@
 
   },
   {
-    "functionName": "json_validate",
-    "blockName": "Json (schema) validate*",
+    "functionName": "JsonValidate",
+    "blockName": "JsonValidate",
     "library": "controls",
     "inputs": [
       {
         "name": "node",
-        "type": "node"
+        "type": null
+      },
+      {
+        "name": "schema",
+        "type": null
       }
     ],
     "outputs": [
       {
-        "name": "node",
+        "name": "results",
         "type": "node"
+      }
+    ],
+    "function": {
+      "ref": null,
+      "code": null
+    }
+
+
+  },
+  {
+    "functionName": "XMLValidate",
+    "blockName": "XMLValidate",
+    "library": "controls",
+    "inputs": [
+      {
+        "name": "node",
+        "type": null
+      }
+    ],
+    "outputs": [
+      {
+        "name": "results",
+        "type": null
       }
     ],
     "function": {
@@ -829,7 +856,7 @@
         "type": "combo",
         "name": "whitespace",
         "default": "",
-        "values": [ "","whitespace-sensitive", "whitespace-sensitive"]
+        "values": [ "","whitespace-sensitive", "whitespace-insensitive"]
 
       }, {
         "type": "combo",
@@ -870,12 +897,44 @@
 
   {
     "functionName": "applyXSLT",
-    "blockName": "Apply XSLT*",
+    "blockName": "ApplyXSLT",
     "library": "transform",
     "inputs": [
       {
+        "name": "node",
+        "type": null
+      },
+      {
+        "name": "xslStr",
+        "type": null
+      },
+      {
+        "name": "xslPath",
+        "type": null
+      }
+
+    ],
+    "outputs": [
+
+      {
         "name": "doc",
         "type": "node"
+      }
+    ],
+    "function": {
+      "ref": null,
+      "code": ""
+    }
+
+  },
+  {
+    "functionName": "ctsDoc",
+    "blockName": "Doc",
+    "library": "cts",
+    "inputs": [
+      {
+        "name": "uri",
+        "type": null
       }
 
     ],
@@ -1078,6 +1137,74 @@
       {
         "name": "value",
         "type": "node"
+      }
+    ],
+    "function": {
+      "ref": null,
+      "code": ""
+    }
+  },
+  {
+    "functionName": "CheckPhoneNumber",
+    "blockName": "CheckPhoneNumber",
+    "library": "controls",
+    "inputs": [
+      {
+        "name": "phoneNumber",
+        "type": null
+      },
+      {
+        "name": "countryISO2",
+        "type": null
+      },
+      {
+        "name": "Uri",
+        "type": null
+      }
+
+
+
+    ],
+    "properties": [
+
+    ],
+    "widgets": [
+      {
+        "type": "combo",
+        "name": "outputFormat",
+        "default": "INTERNATIONAL",
+        "values": ["NATIONAL","INTERNATIONAL","E164"]
+      },
+      {
+        "type": "text",
+        "name": "defaultCountry",
+        "default": "FR",
+        "values": null
+      },
+      {
+        "type": "toggle",
+        "name": "Output if invalid ?",
+        "default": true,
+        "values": null
+      }
+
+    ],
+    "outputs": [
+      {
+        "name": "phoneNumber",
+        "type": null
+      },
+      {
+        "name": "countryCode",
+        "type": null
+      },
+      {
+        "name": "numberType",
+        "type": null
+      },
+      {
+        "name": "qualityResult",
+        "type": null
       }
     ],
     "function": {

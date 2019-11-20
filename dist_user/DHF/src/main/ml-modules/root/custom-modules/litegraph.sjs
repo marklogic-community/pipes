@@ -12032,6 +12032,31 @@ if (typeof exports != "undefined") {
 
     }
     ,
+
+    {
+      "functionName": "ctsDoc",
+      "blockName": "Doc",
+      "library": "cts",
+      "inputs": [
+        {
+          "name": "uri",
+          "type": null
+        }
+
+      ],
+      "outputs": [
+
+        {
+          "name": "doc",
+          "type": "node"
+        }
+      ],
+      "function": {
+        "ref": "cts.doc",
+        "code": ""
+      }
+
+    },
     /* {
             "functionName" : "cts_jsonPropertyValueQuery",
             "blockName" : "jsonPropertyValueQuery",
@@ -13540,6 +13565,90 @@ if (typeof exports != "undefined") {
   }
   LiteGraph.registerNodeType("feature/selectCase", selectCase );
 
+
+  function xmlValidate()
+  {
+    this.addInput("node",null);
+    this.addOutput("results",null);
+
+    this.size = this.computeSize();
+    this.serialize_widgets = true;
+  }
+
+  xmlValidate.title = "xmlValidate";
+  xmlValidate.prototype.onExecute = function()
+  {
+
+    let inputNode = this.getInputData(0);
+
+
+    this.setOutputData(0, xdmp.validate(inputNode))
+
+
+  }
+  LiteGraph.registerNodeType("controls/XMLValidate", xmlValidate );
+
+  function jsonValidate()
+  {
+    this.addInput("node",null);
+    this.addInput("schema",null);
+    this.addOutput("results",null);
+
+    this.size = this.computeSize();
+    this.serialize_widgets = true;
+  }
+
+  jsonValidate.title = "jsonValidate";
+  jsonValidate.prototype.onExecute = function()
+  {
+
+    let inputNode = this.getInputData(0);
+    let schema = this.getInputData(1);
+
+    try {
+      let results = xdmp.jsonValidate(inputNode,schema)
+      this.setOutputData(0, results)
+    }
+    catch(error) {
+
+      this.setOutputData(0, error)
+    }
+  }
+
+  LiteGraph.registerNodeType("controls/JsonValidate", jsonValidate );
+
+  function xslBlock()
+  {
+    this.addInput("node",null);
+    this.addInput("xsl","number");
+    this.addInput("xslPath",null);
+    this.addOutput("node",null);
+
+    this.size = this.computeSize();
+    this.serialize_widgets = true;
+  }
+
+  xslBlock.title = "XSL";
+  xslBlock.prototype.onExecute = function()
+  {
+
+    let inputNode = this.getInputData(0);
+    if(inputNode!=null && inputNode!=undefined) {
+      let xslStr = this.getInputData(1);
+      let xslPath = this.getInputData(2);
+      let result = null
+      if ((xslStr == undefined || xslStr == null) && (xslPath != null && xslPath != undefined))
+        result = xdmp.xsltInvoke(xslPath, inputNode)
+      else if (xslStr != null && xslStr != undefined) {
+        let xsl = xdmp.unquote(xslStr)
+        result = xdmp.xsltEval(xsl, inputNode)
+      }
+
+      this.setOutputData(0, result)
+    }
+
+  }
+  LiteGraph.registerNodeType("transform/ApplyXSLT", xslBlock );
 
   function checkPhoneNumber()
   {

@@ -45,14 +45,12 @@ function post(context, params, input) {
 
   if(params.save=="true" ) {
 
+    let jsonResults = JSON.parse(xdmp.quote(result))
 
-    if(!isIterable(result) && !result.length) result =[result]
 
-    for(let r of result) {
+    for(let r of jsonResults) {
 
       let saveDoc = r
-      if(saveDoc.toObject) saveDoc=saveDoc.toObject()
-      if(saveDoc.length) saveDoc =saveDoc[0]
       let uri = (saveDoc.uri)?saveDoc.uri:sem.uuidString()
       let doc = (saveDoc.value)?saveDoc.value:saveDoc
       let collections =  (saveDoc.context && saveDoc.context.collections)? saveDoc.context.collections:"vpp"
@@ -64,6 +62,7 @@ function post(context, params, input) {
       }, {"database": targetDb, "update": "true"}
     )
     }
+
   }
 
   return result
