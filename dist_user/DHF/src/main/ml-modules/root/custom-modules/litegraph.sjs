@@ -13686,7 +13686,7 @@ if (typeof exports != "undefined") {
 
 
   }
-  LiteGraph.registerNodeType("feature/Highlight", Highlight );
+  LiteGraph.registerNodeType("string/Highlight", Highlight );
 
   function enrichEntity()
   {
@@ -13721,7 +13721,7 @@ if (typeof exports != "undefined") {
 
 
   }
-  LiteGraph.registerNodeType("feature/EntityEnrichment", enrichEntity );
+  LiteGraph.registerNodeType("string/EntityEnrichment", enrichEntity );
 
 
   function checkPhoneNumber()

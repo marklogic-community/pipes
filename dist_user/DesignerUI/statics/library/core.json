@@ -1093,6 +1093,64 @@
     }
   },
   {
+    "functionName": "EntityEnrichment",
+    "blockName": "EntityEnrichment",
+    "library": "string",
+    "inputs": [
+      {
+        "name": "string",
+        "type": null
+      },
+      {
+        "name": "dictionary",
+        "type": null
+      }
+
+    ],
+    "properties": [],
+    "outputs": [
+      {
+        "name": "enrichedString",
+        "type": null
+      }
+    ],
+    "function": {
+      "ref": null,
+      "code": ""
+    }
+  },
+  {
+    "functionName": "Highlight",
+    "blockName": "Highlight",
+    "library": "string",
+    "inputs": [
+      {
+        "name": "string",
+        "type": null
+      },
+      {
+        "name": "query",
+        "type": null
+      },
+      {
+        "name": "highlightKeyword",
+        "type": null
+      }
+
+    ],
+    "properties": [],
+    "outputs": [
+      {
+        "name": "enrichedString",
+        "type": null
+      }
+    ],
+    "function": {
+      "ref": null,
+      "code": ""
+    }
+  },
+  {
     "functionName": "selectCase",
     "blockName": "selectCase",
     "library": "feature",
