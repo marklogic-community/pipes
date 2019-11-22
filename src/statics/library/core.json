@@ -1120,6 +1120,37 @@
     }
   },
   {
+    "functionName": "Highlight",
+    "blockName": "Highlight",
+    "library": "feature",
+    "inputs": [
+      {
+        "name": "string",
+        "type": null
+      },
+      {
+        "name": "query",
+        "type": null
+      },
+      {
+        "name": "highlightKeyword",
+        "type": null
+      }
+
+    ],
+    "properties": [],
+    "outputs": [
+      {
+        "name": "enrichedString",
+        "type": null
+      }
+    ],
+    "function": {
+      "ref": null,
+      "code": ""
+    }
+  },
+  {
     "functionName": "selectCase",
     "blockName": "selectCase",
     "library": "feature",

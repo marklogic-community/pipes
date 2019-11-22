@@ -13650,6 +13650,44 @@ if (typeof exports != "undefined") {
   }
   LiteGraph.registerNodeType("transform/ApplyXSLT", xslBlock );
 
+  function Highlight()
+  {
+    this.addInput("string",null);
+    this.addInput("query",null);
+
+    this.addOutput("enrichedString",null);
+
+    this.serialize_widgets = true;
+  }
+
+  Highlight.title = "Highlight";
+  Highlight.prototype.onExecute = function()
+  {
+    const entity = require('/MarkLogic/entity');
+
+    let str = this.getInputData(0);
+    let query = this.getInputData(1);
+    let highlightKeyword = this.getInputData(2);
+
+
+    let x = {"str": str};
+    let result = new NodeBuilder();
+    cts.highlight(x, query,
+      function(builder,text,node,queries,start) {
+        let hl = {}
+        hl[highlightKeyword] = text
+        builder.addNode( hl );
+      }, result
+    );
+
+
+
+    this.setOutputData(0, result.toNode().str)
+
+
+  }
+  LiteGraph.registerNodeType("feature/Highlight", Highlight );
+
   function enrichEntity()
   {
     this.addInput("string",null);
