@@ -13650,6 +13650,42 @@ if (typeof exports != "undefined") {
   }
   LiteGraph.registerNodeType("transform/ApplyXSLT", xslBlock );
 
+  function enrichEntity()
+  {
+    this.addInput("string",null);
+    this.addInput("dictionary",null);
+
+    this.addOutput("enrichedString",null);
+
+    this.serialize_widgets = true;
+  }
+
+  enrichEntity.title = "EntityEnrichment";
+  enrichEntity.prototype.onExecute = function()
+  {
+    const entity = require('/MarkLogic/entity');
+
+    let str = this.getInputData(0);
+    let dict = this.getInputData(1);
+
+
+    function asNode(text) {
+      return new NodeBuilder()
+        .addElement('node', text)
+        .toNode();
+    }
+
+    let result = entity.enrich(asNode(str),
+      [cts.entityDictionaryGet(dict)],
+      "full")
+
+    this.setOutputData(0, result)
+
+
+  }
+  LiteGraph.registerNodeType("feature/EntityEnrichment", enrichEntity );
+
+
   function checkPhoneNumber()
   {
     this.addInput("phoneNumber",null);
