@@ -67,7 +67,7 @@ export default {
 
 
     getEntities() {
-      this.$axios.get('/v1/resources/dhfEntities')
+      this.$axios.post('/v1/resources/vppBackendServices?rs:action=DHFEntities')
               .then((response) => {
                 this.availableEntities = response.data
               })
@@ -81,7 +81,7 @@ export default {
               })
     },
     entityChanged(){
-      this.$axios.get('/v1/resources/dhfEntityProperties?rs:entity=' +  this.selectedEntity.value)
+      this.$axios.post('/v1/resources/vppBackendServices?rs:action=DHFEntityProperties&rs:entity=' +  this.selectedEntity.value)
               .then((response) => {
                 this.entityModel = response.data
 

@@ -337,7 +337,7 @@
       ,
       getSavedGraph(uri) {
         //if(uri!=null)
-        this.$axios.get('/v1/resources/savedGraph?rs:uri=' + encodeURI(uri))
+        this.$axios.post('/v1/resources/vppBackendServices?rs:action=GetSavedGraph&rs:uri=' + encodeURI(uri))
           .then((response) => {
             let graph = response.data;
 
@@ -355,7 +355,7 @@
       },
       loadSavedGraph() {
 
-        this.$axios.post('/v1/resources/savedGraph')
+        this.$axios.post('/v1/resources/vppBackendServices?rs:action=ListSavedGraph')
           .then((response) => {
             this.savedGraph = response.data;
 
@@ -758,7 +758,7 @@
 
         }
 
-        this.$axios.put('/v1/resources/savedGraph', graphDef)
+        this.$axios.post('/v1/resources/vppBackendServices?rs:action=SaveGraph', graphDef)
           .then((response) => {
 
             this.$q.notify({
@@ -796,7 +796,7 @@
 
         let dbOption =""
         if(this.selectedDB!=null && this.selectedDB!="") {
-          dbOption += "?rs:database=" + this.selectedDB.value
+          dbOption += "&rs:database=" + this.selectedDB.value
           //this.$root.$emit("databaseChanged",
            // {selectedDatabase: this.selectedDatabase,availableDatabases:this.availableDatabases
            // }
@@ -827,7 +827,7 @@ else
 
 
         console.log(jsonGraph)
-        this.$axios.post('/v1/resources/executeGraph' + dbOption , request)
+        this.$axios.post('/v1/resources/vppBackendServices?rs:action=ExecuteGraph' + dbOption , request)
           .then((response) => {
 
             this.jsonFromPreview = response.data

@@ -1,6 +1,7 @@
 
 var LiteGraph = require("/custom-modules/litegraph").LiteGraph;
-var userBlocks = require("/custom-modules/userblockDefs");
+var userBlocks = require("/custom-modules/user");
+var coreBlocks = require("/custom-modules/core");
 var registeredNodeType=false
 var graph =null
 
@@ -118,13 +119,13 @@ function createGraphNodeFromModel(blockDef) {
         let v= docNode.xpath(path)
         if(v==null || fn.count(v)==0) {
           //let last = path.lastIndexOf("array-node()/object-node()")
-          // if (fn.matches(path, "array-node\\('[\\s\\w]*'\\)/object-node\\(\\)")) {
-          let last = path.substring(path.lastIndexOf("array-node")).substring(path.indexOf("/object-node"))
-          path = "./" + path.substring(last + 12)
-          v = docNode.xpath(path)
-          if (v==null || fn.count(v) == 0) {
-            path = "./" + path.substring(path.lastIndexOf("/"))
-          }
+         // if (fn.matches(path, "array-node\\('[\\s\\w]*'\\)/object-node\\(\\)")) {
+            let last = path.substring(path.lastIndexOf("array-node")).substring(path.indexOf("/object-node"))
+            path = "./" + path.substring(last + 12)
+            v = docNode.xpath(path)
+            if (v==null || fn.count(v) == 0) {
+              path = "./" + path.substring(path.lastIndexOf("/"))
+            }
           //}
         }
         let children = docNode.xpath( path + "//*")
@@ -143,10 +144,10 @@ function createGraphNodeFromModel(blockDef) {
       }
 
       if (this.blockDef.options.indexOf("fieldsInputs") > -1) {
-        //  if (this.getInputData(this.ioSetup.inputs[blockDef.fields[i].path]) != undefined) {
+      //  if (this.getInputData(this.ioSetup.inputs[blockDef.fields[i].path]) != undefined) {
 
-        let v = this.getInputData(this.ioSetup.inputs[this.blockDef.fields[i].path])
-        this.doc.output[this.blockDef.fields[i].field] = v ;
+          let v = this.getInputData(this.ioSetup.inputs[this.blockDef.fields[i].path])
+          this.doc.output[this.blockDef.fields[i].field] = v ;
         try {
           let srcUri = fn.baseUri(v);
           if(srcUri!=null) this.prov.add(String(srcUri))
@@ -155,7 +156,7 @@ function createGraphNodeFromModel(blockDef) {
           //this.prov.push(error)
         }
 
-      }  //}
+        }  //}
       if (this.blockDef.options.indexOf("fieldsOutputs") > -1)
         this.setOutputData(this.ioSetup.outputs[blockDef.fields[i].path], this.doc.output[this.blockDef.fields[i].field]);
 
@@ -232,7 +233,7 @@ function executeGraphFromJson(jsonGraph,uri, input,context){
   Library refactoring
   var core = require("/custom-modules/core");
   var user = require("/custom-modules/user");
-  core.init(LiteGraph);
+  core
   user.init(LiteGraph);
   */
 
@@ -242,7 +243,9 @@ function executeGraphFromJson(jsonGraph,uri, input,context){
   if(registeredNodeType==false) {
     for (let model of jsonGraph.models)
       LiteGraph.registerNodeType(model.source + "/" + model.collection, createGraphNodeFromModel(model));
-    userBlocks.initUserBlocks(LiteGraph);
+    //userBlocks.initUserBlocks(LiteGraph);
+    coreBlocks.init(LiteGraph);
+    userBlocks.init(LiteGraph);
     graph = new LiteGraph.LGraph();
     graph.configure(jsonGraph.executionGraph)
     registeredNodeType=true

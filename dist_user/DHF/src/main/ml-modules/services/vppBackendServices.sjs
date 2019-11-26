@@ -289,6 +289,99 @@ function getCollectionDetails(){
   }
 }
 
+function getDHFEntities(){
+
+  return sem.sparql(
+    "SELECT DISTINCT ?value ?label WHERE {?value <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>	 <http://marklogic.com/entity-services#EntityType>. \
+      ?value <http://marklogic.com/entity-services#title> ?label.\
+        FILTER NOT EXISTS {?any <http://marklogic.com/entity-services#ref> ?value}\
+      }").toArray()
+}
+
+function getDHFEntityProperties(entity){
+
+  let entityModel ={
+    "label" : entity,
+    "children" :null
+  }
+
+  entityModel.children = sem.sparql(
+    "SELECT * WHERE {\
+      ?entity <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>	 <http://marklogic.com/entity-services#EntityType>.\
+      ?entity <http://marklogic.com/entity-services#property> ?property.\
+      ?property <http://marklogic.com/entity-services#title> ?label.\
+      OPTIONAL {?property <http://marklogic.com/entity-services#datatype>|<http://marklogic.com/entity-services#ref> ?type.}\
+      }",{"entity" : sem.iri(entityModel.label)}).toArray()
+  return entityModel
+}
+
+function isIterable(obj) {
+  // checks for null and undefined
+  if (obj == null) {
+    return false;
+  }
+  return typeof obj[Symbol.iterator] === 'function';
+}
+
+function InvokeExecuteGraph(input){
+
+
+
+  return {
+    execute: function execute() {
+      let gHelper  = require("/custom-modules/graphHelper")
+      let execContext = input.toObject()
+      let doc = null
+      if(execContext.collectionRandom)
+        doc= fn.head(fn.subsequence(fn.collection(execContext.collection),xdmp.random(fn.count(fn.collection(execContext.collection)) + 1)))
+      else {
+        if(execContext.previewUri==null || execContext.previewUri=="")
+          doc = fn.head(fn.collection(execContext.collection))
+        else
+          doc = cts.doc(execContext.previewUri)
+      }
+      let uri = fn.baseUri(doc)
+
+      return gHelper.executeGraphFromJson(execContext.jsonGraph,uri, doc,{collections: xdmp.documentGetCollections(uri)})
+
+    }
+  }
+}
+
+function executeGraph(input,params){
+
+  const invokeExecuteGraph = InvokeExecuteGraph(input)
+  let db = (params.database != null) ? params.database : xdmp.database()
+  let targetDb = (params.toDatabase != null) ? params.toDatabase : xdmp.database()
+  let result =  xdmp.invokeFunction(invokeExecuteGraph.execute, {database: db})
+
+  if(params.save=="true" ) {
+
+    let jsonResults = JSON.parse(xdmp.quote(result))
+
+    for(let r of jsonResults) {
+
+      let saveDoc = r
+      let uri = (saveDoc.uri)?saveDoc.uri:sem.uuidString()
+      let doc = (saveDoc.value)?saveDoc.value:saveDoc
+      let collections =  (saveDoc.context && saveDoc.context.collections)? saveDoc.context.collections:"vpp"
+
+      xdmp.invokeFunction(() => {
+
+        xdmp.documentInsert(uri, doc, null, collections)
+
+      }, {"database": targetDb, "update": "true"}
+    )
+    }
+
+  }
+
+  return result
+
+
+}
+
+
 function getFieldsByCollection(collection) {
 
   return {
@@ -346,6 +439,72 @@ function getFieldsByCollection(collection) {
   }
 }
 
+function getSavedBlock(params){
+  return fn.doc(params.uri)
+
+}
+
+function listSavedBlock(params){
+
+  let results = []
+  for (let graph of cts.search(cts.andQuery([
+    cts.collectionQuery("/type/savedBlock"),
+    ((params.q!=null)?params.q:cts.trueQuery())
+  ])))
+    results.push({
+      uri: fn.baseUri(graph),
+      name: graph.toObject().name
+    })
+
+  return results
+}
+
+function saveBlock(input,params){
+  let graph = input.toObject();
+  let targetDb = (params.toDatabase != null) ? params.toDatabase : xdmp.database()
+  xdmp.invokeFunction(() => {
+
+    xdmp.documentInsert("/savedBlock/" + graph.name + ".json", graph,  null
+      , "/type/savedBlock"  )
+
+  }, {"database": targetDb, "update": "true"}
+)
+
+}
+
+function getSavedGraph(params){
+  return fn.doc(params.uri)
+
+}
+
+function listSavedGraph(params){
+
+  let results = []
+  for (let graph of cts.search(cts.andQuery([
+    cts.collectionQuery("/type/savedGraph"),
+    ((params.q!=null)?params.q:cts.trueQuery())
+  ])))
+    results.push({
+      uri: fn.baseUri(graph),
+      name: graph.toObject().name
+    })
+
+  return results
+}
+
+function saveGraph(input,params){
+  let graph = input.toObject();
+  let targetDb = (params.toDatabase != null) ? params.toDatabase : xdmp.database()
+  xdmp.invokeFunction(() => {
+
+    xdmp.documentInsert("/savedGraph/" + graph.name + ".json", graph,  null
+      , "/type/savedGraph"  )
+
+  }, {"database": targetDb, "update": "true"}
+)
+
+
+}
 
 function get(context, params) {
 
@@ -398,6 +557,34 @@ function post(context, params, input) {
     case "Document":
       const invokeOpenDocument = openDocument(ctx.currentDocumentUri)
       return xdmp.invokeFunction(invokeOpenDocument.getResults, {database: (ctx.database != null) ? ctx.database.value : xdmp.database()})
+      break;
+    case "DHFEntities":
+      return getDHFEntities();
+      break;
+    case "DHFEntityProperties":
+      return getDHFEntityProperties(params.entity);
+      break;
+    case "ExecuteGraph":
+      return executeGraph(input,params)
+      break;
+    case "GetSavedBlock":
+      return getSavedBlock(params)
+      break;
+    case "ListSavedBlock":
+      return listSavedBlock(params)
+      break;
+    case "SaveBlock":
+      return saveBlock(input,params)
+      break;
+    case "GetSavedGraph":
+      return getSavedGraph(params)
+      break;
+    case "ListSavedGraph":
+      return listSavedGraph(params)
+      break;
+    case "SaveGraph":
+      return saveGraph(input,params)
+      break;
     default:
     // code block
   }
