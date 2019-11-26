@@ -11,11 +11,11 @@
   },
   "dependencies": {
     "@json-editor/json-editor": "^1.4.0-beta.0",
-    "@quasar/extras": "^1.3.2",
+    "@quasar/extras": "^1.3.3",
     "axios": "^0.18.1",
     "file-saver": "^2.0.2",
     "litegraph.js": "^0.7.0",
-    "quasar": "^1.1.4",
+    "quasar": "^1.4.5",
     "vue-edit-json": "^1.0.4",
     "vue-json-edit": "^1.2.0",
     "vue-json-editor": "^1.3.1",
@@ -24,7 +24,7 @@
     "vue2-dropzone": "^3.6.0"
   },
   "devDependencies": {
-    "@quasar/app": "^1.1.2"
+    "@quasar/app": "^1.2.4"
   },
   "engines": {
     "node": ">= 8.9.0",
