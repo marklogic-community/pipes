@@ -214,7 +214,7 @@
       },
       loadSavedBlocks() {
 
-        this.$axios.post('/v1/resources/savedBlock')
+        /* this.$axios.post('/v1/resources/savedBlock')
           .then((response) => {
             this.savedBlocks = response.data;
 
@@ -226,11 +226,11 @@
               message: 'Loading failed',
               icon: 'report_problem'
             })
-          })
+          })   */
       },
       getSavedBlock(uri) {
         //if(uri!=null)
-        this.$axios.get('/v1/resources/savedBlock?rs:uri=' + encodeURI(uri))
+      /*  this.$axios.get('/v1/resources/savedBlock?rs:uri=' + encodeURI(uri))
           .then((response) => {
             let block = response.data;
             if (block != null) {
@@ -247,11 +247,11 @@
               message: 'Loading failed',
               icon: 'report_problem'
             })
-          })
+          }) */
       },
       saveBlock() {
 
-        let blockDef = {
+    /*    let blockDef = {
 
           name: this.blockName,
           collection: this.selectedCollection,
@@ -272,7 +272,7 @@
               message: 'Loading failed',
               icon: 'report_problem'
             })
-          })
+          }) */
       },
       discoverModel(collection) {
         let dbOption =""
