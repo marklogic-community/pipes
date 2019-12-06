@@ -5,24 +5,25 @@ Node.js >= 8.9.0 is required.
 
 ## Set up on your local machine
 
-1. Install quasar CLI:
+From the project root folder:
 
-$ yarn global add quasar-cli
+1. Install quasar CLI using npm:
 
-or:
+    `npm install -g @quasar/cli`
 
-$ npm install -g @quasar-cli
+2. Download node modules:
 
+     `npm install`
 
-2. Download modules
-$ yarn install
-
-3. Make sure to override litegraph node_modules with the project one node_modules_override
+3. Make sure to override litegraph node_modules with the project one node_modules_override:
+    
+    `cp node_modules_override/litegraph.js node_modules/litegraph.js/build/litegraph.js`
 
 4. Optional: update MarkLogic staging port if different from 8010. Proxy configuration is here: /quasar.conf.js line 114
 
 5. start dev server:
-$ quasar dev
+
+    `quasar dev`
 
 ## Set up in a Docker container
 
