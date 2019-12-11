@@ -9,13 +9,7 @@
           Create and add the block top the library
         </q-tooltip>
       </q-btn>
-      <q-btn label="Save block" @click="saveBlock()">
-
-        <q-tooltip>
-          Save the block definition to the staging DB
-        </q-tooltip>
-      </q-btn>
-
+      <q-toggle v-model="saveBlockToDB" label="Save block"/>
     </q-btn-group>
     <q-input v-model="blockName" stack-label label="Block name"/>
 
@@ -93,12 +87,7 @@
           Create and add the block top the library
         </q-tooltip>
       </q-btn>
-      <q-btn label="Save" @click="saveBlock()">
-
-        <q-tooltip>
-          Save the block definition to the staging DB
-        </q-tooltip>
-      </q-btn>
+      <q-toggle v-model="saveBlockToDB" label="Save block"/>
 
     </q-btn-group>
     <q-input v-model="blockName" stack-label label="Block name"/>
@@ -126,6 +115,7 @@
     data() {
       return {
         selectedCollection: "",
+        saveBlockToDB:false,
         selectedDatabase:null,
         selectedFields: null,
         selectedFieldsNodes:null,
@@ -214,7 +204,7 @@
       },
       loadSavedBlocks() {
 
-        /* this.$axios.post('/v1/resources/savedBlock')
+         this.$axios.post('/v1/resources/vppBackendServices?rs:action=ListSavedBlock')
           .then((response) => {
             this.savedBlocks = response.data;
 
@@ -226,16 +216,18 @@
               message: 'Loading failed',
               icon: 'report_problem'
             })
-          })   */
+          })
       },
       getSavedBlock(uri) {
         //if(uri!=null)
-      /*  this.$axios.get('/v1/resources/savedBlock?rs:uri=' + encodeURI(uri))
+       this.$axios.post('/v1/resources/vppBackendServices?rs:action=GetSavedBlock&rs:uri=' + encodeURI(uri))
           .then((response) => {
             let block = response.data;
             if (block != null) {
               this.blockName = block.name
-              this.selectedCollection.value =block.collection
+              this.selectedDatabase=block.database
+              this.selectedCollection =block.collection
+              this.discoverModel( this.selectedCollection)
               this.selectedFields = block.fields;
               this.blockOptions = block.options;
             }
@@ -247,13 +239,14 @@
               message: 'Loading failed',
               icon: 'report_problem'
             })
-          }) */
+          })
       },
       saveBlock() {
 
-    /*    let blockDef = {
+        let blockDef = {
 
           name: this.blockName,
+          database: this.selectedDatabase,
           collection: this.selectedCollection,
           source: "Sources",
           fields: this.selectedFields,
@@ -261,7 +254,7 @@
 
         }
 
-        this.$axios.put('/v1/resources/savedBlock', blockDef)
+        this.$axios.post('/v1/resources/vppBackendServices?rs:action=SaveBlock', blockDef)
           .then((response) => {
             this.savedGraph = response.data
           })
@@ -272,7 +265,7 @@
               message: 'Loading failed',
               icon: 'report_problem'
             })
-          }) */
+          })
       },
       discoverModel(collection) {
         let dbOption =""
@@ -350,9 +343,16 @@
             options: this.blockOptions
 
           }
+              if(this.saveBlockToDB) this.saveBlock()
           this.$root.$emit("blockRequested", blockDef);
-                this.blockName+=" - already saved"
-        }}
+                this.blockName+=" - already saved";
+
+
+        }
+
+        }
+
+
       }
     },
     mounted() {

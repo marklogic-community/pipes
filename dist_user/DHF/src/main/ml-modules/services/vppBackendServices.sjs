@@ -35,8 +35,8 @@ function mapper(item, cfg) {
                 result.document[field] = fieldValues.map(f => {
                   return fn.head(item.document.xpath(".//" + f.value))
                 }).join(" - ")
-            else
-              result.document[field] = fn.head(item.document.xpath(".//" + fieldValues.value))
+              else
+                result.document[field] = fn.head(item.document.xpath(".//" + fieldValues.value))
 
             }
           }
@@ -89,7 +89,7 @@ function parseGroup(group) {
           queries.push(parseGroup(q.query))
           break;
         default:
-        // code block
+          // code block
       }
 
 
@@ -133,21 +133,21 @@ function search(ctx) {
 
       if (ctx.facets != null && ctx.facets.length > 0) {
         results = jsearch.facets(
-          ctx.facets.map(item => {
-            return jsearch.facet(item, item).slice(1, 5)
-          }), jsearch.documents()
-          .where(cts.andQuery(queries))
-          .slice(10 * (currentPage - 1), 10 * (currentPage - 1) + 10)
-          .map(item => {
-          return mapper(item, ctx)
-        })).result()
+            ctx.facets.map(item => {
+              return jsearch.facet(item, item).slice(1, 5)
+            }), jsearch.documents()
+                .where(cts.andQuery(queries))
+                .slice(10 * (currentPage - 1), 10 * (currentPage - 1) + 10)
+                .map(item => {
+                  return mapper(item, ctx)
+                })).result()
       } else {
         results = jsearch.documents()
-          .where(cts.andQuery(queries))
-          .slice(10 * (currentPage - 1), 10 * (currentPage - 1) + 10)
-          .map(item => {
-          return mapper(item, ctx)
-        }).result();
+            .where(cts.andQuery(queries))
+            .slice(10 * (currentPage - 1), 10 * (currentPage - 1) + 10)
+            .map(item => {
+              return mapper(item, ctx)
+            }).result();
 
       }
 
@@ -250,7 +250,7 @@ function getCollectionsModels(ctx) {
           cts.collectionMatch(item).toArray().map(item2 => {
             collections[item2] = getFieldsByCollection(item2)
           })
-      })
+        })
       } else {
 
         for (let col of fn.subsequence(cts.collections(), 1, 15)) {
@@ -292,10 +292,10 @@ function getCollectionDetails(){
 function getDHFEntities(){
 
   return sem.sparql(
-    "SELECT DISTINCT ?value ?label WHERE {?value <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>	 <http://marklogic.com/entity-services#EntityType>. \
-      ?value <http://marklogic.com/entity-services#title> ?label.\
-        FILTER NOT EXISTS {?any <http://marklogic.com/entity-services#ref> ?value}\
-      }").toArray()
+      "SELECT DISTINCT ?value ?label WHERE {?value <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>	 <http://marklogic.com/entity-services#EntityType>. \
+        ?value <http://marklogic.com/entity-services#title> ?label.\
+          FILTER NOT EXISTS {?any <http://marklogic.com/entity-services#ref> ?value}\
+        }").toArray()
 }
 
 function getDHFEntityProperties(entity){
@@ -306,12 +306,12 @@ function getDHFEntityProperties(entity){
   }
 
   entityModel.children = sem.sparql(
-    "SELECT * WHERE {\
-      ?entity <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>	 <http://marklogic.com/entity-services#EntityType>.\
-      ?entity <http://marklogic.com/entity-services#property> ?property.\
-      ?property <http://marklogic.com/entity-services#title> ?label.\
-      OPTIONAL {?property <http://marklogic.com/entity-services#datatype>|<http://marklogic.com/entity-services#ref> ?type.}\
-      }",{"entity" : sem.iri(entityModel.label)}).toArray()
+      "SELECT * WHERE {\
+        ?entity <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>	 <http://marklogic.com/entity-services#EntityType>.\
+        ?entity <http://marklogic.com/entity-services#property> ?property.\
+        ?property <http://marklogic.com/entity-services#title> ?label.\
+        OPTIONAL {?property <http://marklogic.com/entity-services#datatype>|<http://marklogic.com/entity-services#ref> ?type.}\
+        }",{"entity" : sem.iri(entityModel.label)}).toArray()
   return entityModel
 }
 
@@ -358,7 +358,7 @@ function executeGraph(input,params){
   if(params.save=="true" ) {
 
     let jsonResults = JSON.parse(xdmp.quote(result))
-    if(!isIterable(jsonResults))  jsonResults=[jsonResults]
+
     for(let r of jsonResults) {
 
       let saveDoc = r
@@ -368,10 +368,10 @@ function executeGraph(input,params){
 
       xdmp.invokeFunction(() => {
 
-        xdmp.documentInsert(uri, doc, null, collections)
+            xdmp.documentInsert(uri, doc, null, collections)
 
-      }, {"database": targetDb, "update": "true"}
-    )
+          }, {"database": targetDb, "update": "true"}
+      )
     }
 
   }
@@ -394,7 +394,7 @@ function getFieldsByCollection(collection) {
         //let doc = fn.head(fn.collection(collection))
 
         for (let node of doc.xpath(".//*")
-          ) {
+            ) {
           let path = xdmp.path(node)
 
           //path = fn.replace(path, "/object-node\\(\\)\\[\\d*\\]", "/object-node()")
@@ -422,13 +422,13 @@ function getFieldsByCollection(collection) {
         results.push(fields[item])
       })
 
-      results=results.sort((a,b) => { return a.label.localeCompare(b.label)})
+          results=results.sort((a,b) => { return a.label.localeCompare(b.label)})
 
       for (let path of Object.keys(fields)) {
 
         fields[path].children = results.filter(item => {
           return (item.parent == path)
-      })
+        })
 
 
       }
@@ -465,10 +465,10 @@ function saveBlock(input,params){
   xdmp.invokeFunction(() => {
 
     xdmp.documentInsert("/savedBlock/" + graph.name + ".json", graph,  null
-      , "/type/savedBlock"  )
+        , "/type/savedBlock"  )
 
-  }, {"database": targetDb, "update": "true"}
-)
+      }, {"database": targetDb, "update": "true"}
+  )
 
 }
 
@@ -498,10 +498,10 @@ function saveGraph(input,params){
   xdmp.invokeFunction(() => {
 
     xdmp.documentInsert("/savedGraph/" + graph.name + ".json", graph,  null
-      , "/type/savedGraph"  )
+        , "/type/savedGraph"  )
 
-  }, {"database": targetDb, "update": "true"}
-)
+      }, {"database": targetDb, "update": "true"}
+  )
 
 
 }
@@ -586,7 +586,7 @@ function post(context, params, input) {
       return saveGraph(input,params)
       break;
     default:
-    // code block
+      // code block
   }
 
 

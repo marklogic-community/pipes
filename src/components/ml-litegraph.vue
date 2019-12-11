@@ -826,21 +826,21 @@ else
 
 
 
-        console.log(jsonGraph)
+        //console.log(jsonGraph)
         this.$axios.post('/v1/resources/vppBackendServices?rs:action=ExecuteGraph' + dbOption , request)
           .then((response) => {
 
             this.jsonFromPreview = response.data
 
           })
-        /*  .catch(() => {
+         .catch(() => {
             this.$q.notify({
               color: 'negative',
               position: 'top',
               message: 'Graph execution failed',
               icon: 'report_problem'
             })
-          })*/
+          })
 
       },
       saveGraph(event) {

@@ -1025,6 +1025,53 @@
 
   },
   {
+    "functionName": "declarativeMapper",
+    "blockName": "declarativeMapper",
+    "library": "dhf",
+    "inputs": [
+
+      {
+        "name": "node",
+        "type": null
+      }
+
+    ],
+    "widgets": [
+      {
+        "type": "text",
+        "name": "MappingName",
+        "default": "",
+        "values": []
+
+      },{
+        "type": "text",
+        "name": "MappingVersion",
+        "default": "",
+        "values": []
+
+      },{
+        "type": "toggle",
+        "name": "WithInstanceRoot",
+        "default": true,
+        "values": []
+
+      }
+
+    ],
+    "outputs": [
+
+      {
+        "name": "mappedNode",
+        "type": null
+      }
+    ],
+    "function": {
+      "ref": null,
+      "code": ""
+    }
+
+  },
+  {
     "functionName": "uuidString",
     "blockName": "uuid",
     "library": "string",

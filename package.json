@@ -4,7 +4,7 @@
   "description": "A Quasar Framework app",
   "productName": "Visual Programming Plugin",
   "cordovaId": "",
-  "author": "epoilvet <#XB0m2019&>",
+  "author": "epoilvet",
   "private": true,
   "scripts": {
     "test": "echo \"No test specified\" && exit 0"
