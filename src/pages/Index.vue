@@ -5,9 +5,7 @@
     <q-dialog v-model="startup">
       <q-card>
         <q-toolbar>
-          <q-avatar>
-            <img src="https://cdn.quasar.dev/logo/svg/quasar-logo.svg">
-          </q-avatar>
+       
 
           <q-toolbar-title><span class="text-weight-bold">Disclaimer</span> Visual Programming Plugin</q-toolbar-title>
 
