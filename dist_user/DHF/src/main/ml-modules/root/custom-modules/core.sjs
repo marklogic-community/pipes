@@ -115,34 +115,34 @@ function init(LiteGraph){
 
 
 
-      let result = {'envelope' : {}} ;
-   // if(this.getInputData(0)==undefined) {
-      result.envelope.headers = (this.getInputData(0)!=undefined)?this.getInputData(0):{};
-      result.envelope.triples = (this.getInputData(1)!=undefined)?this.getInputData(1):{};
-      result.envelope.instance = (this.getInputData(2)!=undefined)?this.getInputData(2):{};
-      result.envelope.attachments  = (this.getInputData(3)!=undefined)?this.getInputData(3):{};
+    let result = {'envelope' : {}} ;
+    // if(this.getInputData(0)==undefined) {
+    result.envelope.headers = (this.getInputData(0)!=undefined)?this.getInputData(0):{};
+    result.envelope.triples = (this.getInputData(1)!=undefined)?this.getInputData(1):{};
+    result.envelope.instance = (this.getInputData(2)!=undefined)?this.getInputData(2):{};
+    result.envelope.attachments  = (this.getInputData(3)!=undefined)?this.getInputData(3):{};
 
-      let defaultCollections = (this.graph.inputs["collections"]!=null)?this.graph.inputs["collections"].value:null
-      let defaultUri = (this.graph.inputs["uri"]!=null)?this.graph.inputs["uri"].value:sem.uuidString()
-      let defaultContext = (this.graph.inputs["context"]!=null)?JSON.parse(JSON.stringify(this.graph.inputs["context"].value)):{}
+    let defaultCollections = (this.graph.inputs["collections"]!=null)?this.graph.inputs["collections"].value:null
+    let defaultUri = (this.graph.inputs["uri"]!=null)?this.graph.inputs["uri"].value:sem.uuidString()
+    let defaultContext = (this.graph.inputs["context"]!=null)?JSON.parse(JSON.stringify(this.graph.inputs["context"].value)):{}
 
-      let uri  = (this.getInputData(4)!=undefined)?this.getInputData(4):defaultUri;
-      let collections  = (this.getInputData(5)!=undefined)?this.getInputData(5):defaultCollections;
-      let context = defaultContext
+    let uri  = (this.getInputData(4)!=undefined)?this.getInputData(4):defaultUri;
+    let collections  = (this.getInputData(5)!=undefined)?this.getInputData(5):defaultCollections;
+    let context = defaultContext
 
-      let content = {}
-      content.value = result;
-      content.uri = uri
+    let content = {}
+    content.value = result;
+    content.uri = uri
 
-      context.collections = collections
-      content.context = context;
+    context.collections = collections
+    content.context = context;
 
-      this.setOutputData(0,content)//}
+    this.setOutputData(0,content)//}
     // this.graph.setOutputData( "output", content );}
-  /*  else {
-      this.setOutputData(0,this.getInputData(0))
-      // this.graph.setOutputData( "output", this.getInputData(0) )
-    }*/
+    /*  else {
+        this.setOutputData(0,this.getInputData(0))
+        // this.graph.setOutputData( "output", this.getInputData(0) )
+      }*/
 
 
 
@@ -168,19 +168,19 @@ function init(LiteGraph){
     return this.title;
   };
 
-  //LiteGraph.GraphOutput = GraphOutputDHF;
+//LiteGraph.GraphOutput = GraphOutputDHF;
   LiteGraph.registerNodeType("dhf/envelope", GraphOutputObjectDHF);
 
 
-  //Output for a subgraph
+//Output for a subgraph
   function GraphOutputDHF() {
     this.addInput("output", null );
- /*   this.addInput("headers", null );
-    this.addInput("triples", null );
-    this.addInput("instance", null );
-    this.addInput("attachments", null );
-    this.addInput("uri", null );
-    this.addInput("collections", null );*/
+    /*   this.addInput("headers", null );
+       this.addInput("triples", null );
+       this.addInput("instance", null );
+       this.addInput("attachments", null );
+       this.addInput("uri", null );
+       this.addInput("collections", null );*/
 
     this.name_in_graph = "";
     this.properties = {};
@@ -199,39 +199,39 @@ function init(LiteGraph){
 
 
     //let result = {'envelope' : {}} ;
-   /* if(this.getInputData(0)==undefined) {
-      result.envelope.headers = (this.getInputData(1)!=undefined)?this.getInputData(1):{};
-      result.envelope.triples = (this.getInputData(2)!=undefined)?this.getInputData(2):{};
-      result.envelope.instance = (this.getInputData(3)!=undefined)?this.getInputData(3):{};
-      result.envelope.attachments  = (this.getInputData(4)!=undefined)?this.getInputData(4):{};
+    /* if(this.getInputData(0)==undefined) {
+       result.envelope.headers = (this.getInputData(1)!=undefined)?this.getInputData(1):{};
+       result.envelope.triples = (this.getInputData(2)!=undefined)?this.getInputData(2):{};
+       result.envelope.instance = (this.getInputData(3)!=undefined)?this.getInputData(3):{};
+       result.envelope.attachments  = (this.getInputData(4)!=undefined)?this.getInputData(4):{};
 
 
-      let defaultCollections = (this.graph.inputs["collections"]!=null)?this.graph.inputs["collections"].value:null
-      let defaultUri = (this.graph.inputs["uri"]!=null)?this.graph.inputs["uri"].value:sem.uuidString()
-      let defaultContext = (this.graph.inputs["context"]!=null)?this.graph.inputs["context"].value:{}
+       let defaultCollections = (this.graph.inputs["collections"]!=null)?this.graph.inputs["collections"].value:null
+       let defaultUri = (this.graph.inputs["uri"]!=null)?this.graph.inputs["uri"].value:sem.uuidString()
+       let defaultContext = (this.graph.inputs["context"]!=null)?this.graph.inputs["context"].value:{}
 
-      let uri  = (this.getInputData(5)!=undefined)?this.getInputData(5):defaultUri;
-      let collections  = (this.getInputData(6)!=undefined)?this.getInputData(6):defaultCollections;
-      let context = defaultContext
+       let uri  = (this.getInputData(5)!=undefined)?this.getInputData(5):defaultUri;
+       let collections  = (this.getInputData(6)!=undefined)?this.getInputData(6):defaultCollections;
+       let context = defaultContext
 
-      let content = {}
-      content.value = result;
-      content.uri = uri
+       let content = {}
+       content.value = result;
+       content.uri = uri
 
-      context.collections = collections
-      content.context = context;
+       context.collections = collections
+       content.context = context;
 
-      this.graph.setOutputData( "output", content );}
-    else {*/
-      let output =  this.getInputData(0)
-      if(output.constructor === Array){
-        let globalArray = []
-        flattenArray(globalArray,output)
-        this.graph.setOutputData( "output",globalArray )
-      }
-      else
-        this.graph.setOutputData( "output",output )
-   // }
+       this.graph.setOutputData( "output", content );}
+     else {*/
+    let output =  this.getInputData(0)
+    if(output.constructor === Array){
+      let globalArray = []
+      flattenArray(globalArray,output)
+      this.graph.setOutputData( "output",globalArray )
+    }
+    else
+      this.graph.setOutputData( "output",output )
+    // }
 
 
 
@@ -460,7 +460,7 @@ function init(LiteGraph){
 
 
 
-  //Added by ERP
+//Added by ERP
 
   /*
     function fn_doc(uri)
@@ -1110,7 +1110,7 @@ function init(LiteGraph){
     code += "LiteGraph.registerNodeType('" + config.library + "/" + config.blockName +"', " + config.functionName + " );"
   }
 
-  //xdmp.log(code)
+//xdmp.log(code)
   eval(code)
 
   /*
@@ -1121,10 +1121,10 @@ function init(LiteGraph){
     }
     LiteGraph.wrapFunctionAsNode('fn/fn_collection',fn_collection,
         ['xs:string'],'node()*')
-*/
+  */
 
 
-  //Output for a subgraph
+//Output for a subgraph
   function GlobalEnvelopeOutput()
   {
     //random name to avoid problems with other outputs when added
@@ -1273,7 +1273,7 @@ function init(LiteGraph){
     GlobalInput.title = "Input";
     GlobalInput.desc = "Input of the graph";
 
-//When added to graph tell the graph this is a new global input
+  //When added to graph tell the graph this is a new global input
     GlobalInput.prototype.onAdded = function()
     {
         this.graph.addGlobalInput( this.properties.name, this.properties.type );
@@ -1293,7 +1293,7 @@ function init(LiteGraph){
 
     LiteGraph.registerNodeType("dhf/StepInput", GlobalInput);
 
-*/
+  */
 
   function StringConstant()
   {
@@ -1451,7 +1451,7 @@ function init(LiteGraph){
     LiteGraph.wrapFunctionAsNode('cts/search',cts_search,
         ['cts:query','(cts:order|xs:string)*','xs:double?','xs:unsignedLong*'],'node()*')
 
-*/
+  */
   /*  function cts_andQuery(query1,query2,query3,query4)
     {
         let queries = [];
@@ -1463,7 +1463,7 @@ function init(LiteGraph){
     }
     LiteGraph.wrapFunctionAsNode('cts/andQuery',cts_andQuery,
         ['cts:query','cts:query','cts:query','cts:query'],'cts:query')
-*/
+  */
   /*
     function cts_orQuery(query1,query2,query3,query4)
     {
@@ -1484,7 +1484,7 @@ function init(LiteGraph){
     LiteGraph.wrapFunctionAsNode('cts/collectionQuery',cts_collectionQuery,
         ['xs:string'],'cts:query')
 
-*/
+  */
 
   /*
     function cts_jsonPropertyValueQuery(propertyName,value,options,weight)
@@ -1494,7 +1494,7 @@ function init(LiteGraph){
     LiteGraph.wrapFunctionAsNode('cts/jsonPropertyValueQuery',cts_jsonPropertyValueQuery,
         ['xs:string','xs:string','xs:string','xs:double'],'cts:query')
 
-*/
+  */
   /*
 
     function fn_head(seq)
@@ -1526,7 +1526,7 @@ function init(LiteGraph){
         ['node'],'xs:string')
 
 
-*/
+  */
 
   function currentDate()
   {
@@ -1646,7 +1646,7 @@ function init(LiteGraph){
 
   LiteGraph.registerNodeType("feature/hashNode", hashNode );
 
-  //node constructor class
+//node constructor class
   function countrySrc()
   {
 
@@ -1676,7 +1676,7 @@ function init(LiteGraph){
   LiteGraph.registerNodeType("dm/CountrySrc", countrySrc );
 
 
-  //node constructor class
+//node constructor class
   function lookupBlock()
   {
     this.addInput("lookupMap","uri");
@@ -1702,7 +1702,7 @@ function init(LiteGraph){
   LiteGraph.registerNodeType("dm/lookup", lookupBlock );
 
 
-  //node constructor class
+//node constructor class
   function lookupMapsBlock()
   {
 
@@ -1727,12 +1727,12 @@ function init(LiteGraph){
 //register in the system
   LiteGraph.registerNodeType("dm/lookupMaps", lookupMapsBlock );
 
-  //End of Added
+//End of Added
 
 
 
 
-  //node constructor class
+//node constructor class
   function countryBlock()
   {
 
@@ -1772,11 +1772,11 @@ function init(LiteGraph){
 //register in the system
   LiteGraph.registerNodeType("dm/Country", countryBlock );
 
-  //End of Added
+//End of Added
 
 
 
-  //node constructor class
+//node constructor class
   function lowercaseBlock()
   {
 
@@ -1804,7 +1804,7 @@ function init(LiteGraph){
   LiteGraph.registerNodeType("dm/lowerCase", lowercaseBlock );
 
 
-  //node constructor class
+//node constructor class
   function multiplyBlock()
   {
 
@@ -1833,7 +1833,7 @@ function init(LiteGraph){
   LiteGraph.registerNodeType("dm/multiply", multiplyBlock );
 
 
-  //node constructor class
+//node constructor class
   function gateBlock()
   {
 
