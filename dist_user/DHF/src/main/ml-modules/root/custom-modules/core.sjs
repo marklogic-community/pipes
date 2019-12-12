@@ -115,7 +115,7 @@ function init(LiteGraph){
 
 
 
-   // let result = {'envelope' : {}} ;
+      let result = {'envelope' : {}} ;
    // if(this.getInputData(0)==undefined) {
       result.envelope.headers = (this.getInputData(0)!=undefined)?this.getInputData(0):{};
       result.envelope.triples = (this.getInputData(1)!=undefined)?this.getInputData(1):{};
