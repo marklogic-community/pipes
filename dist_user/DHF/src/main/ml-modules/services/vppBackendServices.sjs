@@ -89,7 +89,7 @@ function parseGroup(group) {
           queries.push(parseGroup(q.query))
           break;
         default:
-          // code block
+        // code block
       }
 
 
@@ -133,21 +133,21 @@ function search(ctx) {
 
       if (ctx.facets != null && ctx.facets.length > 0) {
         results = jsearch.facets(
-            ctx.facets.map(item => {
-              return jsearch.facet(item, item).slice(1, 5)
-            }), jsearch.documents()
-                .where(cts.andQuery(queries))
-                .slice(10 * (currentPage - 1), 10 * (currentPage - 1) + 10)
-                .map(item => {
-                  return mapper(item, ctx)
-                })).result()
-      } else {
-        results = jsearch.documents()
+          ctx.facets.map(item => {
+            return jsearch.facet(item, item).slice(1, 5)
+          }), jsearch.documents()
             .where(cts.andQuery(queries))
             .slice(10 * (currentPage - 1), 10 * (currentPage - 1) + 10)
             .map(item => {
               return mapper(item, ctx)
-            }).result();
+            })).result()
+      } else {
+        results = jsearch.documents()
+          .where(cts.andQuery(queries))
+          .slice(10 * (currentPage - 1), 10 * (currentPage - 1) + 10)
+          .map(item => {
+            return mapper(item, ctx)
+          }).result();
 
       }
 
@@ -248,13 +248,13 @@ function getCollectionsModels(ctx) {
       if (ctx != null && ctx.collectionIncl != null && ctx.collectionIncl.length > 0) {
         ctx.collectionIncl.map(item => {
           cts.collectionMatch(item).toArray().map(item2 => {
-            collections[item2] = getFieldsByCollection(item2)
+            collections[item2] = getFieldsByCollection(item2,"")
           })
         })
       } else {
 
         for (let col of fn.subsequence(cts.collections(), 1, 15)) {
-          collections[col] = getFieldsByCollection(col)
+          collections[col] = getFieldsByCollection(col,"")
 
         }
 
@@ -292,10 +292,10 @@ function getCollectionDetails(){
 function getDHFEntities(){
 
   return sem.sparql(
-      "SELECT DISTINCT ?value ?label WHERE {?value <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>	 <http://marklogic.com/entity-services#EntityType>. \
-        ?value <http://marklogic.com/entity-services#title> ?label.\
-          FILTER NOT EXISTS {?any <http://marklogic.com/entity-services#ref> ?value}\
-        }").toArray()
+    "SELECT DISTINCT ?value ?label WHERE {?value <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>	 <http://marklogic.com/entity-services#EntityType>. \
+      ?value <http://marklogic.com/entity-services#title> ?label.\
+        FILTER NOT EXISTS {?any <http://marklogic.com/entity-services#ref> ?value}\
+      }").toArray()
 }
 
 function getDHFEntityProperties(entity){
@@ -306,12 +306,12 @@ function getDHFEntityProperties(entity){
   }
 
   entityModel.children = sem.sparql(
-      "SELECT * WHERE {\
-        ?entity <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>	 <http://marklogic.com/entity-services#EntityType>.\
-        ?entity <http://marklogic.com/entity-services#property> ?property.\
-        ?property <http://marklogic.com/entity-services#title> ?label.\
-        OPTIONAL {?property <http://marklogic.com/entity-services#datatype>|<http://marklogic.com/entity-services#ref> ?type.}\
-        }",{"entity" : sem.iri(entityModel.label)}).toArray()
+    "SELECT * WHERE {\
+      ?entity <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>	 <http://marklogic.com/entity-services#EntityType>.\
+      ?entity <http://marklogic.com/entity-services#property> ?property.\
+      ?property <http://marklogic.com/entity-services#title> ?label.\
+      OPTIONAL {?property <http://marklogic.com/entity-services#datatype>|<http://marklogic.com/entity-services#ref> ?type.}\
+      }",{"entity" : sem.iri(entityModel.label)}).toArray()
   return entityModel
 }
 
@@ -368,9 +368,9 @@ function executeGraph(input,params){
 
       xdmp.invokeFunction(() => {
 
-            xdmp.documentInsert(uri, doc, null, collections)
+          xdmp.documentInsert(uri, doc, null, collections)
 
-          }, {"database": targetDb, "update": "true"}
+        }, {"database": targetDb, "update": "true"}
       )
     }
 
@@ -382,19 +382,28 @@ function executeGraph(input,params){
 }
 
 
-function getFieldsByCollection(collection) {
+function getFieldsByCollection(collection,customURI) {
 
   return {
     FieldsByCollection: function FieldsByCollection() {
       let i = 0
       let fields = {}
+      let docs =[]
       let nbDocs = fn.count(fn.collection(collection))
-      for(let j=0;j<10;j++) {
-        let doc = fn.head(fn.subsequence(fn.collection(collection), xdmp.random(nbDocs )))
-        //let doc = fn.head(fn.collection(collection))
-
+      if(collection!=null && collection!="") {
+        for (let j = 0; j < 10; j++) {
+          docs.push(fn.head(fn.subsequence(fn.collection(collection), xdmp.random(nbDocs))))
+          //let doc = fn.head(fn.collection(collection))
+        }
+      }
+      if(customURI!=null && customURI!="") {
+        let doc =cts.doc(customURI)
+        if (doc != null)
+          docs.push(doc)
+      }
+      for(let doc of docs){
         for (let node of doc.xpath(".//*")
-            ) {
+          ) {
           let path = xdmp.path(node)
 
           //path = fn.replace(path, "/object-node\\(\\)\\[\\d*\\]", "/object-node()")
@@ -422,7 +431,7 @@ function getFieldsByCollection(collection) {
         results.push(fields[item])
       })
 
-          results=results.sort((a,b) => { return a.label.localeCompare(b.label)})
+      results=results.sort((a,b) => { return a.label.localeCompare(b.label)})
 
       for (let path of Object.keys(fields)) {
 
@@ -464,10 +473,10 @@ function saveBlock(input,params){
   let targetDb = (params.toDatabase != null) ? params.toDatabase : xdmp.database()
   xdmp.invokeFunction(() => {
 
-    xdmp.documentInsert("/savedBlock/" + graph.name + ".json", graph,  null
+      xdmp.documentInsert("/savedBlock/" + graph.name + ".json", graph,  null
         , "/type/savedBlock"  )
 
-      }, {"database": targetDb, "update": "true"}
+    }, {"database": targetDb, "update": "true"}
   )
 
 }
@@ -497,10 +506,10 @@ function saveGraph(input,params){
   let targetDb = (params.toDatabase != null) ? params.toDatabase : xdmp.database()
   xdmp.invokeFunction(() => {
 
-    xdmp.documentInsert("/savedGraph/" + graph.name + ".json", graph,  null
+      xdmp.documentInsert("/savedGraph/" + graph.name + ".json", graph,  null
         , "/type/savedGraph"  )
 
-      }, {"database": targetDb, "update": "true"}
+    }, {"database": targetDb, "update": "true"}
   )
 
 
@@ -512,7 +521,7 @@ function get(context, params) {
 
   switch (params.action) {
     case "collectionModel":
-      const invokeGetFieldsByCollection = getFieldsByCollection(params.collection)
+      const invokeGetFieldsByCollection = getFieldsByCollection(params.collection,params.customURI)
       return xdmp.invokeFunction(invokeGetFieldsByCollection.FieldsByCollection, {database: (params.database != null) ? params.database : xdmp.database()})
       break;
     case "collectionDetails":
@@ -586,7 +595,7 @@ function post(context, params, input) {
       return saveGraph(input,params)
       break;
     default:
-      // code block
+    // code block
   }
 
 

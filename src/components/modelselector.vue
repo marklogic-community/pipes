@@ -46,6 +46,11 @@
       </template>
 
     </q-select>
+    <q-input bottom-slots v-model="customURI" label="Analyze custom URI" >
+      <template v-slot:append>
+        <q-btn round dense flat icon="play_arrow" @click="collectionChanged()"/>
+      </template>
+    </q-input>
     <q-input bottom-slots v-model="newCustomFieldName" label="Add custom field" >
 
       <template v-slot:append>
@@ -137,7 +142,8 @@
         savedGraph: [],
         savedBlocks: [],
         blockName: "",
-        newCustomFieldName:""
+        newCustomFieldName:"",
+        customURI:""
 
       }
     },
@@ -148,8 +154,8 @@
       }
       ,
       collectionChanged() {
-        console.log(this.selectedCollection)
-        this.discoverModel(this.selectedCollection)
+       // console.log(this.selectedCollection)
+        this.discoverModel(this.selectedCollection,this.customURI)
 
       },
       addCustomField(){
@@ -227,7 +233,7 @@
               this.blockName = block.name
               this.selectedDatabase=block.database
               this.selectedCollection =block.collection
-              this.discoverModel( this.selectedCollection)
+              this.discoverModel( this.selectedCollection,"")
               this.selectedFields = block.fields;
               this.blockOptions = block.options;
             }
@@ -267,7 +273,7 @@
             })
           })
       },
-      discoverModel(collection) {
+      discoverModel(collection,customURI) {
         let dbOption =""
         if(this.selectedDatabase!=null && this.selectedDatabase!="") {
           dbOption += "&rs:database=" + this.selectedDatabase.value
@@ -277,8 +283,15 @@
 
         //  );
         }
+
+        if(collection!=null && collection.value!=null)
+          dbOption += "&rs:collection=" + collection.value
+
+        if(customURI!=null && customURI!="")
+          dbOption += "&rs:customURI=" + customURI
+
         //this.$axios.get('/v1/resources/modelDiscovery?rs:collection=' + collection.value)
-        this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionModel&rs:collection=' + collection.value + dbOption)
+        this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionModel' + dbOption)
           .then((response) => {
             this.collectionModel[0].children = response.data
           })
