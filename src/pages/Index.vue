@@ -5,7 +5,7 @@
     <q-dialog v-model="startup">
       <q-card>
         <q-toolbar>
-       
+
 
           <q-toolbar-title><span class="text-weight-bold">Disclaimer</span> Visual Programming Plugin</q-toolbar-title>
 
