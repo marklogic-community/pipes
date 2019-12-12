@@ -1,78 +1,21 @@
 {
-  "models": [
-  ],
+  "models": [],
   "executionGraph": {
     "last_node_id": 2,
     "last_link_id": 0,
     "nodes": [
       {
-        "id": 2,
-        "type": "dhf/output",
-        "pos": [
-          1377,
-          410
-        ],
-        "size": [
-          180,
-          160
-        ],
-        "flags": {
-        },
-        "order": 1,
-        "mode": 0,
-        "inputs": [
-          {
-            "name": "output",
-            "type": 0,
-            "link": null
-          },
-          {
-            "name": "headers",
-            "type": 0,
-            "link": null
-          },
-          {
-            "name": "triples",
-            "type": 0,
-            "link": null
-          },
-          {
-            "name": "instance",
-            "type": 0,
-            "link": null
-          },
-          {
-            "name": "attachments",
-            "type": 0,
-            "link": null
-          },
-          {
-            "name": "uri",
-            "type": 0,
-            "link": null
-          },
-          {
-            "name": "collections",
-            "type": 0,
-            "link": null
-          }
-        ],
-        "properties": {
-        }
-      },
-      {
         "id": 1,
         "type": "dhf/input",
         "pos": [
-          165,
-          469
+          50,
+          500
         ],
         "size": [
           180,
           60
         ],
-        "flags": {
-        },
+        "flags": {},
         "order": 0,
         "mode": 0,
         "outputs": [
@@ -92,17 +35,42 @@
             "links": null
           }
         ],
-        "properties": {
-        }
+        "properties": {}
+      },
+      {
+        "id": 2,
+        "type": "dhf/output",
+        "pos": [
+          1570,
+          406
+        ],
+        "size": [
+          180,
+          160
+        ],
+        "flags": {},
+        "order": 1,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "output",
+            "type": 0,
+            "link": null
+          }
+        ],
+        "properties": {}
       }
     ],
-    "links": [
-    ],
-    "groups": [
-    ],
-    "config": {
-    },
+    "links": [],
+    "groups": [],
+    "config": {},
     "version": 0.4
   },
-  "name": "Default"
+  "name": "",
+  "metadata": {
+    "title": "",
+    "version": "00.01",
+    "author": "",
+    "description": ""
+  }
 }

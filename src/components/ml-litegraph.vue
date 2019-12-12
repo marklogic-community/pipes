@@ -355,7 +355,7 @@
       },
       loadSavedGraph() {
 
-        this.$axios.post('/v1/resources/vppBackendServices?rs:action=ListSavedGraph')
+        this.$axios.get('/v1/resources/vppBackendServices?rs:action=ListSavedGraph')
           .then((response) => {
             this.savedGraph = response.data;
 
