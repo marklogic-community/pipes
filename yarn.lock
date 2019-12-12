@@ -8291,22 +8291,10 @@ vue-json-edit@^1.2.0:
     highlight.js "^9.15.6"
     vue "^2.6.8"
 
-vue-json-editor@^1.3.1:
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/vue-json-editor/-/vue-json-editor-1.3.1.tgz#1def62fe52cce928a9211473998fd67823edeb2c"
-  integrity sha512-zr56L0ltiV/Dh8tFPP2Rbu9A9ovH2sEyKYyyFTbV5xfqa99e7LUqbMBUgNkwSeWI6wmB4KEcjKYRZVxL36ZniQ==
-  dependencies:
-    vue "^2.2.6"
-
 vue-json-pretty@^1.6.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/vue-json-pretty/-/vue-json-pretty-1.6.0.tgz#ea3efaa7d574ee987e636908395ae4a7044f9aee"
   integrity sha512-yLQ2Kuk4S+fPxVncww9kPO72pTiGrZfgyi1P+Vhmy1kR7J1CwzYli8uyhgdTMPaz0h2zqiDF0VGtzX+FTrwbig==
-
-vue-json-ui-editor@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/vue-json-ui-editor/-/vue-json-ui-editor-1.0.0.tgz#e4d7dcd2ca85a115e0ed86855d9126ff4f12dcd1"
-  integrity sha512-tiwljY2gECnCmy+VHFxdfjm0O29Wh1qJ6FaRx4+6NebCUXZ7+TA9w/FgDkJMe7FmAx9ulDzewznscYaOjyi/QA==
 
 vue-loader@15.7.1:
   version "15.7.1"
@@ -8366,7 +8354,7 @@ vue2-dropzone@^3.6.0:
   dependencies:
     dropzone "^5.5.1"
 
-vue@2.6.10, vue@^2.2.2, vue@^2.2.6, vue@^2.6.8:
+vue@2.6.10, vue@^2.2.2, vue@^2.6.8:
   version "2.6.10"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.10.tgz#a72b1a42a4d82a721ea438d1b6bf55e66195c637"
   integrity sha512-ImThpeNU9HbdZL3utgMCq0oiMzAkt1mcgy3/E6zWC/G6AaQoeuFdsl9nDhTDU3X1R6FK7nsIUuRACVcjI+A2GQ==
