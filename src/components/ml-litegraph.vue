@@ -337,7 +337,7 @@
       ,
       getSavedGraph(uri) {
         //if(uri!=null)
-        this.$axios.post('/v1/resources/vppBackendServices?rs:action=GetSavedGraph&rs:uri=' + encodeURI(uri))
+        this.$axios.get('/v1/resources/vppBackendServices?rs:action=GetSavedGraph&rs:uri=' + encodeURI(uri))
           .then((response) => {
             let graph = response.data;
 

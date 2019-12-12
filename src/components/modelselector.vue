@@ -210,7 +210,7 @@
       },
       loadSavedBlocks() {
 
-         this.$axios.post('/v1/resources/vppBackendServices?rs:action=ListSavedBlock')
+         this.$axios.get('/v1/resources/vppBackendServices?rs:action=ListSavedBlock')
           .then((response) => {
             this.savedBlocks = response.data;
 
@@ -226,7 +226,7 @@
       },
       getSavedBlock(uri) {
         //if(uri!=null)
-       this.$axios.post('/v1/resources/vppBackendServices?rs:action=GetSavedBlock&rs:uri=' + encodeURI(uri))
+       this.$axios.get('/v1/resources/vppBackendServices?rs:action=GetSavedBlock&rs:uri=' + encodeURI(uri))
           .then((response) => {
             let block = response.data;
             if (block != null) {

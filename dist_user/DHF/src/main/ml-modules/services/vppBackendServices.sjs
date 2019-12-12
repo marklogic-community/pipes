@@ -527,8 +527,28 @@ function get(context, params) {
     case "collectionDetails":
       const invokeGetCollectionDetails = getCollectionDetails()
       return xdmp.invokeFunction(invokeGetCollectionDetails.CollectionDetails, {database: (params.database != null) ? params.database : xdmp.database()})
+      break;
     case "databasesDetails":
       return getDatabases()
+    break;
+    case "DHFEntities":
+      return getDHFEntities();
+      break;
+    case "DHFEntityProperties":
+      return getDHFEntityProperties(params.entity);
+      break;
+    case "GetSavedBlock":
+      return getSavedBlock(params)
+      break;
+    case "ListSavedBlock":
+      return listSavedBlock(params)
+      break;
+    case "GetSavedGraph":
+      return getSavedGraph(params)
+      break;
+    case "ListSavedGraph":
+      return listSavedGraph(params)
+      break;
     default:
   }
 
