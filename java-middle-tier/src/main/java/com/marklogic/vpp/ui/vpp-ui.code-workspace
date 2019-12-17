@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "/Users/smitrovi/MarkLogic/dev/vpp-springboot/vpp-ui"
+		},
+		{
+			"path": "/Users/smitrovi/MarkLogic/dev/visual-programming-plugin"
+		}
+	],
+	"settings": {
+		"java.configuration.updateBuildConfiguration": "disabled"
+	}
+}

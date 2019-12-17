@@ -39,3 +39,6 @@ dhf/.project
 dhf/.settings/
 dhf/mappings/
 nohup.out
+
+#java stuff
+java-middle-tier/bin/
