@@ -26,6 +26,8 @@ public class InstallVppBackend implements ApplicationRunner {
 
     boolean deployBackend = args.containsOption("deployBackend");
 
+    // TO-DO: check for existence of the folder
+
     if (deployBackend) {
       LoggerFactory.getLogger(getClass()).info(
         String.format("Will deploy MarkLogic backend modules to following DHF root: %s", clientConfig.getMlDhfRoot()));
@@ -58,6 +60,9 @@ public class InstallVppBackend implements ApplicationRunner {
           System.out.println(e.toString());
         }
       }
+
+      LoggerFactory.getLogger(getClass()).info(
+        String.format("MarkLogic backend modules deployed. Make sure to reload the modules from your DHF project!"));
     }
 
 
