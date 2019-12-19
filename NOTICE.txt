@@ -1,4 +1,4 @@
-﻿Visual Programming Plugin for DHF
+﻿Flowtilla
 
 Copyright © 2019 MarkLogic Corporation.
 

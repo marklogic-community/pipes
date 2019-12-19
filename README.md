@@ -1,65 +1,37 @@
-# Quasar executionGraph front App
-This a upgraded version of the code to Quasar RC version
+# Flowtilla
 
-Node.js >= 8.9.0 is required.
+## What is it?
+A visual programming plugin for MarkLogic. It integrates with [MarkLogic's Datahub](https://docs.marklogic.com/datahub/) and produces the custom code step using a no-code UI environment.
 
-## Set up on your local machine
+## Great! How do I run it?
+Download the jar from the releases section. In the same directory where you placed the jar, create application.properties file with following content:
 
-From the project root folder:
+```
+# this is where the UI will be running, make sure the port is not used
+server.port=8081
 
-1. Install quasar CLI using npm:
+# MarkLogic DHF settings
+mlHost=localhost
+mlStagingPort=8010
+mlUsername=admin
+mlPassword=admin
 
-    `npm install -g @quasar/cli`
+# this is the root of your DHF project to deploy backend modules to
+mlDhfRoot=/my/projects/dhf 
+```
 
-2. Download node modules:
+Flowtilla requires several backend modules to be installed on MarkLogic. When you run Flowtilla for the first time, use following:
 
-     `npm install`
+```java -jar flowtilla-ui-xyz.jar --deployBackend=true```
 
-3. Make sure to override litegraph node_modules with the project one node_modules_override:
-    
-    `cp node_modules_override/litegraph.js node_modules/litegraph.js/build/litegraph.js`
+This will run the UI and deploy backend modules to the appropriate location within your DHF project. 
 
-4. Optional: update MarkLogic staging port if different from 8010. Proxy configuration is here: /quasar.conf.js line 114
+Now, you have to (re)load modules by running
+```./gradlew mlReloadModules```
+from your DHF project root.
 
-5. start dev server:
+Flowtilla UI is now running on localhost and port that you've specified in the application.properties under value server.port. Example: [localhost:8081](ocalhost:8081)
 
-    `quasar dev`
+For subsequent Flowtilla runs on the same DHF project, you can ommit the deployBackend parameter.
 
-## Set up in a Docker container
-
-The Dockerfile in the root of this project can be used to create a CentOS 7 container for development, which contains:
-
-- MarkLogic 10
-- Java 8 (1.8.0_222-b10)
-- Gradle 4.6
-- Node.js 12.9.0
-- NPM 6.10.2
-- Quasar 1.0.0
-
-### Setting up the container
-
-Requirements: you need to install Docker on your local machine.
-
-With [Docker installed](https://docs.docker.com/docker-for-mac/install/), in the same directory as the Dockerfile:
-1) Build the image 
-```docker build -t marklogic:visual-programming . ```
-2) Create and run a container from that image
-``docker run -d --name=visual-programming -p 8040-8060:8000-8020 -p 9000:8080 marklogic:visual-programming``
-3) find the container ID
-``docker ps``
-4) access the container via the terminal
-``docker exec -it {your container ID} bash``
-5) "Inside" the container, clone the visual-programming-repo
-``git clone https://project.marklogic.com/repo/scm/fran/visual-programming-plugin.git``
-Enter your MarkLogic username and password
-
-You should now have the repo installed on your container. Next, you need to initiate MarkLogic, via port 8041 on your local machine (which is mapped to the container's port 8001)
-
-## Setting up DHF (prerequisite to running the VPP UI)
-From the root of the project, run
-```./initHub.sh```
-
-It will create the DHF folder structure in the dhf/ folder and copy the VPP files into DHF folders.
-Next, configre gradle-local.properties to reflect your situation.
-
-You can then start the UI dev server (see above quasar dev command)
+Have fun!

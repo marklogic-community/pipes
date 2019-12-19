@@ -20,7 +20,7 @@
 
 
         <q-toolbar-title>
-          MarkLogic Data Hub - Visual Programming Plugin
+          Flowtilla
           <div slot="subtitle">Draw your ideas</div>
         </q-toolbar-title>
 

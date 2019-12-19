@@ -330,7 +330,7 @@ function InvokeExecuteGraph(input){
   return {
     execute: function execute() {
       let gHelper  = require("/custom-modules/graphHelper")
-      let execContext = input.toObject()
+      let execContext = JSON.parse(input)
       let doc = null
       if(execContext.collectionRandom)
         doc= fn.head(fn.subsequence(fn.collection(execContext.collection),xdmp.random(fn.count(fn.collection(execContext.collection)) + 1)))
@@ -341,6 +341,13 @@ function InvokeExecuteGraph(input){
           doc = cts.doc(execContext.previewUri)
       }
       let uri = fn.baseUri(doc)
+
+      console.log("input=", input)
+      console.log("execContext=",execContext)
+      console.log("execContext.collection=",execContext.collection)
+      console.log("execContext[\"collection\"]=",execContext["collection"])
+      console.log("input.collection=", input.collection)
+      console.log("uri=", uri);
 
       return gHelper.executeGraphFromJson(execContext.jsonGraph,uri, doc,{collections: xdmp.documentGetCollections(uri)})
 
@@ -469,7 +476,7 @@ function listSavedBlock(params){
 }
 
 function saveBlock(input,params){
-  let graph = input.toObject();
+  let graph = JSON.parse(input)
   let targetDb = (params.toDatabase != null) ? params.toDatabase : xdmp.database()
   xdmp.invokeFunction(() => {
 
@@ -502,7 +509,7 @@ function listSavedGraph(params){
 }
 
 function saveGraph(input,params){
-  let graph = input.toObject();
+  let graph = JSON.parse(input);
   let targetDb = (params.toDatabase != null) ? params.toDatabase : xdmp.database()
   xdmp.invokeFunction(() => {
 
@@ -559,7 +566,7 @@ function post(context, params, input) {
 
   let config = {}
 
-  let ctx = input.toObject()
+  let ctx = JSON.parse(input);
 
 
   switch (params.action) {

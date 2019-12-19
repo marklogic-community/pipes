@@ -39,3 +39,10 @@ dhf/.project
 dhf/.settings/
 dhf/mappings/
 nohup.out
+
+#java stuff
+java-middle-tier/bin/
+java-middle-tier/src/main/resources/
+java-middle-tier/.classpath
+java-middle-tier/.project
+java-middle-tier/.settings/
