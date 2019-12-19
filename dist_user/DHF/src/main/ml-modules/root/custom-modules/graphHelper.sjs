@@ -132,7 +132,7 @@ function createGraphNodeFromModel(blockDef) {
         if(fn.count(children)>1)
           v= docNode.xpath(path).toArray();
         else
-          v=   docNode.xpath( path ) //+ "/string()");
+          v=   docNode.xpath( path + "/string()");
         this.doc.output[this.blockDef.fields[i].field] = v
 
 
