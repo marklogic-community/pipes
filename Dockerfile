@@ -10,7 +10,9 @@
     RUN yum install java-devel -y
 
     # add JAVA_HOME
-    ENV JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.222.b10-0.el7_6.x86_64
+#    ENV JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.222.b10-0.el7_6.x86_64
+#ez Changed for new Java version
+    ENV JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.222.b10-1.el7_7.x86_64
 
     # Copy QuickStart 
     # RUN mkdir /home/dhf5
