@@ -30,7 +30,7 @@ Now, you have to (re)load modules by running
 ```./gradlew mlReloadModules```
 from your DHF project root.
 
-Flowtilla UI is not running on localhost and port that you've specified in the application.properties under value server.port. Example: [localhost:8081](ocalhost:8081)
+Flowtilla UI is now running on localhost and port that you've specified in the application.properties under value server.port. Example: [localhost:8081](ocalhost:8081)
 
 For subsequent Flowtilla runs on the same DHF project, you can ommit the deployBackend parameter.
 
