@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.marklogic.vpp'
-version = '0.8-SNAPSHOT'
+version = '0.8'
 sourceCompatibility = '1.8'
 
 repositories {
