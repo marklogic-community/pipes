@@ -30,6 +30,9 @@ public class ClientConfig {
   @Value("${mlStagingPort:8010}")
   private int mlStagingPort;
 
+  @Value("${mlDhfRoot:/my/dhf}")
+  private String mlDhfRoot;
+
   /**
    * @return the mlStagingPort
    */
@@ -39,6 +42,10 @@ public class ClientConfig {
 
   public String getMlHost() {
     return mlHost;
+  }
+
+  public String getMlDhfRoot() {
+    return mlDhfRoot;
   }
 
   @Autowired
