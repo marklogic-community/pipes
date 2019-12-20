@@ -7,8 +7,15 @@
 # build the front end SPA UI
 quasar build
 
+# create static resource directory first
+mkdir -p java-middle-tier/src/main/resources/static
+
 # deploy to resources/static to be picked up by jar builder
 cp -r dist/spa/* java-middle-tier/src/main/resources/static/.
+
+
+# create dhf resource directory first
+mkdir -p java-middle-tier/src/main/resources/dhf
 
 # deploy backend modules to be picked up by jar builder
 cp -r dist_user/dhf/* java-middle-tier/src/main/resources/dhf/.
