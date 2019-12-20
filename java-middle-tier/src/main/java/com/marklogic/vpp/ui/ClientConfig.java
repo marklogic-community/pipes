@@ -1,3 +1,7 @@
+/*
+Copyright ©2019 MarkLogic Corporation.
+*/
+
 package com.marklogic.vpp.ui;
 
 import org.apache.http.HttpHost;
@@ -51,7 +55,7 @@ public class ClientConfig {
   @Autowired
   Environment environment;
 
-  
+
   @Bean
   public RestTemplate restTemplate() {
     int springPort = Integer.parseInt(environment.getProperty("server.port"));

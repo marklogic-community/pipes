@@ -1,3 +1,6 @@
+/*
+Copyright ©2019 MarkLogic Corporation.
+*/
 package com.marklogic.vpp.ui;
 
 import java.net.URI;
@@ -16,7 +19,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-// @RequestMapping("/v1")
 public class MlController {
 
     @Autowired

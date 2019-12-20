@@ -1,3 +1,6 @@
+/*
+Copyright ©2019 MarkLogic Corporation.
+*/
 package com.marklogic.vpp.ui;
 
 import org.springframework.boot.SpringApplication;

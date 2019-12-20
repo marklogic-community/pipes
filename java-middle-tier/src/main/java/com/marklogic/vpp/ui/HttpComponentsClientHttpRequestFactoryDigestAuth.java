@@ -1,3 +1,7 @@
+/*
+Copyright ©2019 MarkLogic Corporation.
+*/
+
 package com.marklogic.vpp.ui;
 
 import java.net.URI;
@@ -13,22 +17,22 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
- 
-public class HttpComponentsClientHttpRequestFactoryDigestAuth 
+
+public class HttpComponentsClientHttpRequestFactoryDigestAuth
   extends HttpComponentsClientHttpRequestFactory {
- 
+
     HttpHost host;
- 
+
     public HttpComponentsClientHttpRequestFactoryDigestAuth(HttpHost host, CloseableHttpClient client) {
         super(client);
         this.host = host;
     }
- 
+
     @Override
     protected HttpContext createHttpContext(HttpMethod httpMethod, URI uri) {
         return createHttpContext();
     }
- 
+
     private HttpContext createHttpContext() {
         // Create AuthCache instance
         AuthCache authCache = new BasicAuthCache();
@@ -37,7 +41,7 @@ public class HttpComponentsClientHttpRequestFactoryDigestAuth
         // If we already know the realm name
         digestAuth.overrideParamter("realm", "Custom Realm Name");
         authCache.put(host, digestAuth);
- 
+
         // Add AuthCache to the execution context
         BasicHttpContext localcontext = new BasicHttpContext();
         localcontext.setAttribute(ClientContext.AUTH_CACHE, authCache);
