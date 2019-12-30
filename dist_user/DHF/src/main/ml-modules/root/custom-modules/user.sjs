@@ -1,4 +1,4 @@
-
+//Copyright ©2020 MarkLogic Corporation.
 
 function init(LiteGraph){
 

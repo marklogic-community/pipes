@@ -1,4 +1,4 @@
-
+//Copyright ©2020 MarkLogic Corporation.
 var LiteGraph = require("/custom-modules/litegraph").LiteGraph;
 var userBlocks = require("/custom-modules/user");
 var coreBlocks = require("/custom-modules/core");

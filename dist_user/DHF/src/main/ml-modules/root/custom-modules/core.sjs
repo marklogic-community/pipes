@@ -1,3 +1,4 @@
+//Copyright ©2020 MarkLogic Corporation.
 const  moment = require("/custom-modules/moment-with-locales.min.sjs")
 const entity = require('/MarkLogic/entity');
 const lib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');

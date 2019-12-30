@@ -1,3 +1,4 @@
+<!-- Copyright ©2020 MarkLogic Corporation. -->
 <template>
   <div class="flex flex-center">
     <canvas class="fixed" height='1000' ref="mycanvas" style='border: 1px solid' width='1800'></canvas>

@@ -1,3 +1,4 @@
+<!-- Copyright ©2020 MarkLogic Corporation. -->
 <template>
   <div id="q-app">
     <router-view />

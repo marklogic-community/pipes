@@ -1,3 +1,4 @@
+//Copyright ©2020 MarkLogic Corporation.
 const admin = require("/MarkLogic/admin.xqy");
 
 

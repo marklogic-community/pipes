@@ -1,3 +1,4 @@
+<!-- Copyright ©2020 MarkLogic Corporation. -->
 <template>
 
   <div class="column gutter-sm">

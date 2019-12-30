@@ -1,3 +1,4 @@
+<!-- Copyright ©2020 MarkLogic Corporation. -->
 <template>
   <q-layout view="hHh lpR fFf">
     <q-header elevated>

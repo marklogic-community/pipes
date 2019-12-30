@@ -1,5 +1,5 @@
 'use strict';
-
+//Copyright ©2020 MarkLogic Corporation.
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const datahub = DataHubSingleton.instance();
 const es = require('/MarkLogic/entity-services/entity-services');
@@ -63,7 +63,7 @@ function buildMapProperties(mapping, entityModel) {
   let mapProperties = mapping.properties;
   let propertyLines = [];
   if (dhMappingTraceIsEnabled) {
-    xdmp.trace(dhMappingTrace, `Building mapping properties for '${mapping.targetEntityType}' with 
+    xdmp.trace(dhMappingTrace, `Building mapping properties for '${mapping.targetEntityType}' with
     '${xdmp.describe(entityModel)}'`);
   }
   let entityName = getEntityName(mapping.targetEntityType);

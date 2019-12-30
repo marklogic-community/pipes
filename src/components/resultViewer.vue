@@ -1,3 +1,4 @@
+<!-- Copyright ©2020 MarkLogic Corporation. -->
 <template>
   <div>
     <q-modal v-model="opened"  position="right">
