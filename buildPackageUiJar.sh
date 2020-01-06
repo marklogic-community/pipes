@@ -1,4 +1,4 @@
-# use this sceipt to generate the JAR file containing the Flowtilla UI
+# use this sceipt to generate the JAR file containing the Pipes UI
 # it will appear in java-middle-tier/build/libs
 # the version is controlled in java-middle-tier/build.gradle
 

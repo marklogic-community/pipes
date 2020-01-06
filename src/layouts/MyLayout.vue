@@ -21,7 +21,7 @@
 
 
         <q-toolbar-title>
-          Flowtilla
+          Pipes for MarkLogic Data Hub
           <div slot="subtitle">Draw your ideas</div>
         </q-toolbar-title>
 

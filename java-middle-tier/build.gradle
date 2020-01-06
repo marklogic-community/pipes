@@ -4,7 +4,7 @@ plugins {
 	id 'java'
 }
 
-group = 'com.marklogic.vpp'
+group = 'com.marklogic.pipes'
 version = '0.8'
 sourceCompatibility = '1.8'
 

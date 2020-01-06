@@ -1,4 +1,4 @@
-package com.marklogic.vpp.vppui;
+package com.marklogic.pipes.ui;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

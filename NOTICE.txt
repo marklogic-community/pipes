@@ -1,4 +1,4 @@
-﻿Flowtilla
+﻿Pipes for MarkLogic DataHub
 
 Copyright © 2019 MarkLogic Corporation.
 

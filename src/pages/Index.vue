@@ -8,16 +8,16 @@
         <q-toolbar>
 
 
-          <q-toolbar-title><span class="text-weight-bold">Disclaimer</span> Flowtilla</q-toolbar-title>
+          <q-toolbar-title><span class="text-weight-bold">Disclaimer</span> Pipes for MarkLogic Data Hub</q-toolbar-title>
 
           <q-btn flat round dense icon="close" v-close-popup />
         </q-toolbar>
 
         <q-card-section>
-          Flowtilla is a community tool.<br/>
-          As such, <b>Flowtilla is not supported by MarkLogic Corporation</b> and is only updated and corrected based on best effort approach.
+          Pipes for MarkLogic DataHub is a community tool.<br/>
+          As such, <b>Pipes for MarkLogic DataHub is not supported by MarkLogic Corporation</b> and is only updated and corrected based on best effort approach.
           Any contribution or feedback is welcomed to make the tool better.<br/>
-          <b>Flowtilla Team</b>
+          <b>Pipes Team</b>
           <br/>
           <br/>
           Version 0.8 / What's new :

@@ -1,7 +1,7 @@
 /*
-Copyright ©2019 MarkLogic Corporation.
+Copyright ©2020 MarkLogic Corporation.
 */
-package com.marklogic.vpp.ui;
+package com.marklogic.pipes.ui;
 
 import java.net.URI;
 import java.net.URISyntaxException;

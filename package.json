@@ -2,7 +2,7 @@
   "name": "DataHubVisualProgrammingPlugin",
   "version": "0.1.0",
   "description": "A Quasar Framework app",
-  "productName": "Flowtilla",
+  "productName": "Pipes for MarkLogic Data Hub",
   "cordovaId": "",
   "author": "epoilvet",
   "private": true,

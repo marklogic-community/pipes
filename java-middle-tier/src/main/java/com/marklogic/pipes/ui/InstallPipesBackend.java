@@ -1,8 +1,8 @@
 /*
-Copyright ©2019 MarkLogic Corporation.
+Copyright ©2020 MarkLogic Corporation.
 */
 
-package com.marklogic.vpp.ui;
+package com.marklogic.pipes.ui;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,10 +17,10 @@ import org.springframework.boot.*;
 import org.springframework.stereotype.*;
 
 /**
- * InstallVppBackend
+ * InstallPipesBackend
  */
 @Component
-public class InstallVppBackend implements ApplicationRunner {
+public class InstallPipesBackend implements ApplicationRunner {
 
   @Autowired
   ClientConfig clientConfig;
@@ -34,7 +34,7 @@ public class InstallVppBackend implements ApplicationRunner {
 
     if (deployBackend) {
       LoggerFactory.getLogger(getClass()).info(
-        String.format("Will deploy MarkLogic backend modules to following DHF root: %s", clientConfig.getMlDhfRoot()));
+        String.format("Will copy MarkLogic backend modules to following DHF root: %s", clientConfig.getMlDhfRoot()));
 
       final String resourcesDhfRoot = "/dhf/src/main/ml-modules";
       final String destinationDhfRoot = "/src/main/ml-modules";
@@ -66,7 +66,7 @@ public class InstallVppBackend implements ApplicationRunner {
       }
 
       LoggerFactory.getLogger(getClass()).info(
-        String.format("MarkLogic backend modules deployed. Make sure to reload the modules from your DHF project!"));
+        String.format("MarkLogic backend modules copied to your DHF project. Make sure to reload the modules from your DHF project!"));
     }
 
 
