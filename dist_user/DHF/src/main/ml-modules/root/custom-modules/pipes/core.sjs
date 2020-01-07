@@ -1,11 +1,11 @@
 //Copyright ©2020 MarkLogic Corporation.
-const  moment = require("/custom-modules/moment-with-locales.min.sjs")
+const  moment = require("/custom-modules/pipes/moment-with-locales.min.sjs")
 const entity = require('/MarkLogic/entity');
 const lib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
 //const lib2 = require('/data-hub/5/builtins/steps/mapping/entity-services/lib.sjs')
-const  lib2 = require("/custom-modules/entity-services-lib-vpp.sjs")
-const PNF = require('/custom-modules/google-libphonenumber.sjs').PhoneNumberFormat;
-const phoneUtil = require('/custom-modules/google-libphonenumber.sjs').PhoneNumberUtil.getInstance();
+const  lib2 = require("/custom-modules/pipes/entity-services-lib-vpp.sjs")
+const PNF = require('/custom-modules/pipes/google-libphonenumber.sjs').PhoneNumberFormat;
+const phoneUtil = require('/custom-modules/pipes/google-libphonenumber.sjs').PhoneNumberUtil.getInstance();
 
 
 function init(LiteGraph){
@@ -2442,6 +2442,46 @@ function init(LiteGraph){
   }
 
   LiteGraph.registerNodeType("controls/JsonValidate", jsonValidate );
+
+
+  function provo()
+  {
+    this.addInput("uri",null);
+    this.addInput("DerivedFrom1",null);
+    this.addInput("DerivedFrom2",null);
+    this.addInput("DerivedFrom3",null);
+    this.addInput("GeneratedBy",null);
+    this.addInput("createdOn",null);
+    this.addOutput("PROV-O",null);
+
+    this.size = this.computeSize();
+
+  }
+
+  provo.title = "PROV-O";
+  provo.prototype.onExecute = function()
+  {
+    let uri =  this.getInputData(0)
+    let triples = []
+    if(this.getInputData(1))
+      triples.push(sem.triple(sem.iri(uri),sem.iri("http://www.w3.org/ns/prov#DerivedFrom1"),sem.iri(this.getInputData(1))))
+
+    if(this.getInputData(2))
+      triples.push(sem.triple(sem.iri(uri),sem.iri("http://www.w3.org/ns/prov#DerivedFrom1"),sem.iri(this.getInputData(2))))
+
+    if(this.getInputData(3))
+      triples.push(sem.triple(sem.iri(uri),sem.iri("http://www.w3.org/ns/prov#DerivedFrom1"),sem.iri(this.getInputData(3))))
+
+    if(this.getInputData(4))
+      triples.push(sem.triple(sem.iri(uri),sem.iri("http://www.w3.org/ns/prov#GeneratedBy"),sem.iri(this.getInputData(4))))
+
+    if(this.getInputData(5))
+      triples.push(sem.triple(sem.iri(uri),sem.iri("http://www.w3.org/ns/prov#createdOn"),sem.iri(this.getInputData(5))))
+
+    this.setOutputData(0, triples)
+  }
+
+  LiteGraph.registerNodeType("provenance/PROV-O structure", provo );
 
   function xslBlock()
   {

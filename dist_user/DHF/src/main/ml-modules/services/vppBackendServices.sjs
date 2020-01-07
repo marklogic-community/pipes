@@ -330,7 +330,7 @@ function InvokeExecuteGraph(input){
 
   return {
     execute: function execute() {
-      let gHelper  = require("/custom-modules/graphHelper")
+      let gHelper  = require("/custom-modules/pipes/graphHelper")
       let execContext = JSON.parse(input)
       let doc = null
       if(execContext.collectionRandom)

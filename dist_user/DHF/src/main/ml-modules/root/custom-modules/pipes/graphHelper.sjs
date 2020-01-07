@@ -1,7 +1,7 @@
 //Copyright ©2020 MarkLogic Corporation.
-var LiteGraph = require("/custom-modules/litegraph").LiteGraph;
-var userBlocks = require("/custom-modules/user");
-var coreBlocks = require("/custom-modules/core");
+var LiteGraph = require("/custom-modules/pipes/litegraph").LiteGraph;
+var userBlocks = require("/custom-modules/pipes/user");
+var coreBlocks = require("/custom-modules/pipes/core");
 var registeredNodeType=false
 var graph =null
 
