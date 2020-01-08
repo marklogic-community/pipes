@@ -2447,9 +2447,9 @@ function init(LiteGraph){
   function provo()
   {
     this.addInput("uri",null);
-    this.addInput("DerivedFrom",null);
-    this.addInput("DerivedFrom",null);
-    this.addInput("DerivedFrom",null);
+    this.addInput("DerivedFrom1",null);
+    this.addInput("DerivedFrom2",null);
+    this.addInput("DerivedFrom3",null);
     this.addInput("GeneratedBy",null);
     this.addInput("createdOn",null);
     this.addOutput("PROV-O",null);
@@ -2464,13 +2464,13 @@ function init(LiteGraph){
     let uri =  this.getInputData(0)
     let triples = []
     if(uri && this.getInputData(1))
-      triples.push(sem.triple(sem.iri(uri),sem.iri("http://www.w3.org/ns/prov#DerivedFrom1"),sem.iri(this.getInputData(1))))
+      triples.push(sem.triple(sem.iri(uri),sem.iri("http://www.w3.org/ns/prov#DerivedFrom"),sem.iri(this.getInputData(1))))
 
     if(uri && this.getInputData(2))
-      triples.push(sem.triple(sem.iri(uri),sem.iri("http://www.w3.org/ns/prov#DerivedFrom1"),sem.iri(this.getInputData(2))))
+      triples.push(sem.triple(sem.iri(uri),sem.iri("http://www.w3.org/ns/prov#DerivedFrom"),sem.iri(this.getInputData(2))))
 
     if(uri && this.getInputData(3))
-      triples.push(sem.triple(sem.iri(uri),sem.iri("http://www.w3.org/ns/prov#DerivedFrom1"),sem.iri(this.getInputData(3))))
+      triples.push(sem.triple(sem.iri(uri),sem.iri("http://www.w3.org/ns/prov#DerivedFrom"),sem.iri(this.getInputData(3))))
 
     if(uri && this.getInputData(4))
       triples.push(sem.triple(sem.iri(uri),sem.iri("http://www.w3.org/ns/prov#GeneratedBy"),sem.iri(this.getInputData(4))))
