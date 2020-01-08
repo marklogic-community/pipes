@@ -366,6 +366,11 @@ function executeGraph(input,params){
   if(params.save=="true" ) {
 
     let jsonResults = JSON.parse(xdmp.quote(result))
+    if(!Array.isArray(jsonResults)){
+
+      jsonResults=[jsonResults]
+
+    }
 
     for(let r of jsonResults) {
 

@@ -10,7 +10,7 @@
           Create and add the block top the library
         </q-tooltip>
       </q-btn>
-      <q-toggle v-model="saveBlockToDB" label="Save block"/>
+      <q-toggle v-model="saveBlockToDB" label="Save block to database"/>
     </q-btn-group>
     <q-input v-model="blockName" stack-label label="Block name"/>
 
@@ -93,7 +93,7 @@
           Create and add the block top the library
         </q-tooltip>
       </q-btn>
-      <q-toggle v-model="saveBlockToDB" label="Save block"/>
+      <q-toggle v-model="saveBlockToDB" label="Save block to Database"/>
 
     </q-btn-group>
     <q-input v-model="blockName" stack-label label="Block name"/>
