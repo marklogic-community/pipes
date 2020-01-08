@@ -2447,9 +2447,9 @@ function init(LiteGraph){
   function provo()
   {
     this.addInput("uri",null);
-    this.addInput("DerivedFrom1",null);
-    this.addInput("DerivedFrom2",null);
-    this.addInput("DerivedFrom3",null);
+    this.addInput("DerivedFrom",null);
+    this.addInput("DerivedFrom",null);
+    this.addInput("DerivedFrom",null);
     this.addInput("GeneratedBy",null);
     this.addInput("createdOn",null);
     this.addOutput("PROV-O",null);
