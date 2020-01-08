@@ -2463,19 +2463,19 @@ function init(LiteGraph){
   {
     let uri =  this.getInputData(0)
     let triples = []
-    if(this.getInputData(1))
+    if(uri && this.getInputData(1))
       triples.push(sem.triple(sem.iri(uri),sem.iri("http://www.w3.org/ns/prov#DerivedFrom1"),sem.iri(this.getInputData(1))))
 
-    if(this.getInputData(2))
+    if(uri && this.getInputData(2))
       triples.push(sem.triple(sem.iri(uri),sem.iri("http://www.w3.org/ns/prov#DerivedFrom1"),sem.iri(this.getInputData(2))))
 
-    if(this.getInputData(3))
+    if(uri && this.getInputData(3))
       triples.push(sem.triple(sem.iri(uri),sem.iri("http://www.w3.org/ns/prov#DerivedFrom1"),sem.iri(this.getInputData(3))))
 
-    if(this.getInputData(4))
+    if(uri && this.getInputData(4))
       triples.push(sem.triple(sem.iri(uri),sem.iri("http://www.w3.org/ns/prov#GeneratedBy"),sem.iri(this.getInputData(4))))
 
-    if(this.getInputData(5))
+    if(uri && this.getInputData(5))
       triples.push(sem.triple(sem.iri(uri),sem.iri("http://www.w3.org/ns/prov#createdOn"),sem.iri(this.getInputData(5))))
 
     this.setOutputData(0, triples)
