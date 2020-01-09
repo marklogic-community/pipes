@@ -2463,19 +2463,19 @@ function init(LiteGraph){
   {
     let uri =  this.getInputData(0)
     let triples = []
-    if(uri && this.getInputData(1))
-      triples.push(sem.triple(sem.iri(uri),sem.iri("http://www.w3.org/ns/prov#DerivedFrom"),sem.iri(this.getInputData(1))))
+    if(this.getInputData(1))
+      triples.push(sem.triple(sem.iri(uri),sem.iri("http://www.w3.org/ns/prov#DerivedFrom1"),sem.iri(this.getInputData(1))))
 
-    if(uri && this.getInputData(2))
-      triples.push(sem.triple(sem.iri(uri),sem.iri("http://www.w3.org/ns/prov#DerivedFrom"),sem.iri(this.getInputData(2))))
+    if(this.getInputData(2))
+      triples.push(sem.triple(sem.iri(uri),sem.iri("http://www.w3.org/ns/prov#DerivedFrom1"),sem.iri(this.getInputData(2))))
 
-    if(uri && this.getInputData(3))
-      triples.push(sem.triple(sem.iri(uri),sem.iri("http://www.w3.org/ns/prov#DerivedFrom"),sem.iri(this.getInputData(3))))
+    if(this.getInputData(3))
+      triples.push(sem.triple(sem.iri(uri),sem.iri("http://www.w3.org/ns/prov#DerivedFrom1"),sem.iri(this.getInputData(3))))
 
-    if(uri && this.getInputData(4))
+    if(this.getInputData(4))
       triples.push(sem.triple(sem.iri(uri),sem.iri("http://www.w3.org/ns/prov#GeneratedBy"),sem.iri(this.getInputData(4))))
 
-    if(uri && this.getInputData(5))
+    if(this.getInputData(5))
       triples.push(sem.triple(sem.iri(uri),sem.iri("http://www.w3.org/ns/prov#createdOn"),sem.iri(this.getInputData(5))))
 
     this.setOutputData(0, triples)
@@ -2515,6 +2515,34 @@ function init(LiteGraph){
 
   }
   LiteGraph.registerNodeType("transform/ApplyXSLT", xslBlock );
+
+
+  function DistinctValues()
+  {
+    this.addInput("array",null);
+    this.xpath = this.addWidget("text","xpath", "//prop", function(v){});
+
+    this.addOutput("distinctValues",null);
+
+    this.serialize_widgets = true;
+  }
+
+  DistinctValues.title = "DistinctValues";
+  DistinctValues.prototype.onExecute = function()
+  {
+
+    const builder = new NodeBuilder();
+    let list = this.getInputData(0);
+    let xpath = this.getInputData(0);
+    let t = builder.addNode(list.toArray()).toNode()
+
+
+
+    this.setOutputData(0, fn.distinctValues(t.xpath(this.xpath.value)).toArray())
+
+
+  }
+  LiteGraph.registerNodeType("feature/DistinctValues", DistinctValues );
 
   function Highlight()
   {

@@ -1202,6 +1202,40 @@
     }
   },
   {
+    "functionName": "DistinctValues",
+    "blockName": "DistinctValues",
+    "library": "feature",
+    "inputs": [
+      {
+        "name": "array",
+        "type": null
+      }
+
+    ],
+
+    "widgets": [
+      {
+        "type": "text",
+        "name": "xpath",
+        "default": "//prop",
+        "values": []
+
+      }
+
+    ],
+    "properties": [],
+    "outputs": [
+      {
+        "name": "distinctValues",
+        "type": null
+      }
+    ],
+    "function": {
+      "ref": null,
+      "code": ""
+    }
+  },
+  {
     "functionName": "selectCase",
     "blockName": "selectCase",
     "library": "feature",
