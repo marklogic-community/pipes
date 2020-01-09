@@ -38,16 +38,17 @@ public class InstallPipesBackend implements ApplicationRunner {
 
       final String resourcesDhfRoot = "/dhf/src/main/ml-modules";
       final String destinationDhfRoot = "/src/main/ml-modules";
+      final String customModulesPathPrefix = "/root/custom-modules/pipes/";
 
       ArrayList<String> filePaths = new ArrayList<String>(
         Arrays.asList(
-          "/root/custom-modules/core.sjs",
-          "/root/custom-modules/entity-services-lib-vpp.sjs",
-          "/root/custom-modules/google-libphonenumber.sjs",
-          "/root/custom-modules/graphHelper.sjs",
-          "/root/custom-modules/litegraph.sjs",
-          "/root/custom-modules/moment-with-locales.min.sjs",
-          "/root/custom-modules/user.sjs",
+          customModulesPathPrefix+"core.sjs",
+          customModulesPathPrefix+"entity-services-lib-vpp.sjs",
+          customModulesPathPrefix+"google-libphonenumber.sjs",
+          customModulesPathPrefix+"graphHelper.sjs",
+          customModulesPathPrefix+"litegraph.sjs",
+          customModulesPathPrefix+"moment-with-locales.min.sjs",
+          customModulesPathPrefix+"user.sjs",
           "/services/vppBackendServices.sjs"
         ));
 
