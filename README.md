@@ -22,7 +22,7 @@ mlDhfRoot=/my/projects/dhf
 
 Pipes requires several backend modules to be installed on MarkLogic. When you run the Pipes jar for the first time, use the following:
 
-```java -jar pipes-xyz.jar java -jar marklogic-pipes-0.8.jar --mlUsername=myusername --mlPassword=mypassword --deployBackend=true```
+```java -jar pipes-xyz.jar --mlUsername=myusername --mlPassword=mypassword --deployBackend=true```
 
 This will run the UI and deploy backend modules to the appropriate location within your DHF project. 
 
