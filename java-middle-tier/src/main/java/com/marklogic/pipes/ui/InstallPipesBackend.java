@@ -6,8 +6,6 @@ package com.marklogic.pipes.ui;
 
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.AppDeployer;
-import com.marklogic.appdeployer.command.restapis.DeployRestApiServersCommand;
-import com.marklogic.appdeployer.command.security.DeployUsersCommand;
 import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.mgmt.ManageClient;
@@ -51,43 +49,65 @@ public class InstallPipesBackend implements ApplicationRunner {
 //     TO-DO: check for existence of the folder
 
     if (deployBackend) {
-      LoggerFactory.getLogger(getClass()).info(
-        String.format("Will copy MarkLogic backend modules to following DHF root: %s", clientConfig.getMlDhfRoot()));
+      try {
+        copyMlBackendModulesToDhfRoot();
+      }
+      catch (Exception e) {
+        LoggerFactory.getLogger(getClass()).error(
+          String.format("Aborting Pipes start-up - failed to copy modules: "+e.getMessage()));
+        throw e;
+      }
 
-      ArrayList<String> filePaths = new ArrayList<String>(
-        Arrays.asList(
-          customModulesPathPrefix+"/core.sjs",
-          customModulesPathPrefix+"/entity-services-lib-vpp.sjs",
-          customModulesPathPrefix+"/google-libphonenumber.sjs",
-          customModulesPathPrefix+"/graphHelper.sjs",
-          customModulesPathPrefix+"/litegraph.sjs",
-          customModulesPathPrefix+"/moment-with-locales.min.sjs",
-          customModulesPathPrefix+"/user.sjs",
-          "/services/vppBackendServices.sjs"
-        ));
-
-
-      for (final String filePath : filePaths) {
-        final InputStream is = Proxy.class.getResourceAsStream(resourcesDhfRoot + filePath);
-        final File dest = new File(clientConfig.getMlDhfRoot() + destinationDhfRoot + filePath);
-
-        try {
-          FileUtils.copyInputStreamToFile(is, dest);
-        } catch (final IOException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-          System.out.println(e.toString());
-        }
+      try {
+        deployMlBackendModulesToModulesDatabase();
+      }
+      catch (Exception e) {
+        LoggerFactory.getLogger(getClass()).error(
+          String.format("Aborting Pipes start-up - Failed to load modules: "+e.getMessage()));
+        throw e;
       }
 
       LoggerFactory.getLogger(getClass()).info(
-        String.format("MarkLogic backend modules copied to your DHF project."));
-
-      deployModules();
+        String.format("Modules successfully copied and deployed."));
     }
   }
 
-  public void deployModules() {
+  private void copyMlBackendModulesToDhfRoot() throws IOException {
+    LoggerFactory.getLogger(getClass()).info(
+      String.format("Will copy MarkLogic backend modules to following DHF root: %s", clientConfig.getMlDhfRoot()));
+
+    ArrayList<String> filePaths = new ArrayList<String>(
+      Arrays.asList(
+        customModulesPathPrefix+"/core.sjs",
+        customModulesPathPrefix+"/entity-services-lib-vpp.sjs",
+        customModulesPathPrefix+"/google-libphonenumber.sjs",
+        customModulesPathPrefix+"/graphHelper.sjs",
+        customModulesPathPrefix+"/litegraph.sjs",
+        customModulesPathPrefix+"/moment-with-locales.min.sjs",
+        customModulesPathPrefix+"/user.sjs",
+        "/services/vppBackendServices.sjs"
+      ));
+
+
+    for (final String filePath : filePaths) {
+      final InputStream is = Proxy.class.getResourceAsStream(resourcesDhfRoot + filePath);
+      final File dest = new File(clientConfig.getMlDhfRoot() + destinationDhfRoot + filePath);
+
+      try {
+        FileUtils.copyInputStreamToFile(is, dest);
+      } catch (final IOException e) {
+        // TODO Auto-generated catch block
+//        e.printStackTrace();
+//        System.out.println(e.toString());
+          throw e;
+      }
+    }
+
+    LoggerFactory.getLogger(getClass()).info(
+      String.format("MarkLogic backend modules copied to your DHF project."));
+  }
+
+  public void deployMlBackendModulesToModulesDatabase() {
     LoggerFactory.getLogger(getClass()).info(
       String.format("Now loading Pipes modules to your DHF modules database...")
     );
@@ -106,7 +126,7 @@ public class InstallPipesBackend implements ApplicationRunner {
     appConfig.setName("data-hub");
     appConfig.setRestPort(clientConfig.getMlStagingPort());
 
-    appConfig.setModulesDatabaseName("data-hub-MODULES");
+    appConfig.setModulesDatabaseName(clientConfig.getMlModulesDatabase());
 
     AppDeployer appDeployer = new SimpleAppDeployer(client, manager, new LoadModulesCommand());
 

@@ -19,6 +19,7 @@ server.port=8081
 # MarkLogic DHF settings
 mlHost=localhost
 mlStagingPort=8010
+mlModulesDatabase=data-hub-MODULES
 
 # this is the root of your DHF project to deploy backend modules to
 mlDhfRoot=/my/projects/dhf 

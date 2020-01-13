@@ -12,63 +12,67 @@
     </encoder>
   </appender>
 
-  <root level="WARN">
+  <root level="ERROR">
     <appender-ref ref="STDOUT" />
   </root>
 
-  <logger name="com.marklogic" level="INFO" additivity="false">
-    <appender-ref ref="STDOUT" />
-  </logger>
+    <logger name="com.marklogic.pipes.ui.InstallPipesBackend" level="INFO" additivity="false">
+      <appender-ref ref="STDOUT" />
+    </logger>
 
- <logger name="org.springframework" level="WARN" additivity="false">
-    <appender-ref ref="STDOUT" />
-  </logger>
+<!--  <logger name="com.marklogic" level="INFO" additivity="false">-->
+<!--    <appender-ref ref="STDOUT" />-->
+<!--  </logger>-->
 
- <logger name="org.apache" level="WARN" additivity="false">
-    <appender-ref ref="STDOUT" />
-  </logger>
-  
-  <logger name="com.netflix" level="ERROR" additivity="false">
-    <appender-ref ref="STDOUT" />
-  </logger>
+<!-- <logger name="org.springframework" level="WARN" additivity="false">-->
+<!--    <appender-ref ref="STDOUT" />-->
+<!--  </logger>-->
+
+<!-- <logger name="org.apache" level="WARN" additivity="false">-->
+<!--    <appender-ref ref="STDOUT" />-->
+<!--  </logger>-->
+<!--  -->
+<!--  <logger name="com.netflix" level="ERROR" additivity="false">-->
+<!--    <appender-ref ref="STDOUT" />-->
+<!--  </logger>-->
 
   <logger name="com.marklogic.client.ext.modulesloader.impl.AssetFileLoader" level="INFO" additivity="false">
     <appender-ref ref="STDOUT" />
   </logger>
 
 
-  <logger name="com.marklogic.client.ext.batch.DefaultBatchHandler" level="WARN" additivity="false">
-    <appender-ref ref="STDOUT" />
-  </logger>
-  
-    <logger name="com.marklogic.mgmt.ManageClient" level="WARN" additivity="false">
-    <appender-ref ref="STDOUT" />
-  </logger>
-  
-  <logger name="com.marklogic.appdeployer.impl.SimpleAppDeployer" level="WARN" additivity="false">
-    <appender-ref ref="STDOUT" />
-  </logger>
+<!--  <logger name="com.marklogic.client.ext.batch.DefaultBatchHandler" level="WARN" additivity="false">-->
+<!--    <appender-ref ref="STDOUT" />-->
+<!--  </logger>-->
+<!--  -->
+<!--    <logger name="com.marklogic.mgmt.ManageClient" level="WARN" additivity="false">-->
+<!--    <appender-ref ref="STDOUT" />-->
+<!--  </logger>-->
+<!--  -->
+<!--  <logger name="com.marklogic.appdeployer.impl.SimpleAppDeployer" level="WARN" additivity="false">-->
+<!--    <appender-ref ref="STDOUT" />-->
+<!--  </logger>-->
 
-  <logger name="com.marklogic.client.impl.ResourceExtensionsImpl" level="WARN" additivity="false">
-    <appender-ref ref="STDOUT" />
-  </logger>
+<!--  <logger name="com.marklogic.client.impl.ResourceExtensionsImpl" level="WARN" additivity="false">-->
+<!--    <appender-ref ref="STDOUT" />-->
+<!--  </logger>-->
 
-  <logger name="com.marklogic.client.impl.DatabaseClientImpl" level="WARN" additivity="false">
-    <appender-ref ref="STDOUT" />
-  </logger>
+<!--  <logger name="com.marklogic.client.impl.DatabaseClientImpl" level="WARN" additivity="false">-->
+<!--    <appender-ref ref="STDOUT" />-->
+<!--  </logger>-->
 
 
-  <logger name="com.marklogic.pipes.ui.Proxy" level="WARN" additivity="false">
-    <appender-ref ref="STDOUT" />
-  </logger>
-  
-  <logger name="org.springframework.cloud.netflix.archaius.ArchaiusAutoConfiguration" level="WARN" additivity="false">
-    <appender-ref ref="STDOUT" />
-  </logger>
-  
-  <logger name="com.marklogic.appdeployer.command.modules.LoadModulesCommand" level="WARN" additivity="false">
-    <appender-ref ref="STDOUT" />
-  </logger>
-  
+<!--  <logger name="com.marklogic.pipes.ui.Proxy" level="WARN" additivity="false">-->
+<!--    <appender-ref ref="STDOUT" />-->
+<!--  </logger>-->
+<!--  -->
+<!--  <logger name="org.springframework.cloud.netflix.archaius.ArchaiusAutoConfiguration" level="WARN" additivity="false">-->
+<!--    <appender-ref ref="STDOUT" />-->
+<!--  </logger>-->
+
+<!--  <logger name="com.marklogic.appdeployer.command.modules.LoadModulesCommand" level="INFO" additivity="false">-->
+<!--    <appender-ref ref="STDOUT" />-->
+<!--  </logger>-->
+
 
 </configuration>
