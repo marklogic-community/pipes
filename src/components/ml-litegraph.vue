@@ -123,7 +123,7 @@
         <div class="layout-padding">
 
           <q-list class="q-mt-md" link>
-            <q-item-label :header="true">List of saved graph</q-item-label>
+            <q-item-label :header="true">List of saved graphs</q-item-label>
             <q-item @click.native="getSavedGraph(item.uri)" tag="label" v-bind:key="item.name"
                     v-for="(item, index) in savedGraph">
 
@@ -151,12 +151,12 @@
     <q-dialog v-model="showPreview">
       <q-card >
         <q-card-section class="row items-center">
-          <div class="text-h6">Preview</div>
+          <div class="text-h6">Preview Graph Execution</div>
         </q-card-section>
         <q-card-section class="row"  >
           <div style="min-width: 250px; max-width: 300px">
 
-            <q-select :options="availableDB"  filled label="Use Database for input"
+            <q-select :options="availableDB"  filled label="Source Database"
                       v-model="selectedDB" @input="dbChanged()">
 
               <template v-slot:prepend>
@@ -164,7 +164,7 @@
               </template>
 
             </q-select>
-            <q-select :options="availableCollections" filled label="Use collection as input"
+            <q-select :options="availableCollections" filled label="Source Collection"
                       v-model="collectionForPreview">
 
               <template v-slot:prepend>
@@ -196,7 +196,9 @@
 
           <div class="q-pa-md q-gutter-sm">
 
-            <q-btn @click="executeGraph()" color="primary" label="Execute Preview"/>
+            <q-btn @click="executeGraph()" color="primary" label="Execute Preview"
+            :disabled="( (saveToDB === false) && ((selectedDB === '' || selectedDB === null) || (collectionForPreview === '' || collectionForPreview === null)) ) ||
+            ((saveToDB === true) && (selectedTargetDB === '' || selectedTargetDB === null) || (selectedDB === '' || selectedDB === null) || (collectionForPreview === '' || collectionForPreview === null))"/>
           </div>
         </q-card-section>
         <q-card-section>
@@ -221,7 +223,7 @@
         </q-card-section>
 
         <q-card-section>
-         The code of you Data Hub Custom step is now available in your browser downloads folder (main.sjs file).
+         The code of your Data Hub Custom step is now available in the browser downloads folder (main.sjs file).
         </q-card-section>
 
         <q-card-actions align="right">
@@ -366,10 +368,12 @@
           })
       },
       dbChanged(){
-
+        this.collectionForPreview = ""
+        this.availableCollections = []
         this.discoverCollections()
       },
       discoverCollections() {
+
         var self = this; // keep reference for notifications called from catch block
         let dbOption =""
         if(this.selectedDB!=null && this.selectedDB!="") {
@@ -814,8 +818,8 @@ else
         }
 
 
-
-        //console.log(jsonGraph)
+        console.log("The graph: " + JSON.stringify(jsonGraph))
+        console.log("The request: " + JSON.stringify(request))
         this.$axios.post('/v1/resources/vppBackendServices?rs:action=ExecuteGraph' + dbOption , request)
           .then((response) => {
 
