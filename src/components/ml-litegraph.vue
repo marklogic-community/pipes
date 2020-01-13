@@ -239,13 +239,16 @@
   import {LiteGraph} from 'litegraph.js';
   import {saveAs} from 'file-saver';
   import VueJsonPretty from 'vue-json-pretty';
-
+  import Notifications from '../components/notificationHandler.js';
 
   export default {
     components: {
       VueJsonPretty
     },
     name: 'PageIndex',
+     mixins: [
+      Notifications
+    ],
     data() {
       return {
         currentCtsQuery:"",
@@ -338,6 +341,7 @@
       ,
       getSavedGraph(uri) {
         //if(uri!=null)
+        var self = this; // keep reference for notifications called from catch block
         this.$axios.get('/v1/resources/vppBackendServices?rs:action=GetSavedGraph&rs:uri=' + encodeURI(uri))
           .then((response) => {
             let graph = response.data;
@@ -345,29 +349,20 @@
              this.loadGraphFromJson(graph)
 
           })
-          .catch(() => {
-            this.$q.notify({
-              color: 'negative',
-              position: 'top',
-              message: 'Loading failed',
-              icon: 'report_problem'
-            })
+          .catch((error) => {
+            self.notifyError("GetSavedGraph", error, self);
           })
       },
       loadSavedGraph() {
 
+        var self = this; // keep reference for notifications called from catch block
         this.$axios.get('/v1/resources/vppBackendServices?rs:action=ListSavedGraph')
           .then((response) => {
             this.savedGraph = response.data;
 
           })
-          .catch(() => {
-            this.$q.notify({
-              color: 'negative',
-              position: 'top',
-              message: 'Loading failed',
-              icon: 'report_problem'
-            })
+          .catch((error) => {
+            self.notifyError("ListSavedGraph", error, self);
           })
       },
       dbChanged(){
@@ -375,6 +370,7 @@
         this.discoverCollections()
       },
       discoverCollections() {
+        var self = this; // keep reference for notifications called from catch block
         let dbOption =""
         if(this.selectedDB!=null && this.selectedDB!="") {
           dbOption += "&rs:database=" + this.selectedDB.value
@@ -383,13 +379,8 @@
             .then((response) => {
               this.availableCollections = response.data
             })
-            .catch(() => {
-              this.$q.notify({
-                color: 'negative',
-                position: 'top',
-                message: 'Loading failed',
-                icon: 'report_problem'
-              })
+            .catch((error) => {
+              self.notifyError("collectionDetails", error, self);
             })
         }
       },
@@ -750,6 +741,7 @@
       },
       saveCurrentGraph() {
 
+        var self = this; // keep reference for notifications called from catch block
         let jsonGraph = this.graph.serialize()
         let graphDef = {
           models: (this.models != null) ? this.models : [],
@@ -769,13 +761,8 @@
               icon: 'code'
             })
           })
-          .catch(() => {
-            this.$q.notify({
-              color: 'negative',
-              position: 'top',
-              message: 'Current graph save failed',
-              icon: 'report_problem'
-            })
+          .catch((error) => {
+            self.notifyError("SaveGraph", error, self);
           })
 
 
@@ -795,6 +782,7 @@
       ,
       executeGraph() {
 
+        var self = this; // keep reference for notifications called from catch block
         let dbOption =""
         if(this.selectedDB!=null && this.selectedDB!="") {
           dbOption += "&rs:database=" + this.selectedDB.value
@@ -834,13 +822,8 @@ else
             this.jsonFromPreview = response.data
 
           })
-         .catch(() => {
-            this.$q.notify({
-              color: 'negative',
-              position: 'top',
-              message: 'Graph execution failed',
-              icon: 'report_problem'
-            })
+         .catch((error) => {
+             self.notifyError("ExecuteGraph", error, self);
           })
 
       },
@@ -878,6 +861,7 @@ else
                 })
         },
       discoverDatabases() {
+        var self = this; 
         this.$axios.get('/v1/resources/vppBackendServices?rs:action=databasesDetails')
           .then((response) => {
             this.availableDB = response.data
@@ -903,16 +887,12 @@ else
 
 
           })
-          .catch(() => {
-            this.$q.notify({
-              color: 'negative',
-              position: 'top',
-              message: 'Loading failed',
-              icon: 'report_problem'
-            })
+          .catch((error) => {
+             self.notifyError("databasesDetails", error, self);
           })
       },
       discoverCollections() {
+        var self = this; 
         let dbOption =""
         if(this.selectedDB!=null && this.selectedDB!="") {
           dbOption += "&rs:database=" + this.selectedDB.value
@@ -927,13 +907,8 @@ else
           .then((response) => {
             this.availableCollections = response.data
           })
-          .catch(() => {
-            this.$q.notify({
-              color: 'negative',
-              position: 'top',
-              message: 'Loading failed',
-              icon: 'report_problem'
-            })
+          .catch((error) => {
+            self.notifyError("collectionDetails", error, self);
           })
       },
       DblClickNode(block) {
