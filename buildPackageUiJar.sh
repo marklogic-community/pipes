@@ -29,7 +29,7 @@ if [[ $1 !=  "release" ]]
     echo "Assuming nightly build, will add timestamp."
 
     for file in java-middle-tier/build/libs/marklogic-pipes*.jar; do
-    mv "$file" "${file%.jar}$(date +%s).jar"
+    mv "$file" "${file%.jar}.$(date +%s).jar"
     
 done 
 fi
