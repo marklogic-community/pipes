@@ -2,23 +2,24 @@ plugins {
 	id 'org.springframework.boot' version '2.2.2.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.8.RELEASE'
 	id 'java'
+
 }
 
 group = 'com.marklogic.pipes'
 version = '0.8'
 sourceCompatibility = '1.8'
-bootJar.baseName = 'marklogic-pipes'
+bootJar.archiveBaseName = 'marklogic-pipes'
 
-repositories {
-	mavenCentral()
-}
-
+repositories { jcenter()}
 ext {
 	set('springCloudVersion', "Hoxton.RELEASE")
 }
 
 dependencies {
-	compile 'org.apache.httpcomponents:httpclient:4.5.10'
+  implementation 'org.apache.httpcomponents:httpclient:4.5.10'
+
+  implementation 'com.marklogic:ml-app-deployer:3.17.0'
+
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-zuul'
 	implementation 'org.springframework.session:spring-session-core'

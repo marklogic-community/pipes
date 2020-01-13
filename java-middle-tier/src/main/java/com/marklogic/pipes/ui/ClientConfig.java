@@ -52,6 +52,10 @@ public class ClientConfig {
     return mlDhfRoot;
   }
 
+  public String getMlUsername() {return mlUsername;}
+
+  public String getMlPassword() {return mlPassword;}
+
   @Autowired
   Environment environment;
 
