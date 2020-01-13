@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -40,6 +41,9 @@ public class InstallPipesBackend implements ApplicationRunner {
 
   @Autowired
   ClientConfig clientConfig;
+
+  @Autowired
+  Environment environment;
 
   @Override
   public void run(ApplicationArguments args) throws Exception {
@@ -69,6 +73,8 @@ public class InstallPipesBackend implements ApplicationRunner {
 
       LoggerFactory.getLogger(getClass()).info(
         String.format("Modules successfully copied and deployed."));
+      LoggerFactory.getLogger(getClass()).info(
+        String.format("Pipes running on port: "+ environment.getProperty("local.server.port")));
     }
   }
 
