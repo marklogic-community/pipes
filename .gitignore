@@ -26,7 +26,9 @@ package-lock.json
 .java-version
 dhf/gradle-*.properties
 dhf/gradle.properties
-dhf/src/
+dhf/src
+dhf/src
+
 dhf/marklogic-datahub-5.0.2.war
 dhf/.tmp
 dhf/build/
@@ -41,8 +43,10 @@ dhf/mappings/
 nohup.out
 
 #java stuff
+java-middle-tier/src/main/resources/dhf
+java-middle-tier/src/main/resources/static
 java-middle-tier/bin/
-java-middle-tier/src/main/resources/
 java-middle-tier/.classpath
 java-middle-tier/.project
 java-middle-tier/.settings/
+
