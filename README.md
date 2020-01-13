@@ -19,14 +19,18 @@ server.port=8081
 # MarkLogic DHF settings
 mlHost=localhost
 mlStagingPort=8010
+mlUsername=myusername
+mlPassword=mypassword 
 
 # this is the root of your DHF project to deploy backend modules to
 mlDhfRoot=/my/projects/dhf 
 ```
 
+If you don't want to put your username and password into a plain text file, you can remove them from the properties file and instead pass them as a parameter to the Pipes jar.
+
 Pipes requires several backend modules to be installed on MarkLogic. When you run the Pipes jar for the first time, use the following:
 
-```java -jar pipes-xyz.jar --mlUsername=myusername --mlPassword=mypassword --deployBackend=true```
+```java -jar pipes-xyz.jar --deployBackend=true```
 
 This will run the UI and deploy backend modules to the appropriate location within your DHF project. 
 
