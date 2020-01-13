@@ -114,10 +114,13 @@
 </template>
 
 <script>
-
+  import Notifications from '../components/notificationHandler.js';
 
   export default {
     // name: 'ComponentName',
+    mixins: [
+      Notifications
+    ],
     data() {
       return {
         selectedCollection: "",
@@ -172,6 +175,7 @@
 
       },
       discoverCollections() {
+        var self = this;
         let dbOption =""
         if(this.selectedDatabase!=null && this.selectedDatabase!="") {
           dbOption += "&rs:database=" + this.selectedDatabase.value
@@ -186,47 +190,34 @@
           .then((response) => {
             this.availableCollections = response.data
           })
-          .catch(() => {
-            this.$q.notify({
-              color: 'negative',
-              position: 'top',
-              message: 'Loading failed',
-              icon: 'report_problem'
-            })
+          .catch((error) => {
+            self.notifyError("collectionDetails", error, self);
           })
       },
       discoverDatabases() {
+        var self = this;
         this.$axios.get('/v1/resources/vppBackendServices?rs:action=databasesDetails')
           .then((response) => {
             this.availableDatabases = response.data
           })
-          .catch(() => {
-            this.$q.notify({
-              color: 'negative',
-              position: 'top',
-              message: 'Loading failed',
-              icon: 'report_problem'
-            })
+          .catch((error) => {
+            self.notifyError("databasesDetails", error,self);
           })
       },
       loadSavedBlocks() {
-
+         var self = this
          this.$axios.get('/v1/resources/vppBackendServices?rs:action=ListSavedBlock')
           .then((response) => {
             this.savedBlocks = response.data;
 
           })
-          .catch(() => {
-            this.$q.notify({
-              color: 'negative',
-              position: 'top',
-              message: 'Loading failed',
-              icon: 'report_problem'
-            })
+          .catch((error) => {
+            self.notifyError("ListSavedBlock", error, self);
           })
       },
       getSavedBlock(uri) {
         //if(uri!=null)
+        var self = this;
        this.$axios.get('/v1/resources/vppBackendServices?rs:action=GetSavedBlock&rs:uri=' + encodeURI(uri))
           .then((response) => {
             let block = response.data;
@@ -239,17 +230,12 @@
               this.blockOptions = block.options;
             }
           })
-          .catch(() => {
-            this.$q.notify({
-              color: 'negative',
-              position: 'top',
-              message: 'Loading failed',
-              icon: 'report_problem'
-            })
+          .catch((error) => {
+             self.notifyError("ListSavedBlock", error, self);
           })
       },
       saveBlock() {
-
+        var self = this;
         let blockDef = {
 
           name: this.blockName,
@@ -265,13 +251,8 @@
           .then((response) => {
             this.savedGraph = response.data
           })
-          .catch(() => {
-            this.$q.notify({
-              color: 'negative',
-              position: 'top',
-              message: 'Loading failed',
-              icon: 'report_problem'
-            })
+          .catch((error) => {
+            self.notifyError("SaveBlock", error, self);
           })
       },
       discoverModel(collection,customURI) {

@@ -34,8 +34,13 @@
 </template>
 
 <script>
+  import Notifications from '../components/notificationHandler.js';
+
 export default {
   // name: 'ComponentName',
+  mixins: [
+      Notifications
+    ],
   data () {
     return {
       availableEntities :[],
@@ -68,17 +73,13 @@ export default {
 
 
     getEntities() {
+      var self = this;
       this.$axios.get('/v1/resources/vppBackendServices?rs:action=DHFEntities')
               .then((response) => {
                 this.availableEntities = response.data
               })
-              .catch(() => {
-                this.$q.notify({
-                  color: 'negative',
-                  position: 'top',
-                  message: 'Loading entities failed',
-                  icon: 'report_problem'
-                })
+              .catch((error) => {
+                self.notifyError("LoadingEntities", error, self);
               })
     },
     entityChanged(){
@@ -125,7 +126,7 @@ export default {
           this.$root.$emit("blockRequested",blockDef);
       },
       saveBlock() {
-
+          var self = this;
           let entity = this.availableEntities.filter(item => { return item.value == this.selectedEntity.value })[0]
 
           let blockDef = {
@@ -142,13 +143,8 @@ export default {
               .then((response) => {
                   this.savedGraph = response.data
               })
-              .catch(() => {
-                  this.$q.notify({
-                      color: 'negative',
-                      position: 'top',
-                      message: 'Loading failed',
-                      icon: 'report_problem'
-                  })
+              .catch((error) => {
+                 self.notifyError("savedBlock", error, self);
               })
       }
   },
