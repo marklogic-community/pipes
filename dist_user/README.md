@@ -24,6 +24,4 @@ You can also use https with this option --https
 
 
 
-## For usage demo see:
-https://wiki.marklogic.com/display/SAL/DHF+-+Low+code+visual+programming+concept+-+Demo
 
