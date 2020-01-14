@@ -29,11 +29,7 @@ Pipes requires several backend modules to be installed on MarkLogic. When you ru
 
 ```java -jar pipes-xyz.jar --mlUsername=myusername --mlPassword=mypassword --deployBackend=true```
 
-This will run the UI and deploy backend modules to the appropriate location within your DHF project. 
-
-Now, you have to (re)load modules by running
-```./gradlew mlReloadModules```
-from your DHF project root.
+This will run the UI, copy the deploy backend modules to the appropriate location within your DHF project and load these modules to the modules DB specified in the application.properties 
 
 Pipes UI is now running on localhost and the port that you've specified in the application.properties under value server.port. Example: [localhost:8081](localhost:8081)
 
