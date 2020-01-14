@@ -36,3 +36,5 @@ Pipes UI is now running on localhost and the port that you've specified in the a
 For subsequent Pipes runs on the same DHF project, you can omit the deployBackend parameter.
 
 Have fun!
+
+![alt text](https://github.com/marklogic-community/pipes/blob/master/Pipes.png?raw=true) 
