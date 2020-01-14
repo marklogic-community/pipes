@@ -29,20 +29,20 @@
 
           <q-btn flat round dense icon="fas fa-file" size="lg" @click.stop="loadDHFDefaultGraph()">
             <q-tooltip>
-              Reset the graph with a default DHF config
+              Reset graph to a default DHF config
             </q-tooltip>
 
           </q-btn>
           <!--  <q-btn flat round dense icon="play_arrow" size="lg" @click.stop="executeGraph()"/> -->
 
-          <q-btn flat round dense icon="fas fa-file-download" size="lg" @click.stop="downloadGraph()">
+          <q-btn flat round dense icon="fas fa-file-download" size="lg">
             <q-tooltip>
-              Download a copy of the current graph locally
+              Download local copy of current graph
             </q-tooltip>
           </q-btn>
           <q-btn flat round dense icon="cloud_upload" size="lg" @click.stop="saveGraph()">
             <q-tooltip>
-              Save current grap to the staging DB
+              Save current graph to the staging DB
             </q-tooltip>
           </q-btn>
           <q-btn flat round dense icon="cloud_download" size="lg" @click.stop="loadGraph()">
@@ -231,7 +231,6 @@
       this.$root.$on("initGraphMetadata", this.setGraphMetadata );
     },
     mounted: function () {
-
     }
   }
 </script>
