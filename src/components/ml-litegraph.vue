@@ -89,20 +89,24 @@
       </q-card>
     </q-dialog>
 
-    <q-dialog :content-css="{minWidth: '30vw', minHeight: '40vh'}" v-model="savePopUpOpened">
-      <q-layout class="bg-white" container>
-
-
-        <div class="layout-padding">
-          <q-item-label :header="true">Save current graph</q-item-label>
-          <div>
+    <q-dialog :content-css="{minWidth: '60vw', minHeight: '80vh'}" v-model="savePopUpOpened">
+        <q-card>
+        <q-card-section class="row items-center">
+          <div class="text-h6">Save current graph</div>
+        </q-card-section>
+        
+         <q-card-section class="row"  >
+          <div style="min-width: 250px; max-width: 300px">
             <q-input stack-label="true" label="Graph name" v-model="graphName"/>
           </div>
-          <div class="q-pa-sm">
+          </q-card-section>
+
+           <div class="q-pa-sm">
             <q-btn
               @click="saveCurrentGraph()"
               color="primary"
               label="Save"
+              :disabled="(graphName === null || graphName === '' || graphName.trim() === '')"
             />
             <q-btn
               @click="savePopUpOpened = false"
@@ -111,42 +115,37 @@
             />
           </div>
 
-        </div>
-      </q-layout>
+      </q-card>
+
     </q-dialog>
 
-
-    <q-dialog :content-css="{minWidth: '30vw', minHeight: '40vh'}" v-model="loadPopUpOpened">
-      <q-layout class="bg-white" container>
-
-
-        <div class="layout-padding">
-
+    <q-dialog v-model="loadPopUpOpened">
+      <div style="min-width: 400px; max-width: 600px">
+        <q-card>
+          <q-card-section class="row items-center">
+            <div class="text-h6">Reload Graph</div>
+          </q-card-section>
+        
           <q-list class="q-mt-md" link>
-            <q-item-label :header="true">List of saved graphs</q-item-label>
-            <q-item @click.native="getSavedGraph(item.uri)" tag="label" v-bind:key="item.name"
+            <q-item-label :header="true">Click graph from list to reload</q-item-label>
+            <q-item @click.native="getSavedGraph(item.uri,item.name)" tag="label" v-bind:key="item.name"
                     v-for="(item, index) in savedGraph">
-
               <q-item-label>
                 <q-item-section label>{{ item.name }}</q-item-section>
-
               </q-item-label>
             </q-item>
           </q-list>
-
-
+          
           <div class="q-pa-sm">
-
-            <q-btn
+           <q-btn
               @click="loadPopUpOpened = false"
               color="primary"
               label="Close"
             />
           </div>
-        </div>
-      </q-layout>
+      </q-card>
+      </div>
     </q-dialog>
-
 
     <q-dialog v-model="showPreview">
       <q-card >
@@ -291,7 +290,6 @@
         availableDB:[],
           docUri:null
 
-
       }
     },
     methods: {
@@ -341,7 +339,7 @@
       }
 
       ,
-      getSavedGraph(uri) {
+      getSavedGraph(uri,graphName) {
         //if(uri!=null)
         var self = this; // keep reference for notifications called from catch block
         this.$axios.get('/v1/resources/vppBackendServices?rs:action=GetSavedGraph&rs:uri=' + encodeURI(uri))
@@ -349,6 +347,13 @@
             let graph = response.data;
 
              this.loadGraphFromJson(graph)
+
+             this.$q.notify({
+              color: 'positive',
+              position: 'top',
+              message: "Loaded graph '" + graphName +"'",
+              icon: 'code'
+            })
 
           })
           .catch((error) => {
@@ -746,7 +751,8 @@
       saveCurrentGraph() {
 
         var self = this; // keep reference for notifications called from catch block
-        let jsonGraph = this.graph.serialize()
+        let jsonGraph = this.graph.serialize() 
+        this.graphName = this.graphName.replace(/[&#]/g, "_"); // & # causes error at download time
         let graphDef = {
           models: (this.models != null) ? this.models : [],
           executionGraph: jsonGraph,
@@ -754,6 +760,7 @@
           metadata: this.graphMetadata
 
         }
+        
 
         this.$axios.post('/v1/resources/vppBackendServices?rs:action=SaveGraph', graphDef)
           .then((response) => {
@@ -761,7 +768,7 @@
             this.$q.notify({
               color: 'positive',
               position: 'top',
-              message: "Current graph is saved",
+              message: "Graph saved as " + self.graphName,
               icon: 'code'
             })
           })
@@ -785,6 +792,11 @@
       }
       ,
       executeGraph() {
+
+        this.jsonFromPreview = {};
+        const graphDetail = this.graph.serialize()
+      //  console.log("Executing graph: " + JSON.stringify( this.graph.serialize() ) )
+      //  console.log("Graph has " + graphDetail.nodes.length + " nodes:")
 
         var self = this; // keep reference for notifications called from catch block
         let dbOption =""
@@ -817,9 +829,6 @@ else
             previewUri : this.docUri
         }
 
-
-        console.log("The graph: " + JSON.stringify(jsonGraph))
-        console.log("The request: " + JSON.stringify(request))
         this.$axios.post('/v1/resources/vppBackendServices?rs:action=ExecuteGraph' + dbOption , request)
           .then((response) => {
 
