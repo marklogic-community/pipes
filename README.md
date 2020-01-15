@@ -10,7 +10,7 @@ Pipes is designed to run on MarkLogic 10.0-2 (with DHF 5.1.0 installed).
 ## Great! How do I run it?
 To use Pipes you will need to have an instance of MarkLogic with the DHF installed.
 
-Next, download the jar from the releases section. In the same directory where you placed the jar, create an application.properties file with following content:
+Next, download the jar from the [Releases](https://github.com/marklogic-community/pipes/releases) section. In the same directory where you placed the jar, create an application.properties file with following content:
 
 ```
 # this is where the UI will be running, make sure the port is not used
@@ -35,9 +35,14 @@ Pipes requires several backend modules to be installed on MarkLogic. When you ru
 
 This will run the UI, copy the deploy backend modules to the appropriate location within your DHF project and load these modules to the modules DB specified in the application.properties 
 
-Pipes UI is now running on localhost and the port that you've specified in the application.properties under value server.port. Example: [localhost:8081](localhost:8081)
+Pipes UI is now running on localhost and the port that you've specified in the application.properties under value server.port. Example: [localhost:8081](http://localhost:8081)
 
 For subsequent Pipes runs on the same DHF project, you can omit the deployBackend parameter.
+
+
+
+## Uhm, OK, I gout it up and running! How do I use it?
+Learn on Pipes Wiki [how to create your first Pipes project](https://github.com/marklogic-community/pipes/wiki/Creating-your-first-Pipes-project)
 
 Have fun!
 
