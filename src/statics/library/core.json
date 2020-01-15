@@ -3,24 +3,32 @@
     "functionName": "GeoReproject",
     "blockName": "GeoReproject",
     "library": "geo",
+    "description" : "",
     "inputs": [
       {
         "name": "srcCoordinateSystem",
-        "type": "xs:string"
+        "type": "xs:string",
+        "mandatory" : true,
+        "description" : ""
       },
       {
         "name": "targetCoordinateSystem",
-        "type": "xs:string"
+        "type": "xs:string",
+        "mandatory" : true,
+        "description" : ""
       },
       {
         "name": "strWKT",
-        "type": "xs:string"
+        "type": "xs:string",
+        "mandatory" : true,
+        "description" : ""
       }
     ],
     "outputs": [
       {
         "name": "strWKT",
-        "type": "node"
+        "type": "node",
+        "description" : ""
       }
     ],
     "function": {
