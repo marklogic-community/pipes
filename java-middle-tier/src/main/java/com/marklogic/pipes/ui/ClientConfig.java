@@ -37,6 +37,13 @@ public class ClientConfig {
   @Value("${mlDhfRoot:/my/dhf}")
   private String mlDhfRoot;
 
+  public String getMlModulesDatabase() {
+    return mlModulesDatabase;
+  }
+
+  @Value("${mlModulesDatabase:data-hub-MODULES}")
+  private String mlModulesDatabase;
+
   /**
    * @return the mlStagingPort
    */
@@ -51,6 +58,10 @@ public class ClientConfig {
   public String getMlDhfRoot() {
     return mlDhfRoot;
   }
+
+  public String getMlUsername() {return mlUsername;}
+
+  public String getMlPassword() {return mlPassword;}
 
   @Autowired
   Environment environment;

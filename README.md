@@ -21,22 +21,19 @@ mlHost=localhost
 mlStagingPort=8010
 mlUsername=myusername
 mlPassword=mypassword 
+mlModulesDatabase=data-hub-MODULES
 
 # this is the root of your DHF project to deploy backend modules to
 mlDhfRoot=/my/projects/dhf 
 ```
 
-If you don't want to put your username and password into a plain text file, you can remove them from the properties file and instead pass them as a parameter to the Pipes jar.
+You probably care about seciruty. If you don't want to put your username and password into a plain text file, you can remove them from the properties file and instead pass them as a parameter to the Pipes jar.
 
 Pipes requires several backend modules to be installed on MarkLogic. When you run the Pipes jar for the first time, use the following:
 
 ```java -jar pipes-xyz.jar --deployBackend=true```
 
-This will run the UI and deploy backend modules to the appropriate location within your DHF project. 
-
-Now, you have to (re)load modules by running
-```./gradlew mlReloadModules```
-from your DHF project root.
+This will run the UI, copy the deploy backend modules to the appropriate location within your DHF project and load these modules to the modules DB specified in the application.properties 
 
 Pipes UI is now running on localhost and the port that you've specified in the application.properties under value server.port. Example: [localhost:8081](localhost:8081)
 

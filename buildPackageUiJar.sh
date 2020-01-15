@@ -20,4 +20,16 @@ mkdir -p java-middle-tier/src/main/resources/dhf
 # deploy backend modules to be picked up by jar builder
 cp -r dist_user/dhf/* java-middle-tier/src/main/resources/dhf/.
 
+rm -f java-middle-tier/build/libs/*
 java-middle-tier/gradlew bootJar -p java-middle-tier
+
+
+if [[ $1 !=  "release" ]]
+  then
+    echo "Assuming nightly build, will add timestamp."
+
+    for file in java-middle-tier/build/libs/marklogic-pipes*.jar; do
+    mv "$file" "${file%.jar}.$(date +%s).jar"
+    
+done 
+fi
