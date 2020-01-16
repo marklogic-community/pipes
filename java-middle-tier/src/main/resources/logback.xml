@@ -16,7 +16,7 @@
     <appender-ref ref="STDOUT" />
   </root>
 
-    <logger name="com.marklogic.pipes.ui.InstallPipesBackend" level="INFO" additivity="false">
+    <logger name="com.marklogic.pipes.ui.BackendModulesManager" level="INFO" additivity="false">
       <appender-ref ref="STDOUT" />
     </logger>
 
@@ -57,6 +57,8 @@
     <appender-ref ref="STDOUT" />
   </logger>
 
+
+
 <!--  <logger name="com.marklogic.client.impl.DatabaseClientImpl" level="WARN" additivity="false">-->
 <!--    <appender-ref ref="STDOUT" />-->
 <!--  </logger>-->
@@ -70,9 +72,9 @@
 <!--    <appender-ref ref="STDOUT" />-->
 <!--  </logger>-->
 
-<!--  <logger name="com.marklogic.appdeployer.command.modules.LoadModulesCommand" level="INFO" additivity="false">-->
-<!--    <appender-ref ref="STDOUT" />-->
-<!--  </logger>-->
+  <logger name="com.marklogic.appdeployer.command.modules.DeleteModulesCommand" level="INFO" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger>
 
 
 </configuration>
