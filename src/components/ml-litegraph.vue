@@ -90,30 +90,30 @@
     </q-dialog>
 
     <q-dialog :content-css="{minWidth: '60vw', minHeight: '80vh'}" v-model="savePopUpOpened">
-        <q-card>
+      <q-card>
         <q-card-section class="row items-center">
           <div class="text-h6">Save current graph</div>
         </q-card-section>
-        
-         <q-card-section class="row"  >
+
+        <q-card-section class="row">
           <div style="min-width: 250px; max-width: 300px">
             <q-input stack-label="true" label="Graph name" v-model="graphName"/>
           </div>
-          </q-card-section>
+        </q-card-section>
 
-           <div class="q-pa-sm">
-            <q-btn
-              @click="saveCurrentGraph()"
-              color="primary"
-              label="Save"
-              :disabled="(graphName === null || graphName === '' || graphName.trim() === '')"
-            />
-            <q-btn
-              @click="savePopUpOpened = false"
-              color="primary"
-              label="Close"
-            />
-          </div>
+        <div class="q-pa-sm">
+          <q-btn
+            @click="saveCurrentGraph()"
+            color="primary"
+            label="Save"
+            :disabled="(graphName === null || graphName === '' || graphName.trim() === '')"
+          />
+          <q-btn
+            @click="savePopUpOpened = false"
+            color="primary"
+            label="Close"
+          />
+        </div>
 
       </q-card>
 
@@ -125,7 +125,7 @@
           <q-card-section class="row items-center">
             <div class="text-h6">Reload Graph</div>
           </q-card-section>
-        
+
           <q-list class="q-mt-md" link>
             <q-item-label :header="true">Click graph from list to reload</q-item-label>
             <q-item @click.native="getSavedGraph(item.uri,item.name)" tag="label" v-bind:key="item.name"
@@ -135,31 +135,31 @@
               </q-item-label>
             </q-item>
           </q-list>
-          
+
           <div class="q-pa-sm">
-           <q-btn
+            <q-btn
               @click="loadPopUpOpened = false"
               color="primary"
               label="Close"
             />
           </div>
-      </q-card>
+        </q-card>
       </div>
     </q-dialog>
 
     <q-dialog v-model="showPreview">
-      <q-card >
+      <q-card>
         <q-card-section class="row items-center">
           <div class="text-h6">Preview Graph Execution</div>
         </q-card-section>
-        <q-card-section class="row"  >
+        <q-card-section class="row">
           <div style="min-width: 250px; max-width: 300px">
 
-            <q-select :options="availableDB"  filled label="Source Database"
+            <q-select :options="availableDB" filled label="Source Database"
                       v-model="selectedDB" @input="dbChanged()">
 
               <template v-slot:prepend>
-                <q-icon name="fas fa-database" @click.stop />
+                <q-icon name="fas fa-database" @click.stop/>
               </template>
 
             </q-select>
@@ -167,19 +167,19 @@
                       v-model="collectionForPreview">
 
               <template v-slot:prepend>
-                <q-icon name="fas fa-tags" @click.stop />
+                <q-icon name="fas fa-tags" @click.stop/>
               </template>
             </q-select>
 
-            <q-select v-if="saveToDB" :options="availableDB"  filled label="Save to Database"
+            <q-select v-if="saveToDB" :options="availableDB" filled label="Save to Database"
                       v-model="selectedTargetDB">
 
               <template v-slot:prepend>
-                <q-icon name="fas fa-database" @click.stop />
+                <q-icon name="fas fa-database" @click.stop/>
               </template>
 
             </q-select>
-            <q-input v-if="!randomDocPreview"   v-model="docUri" label="Optional doc URI" />
+            <q-input v-if="!randomDocPreview" v-model="docUri" label="Optional doc URI"/>
           </div>
 
           <q-toggle
@@ -196,23 +196,22 @@
           <div class="q-pa-md q-gutter-sm">
 
             <q-btn @click="executeGraph()" color="primary" label="Execute Preview"
-            :disabled="( (saveToDB === false) && ((selectedDB === '' || selectedDB === null) || (collectionForPreview === '' || collectionForPreview === null)) ) ||
+                   :disabled="( (saveToDB === false) && ((selectedDB === '' || selectedDB === null) || (collectionForPreview === '' || collectionForPreview === null)) ) ||
             ((saveToDB === true) && (selectedTargetDB === '' || selectedTargetDB === null) || (selectedDB === '' || selectedDB === null) || (collectionForPreview === '' || collectionForPreview === null))"/>
           </div>
         </q-card-section>
         <q-card-section>
           <q-scroll-area style="height: 500px; max-width: 500px;">
             <div class="q-py-xs">
-          <vue-json-pretty
-            :data="jsonFromPreview"
-          >
-          </vue-json-pretty>
+              <vue-json-pretty
+                :data="jsonFromPreview"
+              >
+              </vue-json-pretty>
             </div>
           </q-scroll-area>
         </q-card-section>
       </q-card>
     </q-dialog>
-
 
 
     <q-dialog v-model="isExported">
@@ -222,11 +221,30 @@
         </q-card-section>
 
         <q-card-section>
-         The code of your Data Hub Custom step is now available in the browser downloads folder (main.sjs file).
+          The code of your Data Hub Custom step is now available in the browser downloads folder (main.sjs file).
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup />
+          <q-btn flat label="OK" color="primary" v-close-popup/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
+
+    <q-dialog
+      v-model="showCodeGenConfig"
+    >
+      <q-card style="width: 400px">
+        <q-card-section>
+          <div class="text-h6">Export DHF module</div>
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          <code-generation-config :graph="graph" :models="models" :is-exported="isExported"></code-generation-config>
+        </q-card-section>
+
+        <q-card-actions align="right" class="bg-white text-teal">
+          <q-btn flat label="OK" v-close-popup/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -241,40 +259,43 @@
   import {saveAs} from 'file-saver';
   import VueJsonPretty from 'vue-json-pretty';
   import Notifications from '../components/notificationHandler.js';
+  import codeGenerationConfig from '../components/codeGenerationConfig.vue'
 
   export default {
     components: {
-      VueJsonPretty
+      VueJsonPretty,
+      codeGenerationConfig
     },
     name: 'PageIndex',
-     mixins: [
+    mixins: [
       Notifications
     ],
     data() {
       return {
-        currentCtsQuery:"",
-        currentCases:"",
-          selectedTargetDB:null,
-        editQuery:false,
+        currentCtsQuery: "",
+        currentCases: "",
+        selectedTargetDB: null,
+        editQuery: false,
         editJson: false,
-        editCases:false,
-          saveToDB:false,
-        graphMetadata:{
-          title:"",
-          version:"00.01",
-          author:"",
-          description:""
+        editCases: false,
+        saveToDB: false,
+        graphMetadata: {
+          title: "",
+          version: "00.01",
+          author: "",
+          description: ""
         },
         columns: [
           {name: 'source', align: 'left', label: 'Source', field: 'source', sortable: true},
           {name: 'target', label: 'Target', field: 'target', sortable: true, align: 'left'},
         ],
         opened: true,
-        isExported:false,
+        isExported: false,
         graph: null,
         results: null,
         models: [],
         showPreview: false,
+        showCodeGenConfig: false,
         collectionForPreview: "",
         jsonFromPreview: {},
         randomDocPreview: false,
@@ -286,9 +307,9 @@
         currentProperties: [],
         jsoneditor: null,
         availableCollections: [],
-        selectedDB:null,
-        availableDB:[],
-          docUri:null
+        selectedDB: null,
+        availableDB: [],
+        docUri: null
 
       }
     },
@@ -318,7 +339,7 @@
       addMapping() {
         this.currentProperties.push({source: "val", target: "newVal"})
       },
-      loadGraphFromJson(graph){
+      loadGraphFromJson(graph) {
 
         for (let model of graph.models) {
           let newBlock = this.createGraphNodeFromModel(model);
@@ -329,29 +350,28 @@
         this.graph.configure(graph.executionGraph)
 
 
-
-          if(graph.metadata && graph.metadata.title !=null) this.graphMetadata.title = graph.metadata.title; else this.graphMetadata.title =""
-          if(graph.metadata && graph.metadata.author !=null) this.graphMetadata.author = graph.metadata.author; else this.graphMetadata.author =""
-          if(graph.metadata && graph.metadata.version !=null) this.graphMetadata.version = graph.metadata.version;else this.graphMetadata.version =""
-          if(graph.metadata && graph.metadata.description !=null) this.graphMetadata.description = graph.description; else this.graphMetadata.description =""
-          this.$root.$emit("initGraphMetadata",this.graphMetadata)
+        if (graph.metadata && graph.metadata.title != null) this.graphMetadata.title = graph.metadata.title; else this.graphMetadata.title = ""
+        if (graph.metadata && graph.metadata.author != null) this.graphMetadata.author = graph.metadata.author; else this.graphMetadata.author = ""
+        if (graph.metadata && graph.metadata.version != null) this.graphMetadata.version = graph.metadata.version; else this.graphMetadata.version = ""
+        if (graph.metadata && graph.metadata.description != null) this.graphMetadata.description = graph.description; else this.graphMetadata.description = ""
+        this.$root.$emit("initGraphMetadata", this.graphMetadata)
 
       }
 
       ,
-      getSavedGraph(uri,graphName) {
+      getSavedGraph(uri, graphName) {
         //if(uri!=null)
         var self = this; // keep reference for notifications called from catch block
         this.$axios.get('/v1/resources/vppBackendServices?rs:action=GetSavedGraph&rs:uri=' + encodeURI(uri))
           .then((response) => {
             let graph = response.data;
 
-             this.loadGraphFromJson(graph)
+            this.loadGraphFromJson(graph)
 
-             this.$q.notify({
+            this.$q.notify({
               color: 'positive',
               position: 'top',
-              message: "Loaded graph '" + graphName +"'",
+              message: "Loaded graph '" + graphName + "'",
               icon: 'code'
             })
 
@@ -372,33 +392,33 @@
             self.notifyError("ListSavedGraph", error, self);
           })
       },
-      dbChanged(){
+      dbChanged() {
         this.collectionForPreview = ""
         this.availableCollections = []
         this.discoverCollections()
       },
       // Filter out DHF and MarkLogic reserved collections
       filterCollections(collections) {
-            var filtered = []
-            if ( collections !== null && typeof collections === 'object' && collections.length >= 1) {
-              filtered = collections.filter(
-                collection => (! collection.label.startsWith('http://marklogic.com/') 
-                && (! collection.label.startsWith('marklogic-pipes/') )
-                )
-              )
-            }
-            return filtered;
-        },
+        var filtered = []
+        if (collections !== null && typeof collections === 'object' && collections.length >= 1) {
+          filtered = collections.filter(
+            collection => (!collection.label.startsWith('http://marklogic.com/')
+              && (!collection.label.startsWith('marklogic-pipes/'))
+            )
+          )
+        }
+        return filtered;
+      },
       discoverCollections() {
 
         var self = this; // keep reference for notifications called from catch block
-        let dbOption =""
-        if(this.selectedDB!=null && this.selectedDB!="") {
+        let dbOption = ""
+        if (this.selectedDB != null && this.selectedDB != "") {
           dbOption += "&rs:database=" + this.selectedDB.value
 
           this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionDetails' + dbOption)
             .then((response) => {
-              this.availableCollections = self.filterCollections( response.data )
+              this.availableCollections = self.filterCollections(response.data)
             })
             .catch((error) => {
               self.notifyError("collectionDetails", error, self);
@@ -490,31 +510,25 @@
 
 
           if (map.sourceField != null && map.sourceField != "") blocks[map.source].fields.push(
-
-          {
-            "label": map.sourceField,
-            "field" :  map.sourceField,
-            "path":  "//text('"  +  map.sourceField + "')"
-          }
-
-
-
+            {
+              "label": map.sourceField,
+              "field": map.sourceField,
+              "path": "//text('" + map.sourceField + "')"
+            }
           )
           if (map.targetField != null && map.targetField != "") blocks[map.target].fields.push(
-
-
-          {
-            "label": map.targetField,
-            "field" :  map.targetField,
-            "path":  "//text('"  +  map.targetField + "')"
-          }
+            {
+              "label": map.targetField,
+              "field": map.targetField,
+              "path": "//text('" + map.targetField + "')"
+            }
           )
 
         }
 
         let ii = 0
         let oi = 0
-        let blockCache ={}
+        let blockCache = {}
         Object.keys(blocks).map(item => {
 
           this.createBlock(blocks[item])
@@ -534,16 +548,16 @@
             })
             */
 
-     for (let map of mappings) {
+        for (let map of mappings) {
 
 
           if (map.source != null && map.target != null && map.sourceField != null && map.targetField != null && map.source != "" && map.target != "" && map.sourceField != "" && map.targetField != "") {
-           // console.log(map.sourceField)
-           // console.log(blocks[map.target].block.ioSetup)
+            // console.log(map.sourceField)
+            // console.log(blocks[map.target].block.ioSetup)
             blockCache[map.source].connect(
-              blockCache[map.source].ioSetup.outputs["//text('" + map.sourceField +"')"],
+              blockCache[map.source].ioSetup.outputs["//text('" + map.sourceField + "')"],
               blockCache[map.target].id,
-              blockCache[map.target].ioSetup.inputs["//text('" + map.targetField +"')"])
+              blockCache[map.target].ioSetup.inputs["//text('" + map.targetField + "')"])
 
           }
 
@@ -586,10 +600,10 @@
           }
 
           if (this.blockDef.options.indexOf("nodeOutput") > -1) {
-              this.ioSetup.outputs["Node"] = this.ioSetup.outputs._count++;
-              this.ioSetup.outputs["Prov"] = this.ioSetup.outputs._count++;
-              this.addOutput("Node", "Node");
-              this.addOutput("Prov", null);
+            this.ioSetup.outputs["Node"] = this.ioSetup.outputs._count++;
+            this.ioSetup.outputs["Prov"] = this.ioSetup.outputs._count++;
+            this.addOutput("Node", "Node");
+            this.addOutput("Prov", null);
           }
 
           if (this.blockDef.options.indexOf("fieldsOutputs") > -1) {
@@ -621,7 +635,7 @@
 
 
       },
-      downloadGraph(){
+      downloadGraph() {
 
 
         let jsonGraph = this.graph.serialize()
@@ -638,132 +652,135 @@
           type: "text/plain;charset=utf-8",
           endings: "transparent"
         });
-        let name =""
-        if(this.graphMetadata && this.graphMetadata.title!=null && this.graphMetadata.title!="") name +=this.graphMetadata.title; else name += "currentGraph"
-        if(this.graphMetadata && this.graphMetadata.version!=null && this.graphMetadata.version!="") name += "-" + this.graphMetadata.version
-        saveAs(blob, name  + ".json");
+        let name = ""
+        if (this.graphMetadata && this.graphMetadata.title != null && this.graphMetadata.title != "") name += this.graphMetadata.title; else name += "currentGraph"
+        if (this.graphMetadata && this.graphMetadata.version != null && this.graphMetadata.version != "") name += "-" + this.graphMetadata.version
+        saveAs(blob, name + ".json");
 
       },
       exportDHFModule() {
         //console.log("export DHF module")
-        let jsonGraph = this.graph.serialize()
-        let request = {
-          models: (this.models != null) ? this.models : [],
-          executionGraph: jsonGraph
+        this.showCodeGenConfig = true
 
-        }
 
-        let begin = "const DataHub = require(\"/data-hub/5/datahub.sjs\");\n" +
-            "var gHelper  = require(\"/custom-modules/graphHelper\")\n" +
-          "const datahub = new DataHub();\n" +
-          "\n" +
-          "\n" +
-          "function getGraphDefinition() {\n" +
-          "\n" +
-          "  return "
-
-        let end = "}\n" +
-          "\n" +
-          "function main(content, options) {\n" +
-          "\n" +
-          "  //grab the doc id/uri\n" +
-          "  let id = content.uri;\n" +
-          "\n" +
-          "  //here we can grab and manipulate the context metadata attached to the document\n" +
-          "  let context = content.context;\n" +
-          "\n" +
-          "  //let's set our output format, so we know what we're exporting\n" +
-          "  let outputFormat = options.outputFormat ? options.outputFormat.toLowerCase() : datahub.flow.consts.DEFAULT_FORMAT;\n" +
-          "\n" +
-          "  //here we check to make sure we're not trying to push out a binary or text document, just xml or json\n" +
-          "  if (outputFormat !== datahub.flow.consts.JSON && outputFormat !== datahub.flow.consts.XML) {\n" +
-          "    datahub.debug.log({\n" +
-          "      message: 'The output format of type ' + outputFormat + ' is invalid. Valid options are ' + datahub.flow.consts.XML + ' or ' + datahub.flow.consts.JSON + '.',\n" +
-          "      type: 'error'\n" +
-          "    });\n" +
-          "    throw Error('The output format of type ' + outputFormat + ' is invalid. Valid options are ' + datahub.flow.consts.XML + ' or ' + datahub.flow.consts.JSON + '.');\n" +
-          "  }\n" +
-          "\n" +
-          "  /*\n" +
-          "  This scaffolding assumes we obtained the document from the database. If you are inserting information, you will\n" +
-          "  have to map data from the content.value appropriately and create an instance (object), headers (object), and triples\n" +
-          "  (array) instead of using the flowUtils functions to grab them from a document that was pulled from MarkLogic.\n" +
-          "  Also you do not have to check if the document exists as in the code below.\n" +
-          "\n" +
-          "  Example code for using data that was sent to MarkLogic server for the document\n" +
-          "  let instance = content.value;\n" +
-          "  let triples = [];\n" +
-          "  let headers = {};\n" +
-          "   */\n" +
-          "\n" +
-          "  //Here we check to make sure it's still there before operating on it\n" +
-          "  if (!fn.docAvailable(id)) {\n" +
-          "    datahub.debug.log({message: 'The document with the uri: ' + id + ' could not be found.', type: 'error'});\n" +
-          "    throw Error('The document with the uri: ' + id + ' could not be found.')\n" +
-          "  }\n" +
-          "\n" +
-          "  //grab the 'doc' from the content value space\n" +
-          "  let doc = content.value;\n" +
-          "\n" +
-          "  // let's just grab the root of the document if its a Document and not a type of Node (ObjectNode or XMLNode)\n" +
-          "  //if (doc && (doc instanceof Document || doc instanceof XMLDocument)) {\n" +
-          "  //  doc = fn.head(doc.root);\n" +
-          "  //}\n" +
-          "\n" +
-          "  /*\n" +
-          "  //get our instance, default shape of envelope is envelope/instance, else it'll return an empty object/array\n" +
-          "  let instance = datahub.flow.flowUtils.getInstance(doc) || {};\n" +
-          "\n" +
-          "  // get triples, return null if empty or cannot be found\n" +
-          "  let triples = datahub.flow.flowUtils.getTriples(doc) || [];\n" +
-          "\n" +
-          "  //gets headers, return null if cannot be found\n" +
-          "  let headers = datahub.flow.flowUtils.getHeaders(doc) || {};\n" +
-          "\n" +
-          "  //If you want to set attachments, uncomment here\n" +
-          "  // instance['$attachments'] = doc;\n" +
-          "  */\n" +
-          "\n" +
-          "\n" +
-          "\n" +
-          "  //insert code to manipulate the instance, triples, headers, uri, context metadata, etc.\n" +
-          "\n" +
-          "\n" +
-          "  let results = gHelper.executeGraphStep(doc,id,getGraphDefinition(),{collections: xdmp.documentGetCollections(id)})\n" +
-          /* "\n" +
-           "  //form our envelope here now, specifying our output format\n" +
-           " // let envelope = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);\n" +
-           "\n" +
-           "  //assign our envelope value\n" +
-           "  content.value = instance.output;\n" +
-           "\n" +
-           "  //assign the uri we want, in this case the same\n" +
-           "  content.uri = (instance.uri!=null)?instance.uri:id;\n" +
-           "\n" +
-           "context.collections = (instance.collections!=null)?instance.collections:context.collections;" +
-           "  //assign the context we want\n" +
-           "  content.context = context;\n" +
-           "\n" +
-           "  //now let's return out our content to be written\n" +*/
-          "  return results;\n" +
-          "}\n" +
-          "\n" +
-          "module.exports = {\n" +
-          "  main: main\n" +
-          "};\n"
-
-        var blob = new Blob([begin + JSON.stringify(request) + end], {
-          type: "text/plain;charset=utf-8",
-          endings: "transparent"
-        });
-        saveAs(blob, "main.sjs");
-        this.isExported=true
+        //  let jsonGraph = this.graph.serialize()
+        //   let request = {
+        //     models: (this.models != null) ? this.models : [],
+        //     executionGraph: jsonGraph
+        //
+        //   }
+        //
+        //   let begin = "const DataHub = require(\"/data-hub/5/datahub.sjs\");\n" +
+        //       "var gHelper  = require(\"/custom-modules/graphHelper\")\n" +
+        //     "const datahub = new DataHub();\n" +
+        //     "\n" +
+        //     "\n" +
+        //     "function getGraphDefinition() {\n" +
+        //     "\n" +
+        //     "  return "
+        //
+        //   let end = "}\n" +
+        //     "\n" +
+        //     "function main(content, options) {\n" +
+        //     "\n" +
+        //     "  //grab the doc id/uri\n" +
+        //     "  let id = content.uri;\n" +
+        //     "\n" +
+        //     "  //here we can grab and manipulate the context metadata attached to the document\n" +
+        //     "  let context = content.context;\n" +
+        //     "\n" +
+        //     "  //let's set our output format, so we know what we're exporting\n" +
+        //     "  let outputFormat = options.outputFormat ? options.outputFormat.toLowerCase() : datahub.flow.consts.DEFAULT_FORMAT;\n" +
+        //     "\n" +
+        //     "  //here we check to make sure we're not trying to push out a binary or text document, just xml or json\n" +
+        //     "  if (outputFormat !== datahub.flow.consts.JSON && outputFormat !== datahub.flow.consts.XML) {\n" +
+        //     "    datahub.debug.log({\n" +
+        //     "      message: 'The output format of type ' + outputFormat + ' is invalid. Valid options are ' + datahub.flow.consts.XML + ' or ' + datahub.flow.consts.JSON + '.',\n" +
+        //     "      type: 'error'\n" +
+        //     "    });\n" +
+        //     "    throw Error('The output format of type ' + outputFormat + ' is invalid. Valid options are ' + datahub.flow.consts.XML + ' or ' + datahub.flow.consts.JSON + '.');\n" +
+        //     "  }\n" +
+        //     "\n" +
+        //     "  /*\n" +
+        //     "  This scaffolding assumes we obtained the document from the database. If you are inserting information, you will\n" +
+        //     "  have to map data from the content.value appropriately and create an instance (object), headers (object), and triples\n" +
+        //     "  (array) instead of using the flowUtils functions to grab them from a document that was pulled from MarkLogic.\n" +
+        //     "  Also you do not have to check if the document exists as in the code below.\n" +
+        //     "\n" +
+        //     "  Example code for using data that was sent to MarkLogic server for the document\n" +
+        //     "  let instance = content.value;\n" +
+        //     "  let triples = [];\n" +
+        //     "  let headers = {};\n" +
+        //     "   */\n" +
+        //     "\n" +
+        //     "  //Here we check to make sure it's still there before operating on it\n" +
+        //     "  if (!fn.docAvailable(id)) {\n" +
+        //     "    datahub.debug.log({message: 'The document with the uri: ' + id + ' could not be found.', type: 'error'});\n" +
+        //     "    throw Error('The document with the uri: ' + id + ' could not be found.')\n" +
+        //     "  }\n" +
+        //     "\n" +
+        //     "  //grab the 'doc' from the content value space\n" +
+        //     "  let doc = content.value;\n" +
+        //     "\n" +
+        //     "  // let's just grab the root of the document if its a Document and not a type of Node (ObjectNode or XMLNode)\n" +
+        //     "  //if (doc && (doc instanceof Document || doc instanceof XMLDocument)) {\n" +
+        //     "  //  doc = fn.head(doc.root);\n" +
+        //     "  //}\n" +
+        //     "\n" +
+        //     "  /*\n" +
+        //     "  //get our instance, default shape of envelope is envelope/instance, else it'll return an empty object/array\n" +
+        //     "  let instance = datahub.flow.flowUtils.getInstance(doc) || {};\n" +
+        //     "\n" +
+        //     "  // get triples, return null if empty or cannot be found\n" +
+        //     "  let triples = datahub.flow.flowUtils.getTriples(doc) || [];\n" +
+        //     "\n" +
+        //     "  //gets headers, return null if cannot be found\n" +
+        //     "  let headers = datahub.flow.flowUtils.getHeaders(doc) || {};\n" +
+        //     "\n" +
+        //     "  //If you want to set attachments, uncomment here\n" +
+        //     "  // instance['$attachments'] = doc;\n" +
+        //     "  */\n" +
+        //     "\n" +
+        //     "\n" +
+        //     "\n" +
+        //     "  //insert code to manipulate the instance, triples, headers, uri, context metadata, etc.\n" +
+        //     "\n" +
+        //     "\n" +
+        //     "  let results = gHelper.executeGraphStep(doc,id,getGraphDefinition(),{collections: xdmp.documentGetCollections(id)})\n" +
+        //     /* "\n" +
+        //      "  //form our envelope here now, specifying our output format\n" +
+        //      " // let envelope = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);\n" +
+        //      "\n" +
+        //      "  //assign our envelope value\n" +
+        //      "  content.value = instance.output;\n" +
+        //      "\n" +
+        //      "  //assign the uri we want, in this case the same\n" +
+        //      "  content.uri = (instance.uri!=null)?instance.uri:id;\n" +
+        //      "\n" +
+        //      "context.collections = (instance.collections!=null)?instance.collections:context.collections;" +
+        //      "  //assign the context we want\n" +
+        //      "  content.context = context;\n" +
+        //      "\n" +
+        //      "  //now let's return out our content to be written\n" +*/
+        //     "  return results;\n" +
+        //     "}\n" +
+        //     "\n" +
+        //     "module.exports = {\n" +
+        //     "  main: main\n" +
+        //     "};\n"
+        //
+        //   var blob = new Blob([begin + JSON.stringify(request) + end], {
+        //     type: "text/plain;charset=utf-8",
+        //     endings: "transparent"
+        //   });
+        //   saveAs(blob, "main.sjs");
+        // //  this.isExported=true
 
       },
       saveCurrentGraph() {
 
         var self = this; // keep reference for notifications called from catch block
-        let jsonGraph = this.graph.serialize() 
+        let jsonGraph = this.graph.serialize()
         this.graphName = this.graphName.replace(/[&#]/g, "_"); // & # causes error at download time
         let graphDef = {
           models: (this.models != null) ? this.models : [],
@@ -772,7 +789,7 @@
           metadata: this.graphMetadata
 
         }
-        
+
 
         this.$axios.post('/v1/resources/vppBackendServices?rs:action=SaveGraph', graphDef)
           .then((response) => {
@@ -791,13 +808,13 @@
 
       }
       ,
-      resetDhfDefaultGraph(){
+      resetDhfDefaultGraph() {
 
 
         this.$axios.get('/statics/graph/dhfDefaultGraph.json')
           .then((response) => {
             let defaultGraph = response.data
-              defaultGraph.models = this.models
+            defaultGraph.models = this.models
             this.loadGraphFromJson(defaultGraph)
 
           })
@@ -807,26 +824,26 @@
 
         this.jsonFromPreview = {};
         const graphDetail = this.graph.serialize()
-      //  console.log("Executing graph: " + JSON.stringify( this.graph.serialize() ) )
-      //  console.log("Graph has " + graphDetail.nodes.length + " nodes:")
+        //  console.log("Executing graph: " + JSON.stringify( this.graph.serialize() ) )
+        //  console.log("Graph has " + graphDetail.nodes.length + " nodes:")
 
         var self = this; // keep reference for notifications called from catch block
-        let dbOption =""
-        if(this.selectedDB!=null && this.selectedDB!="") {
+        let dbOption = ""
+        if (this.selectedDB != null && this.selectedDB != "") {
           dbOption += "&rs:database=" + this.selectedDB.value
           //this.$root.$emit("databaseChanged",
-           // {selectedDatabase: this.selectedDatabase,availableDatabases:this.availableDatabases
-           // }
+          // {selectedDatabase: this.selectedDatabase,availableDatabases:this.availableDatabases
+          // }
 
           //);
         }
 
-        if(this.saveToDB){
+        if (this.saveToDB) {
 
-            if(dbOption!="")
-                dbOption += "&rs:toDatabase=" + this.selectedTargetDB.value + "&rs:save=true"
-else
-                dbOption += "?rs:toDatabase=" + this.selectedTargetDB.value+ "&rs:save=true"
+          if (dbOption != "")
+            dbOption += "&rs:toDatabase=" + this.selectedTargetDB.value + "&rs:save=true"
+          else
+            dbOption += "?rs:toDatabase=" + this.selectedTargetDB.value + "&rs:save=true"
         }
 
         let jsonGraph = this.graph.serialize()
@@ -838,17 +855,17 @@ else
           },
           collection: this.collectionForPreview.value,
           collectionRandom: this.randomDocPreview,
-            previewUri : this.docUri
+          previewUri: this.docUri
         }
 
-        this.$axios.post('/v1/resources/vppBackendServices?rs:action=ExecuteGraph' + dbOption , request)
+        this.$axios.post('/v1/resources/vppBackendServices?rs:action=ExecuteGraph' + dbOption, request)
           .then((response) => {
 
             this.jsonFromPreview = response.data
 
           })
-         .catch((error) => {
-             self.notifyError("ExecuteGraph", error, self);
+          .catch((error) => {
+            self.notifyError("ExecuteGraph", error, self);
           })
 
       },
@@ -863,30 +880,30 @@ else
         this.loadPopUpOpened = true;
 
       },
-        selectNode(block){
-          console.log(block)
-            let message = null
-            if ( block.properties.testCases)
-                message= 'Double click the box to edit the test cases'
+      selectNode(block) {
+        console.log(block)
+        let message = null
+        if (block.properties.testCases)
+          message = 'Double click the box to edit the test cases'
 
 
-            if ( block.properties.mapping)
-                message= 'Double click the box to edit the mapping rules'
+        if (block.properties.mapping)
+          message = 'Double click the box to edit the mapping rules'
 
-            if (block.properties.ctsQuery)
-                message= 'Double click the box to edit the lookup query'
+        if (block.properties.ctsQuery)
+          message = 'Double click the box to edit the lookup query'
 
-            if(message!=null)
-                this.$q.notify({
-                    color: 'secondary',
-                    position: 'center',
-                    message: message,
-                    icon: 'info',
-                    timeout:800
-                })
-        },
+        if (message != null)
+          this.$q.notify({
+            color: 'secondary',
+            position: 'center',
+            message: message,
+            icon: 'info',
+            timeout: 800
+          })
+      },
       discoverDatabases() {
-        var self = this; 
+        var self = this;
         this.$axios.get('/v1/resources/vppBackendServices?rs:action=databasesDetails')
           .then((response) => {
             this.availableDB = response.data
@@ -906,31 +923,31 @@ else
 
               })
             console.log("emit init")
-            this.$root.$emit("initGraphMetadata",this.graphMetadata)
+            this.$root.$emit("initGraphMetadata", this.graphMetadata)
 
             this.discoverCollections()
 
 
           })
           .catch((error) => {
-             self.notifyError("databasesDetails", error, self);
+            self.notifyError("databasesDetails", error, self);
           })
       },
       discoverCollections() {
-        var self = this; 
-        let dbOption =""
-        if(this.selectedDB!=null && this.selectedDB!="") {
+        var self = this;
+        let dbOption = ""
+        if (this.selectedDB != null && this.selectedDB != "") {
           dbOption += "&rs:database=" + this.selectedDB.value
-         // this.$root.$emit("databaseChanged",
-         //   {selectedDatabase: this.selectedDatabase,availableDatabases:this.availableDatabases
-         //   }
+          // this.$root.$emit("databaseChanged",
+          //   {selectedDatabase: this.selectedDatabase,availableDatabases:this.availableDatabases
+          //   }
 
-         // );
+          // );
         }
 
-        this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionDetails' + dbOption )
+        this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionDetails' + dbOption)
           .then((response) => {
-            this.availableCollections = self.filterCollections( response.data )
+            this.availableCollections = self.filterCollections(response.data)
           })
           .catch((error) => {
             self.notifyError("collectionDetails", error, self);
@@ -970,10 +987,10 @@ else
 
 
       },
-      setCurrrentDatabase(db){
+      setCurrrentDatabase(db) {
 
-        this.selectedDB=db.selectedDatabase;
-        this.availableDB=db.availableDatabases;
+        this.selectedDB = db.selectedDatabase;
+        this.availableDB = db.availableDatabases;
         this.discoverCollections()
 
       },
@@ -994,7 +1011,7 @@ else
             return "this.addProperty('" + property.name + ((property.type) ? "'," + JSON.stringify(property.type) + ");" : "');")
           }).join("") : ""
           code += (config.widgets != null) ? config.widgets.map((widget) => {
-            return "this.addWidget('" + widget.type + "','" + widget.name + "','" + widget.default + "', function(v){"+ (widget.callback?widget.callback:"") +"}.bind(this), { values:" + JSON.stringify(widget.values) + "} );"
+            return "this.addWidget('" + widget.type + "','" + widget.name + "','" + widget.default + "', function(v){" + (widget.callback ? widget.callback : "") + "}.bind(this), { values:" + JSON.stringify(widget.values) + "} );"
           }).join("") : "";
           if (config.width)
             code += "    this.size = [" + config.width + "," + config.height + "];\n"
@@ -1005,7 +1022,7 @@ else
 
           code += config.functionName + ".title = '" + config.blockName + "';";
           code += config.functionName + ".prototype.notify = function(node){this.$root.$emit(\"nodeSelected\",node)}.bind(this);";
-          code+= config.functionName + ".prototype.onSelected = function(){this.notify(this) };"
+          code += config.functionName + ".prototype.onSelected = function(){this.notify(this) };"
           code += config.functionName + ".prototype.onDblClick = function(e,pos,object){this.$root.$emit(\"nodeDblClicked\",object) }.bind(this);"
           code += config.functionName + ".prototype.onExecute = function(){  ";
 
@@ -1058,16 +1075,11 @@ else
       this.$root.$on("loadGraphJsonCall", this.loadGraphFromJson);
       this.$root.$on("exportGraphCall", this.exportDHFModule);
       this.$root.$on("nodeDblClicked", this.DblClickNode);
-        this.$root.$on("nodeSelected", this.selectNode);
+      this.$root.$on("nodeSelected", this.selectNode);
       this.$root.$on("loadDHFDefaultGraphCall", this.resetDhfDefaultGraph);
       this.discoverDatabases()
       this.graph = new LiteGraph.LGraph();
       this.graph_canvas = new LiteGraph.LGraphCanvas(this.$refs["mycanvas"], this.graph);
-
-
-
-
-
 
 
       /*
