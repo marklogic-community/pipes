@@ -377,6 +377,18 @@
         this.availableCollections = []
         this.discoverCollections()
       },
+      // Filter out DHF and MarkLogic reserved collections
+      filterCollections(collections) {
+            var filtered = []
+            if ( collections !== null && typeof collections === 'object' && collections.length >= 1) {
+              filtered = collections.filter(
+                collection => (! collection.label.startsWith('http://marklogic.com/') 
+                && (! collection.label.startsWith('marklogic-pipes/') )
+                )
+              )
+            }
+            return filtered;
+        },
       discoverCollections() {
 
         var self = this; // keep reference for notifications called from catch block
@@ -386,7 +398,7 @@
 
           this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionDetails' + dbOption)
             .then((response) => {
-              this.availableCollections = response.data
+              this.availableCollections = self.filterCollections( response.data )
             })
             .catch((error) => {
               self.notifyError("collectionDetails", error, self);
@@ -918,7 +930,7 @@ else
 
         this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionDetails' + dbOption )
           .then((response) => {
-            this.availableCollections = response.data
+            this.availableCollections = self.filterCollections( response.data )
           })
           .catch((error) => {
             self.notifyError("collectionDetails", error, self);

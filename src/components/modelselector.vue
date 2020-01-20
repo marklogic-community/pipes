@@ -66,10 +66,7 @@
       node-key="label"
       tick-strategy="strict"
       :ticked.sync="selectedFields"
-
-
     />
-
 
     <div class="q-body-1">Select the generation options</div>
     <q-option-group
@@ -90,7 +87,7 @@
     <q-btn-group>
       <q-btn label="Create block" @click="notifyBlockRequested()">
         <q-tooltip>
-          Create and add the block top the library
+          Create and add block to library
         </q-tooltip>
       </q-btn>
       <q-toggle v-model="saveBlockToDB" label="Save block to Database"/>
@@ -169,12 +166,24 @@
              "children":[],
             "field" : this.newCustomFieldName,
             "path":  "//"  + this.newCustomFieldName
-
-
         })
 
       },
+      // Filter out DHF, MarkLogic, and Pipes reserved collections
+      filterCollections(collections) {
+            var filtered = []
+            if ( collections !== null && typeof collections === 'object' && collections.length >= 1) {
+              filtered = collections.filter(
+                collection => (! collection.label.startsWith('http://marklogic.com/') 
+                && (! collection.label.startsWith('marklogic-pipes/') )
+                )
+              )
+            }
+            return filtered;
+        },
       discoverCollections() {
+        // filter out DHF core collections 
+
         var self = this;
         let dbOption =""
         if(this.selectedDatabase!=null && this.selectedDatabase!="") {
@@ -188,7 +197,7 @@
 
           this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionDetails' + dbOption )
           .then((response) => {
-            this.availableCollections = response.data
+            this.availableCollections = self.filterCollections(response.data)
           })
           .catch((error) => {
             self.notifyError("collectionDetails", error, self);
@@ -287,7 +296,7 @@
           })
       },
       databaseChanged(){
-
+        this.selectedCollection = []
         this.discoverCollections()
          this.$root.$emit("databaseChanged",
            {selectedDatabase: this.selectedDatabase,availableDatabases:this.availableDatabases
