@@ -128,10 +128,10 @@
 
           <q-list class="q-mt-md" link>
             <q-item-label :header="true">Click graph from list to reload</q-item-label>
-            <q-item @click.native="getSavedGraph(item.uri,item.name)" tag="label" v-bind:key="item.msg"
+            <q-item @click.native="getSavedGraph(item.uri,item.name)" tag="label" v-bind:key="item.name"
                     v-for="(item, index) in savedGraph">
               <q-item-label>
-                <q-item-section label>{{ item.msg }}</q-item-section>
+                <q-item-section label>{{ item.name }}</q-item-section>
               </q-item-label>
             </q-item>
           </q-list>
