@@ -27,7 +27,7 @@
         selectedOptions: ["download"],
         generationOptions: [
           {
-            label: "Save oo Modules DB  (Coming soon)",
+            label: "Save to Modules DB  (Coming soon)",
             value: "toModules"
           },
           {label: "Save to project code (Coming soon)", value: "toCode"},
@@ -165,7 +165,7 @@
           this.$q.notify({
             color: 'positive',
             position: 'top',
-            message: " The code of your Data Hub Custom step is now available in the browser downloads folder (main.sjs file).",
+            message: "The code of your Data Hub Custom step is now available in the browser downloads folder (main.sjs file).",
             icon: 'code'
           })
         }
@@ -174,7 +174,7 @@
           this.$q.notify({
             color: 'positive',
             position: 'top',
-            message: " The code of your Data Hub Custom step saved to the project code. Gradle mlloadmodules is required to deploy the code.",
+            message: "Soon - The code of your Data Hub Custom step saved to the project code. Gradle mlloadmodules is required to deploy the code.",
             icon: 'code'
           })
 
@@ -182,7 +182,7 @@
           this.$q.notify({
             color: 'positive',
             position: 'top',
-            message: " The code of your Data Hub Custom step saved to the modules DB and is ready to use.",
+            message: "Soon - The code of your Data Hub Custom step saved to the modules DB and is ready to use.",
             icon: 'code'
           })
 
