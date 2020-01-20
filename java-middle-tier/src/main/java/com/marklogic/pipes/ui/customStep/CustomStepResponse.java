@@ -5,9 +5,9 @@ import java.util.List;
 
 public class CustomStepResponse {
 
-  private List<> customSteps;
+  private List<CustomStep> customSteps;
 
-  public List<> getCustomSteps() {
+  public List<CustomStep> getCustomSteps() {
     return customSteps;
   }
 
