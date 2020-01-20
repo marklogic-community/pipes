@@ -35,7 +35,7 @@
           </q-btn>
           <!--  <q-btn flat round dense icon="play_arrow" size="lg" @click.stop="executeGraph()"/> -->
 
-          <q-btn flat round dense icon="fas fa-file-download" size="lg">
+          <q-btn flat round dense icon="fas fa-file-download" size="lg" @click="downloadGraph()">
             <q-tooltip>
               Download local copy of current graph
             </q-tooltip>
@@ -194,7 +194,7 @@
     },
     downloadGraph() {
       this.$root.$emit("downloadGraphCall");
-
+console.log("downloadGraph")
     }
   ,
     loadGraph() {
