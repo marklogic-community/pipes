@@ -27,7 +27,7 @@ mlModulesDatabase=data-hub-MODULES
 mlDhfRoot=/my/projects/dhf 
 ```
 
-You probably care about seciruty. If you don't want to put your username and password into a plain text file, you can remove them from the properties file and instead pass them as a parameter to the Pipes jar.
+You probably care about security. If you don't want to put your username and password into a plain text file, you can remove them from the properties file and instead pass them as a parameter to the Pipes jar.
 
 Pipes requires several backend modules to be installed on MarkLogic. When you run the Pipes jar for the first time, use the following:
 
