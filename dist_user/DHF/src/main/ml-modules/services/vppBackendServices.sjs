@@ -1,6 +1,8 @@
 //Copyright ©2020 MarkLogic Corporation.
 const admin = require("/MarkLogic/admin.xqy");
 
+const blocksCollection = "marklogic-pipes/type/savedBlock";
+const graphsCollection = "marklogic-pipes/type/savedGraph";
 
 function mapper(item, cfg) {
 
@@ -470,7 +472,7 @@ function listSavedBlock(params){
 
   let results = []
   for (let graph of cts.search(cts.andQuery([
-    cts.collectionQuery("/type/savedBlock"),
+    cts.collectionQuery(blocksCollection),
     ((params.q!=null)?params.q:cts.trueQuery())
   ])))
     results.push({
@@ -486,8 +488,8 @@ function saveBlock(input,params){
   let targetDb = (params.toDatabase != null) ? params.toDatabase : xdmp.database()
   xdmp.invokeFunction(() => {
 
-      xdmp.documentInsert("/savedBlock/" + graph.name + ".json", graph,  null
-        , "/type/savedBlock"  )
+      xdmp.documentInsert("/marklogic-pipes/savedBlock/" + graph.name + ".json", graph,  null
+        , blocksCollection  )
 
     }, {"database": targetDb, "update": "true"}
   )
@@ -503,7 +505,7 @@ function listSavedGraph(params){
 
   let results = []
   for (let graph of cts.search(cts.andQuery([
-    cts.collectionQuery("/type/savedGraph"),
+    cts.collectionQuery(graphsCollection),
     ((params.q!=null)?params.q:cts.trueQuery())
   ])))
     results.push({
@@ -519,8 +521,8 @@ function saveGraph(input,params){
   let targetDb = (params.toDatabase != null) ? params.toDatabase : xdmp.database()
   xdmp.invokeFunction(() => {
 
-      xdmp.documentInsert("/savedGraph/" + graph.name + ".json", graph,  null
-        , "/type/savedGraph"  )
+      xdmp.documentInsert("/marklogic-pipes/savedGraph/" + graph.name + ".json", graph,  null
+        , graphsCollection  )
 
     }, {"database": targetDb, "update": "true"}
   )
