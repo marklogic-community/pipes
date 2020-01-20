@@ -3,24 +3,32 @@
     "functionName": "GeoReproject",
     "blockName": "GeoReproject",
     "library": "geo",
+    "description" : "This block converts geo coordinates from source coordinate system to the target one.",
     "inputs": [
       {
         "name": "srcCoordinateSystem",
-        "type": "xs:string"
+        "type": "xs:string",
+        "mandatory" : true,
+        "description" : "Source coordinate system"
       },
       {
         "name": "targetCoordinateSystem",
-        "type": "xs:string"
+        "type": "xs:string",
+        "mandatory" : true,
+        "description" : "Target coordinate system"
       },
       {
         "name": "strWKT",
-        "type": "xs:string"
+        "type": "xs:string",
+        "mandatory" : true,
+        "description" : "Geo shape"
       }
     ],
     "outputs": [
       {
         "name": "strWKT",
-        "type": "node"
+        "type": "node",
+        "description" : "Converted geo shape"
       }
     ],
     "function": {
@@ -126,6 +134,7 @@
     "functionName": "FormatDate",
     "blockName": "FormatDate",
     "library": "date",
+    "description": "This blocks formats the input date to ISO format using the provided format",
     "inputs": [
       {
         "name": "inputDate",
@@ -158,6 +167,7 @@
     "functionName": "CreateTriple",
     "blockName": "CreateTriple",
     "library": "triples",
+    "description": "This block creates a triple using the provided subject, predicate, object",
     "inputs": [
       {
         "name": "subject",
@@ -209,6 +219,7 @@
     "functionName": "Split",
     "blockName": "Split",
     "library": "string",
+    "description" : "This block splits the input string using the provided char.",
     "inputs": [
       {
         "name": "string",
@@ -251,6 +262,7 @@
     "functionName": "FormatDateAuto",
     "blockName": "FormatDateAuto",
     "library": "date",
+    "description": "This blocks formats the input date to ISO format using MM-DD-YYYY, YYYY-MM-DD, DD/MM/YYYY",
     "inputs": [
       {
         "name": "inputDate",
@@ -375,6 +387,7 @@
     "functionName": "FormatDateTimeAuto",
     "blockName": "FormatDateTimeAuto",
     "library": "date",
+    "description" : "This block formats input datetime to ISO format using predefined formats (momentjs)",
     "inputs": [
       {
         "name": "inputDateTime",
@@ -560,6 +573,7 @@
     "functionName": "fn_stringJoin",
     "blockName": "String join",
     "library": "string",
+    "description" : "This block joins the input array of strings using the provided separator",
     "inputs": [
       {
         "name": "string*",
@@ -588,6 +602,7 @@
     "functionName": "mapValues",
     "blockName": "Map values",
     "library": "string",
+    "description" : "This block maps an input value to another using the configuration of the block (double click)",
     "inputs": [
       {
         "name": "value",
@@ -654,13 +669,16 @@
     "functionName": "JsonValidate",
     "blockName": "JsonValidate",
     "library": "controls",
+    "description": "This block validates the input Json  according to the provided schema (URI) in schema DB",
     "inputs": [
       {
         "name": "node",
+        "description": "Node to be validated",
         "type": null
       },
       {
         "name": "schema",
+        "description": "URI of the json schema in the schema DB",
         "type": null
       }
     ],
@@ -681,6 +699,7 @@
     "functionName": "XMLValidate",
     "blockName": "XMLValidate",
     "library": "controls",
+    "description": "this block validates the XML input according to the schemas in schema DB",
     "inputs": [
       {
         "name": "node",
@@ -899,6 +918,7 @@
     "functionName": "applyXSLT",
     "blockName": "ApplyXSLT",
     "library": "transform",
+    "description" : "This block applies the input XSL to the input node. XSL can be a string or the URI in module DB of the XSL",
     "inputs": [
       {
         "name": "node",
@@ -991,6 +1011,7 @@
     "functionName": "array",
     "blockName": "Array",
     "library": "basic",
+    "description" : "This block merges the inputs into an array. If one of the input is itself an array is will be flatten into the main array",
     "inputs": [
 
       {
@@ -1028,6 +1049,7 @@
     "functionName": "declarativeMapper",
     "blockName": "declarativeMapper",
     "library": "dhf",
+    "description" : "This block applies DHF 5.1 mapping to the input node",
     "inputs": [
 
       {
@@ -1075,6 +1097,7 @@
     "functionName": "uuidString",
     "blockName": "uuid",
     "library": "string",
+    "description" : "This block generates an UUID string",
     "inputs": [],
 
     "widgets": [
@@ -1082,7 +1105,8 @@
         "type": "text",
         "name": "prefix",
         "default": "/prefix/",
-        "values": []
+        "values": [],
+        "description": "This value can be added as a prefix to the UUID"
 
       }
 
@@ -1105,30 +1129,43 @@
     "functionName": "provo",
     "blockName": "PROV-O structure",
     "library": "provenance",
+    "description" : "This block generates provo triples based on the provided inputs",
     "inputs": [
       {
         "name": "uri",
-        "type": null
+        "type": null,
+        "mandatory": true,
+        "description" : "URI of the source"
       },
       {
         "name": "DerivedFrom1",
-        "type": null
+        "type": null,
+        "mandatory": false,
+        "description" : "Optional derived from URI"
       },
       {
         "name": "DerivedFrom2",
-        "type": null
+        "type": null,
+        "mandatory": false,
+        "description" : "Optional derived from URI"
       },
       {
         "name": "DerivedFrom3",
-        "type": null
+        "type": null,
+        "mandatory": false,
+        "description" : "Optional derived from URI"
       },
       {
         "name": "GeneratedBy",
-        "type": null
+        "type": null,
+        "mandatory": false,
+        "description" : "Optional generated by URI"
       },
       {
         "name": "createdOn",
-        "type": null
+        "type": null,
+        "mandatory": false,
+        "description" : "Optional date"
       }
     ],
     "properties": [],
@@ -1147,14 +1184,19 @@
     "functionName": "EntityEnrichment",
     "blockName": "EntityEnrichment",
     "library": "string",
+    "description" : "This block performs entity enrichment on the input string based on a dictionary",
     "inputs": [
       {
         "name": "string",
-        "type": null
+        "type": null,
+        "mandatory" : true,
+        "description" : "String to enrich"
       },
       {
         "name": "dictionary",
-        "type": null
+        "type": null,
+        "mandatory" : true,
+        "description" : "URI of a SKOS dictionary"
       }
 
     ],
@@ -1162,7 +1204,8 @@
     "outputs": [
       {
         "name": "enrichedString",
-        "type": null
+        "type": null,
+        "description" : "Enriched string"
       }
     ],
     "function": {
@@ -1174,6 +1217,7 @@
     "functionName": "Highlight",
     "blockName": "Highlight",
     "library": "string",
+    "description" : "This block applies MarkLogic highlight function to the input string",
     "inputs": [
       {
         "name": "string",
@@ -1205,6 +1249,7 @@
     "functionName": "DistinctValues",
     "blockName": "DistinctValues",
     "library": "feature",
+    "description" : "This block returns the distinct values of a property from the input (can be array or sequence with reasonable size",
     "inputs": [
       {
         "name": "array",
@@ -1239,6 +1284,7 @@
     "functionName": "selectCase",
     "blockName": "selectCase",
     "library": "feature",
+    "description" : "This block returns one of the inputX value depending on the value2Test input. The selection of inputX is done based on the block configuration (double click)",
     "inputs": [
       {
         "name": "value2Test",
@@ -1291,14 +1337,17 @@
     "functionName": "CheckPhoneNumber",
     "blockName": "CheckPhoneNumber",
     "library": "controls",
+    "description" : "This blocks checks the provided phone number according to the country. It returns the reformatted phone number and the validation status",
     "inputs": [
       {
         "name": "phoneNumber",
-        "type": null
+        "type": null,
+        "mandatory" : true
       },
       {
         "name": "countryISO2",
-        "type": null
+        "type": null,
+        "mandatory" : true
       },
       {
         "name": "Uri",
