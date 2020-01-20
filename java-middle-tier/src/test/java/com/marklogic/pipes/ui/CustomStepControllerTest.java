@@ -45,7 +45,7 @@ class CustomStepControllerTest {
     @Test
     void shouldReturnAListOf3CustomSteps() throws Exception {
       String jsonExample="{\"customSteps\":[\"a\",\"b\",\"c\"]}";
-      when(customStepService.accessDhfRootAndGetCustomStepsArray()).thenReturn(jsonExample);
+      when(customStepService.accessDhfRootAndGetCustomStepsJson()).thenReturn(jsonExample);
       this.mockMvc.perform(get("/customSteps")).andDo(print()).andExpect(status().isOk())
         .andExpect(content().string(jsonExample));
     }
