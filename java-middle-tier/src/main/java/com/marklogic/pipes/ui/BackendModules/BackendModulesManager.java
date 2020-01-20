@@ -1,8 +1,4 @@
-/*
-Copyright ©2020 MarkLogic Corporation.
-*/
-
-package com.marklogic.pipes.ui;
+package com.marklogic.pipes.ui.BackendModules;
 
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.AppDeployer;
@@ -13,17 +9,15 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.admin.ResourceExtensionsManager;
 import com.marklogic.mgmt.ManageClient;
-
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;
 import com.marklogic.mgmt.admin.AdminManager;
+import com.marklogic.pipes.ui.ClientConfig;
+import com.marklogic.pipes.ui.Proxy;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,11 +27,11 @@ import java.util.Arrays;
 import java.util.regex.Pattern;
 
 
-/**
- * BackendModulesManager
- */
-@Component
-public class BackendModulesManager implements ApplicationRunner {
+@Repository
+public class BackendModulesManager {
+
+  @Autowired
+  ClientConfig clientConfig;
 
   final String resourcesDhfRoot = "/dhf/src/main/ml-modules";
   final String destinationDhfRoot = "/src/main/ml-modules";
@@ -48,38 +42,7 @@ public class BackendModulesManager implements ApplicationRunner {
     Remove
   }
 
-  @Autowired
-  ClientConfig clientConfig;
-
-  @Autowired
-  Environment environment;
-
-  @Override
-  public void run(ApplicationArguments args) throws Exception {
-
-    boolean deployBackend = args.containsOption("deployBackend");
-    boolean undeployBackend = args.containsOption("undeployBackend");
-
-    // if command line param "teardown" has been specified and it's true,
-    // the app will delete backend modules and terminate
-    if (undeployBackend) {
-      unloadPipesModules();
-
-      LoggerFactory.getLogger(getClass()).info(
-        String.format("Shutting down Pipes...")
-      );
-      LoggerFactory.getLogger(getClass()).info(
-        String.format("So Long, and Thanks for All the Fish.")
-      );
-      System.exit(0);
-    }
-
-    if (deployBackend) {
-      copyAndDeployPipesBackend();
-    }
-  }
-
-  private void copyAndDeployPipesBackend() throws Exception {
+  public void copyAndDeployPipesBackend() throws Exception {
 
     LoggerFactory.getLogger(getClass()).info(
       String.format("Will copy MarkLogic backend modules to following DHF root: %s", clientConfig.getMlDhfRoot()));
@@ -93,7 +56,14 @@ public class BackendModulesManager implements ApplicationRunner {
     }
 
     try {
-      deployMlBackendModulesToModulesDatabase();
+
+      LoggerFactory.getLogger(getClass()).info(
+        String.format("Now loading Pipes modules to your DHF modules database...")
+      );
+      deployMlBackendModulesToModulesDatabase(".*/pipes/.*.sjs|.*vppBackendServices.sjs");
+      LoggerFactory.getLogger(getClass()).info(
+        String.format("MarkLogic backend modules have been loaded."));
+
     }
     catch (Exception e) {
       LoggerFactory.getLogger(getClass()).error(
@@ -103,8 +73,7 @@ public class BackendModulesManager implements ApplicationRunner {
 
     LoggerFactory.getLogger(getClass()).info(
       String.format("Modules successfully copied and deployed."));
-    LoggerFactory.getLogger(getClass()).info(
-      String.format("Pipes running on port: "+ environment.getProperty("local.server.port")));
+
   }
 
   private void manageMarkLogicBackendModules(fileOperation operation) throws Exception {
@@ -128,10 +97,10 @@ public class BackendModulesManager implements ApplicationRunner {
       final File dest = new File(clientConfig.getMlDhfRoot() + destinationDhfRoot + filePath);
 
       try {
-        if (operation==fileOperation.Copy) {
+        if (operation== fileOperation.Copy) {
           FileUtils.copyInputStreamToFile(is, dest);
         }
-        else if (operation==fileOperation.Remove) {
+        else if (operation== fileOperation.Remove) {
           dest.delete();
         }
         else {
@@ -142,12 +111,12 @@ public class BackendModulesManager implements ApplicationRunner {
         // TODO Auto-generated catch block
 //        e.printStackTrace();
 //        System.out.println(e.toString());
-          throw e;
+        throw e;
       }
     }
 
     // also delete the pipes folder
-    if (operation==fileOperation.Remove) {
+    if (operation== fileOperation.Remove) {
       String folderPath=clientConfig.getMlDhfRoot() + destinationDhfRoot + customModulesPathPrefix;
       FileUtils.deleteDirectory(new File(folderPath));
 
@@ -155,17 +124,17 @@ public class BackendModulesManager implements ApplicationRunner {
         String.format("Deleted folder "+folderPath));
     }
 
-    else if (operation==fileOperation.Copy) {
+    else if (operation== fileOperation.Copy) {
       LoggerFactory.getLogger(getClass()).info(
         String.format("MarkLogic backend modules copied to your DHF project."));
     }
 
   }
 
-  private void deployMlBackendModulesToModulesDatabase() {
-    LoggerFactory.getLogger(getClass()).info(
-      String.format("Now loading Pipes modules to your DHF modules database...")
-    );
+  public void deployMlBackendModulesToModulesDatabase(String patternString) {
+    // ".*/pipes/.*.sjs|.*vppBackendServices.sjs"
+    Pattern pattern=Pattern.compile(patternString);
+
     ManageClient client = getManageClient();
     AdminManager manager = getAdminManager();
     AppConfig appConfig = getAppConfig();
@@ -176,12 +145,11 @@ public class BackendModulesManager implements ApplicationRunner {
     appConfig.setModulesLoaderBatchSize(1);
 
     // push /pipes/ modules
-    appConfig.setModuleFilenamesIncludePattern(Pattern.compile(".*/pipes/.*.sjs|.*vppBackendServices.sjs"));
+    appConfig.setModuleFilenamesIncludePattern(pattern);
     // Call it
     appDeployer.deploy(appConfig);
 
-    LoggerFactory.getLogger(getClass()).info(
-      String.format("MarkLogic backend modules have been loaded."));
+
 
   }
 
@@ -207,7 +175,7 @@ public class BackendModulesManager implements ApplicationRunner {
     return new ManageClient(new ManageConfig(clientConfig.getMlHost(),8002,clientConfig.getMlUsername(),clientConfig.getMlPassword()));
   }
 
-  private void unloadPipesModules() throws Exception {
+  public void unloadPipesModules() throws Exception {
 
     LoggerFactory.getLogger(getClass()).info(
       String.format("Now deleting Pipes modules from your DHF modules database...")
@@ -239,8 +207,8 @@ public class BackendModulesManager implements ApplicationRunner {
       clientConfig.getMlHost(), clientConfig.getMlStagingPort(),
       new DatabaseClientFactory.DigestAuthContext(clientConfig.getMlUsername(), clientConfig.getMlPassword()));
 
-      ResourceExtensionsManager resourceExtensionsManager = dbClient.newServerConfigManager().newResourceExtensionsManager();
-      resourceExtensionsManager.deleteServices("vppBackendServices");
+    ResourceExtensionsManager resourceExtensionsManager = dbClient.newServerConfigManager().newResourceExtensionsManager();
+    resourceExtensionsManager.deleteServices("vppBackendServices");
 
 
     LoggerFactory.getLogger(getClass()).info(
@@ -255,6 +223,5 @@ public class BackendModulesManager implements ApplicationRunner {
 
 
   }
-
 
 }

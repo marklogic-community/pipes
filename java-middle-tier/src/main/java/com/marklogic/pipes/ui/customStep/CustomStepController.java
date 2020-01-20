@@ -1,13 +1,13 @@
 package com.marklogic.pipes.ui.customStep;
 
 import org.springframework.http.HttpMethod;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.lang.reflect.Array;
 
 @RestController
 public class CustomStepController {
@@ -18,14 +18,34 @@ public class CustomStepController {
     this.customStepService=service;
   }
 
+  /**
+   *
+   * @return a String representing a json containing an array with all custom steps found in the DHF project
+   * @throws IOException gets thrown if the path is not correct (check mlDhfRoot in application.properties)
+   */
   @RequestMapping(value = "/customSteps", method = RequestMethod.GET)
   public String listOfCustomStepNames() throws IOException {
 
-    return customStepService.accessDhfRootAndGetCustomStepsArray();
+    return customStepService.accessDhfRootAndGetCustomStepsJson();
   }
 
+  /**
+   * Will copy incoming body (hopefully a Pipes-generated main.sjs for the custom step) to the proper location specified by the "name" parameter
+   * Additionally, it will deploy the main.sjs, if requested by using param deploy=true in the request
+   * @param body content of main.sjs
+   * @param method not used
+   * @param request name: name of the custom step; deploy=true will also push the code to ML
+   * @throws IOException
+   */
   @RequestMapping(value = "/customSteps", method = RequestMethod.POST)
   public void deployCustomStep(@RequestBody String body, HttpMethod method, HttpServletRequest request) throws IOException {
+    String customStepName=request.getParameter("name");
+
+    customStepService.copyCustomStepToDhf(body, customStepName);
+
+    if (request.getParameter("deploy").equals("true")) {
+      customStepService.deployCustomStepToMl(body, customStepName);
+    }
 
   }
 }

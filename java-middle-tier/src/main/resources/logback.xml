@@ -16,7 +16,7 @@
     <appender-ref ref="STDOUT" />
   </root>
 
-    <logger name="com.marklogic.pipes.ui.BackendModulesManager" level="INFO" additivity="false">
+    <logger name="com.marklogic.pipes.ui.BackendModules.BackendModulesAppRunner" level="INFO" additivity="false">
       <appender-ref ref="STDOUT" />
     </logger>
 
