@@ -669,13 +669,16 @@
     "functionName": "JsonValidate",
     "blockName": "JsonValidate",
     "library": "controls",
+    "description": "This block validates the input Json  according to the provided schema (URI) in schema DB",
     "inputs": [
       {
         "name": "node",
+        "description": "Node to be validated",
         "type": null
       },
       {
         "name": "schema",
+        "description": "URI of the json schema in the schema DB",
         "type": null
       }
     ],
@@ -696,6 +699,7 @@
     "functionName": "XMLValidate",
     "blockName": "XMLValidate",
     "library": "controls",
+    "description": "this block validates the XML input according to the schemas in schema DB",
     "inputs": [
       {
         "name": "node",
@@ -1333,7 +1337,7 @@
     "functionName": "CheckPhoneNumber",
     "blockName": "CheckPhoneNumber",
     "library": "controls",
-    "description" : "This check the provided phone number according to the country. It returns the reformatted phone number and the validation status",
+    "description" : "This blocks checks the provided phone number according to the country. It returns the reformatted phone number and the validation status",
     "inputs": [
       {
         "name": "phoneNumber",
