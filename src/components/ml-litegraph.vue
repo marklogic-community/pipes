@@ -128,10 +128,10 @@
 
           <q-list class="q-mt-md" link>
             <q-item-label :header="true">Click graph from list to reload</q-item-label>
-            <q-item @click.native="getSavedGraph(item.uri,item.name)" tag="label" v-bind:key="item.name"
+            <q-item @click.native="getSavedGraph(item.uri,item.name)" tag="label" v-bind:key="item.msg"
                     v-for="(item, index) in savedGraph">
               <q-item-label>
-                <q-item-section label>{{ item.name }}</q-item-section>
+                <q-item-section label>{{ item.msg }}</q-item-section>
               </q-item-label>
             </q-item>
           </q-list>
@@ -199,7 +199,18 @@
                    :disabled="( (saveToDB === false) && ((selectedDB === '' || selectedDB === null) || (collectionForPreview === '' || collectionForPreview === null)) ) ||
             ((saveToDB === true) && (selectedTargetDB === '' || selectedTargetDB === null) || (selectedDB === '' || selectedDB === null) || (collectionForPreview === '' || collectionForPreview === null))"/>
           </div>
+
         </q-card-section>
+        <q-list dense bordered padding class="rounded-borders">
+          <q-item clickable v-ripple v-for="(item, index) in validationInfos" v-bind:key="index">
+            <q-item-section avatar>
+              <q-icon :color="(item.type=='error')?'negative':'primary'" :name="item.type"/>
+            </q-item-section>
+
+            <q-item-section>{{item.msg}}</q-item-section>
+          </q-item>
+
+        </q-list>
         <q-card-section>
           <q-scroll-area style="height: 500px; max-width: 500px;">
             <div class="q-py-xs">
@@ -309,9 +320,56 @@
         availableCollections: [],
         selectedDB: null,
         availableDB: [],
-        docUri: null
+        docUri: null,
+        validationConfigs: [
+          {
+            block: "dhf/output",
+            mandatoryInputs: [
+              {
+                name: "output",
+                msg: "The graph has no output as the the input '${input.name}' of the block ${config.block} is not connected.",
+                type: "error"
+              }],
+            mandatoryOutputs: [],
+            count: {
+              "N": {
+                msg: "You should have only one block ${config.block} in the graph.",
+                type: "error"
+              },
+              0: {
+                msg: "You should have at least one block ${config.block} in the graph.",
+                type: "error"
+              }
+            }
+
+          },
+          {
+            block: "dhf/envelope",
+            mandatoryInputs: [
+              {
+                name: "instance",
+                msg: "The input '${input.name}' of the block ${config.block} should be set.",
+                type: "error"
+              },
+              {
+                name: "uri",
+                msg: "If the input '${input.name}' of the block ${config.block} is not set, you might have conflicting URIs.",
+                type: "info"
+              }
+            ],
+            mandatoryOutputs: [],
+            count: {
+              0: {
+                msg: "Usually there is at least one ${config.block} in the graph.",
+                type: "info"
+              }
+            }
+          }
+        ],
+        validationInfos: []
 
       }
+
     },
     methods: {
 
@@ -820,54 +878,122 @@
           })
       }
       ,
+      findBlock(graph, nodeType) {
+
+        let node = graph.nodes.filter(node => node.type == nodeType)
+        if (node.length > 0)
+          return node
+        else null
+      },
+
+      findIO(node, type, IOName) {
+
+        let IO = node[type].filter(input => input.name == IOName)
+        if (IO.length > 0)
+          return IO[0]
+        else null
+      },
+      addInfos(validationInfos, type, msg) {
+
+        validationInfos.push({
+          type: type,
+          msg: msg
+        })
+      },
+
+      checkConfiguration(graph, configs) {
+        let result = []
+        for (let config of configs) {
+
+          let blocks = this.findBlock(graph, config.block)
+          let ok = true
+          if (blocks) {
+
+            if (blocks.length > 1) {
+              if (config.count["N"])
+                this.addInfos(result, config.count["N"].type, eval("`" + config.count["N"].msg + "`"))
+            }
+
+            for (let block of blocks) {
+              for (let input of config.mandatoryInputs) {
+                let inputIO = this.findIO(block, "inputs", input.name)
+                if (!inputIO || inputIO.link == null) this.addInfos(result, input.type, eval("`" + input.msg + "`"))
+                ok = ok && inputIO
+              }
+
+              for (let output of config.mandatoryOutputs) {
+                let outputIO = this.findIO(block, "outputs", output)
+                if (!outputIO || outputIO.link == null) this.addInfos(result, output.type, eval("`" + output.msg + "`"))
+                ok = ok && outputIO
+              }
+            }
+          } else {
+
+            if (config.count[0])
+              this.addInfos(result, config.count[0].type, eval("`" + config.count[0].msg + "`"))
+
+
+          }
+
+
+        }
+
+        return result
+      },
       executeGraph() {
 
+        this.validationInfos = []
         this.jsonFromPreview = {};
         const graphDetail = this.graph.serialize()
         //  console.log("Executing graph: " + JSON.stringify( this.graph.serialize() ) )
         //  console.log("Graph has " + graphDetail.nodes.length + " nodes:")
 
-        var self = this; // keep reference for notifications called from catch block
-        let dbOption = ""
-        if (this.selectedDB != null && this.selectedDB != "") {
-          dbOption += "&rs:database=" + this.selectedDB.value
-          //this.$root.$emit("databaseChanged",
-          // {selectedDatabase: this.selectedDatabase,availableDatabases:this.availableDatabases
-          // }
+        this.validationInfos = this.checkConfiguration(graphDetail, this.validationConfigs)
 
-          //);
+        if (this.validationInfos.filter(item => item.type == "error").length == 0) {
+
+
+          var self = this; // keep reference for notifications called from catch block
+          let dbOption = ""
+          if (this.selectedDB != null && this.selectedDB != "") {
+            dbOption += "&rs:database=" + this.selectedDB.value
+            //this.$root.$emit("databaseChanged",
+            // {selectedDatabase: this.selectedDatabase,availableDatabases:this.availableDatabases
+            // }
+
+            //);
+          }
+
+          if (this.saveToDB) {
+
+            if (dbOption != "")
+              dbOption += "&rs:toDatabase=" + this.selectedTargetDB.value + "&rs:save=true"
+            else
+              dbOption += "?rs:toDatabase=" + this.selectedTargetDB.value + "&rs:save=true"
+          }
+
+          let jsonGraph = this.graph.serialize()
+          let request = {
+            jsonGraph: {
+              models: (this.models != null) ? this.models : [],
+              executionGraph: jsonGraph
+
+            },
+            collection: this.collectionForPreview.value,
+            collectionRandom: this.randomDocPreview,
+            previewUri: this.docUri
+          }
+
+          this.$axios.post('/v1/resources/vppBackendServices?rs:action=ExecuteGraph' + dbOption, request)
+            .then((response) => {
+
+              this.jsonFromPreview = response.data
+
+            })
+            .catch((error) => {
+              self.notifyError("ExecuteGraph", error, self);
+            })
         }
-
-        if (this.saveToDB) {
-
-          if (dbOption != "")
-            dbOption += "&rs:toDatabase=" + this.selectedTargetDB.value + "&rs:save=true"
-          else
-            dbOption += "?rs:toDatabase=" + this.selectedTargetDB.value + "&rs:save=true"
-        }
-
-        let jsonGraph = this.graph.serialize()
-        let request = {
-          jsonGraph: {
-            models: (this.models != null) ? this.models : [],
-            executionGraph: jsonGraph
-
-          },
-          collection: this.collectionForPreview.value,
-          collectionRandom: this.randomDocPreview,
-          previewUri: this.docUri
-        }
-
-        this.$axios.post('/v1/resources/vppBackendServices?rs:action=ExecuteGraph' + dbOption, request)
-          .then((response) => {
-
-            this.jsonFromPreview = response.data
-
-          })
-          .catch((error) => {
-            self.notifyError("ExecuteGraph", error, self);
-          })
-
       },
       saveGraph(event) {
 
