@@ -47,3 +47,11 @@ Learn on Pipes Wiki [how to create your first Pipes project](https://github.com/
 Have fun!
 
 ![alt text](https://github.com/marklogic-community/pipes/blob/master/Pipes.png?raw=true) 
+
+## How can uninstall Pipes?
+
+To remove all MarkLogic back-end modules that Pipes has installed and delete the Pipes files within your DHF project run Pipes as follows:
+
+```java -jar pipes-xyz.jar --undeployBackend=true```
+
+Once the command is finished, you can delete the Pipes jar file.
