@@ -190,6 +190,7 @@ public class BackendModulesManager implements ApplicationRunner {
     AppConfig appConfig = new AppConfig(new File(clientConfig.getMlDhfRoot()));
     appConfig.setName("data-hub");
     appConfig.setRestPort(clientConfig.getMlStagingPort());
+    appConfig.setHost(clientConfig.getMlHost());
 
     appConfig.setModulesDatabaseName(clientConfig.getMlModulesDatabase());
     return appConfig;
