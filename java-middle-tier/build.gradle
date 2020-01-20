@@ -19,7 +19,7 @@ dependencies {
   implementation 'org.apache.httpcomponents:httpclient:4.5.10'
 
   implementation 'com.marklogic:ml-app-deployer:3.17.0'
-
+  implementation 'com.marklogic:marklogic-data-hub:5.1.0'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-zuul'
 	implementation 'org.springframework.session:spring-session-core'

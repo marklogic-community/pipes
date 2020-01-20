@@ -69,7 +69,10 @@ public class ClientConfig {
 
   @Bean
   public RestTemplate restTemplate() {
-    int springPort = Integer.parseInt(environment.getProperty("server.port"));
+
+    // assign default 8081 if not specified
+    String serverPort=environment.getProperty("server.port")!=null ? environment.getProperty("server.port") : "8081";
+    int springPort = Integer.parseInt(serverPort);
 
     HttpHost host = new HttpHost(mlHost, springPort, "http");
     CloseableHttpClient client = HttpClientBuilder.create().setDefaultCredentialsProvider(provider())
