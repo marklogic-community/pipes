@@ -7,8 +7,8 @@
       color="green"
       type="checkbox"
     />
-
-    <q-btn color="primary" label="Export" @click="exportDHFModule"/>
+    <q-select dense v-if="selectedOptions.indexOf('toModules')>=0 || selectedOptions.indexOf('toCode')>=0" outlined v-model="selectedStep" :options="dhfSteps" label="Select DHF5 Step to update" />
+    <br/> <q-btn color="primary" label="Export" @click="exportDHFModule"/>
     <br/>
 
   </div>
@@ -22,10 +22,12 @@
     data() {
       return {
         message: "",
+        selectedStep:null,
+        dhfSteps:[],
         selectedOptions: ["download"],
         generationOptions: [
           {
-            label: "Save To Modules DB  (Coming soon)",
+            label: "Save oo Modules DB  (Coming soon)",
             value: "toModules"
           },
           {label: "Save to project code (Coming soon)", value: "toCode"},
