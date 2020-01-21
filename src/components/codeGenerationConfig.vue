@@ -35,7 +35,7 @@
         selectedOptions: ["download"],
         generationOptions: [
           {label: "Download main.sjs file", value: "download"},
-          {label: "Save to project code (Coming soon)", value: "toCode"},
+          {label: "Save to project code", value: "toCode"},
          ]
       }
     },
@@ -195,7 +195,7 @@
                 this.$q.notify({
                   color: 'positive',
                   position: 'top',
-                  message: "Soon - The code of your Data Hub Custom step is saved to the project code" +msgAdd,
+                  message: "The code of your Data Hub Custom step is saved to the project code" +msgAdd,
                   icon: 'code'
                 })
 
