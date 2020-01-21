@@ -29,7 +29,7 @@
       return {
 
         message: "",
-        deployOption:null,
+        deployOption:false,
         selectedStep:null,
         dhfSteps:[],
         selectedOptions: ["download"],
@@ -179,7 +179,7 @@
 
           if (this.selectedStep != null) {
 
-            let deploy = (this.selectedOptions.indexOf("toModules") >= 0)
+
 
             var config = {
               headers: {
@@ -189,7 +189,7 @@
               responseType: 'text'
             };
 
-            this.$axios.post('/customSteps?name=' + this.selectedStep.value + '&deploy=' + deploy,begin + JSON.stringify(request) + end,config).then(
+            this.$axios.post('/customSteps?name=' + this.selectedStep.value + '&deploy=' + this.deployOption,begin + JSON.stringify(request) + end,config).then(
               (response) => {
                 let msgAdd = (deploy)?" and deployed to MarkLogic.":"."
                 this.$q.notify({
