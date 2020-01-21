@@ -200,13 +200,15 @@
             "path":  "//"  + fieldName,
             "type": "custom"
         })
-        this.$refs.selectionTree.setExpanded("Custom",true)
-        } 
 
+        this.$refs.selectionTree.setExpanded("custom",true)
+        
+        } 
+          this.newCustomFieldName = ''
+          this.resetCustomFieldValidation()
         }
 
-       this.newCustomFieldName = '' 
-       this.resetCustomFieldValidation()
+       
 
       },
       discoverCollections() {
