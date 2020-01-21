@@ -4,7 +4,7 @@
   <div class="column gutter-sm">
 
 <div class="spacer-div">
-      <q-btn label="Create block" @click="notifyBlockRequested()">
+      <q-btn label="Create block" @click="notifyBlockRequested()" :disabled="selectedEntity === null">
         <q-tooltip>
           Create block and add to library (right click)
         </q-tooltip>
@@ -85,12 +85,6 @@ export default {
       this.$axios.get('/v1/resources/vppBackendServices?rs:action=DHFEntityProperties&rs:entity=' +  this.selectedEntity.value)
               .then((response) => {
                 this.entityModel = response.data
-
-
-
-
-
-
               })
              /* .catch(() => {
                 this.$q.notify({
