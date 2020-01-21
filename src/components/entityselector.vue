@@ -3,15 +3,14 @@
 
   <div class="column gutter-sm">
 
-    <q-btn-group>
+<div class="spacer-div">
       <q-btn label="Create block" @click="notifyBlockRequested()">
         <q-tooltip>
-          Create and add the block top the library (right click)
+          Create block and add to library (right click)
         </q-tooltip>
       </q-btn>
+</div>      
 
-
-    </q-btn-group>
   <q-select
           name="collectionSelector"
           v-model="selectedEntity"
@@ -23,7 +22,7 @@
           label="Select an entity"
   />
     <q-table
-            title="Properties of the entity"
+            title="Entity Properties"
             :data="entityModel.children"
             :columns="columns"
             row-key="name"
@@ -156,4 +155,5 @@ export default {
 </script>
 
 <style>
+.spacer-div { margin-bottom: 8px; } 
 </style>
