@@ -9,8 +9,12 @@
     />
     <q-checkbox name="deployOption" v-if="selectedOptions.indexOf('toCode')>=0" left-label v-model="deployOption" label="Deploy to MarkLogic" />
     <q-select dense v-if="selectedOptions.indexOf('toCode')>=0" outlined v-model="selectedStep" :options="dhfSteps" label="Select DHF5 Step to update" />
-    <br/> <q-btn color="primary" label="Export" @click="exportDHFModule"/>
-    <q-btn color="primary" label="Close"  v-close-popup/>
+    <br/>
+    <q-btn-group >
+      <q-btn  label="Export" icon="archive" @click="exportDHFModule" />
+      <q-btn  label="Close" icon="close"  v-close-popup/>
+    </q-btn-group>
+
 
     <br/>
 
