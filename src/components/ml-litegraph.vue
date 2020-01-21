@@ -236,7 +236,7 @@
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn flat label="OK" color="primary" v-close-popup/>
+          <q-btn flat label="OK" color="primary" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -255,7 +255,7 @@
         </q-card-section>
 
         <q-card-actions align="right" class="bg-white text-teal">
-          <q-btn flat label="OK" v-close-popup/>
+
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -327,7 +327,7 @@
             mandatoryInputs: [
               {
                 name: "output",
-                msg: "The graph has no output as the the input '${input.name}' of the block ${config.block} is not connected.",
+                msg: "The final output of the graph is not connected (in dhf/output). You won't get any result.",
                 type: "error"
               }],
             mandatoryOutputs: [],
@@ -348,7 +348,7 @@
             mandatoryInputs: [
               {
                 name: "instance",
-                msg: "The input '${input.name}' of the block ${config.block} should be set.",
+                msg: "The input '${input.name}' of the block ${config.block} should be connected.",
                 type: "error"
               },
               {

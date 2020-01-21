@@ -7,8 +7,11 @@
       color="green"
       type="checkbox"
     />
-    <q-select dense v-if="selectedOptions.indexOf('toModules')>=0 || selectedOptions.indexOf('toCode')>=0" outlined v-model="selectedStep" :options="dhfSteps" label="Select DHF5 Step to update" />
+    <q-checkbox name="deployOption" v-if="selectedOptions.indexOf('toCode')>=0" left-label v-model="deployOption" label="Deploy to MarkLogic" />
+    <q-select dense v-if="selectedOptions.indexOf('toCode')>=0" outlined v-model="selectedStep" :options="dhfSteps" label="Select DHF5 Step to update" />
     <br/> <q-btn color="primary" label="Export" @click="exportDHFModule"/>
+    <q-btn color="primary" label="Close"  v-close-popup/>
+
     <br/>
 
   </div>
@@ -16,22 +19,24 @@
 
 <script>
   import {saveAs} from "file-saver";
-
+  import Notifications from '../components/notificationHandler.js';
   export default {
     // name: 'ComponentName',
+    mixins: [
+      Notifications
+    ],
     data() {
       return {
+
         message: "",
+        deployOption:null,
         selectedStep:null,
         dhfSteps:[],
         selectedOptions: ["download"],
         generationOptions: [
-          {
-            label: "Save to Modules DB  (Coming soon)",
-            value: "toModules"
-          },
+          {label: "Download main.sjs file", value: "download"},
           {label: "Save to project code (Coming soon)", value: "toCode"},
-          {label: "Download main.sjs file", value: "download"}]
+         ]
       }
     },
     props: ['models', 'graph', "isExported"],
@@ -47,7 +52,7 @@
         }
 
         let begin = "const DataHub = require(\"/data-hub/5/datahub.sjs\");\n" +
-          "var gHelper  = require(\"/custom-modules/graphHelper\")\n" +
+          "var gHelper  = require(\"/custom-modules/pipes/graphHelper\")\n" +
           "const datahub = new DataHub();\n" +
           "\n" +
           "\n" +
@@ -170,23 +175,68 @@
           })
         }
 
-        if (this.selectedOptions.indexOf("toCode") >= 0)
-          this.$q.notify({
-            color: 'positive',
-            position: 'top',
-            message: "Soon - The code of your Data Hub Custom step saved to the project code. Gradle mlloadmodules is required to deploy the code.",
-            icon: 'code'
-          })
+        if (this.selectedOptions.indexOf("toCode") >= 0) {
 
-        if (this.selectedOptions.indexOf("toModules") >= 0)
-          this.$q.notify({
-            color: 'positive',
-            position: 'top',
-            message: "Soon - The code of your Data Hub Custom step saved to the modules DB and is ready to use.",
-            icon: 'code'
-          })
+          if (this.selectedStep != null) {
+
+            let deploy = (this.selectedOptions.indexOf("toModules") >= 0)
+
+            var config = {
+              headers: {
+                'Content-Length': 0,
+                'Content-Type': 'text/plain'
+              },
+              responseType: 'text'
+            };
+
+            this.$axios.post('/customSteps?name=' + this.selectedStep.value + '&deploy=' + deploy,begin + JSON.stringify(request) + end,config).then(
+              (response) => {
+                let msgAdd = (deploy)?" and deployed to MarkLogic.":"."
+                this.$q.notify({
+                  color: 'positive',
+                  position: 'top',
+                  message: "Soon - The code of your Data Hub Custom step is saved to the project code" +msgAdd,
+                  icon: 'code'
+                })
+
+
+              }
+
+
+            ).catch((error) => {
+              this.notifyError("exportDHFModule", error, this);
+            })
+
+
+
+          }
+          else{
+
+            this.$q.notify({
+              color: 'negative',
+              position: 'top',
+              message: "You must select a DHF step.",
+              icon: 'code'
+            })
+
+          }
+        }
+
+
 
       }
+    },
+    mounted:function(){
+
+      this.$axios.get('/customSteps') .then((response) => {
+
+           this.dhfSteps = response.data.customSteps.map(item => {return {"label":item.name,"value":item.name}})
+
+      })
+
+      //let response = {"customSteps":[{"name":"custom-1","path":"/Users/smitrovi/MarkLogic/dev/test-dhf/step-definitions/custom/custom-1/custom-1.step.json"},{"name":"custom-2","path":"/Users/smitrovi/MarkLogic/dev/test-dhf/step-definitions/custom/custom-2/custom-2.step.json"}]}
+      //this.dhfSteps = response.customSteps.map(item => {return {"label":item.name,"value":item.name}})
+
     }
   }
 </script>
