@@ -2,17 +2,17 @@
 <template>
 
   <div class="column gutter-sm">
+   
+    <q-input ref="blockName" bottom-slots v-model="blockName" label="Block name" maxlength="40"/>
 
-
-    <q-btn-group>
-      <q-btn label="Create block" @click="notifyBlockRequested()">
+     <div class="spacer-div">
+      <q-btn label="Create block" @click="notifyBlockRequested()" :disabled="cleanBlockName() == ''">
         <q-tooltip>
-          Create and add the block top the library
+          Create block and add to library
         </q-tooltip>
       </q-btn>
       <q-toggle v-model="saveBlockToDB" label="Save block to database"/>
-    </q-btn-group>
-    <q-input v-model="blockName" stack-label label="Block name"/>
+      </div>
 
     <q-select
       name="databaseSelector"
@@ -20,15 +20,13 @@
       :options.sync="availableDatabases"
       @input="databaseChanged"
       filled
-
       separator
-      label="Select a database"
+      label="Source database"
       stack-label
     >
       <template v-slot:prepend>
         <q-icon name="fas fa-database" @click.stop />
       </template>
-
     </q-select>
 
     <q-select
@@ -39,27 +37,29 @@
       filled
 
       separator
-      label="Select a collection"
+      label="Source collection"
       stack-label
     >
       <template v-slot:prepend>
         <q-icon name="fas fa-tags" @click.stop />
       </template>
-
     </q-select>
+
     <q-input bottom-slots v-model="customURI" label="Analyze custom URI" >
       <template v-slot:append>
         <q-btn round dense flat icon="play_arrow" @click="collectionChanged()"/>
       </template>
     </q-input>
-    <q-input bottom-slots v-model="newCustomFieldName" label="Add custom field" >
 
+    <q-input ref="customFieldName" maxlength="40" bottom-slots v-model="newCustomFieldName" label="Add custom field" 
+     :rules="[ val => (cleanCustomFieldName(val).length >= 0 ) || 'Invalid field name']" @blur="resetCustomFieldValidation()">
       <template v-slot:append>
-        <q-btn round dense flat icon="add" @click="addCustomField()"/>
+        <q-btn round dense flat icon="add" :disabled="cleanCustomFieldName() == ''" @click="addCustomField()"/>
       </template>
     </q-input>
 
-    <div class="q-body-1"><p>Select the fields to add</p></div>
+    <div>Fields to add</div>
+
     <q-tree
       ref="selectionTree"
       :nodes="collectionModel"
@@ -68,7 +68,7 @@
       :ticked.sync="selectedFields"
     />
 
-    <div class="q-body-1">Select the generation options</div>
+    <div class="q-display-1">Generation options</div>
     <q-option-group
       color="secondary"
       type="toggle"
@@ -82,48 +82,40 @@
     ]"
     />
 
-
-
-    <q-btn-group>
-      <q-btn label="Create block" @click="notifyBlockRequested()">
-        <q-tooltip>
-          Create and add block to library
-        </q-tooltip>
-      </q-btn>
-      <q-toggle v-model="saveBlockToDB" label="Save block to Database"/>
-
-    </q-btn-group>
-    <q-input v-model="blockName" stack-label label="Block name"/>
     <q-list class="q-mt-md" link>
-      <q-item-label>Saved model definitions</q-item-label>
+      <q-item-label>Saved Blocks</q-item-label>
       <q-item tag="label" v-for="(item, index) in savedBlocks" v-bind:key="item.name"
               @click.native="getSavedBlock(item.uri)">
-
         <q-item-label>
           <q-item-section label>{{ item.name }}</q-item-section>
-
         </q-item-label>
       </q-item>
     </q-list>
-
 
   </div>
 </template>
 
 <script>
   import Notifications from '../components/notificationHandler.js';
+  import DatabaseFilter from '../components/databaseFilter.js';
+  import CollectionFilter from '../components/collectionFilter.js';
 
   export default {
     // name: 'ComponentName',
     mixins: [
-      Notifications
+      Notifications,
+      DatabaseFilter,
+      CollectionFilter
+
     ],
     data() {
       return {
         selectedCollection: "",
         saveBlockToDB:false,
+        blockSaved: false,
+        blockLibrary: [], // keep track of created blocks for pre-existance check
         selectedDatabase:null,
-        selectedFields: null,
+        selectedFields: [],
         selectedFieldsNodes:null,
         selectedCollection: null,
         availableCollections: [],
@@ -148,51 +140,80 @@
 
       }
     },
+    computed: {
+      blockStatusIcon() {
+    	    return (this.blockSaved ? 'check' : 'sticky-note');
+    }
+    },
     methods: {
       selectFieldPath(node){
-
         console.log(node)
       }
       ,
       collectionChanged() {
        // console.log(this.selectedCollection)
         this.discoverModel(this.selectedCollection,this.customURI)
-
+      },
+       resetBlockFields() {
+        this.newCustomFieldName = null
+        this.blockName = null
+        this.selectedDatabase = null
+        this.$refs.customFieldName.resetValidation()
+      },
+      resetCustomFieldValidation() {
+        this.newCustomFieldName= this.cleanCustomFieldName()
+        this.$refs.customFieldName.resetValidation()
+      },
+      cleanCustomFieldName() {
+        // must be a valid javascript property name. Possible further cleaning to come
+        var name = ''
+        if ( this.newCustomFieldName !== null) {
+           name = this.newCustomFieldName.trim().replace(/  +/g, ' ');
+        }
+        return name
+      },
+      cleanBlockName() {
+        return this.blockName.trim().replace(/  +/g, ' ');
+      },
+      blockIsInLibrary(name) {
+          var found = false;
+          for(var i = 0; i < this.blockLibrary.length; i++) {
+            if (this.blockLibrary[i].label == name) {
+            found = true;
+            break;
+        }
+      }
+        return found
       },
       addCustomField(){
 
+        if ( this.cleanCustomFieldName() !== '' ) {
+
+        var fieldName = this.cleanCustomFieldName()
+        // disallow duplicate custom field names
+        if ( ! this.$refs.selectionTree.getNodeByKey(fieldName) ) {
+
         this.collectionModel[1].children.push({
-            "label":this.newCustomFieldName,
-             "children":[],
-            "field" : this.newCustomFieldName,
-            "path":  "//"  + this.newCustomFieldName
+            "label":fieldName,
+            "children":[],
+            "field" : fieldName,
+            "path":  "//"  + fieldName,
+            "type": "custom"
         })
+        this.$refs.selectionTree.setExpanded("Custom",true)
+        } 
+
+        }
+
+       this.newCustomFieldName = '' 
+       this.resetCustomFieldValidation()
 
       },
-      // Filter out DHF, MarkLogic, and Pipes reserved collections
-      filterCollections(collections) {
-            var filtered = []
-            if ( collections !== null && typeof collections === 'object' && collections.length >= 1) {
-              filtered = collections.filter(
-                collection => (! collection.label.startsWith('http://marklogic.com/') 
-                && (! collection.label.startsWith('marklogic-pipes/') )
-                )
-              )
-            }
-            return filtered;
-        },
       discoverCollections() {
-        // filter out DHF core collections 
-
         var self = this;
         let dbOption =""
         if(this.selectedDatabase!=null && this.selectedDatabase!="") {
           dbOption += "&rs:database=" + this.selectedDatabase.value
-        /*  this.$root.$emit("databaseChanged",
-            {selectedDatabase: this.selectedDatabase,availableDatabases:this.availableDatabases
-            }
-
-            );*/
         }
 
           this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionDetails' + dbOption )
@@ -207,7 +228,7 @@
         var self = this;
         this.$axios.get('/v1/resources/vppBackendServices?rs:action=databasesDetails')
           .then((response) => {
-            this.availableDatabases = response.data
+            this.availableDatabases = this.filterDatabases(response.data)
           })
           .catch((error) => {
             self.notifyError("databasesDetails", error,self);
@@ -218,7 +239,6 @@
          this.$axios.get('/v1/resources/vppBackendServices?rs:action=ListSavedBlock')
           .then((response) => {
             this.savedBlocks = response.data;
-
           })
           .catch((error) => {
             self.notifyError("ListSavedBlock", error, self);
@@ -231,12 +251,19 @@
           .then((response) => {
             let block = response.data;
             if (block != null) {
+              self.collectionModel[0].children=[] // clear model and selected fields
+              self.collectionModel[1].children=[]
+              this.selectedFields=[]
               this.blockName = block.name
               this.selectedDatabase=block.database
               this.selectedCollection =block.collection
               this.discoverModel( this.selectedCollection,"")
-              this.selectedFields = block.fields;
               this.blockOptions = block.options;
+              this.restoreFields(block) // restore fields from block
+              this.$refs.selectionTree.expandAll()
+              this.blockLibrary.push(block.name)
+
+
             }
           })
           .catch((error) => {
@@ -245,18 +272,36 @@
       },
       saveBlock() {
         var self = this;
-        let blockDef = {
 
+        let blockMetadata = { "dateCreated" : new Date().toISOString() }
+         var updatedFields = []
+
+        if ( this.selectedFields !== null) {
+
+        // Identify collection and custom fields
+
+        for (var x = 0; x < this.selectedFields.length; x++) {
+    
+        var field = this.selectedFields[x]
+        var isCustomField = false;
+        for (var i = 0; isCustomField == false && i < self.collectionModel[1].children.length; i++) {
+                isCustomField = (this.selectedFields[i] == field) 
+          }
+                updatedFields.push({"label" : field, "customField" : isCustomField});
+        }
+        }
+
+        let blockDef = {
           name: this.blockName,
           database: this.selectedDatabase,
           collection: this.selectedCollection,
           source: "Sources",
-          fields: this.selectedFields,
-          options: this.blockOptions
-
+          fields: updatedFields, //this.selectedFields,
+          options: this.blockOptions,
+          metadata: blockMetadata
         }
 
-        this.$axios.post('/v1/resources/vppBackendServices?rs:action=SaveBlock', blockDef)
+        return this.$axios.post('/v1/resources/vppBackendServices?rs:action=SaveBlock', blockDef)
           .then((response) => {
             this.savedGraph = response.data
           })
@@ -264,15 +309,31 @@
             self.notifyError("SaveBlock", error, self);
           })
       },
+      // Restore collection fields and custom fields after block reload 
+      restoreFields(reloadedBlock) {
+          if ( reloadedBlock.fields.length > 0) {
+          for (var i = 0; i < reloadedBlock.fields.length; i++) {
+            if ( (reloadedBlock.fields[i].customField == true) ) {
+                var fieldName = reloadedBlock.fields[i].label
+                
+                this.collectionModel[1].children.push({
+                  "label":fieldName,
+                  "children":[],
+                  "field" : fieldName,
+                  "path":  "//"  + fieldName,
+                  "type": "custom"
+                })
+                
+            } 
+            // add all field regardless of type to "selected" so check boxes in tree are filled in
+            this.selectedFields.push(reloadedBlock.fields[i].label)
+         } 
+          }
+      },
       discoverModel(collection,customURI) {
         let dbOption =""
         if(this.selectedDatabase!=null && this.selectedDatabase!="") {
           dbOption += "&rs:database=" + this.selectedDatabase.value
-         // this.$root.$emit("databaseChanged",
-         //   {selectedDatabase: this.selectedDatabase,availableDatabases:this.availableDatabases
-         //   }
-
-        //  );
         }
 
         if(collection!=null && collection.value!=null)
@@ -281,7 +342,6 @@
         if(customURI!=null && customURI!="")
           dbOption += "&rs:customURI=" + customURI
 
-        //this.$axios.get('/v1/resources/modelDiscovery?rs:collection=' + collection.value)
         this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionModel' + dbOption)
           .then((response) => {
             this.collectionModel[0].children = response.data
@@ -307,63 +367,52 @@
 
       notifyBlockRequested() {
 
-        /*this.$q.notify({
-          color: 'negative',
-          position: 'top',
-          message: 'Loading failed',
-          icon: 'report_problem'
-        })*/
+        this.blockName = this.cleanBlockName()
 
-        if(this.blockName == null || this.blockName == "")
-        {
-
-          this.$q.notify({
-            color: 'negative',
-            position: 'top',
-            message: 'Please set the block name',
-            icon: 'report_problem'
-          })
-        }
-          else
-        {
-            if(this.blockName.indexOf(" - already saved")>=0)
+            if ( this.blockIsInLibrary(this.blockName) )
             {
-
                 this.$q.notify({
                     color: 'negative',
                     position: 'top',
-                    message: 'This name was already used, please check and reset if confirmed',
+                    message: 'Block with this name already in library. Please use another name',
                     icon: 'report_problem'
                 })
             }
-            else{
 
-          let blockDef = {
+            else {
+           
+          let blockMetadata = { "dateCreated" : new Date().toISOString() }
+
+          let blockDef = { 
 
             label: this.blockName,
             collection: this.blockName,
             source: "Sources",
             fields: this.$refs["selectionTree"].getTickedNodes(), //this.selectedFields,
-            options: this.blockOptions
+            options: this.blockOptions,
+            metadata: blockMetadata
 
           }
-              if(this.saveBlockToDB) this.saveBlock()
+
+          if (this.saveBlockToDB) { 
+            var ref = this
+            this.saveBlock().then(() => {
+                  ref.loadSavedBlocks()
+          });
+           
+          }
+          this.blockLibrary.push(blockDef)
           this.$root.$emit("blockRequested", blockDef);
-                this.blockName+=" - already saved";
-
-
+          this.blockSaved = true; 
         }
 
-        }
-
+       // }
 
       }
     },
     mounted() {
       console.log('Nothing gets called before me!')
       this.discoverDatabases()
-      //this.discoverCollections()
-      //Vue.set(vm.userProfile, 'age', 27)
       this.loadSavedBlocks();
     }
   }
@@ -371,4 +420,5 @@
 </script>
 
 <style>
+.spacer-div { margin-bottom: 8px; } 
 </style>
