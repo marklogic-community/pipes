@@ -191,7 +191,7 @@
 
             this.$axios.post('/customSteps?name=' + this.selectedStep.value + '&deploy=' + this.deployOption,begin + JSON.stringify(request) + end,config).then(
               (response) => {
-                let msgAdd = (deploy)?" and deployed to MarkLogic.":"."
+                let msgAdd = (this.deployOption)?" and deployed to MarkLogic.":"."
                 this.$q.notify({
                   color: 'positive',
                   position: 'top',
