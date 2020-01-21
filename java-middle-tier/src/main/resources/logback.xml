@@ -20,6 +20,10 @@
       <appender-ref ref="STDOUT" />
     </logger>
 
+  <logger name="com.marklogic.pipes.ui.customStep.CustomStepService" level="INFO" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger>
+
 <!--  <logger name="com.marklogic" level="INFO" additivity="false">-->
 <!--    <appender-ref ref="STDOUT" />-->
 <!--  </logger>-->

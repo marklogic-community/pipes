@@ -72,12 +72,18 @@ public class CustomStepService {
 
   public void copyCustomStepToDhf(String customStepDocument, String customStepName)  throws IOException {
 
+    LoggerFactory.getLogger(getClass()).info(
+      String.format("Now copying custom step "+ customStepName +" to your DHF project...")
+    );
     String customStepsAboslutePath = clientConfig.getMlDhfRoot()+ "/src/main/ml-modules/root/custom-modules/custom/";
 
       BufferedWriter writer = new BufferedWriter(new FileWriter(
         customStepsAboslutePath+customStepName+"/main.sjs"));
       writer.write(customStepDocument);
       writer.close();
+
+    LoggerFactory.getLogger(getClass()).info(
+      String.format("Custom step has been copied."));
   };
 
   private StepDefinition getStepDefinition(StepDefinitionManager stepDefinitionManager, String customStepsAbsPath, File dir) throws FileNotFoundException {

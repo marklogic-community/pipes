@@ -1,6 +1,8 @@
 package com.marklogic.pipes.ui.customStep;
 
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -38,14 +40,21 @@ public class CustomStepController {
    * @throws IOException
    */
   @RequestMapping(value = "/customSteps", method = RequestMethod.POST)
-  public void deployCustomStep(@RequestBody String body, HttpMethod method, HttpServletRequest request) throws IOException {
-    String customStepName=request.getParameter("name");
+  public ResponseEntity<Object> deployCustomStep(@RequestBody String body, HttpMethod method, HttpServletRequest request) throws IOException {
+    if(request.getParameter("name") != null) {
+      String customStepName=request.getParameter("name");
+      customStepService.copyCustomStepToDhf(body, customStepName);
 
-    customStepService.copyCustomStepToDhf(body, customStepName);
+      if (request.getParameter("deploy")!=null && request.getParameter("deploy").equals("true")) {
+        customStepService.deployCustomStepToMl(body, customStepName);
+      }
 
-    if (request.getParameter("deploy").equals("true")) {
-      customStepService.deployCustomStepToMl(body, customStepName);
+      return new ResponseEntity<>(null,HttpStatus.OK);
     }
+    else {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Parameter 'name' is mandatory.");
+    }
+
 
   }
 }
