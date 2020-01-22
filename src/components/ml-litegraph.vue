@@ -195,7 +195,7 @@
 
           <div class="q-pa-md q-gutter-sm">
 
-            <q-btn @click="executeGraph()" color="primary" label="Execute Preview"
+            <q-btn :loading="graphPreviewExecuting" v-bind:disabled="graphPreviewExecuting" @click="executeGraph()" color="primary" label="Execute Preview"
                    :disabled="( (saveToDB === false) && ((selectedDB === '' || selectedDB === null) || (collectionForPreview === '' || collectionForPreview === null)) ) ||
             ((saveToDB === true) && (selectedTargetDB === '' || selectedTargetDB === null) || (selectedDB === '' || selectedDB === null) || (collectionForPreview === '' || collectionForPreview === null))"/>
           </div>
@@ -270,6 +270,8 @@
   import {saveAs} from 'file-saver';
   import VueJsonPretty from 'vue-json-pretty';
   import Notifications from '../components/notificationHandler.js';
+  import DatabaseFilter from '../components/databaseFilter.js';
+  import CollectionFilter from '../components/collectionFilter.js';
   import codeGenerationConfig from '../components/codeGenerationConfig.vue'
 
   export default {
@@ -279,7 +281,9 @@
     },
     name: 'PageIndex',
     mixins: [
-      Notifications
+      Notifications,
+      DatabaseFilter,
+      CollectionFilter
     ],
     data() {
       return {
@@ -321,6 +325,7 @@
         selectedDB: null,
         availableDB: [],
         docUri: null,
+        graphPreviewExecuting: false,
         validationConfigs: [
           {
             block: "dhf/output",
@@ -380,7 +385,8 @@
       },
 
       createBlock(blockDef) {
-        console.log(blockDef)
+
+       console.log("createBlock called in ml-litegraph : " + JSON.stringify(blockDef))
 
         let newBlock = this.createGraphNodeFromModel(blockDef);
         LiteGraph.registerNodeType(blockDef.source + "/" + blockDef.collection, newBlock);
@@ -389,7 +395,7 @@
         this.$q.notify({
           color: 'positive',
           position: 'top',
-          message: "The new block is now available in the library (right click)",
+          message: "New block is now available in the library (right click)",
           icon: 'code'
         })
 
@@ -521,24 +527,6 @@
 
         let mappings = this.csvJSON(csvData)
 
-        /*mappings =[
-
-              {
-                source : "mySrc",
-                sourceField:"s1",
-                target:"myTarget",
-                targetField:"t1"
-              },
-              {
-                source : "mySrc",
-                sourceField:"s2",
-                target:"myTarget",
-                targetField:"t2"
-
-              }
-
-
-            ]*/
         let blocks = {}
         let inputs = {}
         let inputIdCount = 0
@@ -546,7 +534,6 @@
         let outputIdCount = 0
 
         for (let map of mappings) {
-
 
           if (map.source != null && blocks[map.source] == null)
             blocks[map.source] = {
@@ -1032,7 +1019,7 @@
         var self = this;
         this.$axios.get('/v1/resources/vppBackendServices?rs:action=databasesDetails')
           .then((response) => {
-            this.availableDB = response.data
+            this.availableDB = this.filterDatabases(response.data)
 
             this.$axios.get('/statics/library/core.json')
               .then((response) => {
