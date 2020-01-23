@@ -50,3 +50,12 @@ java-middle-tier/.classpath
 java-middle-tier/.project
 java-middle-tier/.settings/
 
+#windows stuff
+gradle/
+gradlew
+gradlew.bat
+java-middle-tier/gradle/wrapper/gradle-wrapper.properties
+java-middle-tier/gradle
+java-middle-tier/.gradle
+
+
