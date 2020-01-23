@@ -3,7 +3,6 @@
   <div class="flex flex-center">
     <canvas class="fixed" height='1000' ref="mycanvas" style='border: 1px solid' width='1800'></canvas>
 
-
     <q-dialog persistent v-model="editQuery">
       <q-card>
         <q-card-section>
@@ -211,19 +210,23 @@
           </q-item>
 
         </q-list>
-        <q-card-section>
-          <q-scroll-area style="height: 500px; max-width: 500px;">
+
+     <!--  <button v-clipboard:copy="jsonFromPreview"><q-icon name="fas fa-paste"/></button> -->
+ 
+       <q-scroll-area style="height: 500px; max-width: 500px;">
             <div class="q-py-xs">
-              <vue-json-pretty
-                :data="jsonFromPreview"
-              >
+              <vue-json-pretty id="prettyJSON" :data="jsonFromPreview">
               </vue-json-pretty>
+
             </div>
           </q-scroll-area>
         </q-card-section>
       </q-card>
     </q-dialog>
 
+     <q-dialog v-model="showUploadGraph">
+      <CSVLoader/>
+    </q-dialog>
 
     <q-dialog v-model="isExported">
       <q-card>
@@ -273,11 +276,13 @@
   import DatabaseFilter from '../components/databaseFilter.js';
   import CollectionFilter from '../components/collectionFilter.js';
   import codeGenerationConfig from '../components/codeGenerationConfig.vue'
+  import CSVLoader from '../components/csvLoader.vue';
 
   export default {
     components: {
       VueJsonPretty,
-      codeGenerationConfig
+      codeGenerationConfig,
+      CSVLoader
     },
     name: 'PageIndex',
     mixins: [
@@ -311,6 +316,7 @@
         models: [],
         showPreview: false,
         showCodeGenConfig: false,
+        showUploadGraph: false,
         collectionForPreview: "",
         jsonFromPreview: {},
         randomDocPreview: false,
@@ -413,7 +419,6 @@
 
         this.graph.configure(graph.executionGraph)
 
-
         if (graph.metadata && graph.metadata.title != null) this.graphMetadata.title = graph.metadata.title; else this.graphMetadata.title = ""
         if (graph.metadata && graph.metadata.author != null) this.graphMetadata.author = graph.metadata.author; else this.graphMetadata.author = ""
         if (graph.metadata && graph.metadata.version != null) this.graphMetadata.version = graph.metadata.version; else this.graphMetadata.version = ""
@@ -421,7 +426,6 @@
         this.$root.$emit("initGraphMetadata", this.graphMetadata)
 
       }
-
       ,
       getSavedGraph(uri, graphName) {
         //if(uri!=null)
@@ -519,11 +523,7 @@
       },
       createGraphFromMapping(csvData) {
 
-
-        // this.$axios.get('/statics/mappingRulesFR.csv')
-        // .then((response) => {
-
-        //console.log(response.data)
+        console.log("loading CSV")
 
         let mappings = this.csvJSON(csvData)
 
@@ -932,8 +932,6 @@
         this.validationInfos = []
         this.jsonFromPreview = {};
         const graphDetail = this.graph.serialize()
-        //  console.log("Executing graph: " + JSON.stringify( this.graph.serialize() ) )
-        //  console.log("Graph has " + graphDetail.nodes.length + " nodes:")
 
         this.validationInfos = this.checkConfiguration(graphDetail, this.validationConfigs)
 
@@ -944,11 +942,6 @@
           let dbOption = ""
           if (this.selectedDB != null && this.selectedDB != "") {
             dbOption += "&rs:database=" + this.selectedDB.value
-            //this.$root.$emit("databaseChanged",
-            // {selectedDatabase: this.selectedDatabase,availableDatabases:this.availableDatabases
-            // }
-
-            //);
           }
 
           if (this.saveToDB) {
@@ -973,9 +966,7 @@
 
           this.$axios.post('/v1/resources/vppBackendServices?rs:action=ExecuteGraph' + dbOption, request)
             .then((response) => {
-
               this.jsonFromPreview = response.data
-
             })
             .catch((error) => {
               self.notifyError("ExecuteGraph", error, self);
@@ -997,14 +988,13 @@
         console.log(block)
         let message = null
         if (block.properties.testCases)
-          message = 'Double click the box to edit the test cases'
-
+          message = 'Double click block to edit the test cases'
 
         if (block.properties.mapping)
-          message = 'Double click the box to edit the mapping rules'
+          message = 'Double click block to edit the mapping rules'
 
         if (block.properties.ctsQuery)
-          message = 'Double click the box to edit the lookup query'
+          message = 'Double click block to edit the lookup query'
 
         if (message != null)
           this.$q.notify({
@@ -1184,6 +1174,9 @@
       this.$root.$on("databaseChanged", this.setCurrrentDatabase);
       this.$root.$on("saveGraphCall", this.saveGraph);
       this.$root.$on("downloadGraphCall", this.downloadGraph);
+      this.$root.$on("uploadGraphCall", function () {
+        this.showUploadGraph = true
+      }.bind(this))
       this.$root.$on("loadGraphCall", this.loadGraph);
       this.$root.$on("loadGraphJsonCall", this.loadGraphFromJson);
       this.$root.$on("exportGraphCall", this.exportDHFModule);

@@ -29,12 +29,15 @@
 
           <q-btn flat round dense icon="fas fa-file" size="lg" @click.stop="loadDHFDefaultGraph()">
             <q-tooltip>
-              Reset graph to a default DHF config
+              Reset graph to default DHF config
             </q-tooltip>
 
           </q-btn>
-          <!--  <q-btn flat round dense icon="play_arrow" size="lg" @click.stop="executeGraph()"/> -->
-
+          <q-btn flat round dense icon="fas fa-file-upload" size="lg" @click="uploadGraph">
+            <q-tooltip>
+              Upload graph or block definitions from file
+            </q-tooltip>
+          </q-btn>
           <q-btn flat round dense icon="fas fa-file-download" size="lg" @click="downloadGraph()">
             <q-tooltip>
               Download local copy of current graph
@@ -46,9 +49,8 @@
             </q-tooltip>
           </q-btn>
           <q-btn flat round dense icon="cloud_download" size="lg" @click.stop="loadGraph()">
-
             <q-tooltip>
-              Load a graph from the staging DB
+              Load graph from the staging DB
             </q-tooltip>
           </q-btn>
           <q-btn flat round dense icon="fas fa-play" size="lg" @click.stop="executeGraph()">
@@ -87,10 +89,9 @@
           align="justify"
           narrow-indicator
         >
-          <q-tab name="metadata" label="Step details" />
-          <q-tab name="sources" label="From Sources" />
-          <q-tab name="entities" label="From Entities" />
-          <q-tab name="file" label="From File" />
+          <q-tab name="metadata" label="Step Details" />
+          <q-tab name="sources" label="Source Blocks" />
+          <q-tab name="entities" label="Entity Blocks" />
         </q-tabs>
 
         <q-separator />
@@ -129,19 +130,10 @@
             <entityselector></entityselector>
           </q-tab-panel>
 
-          <q-tab-panel name="file">
-
-           <csv-loader></csv-loader>
-          </q-tab-panel>
         </q-tab-panels>
       </q-card>
 
     </q-drawer>
-
-
-
-
-
 
     </q-drawer>
 
@@ -156,7 +148,6 @@
   import modelselector from '../components/modelselector.vue'
   import resultViewer from '../components/resultViewer.vue'
   import entityselector from '../components/entityselector.vue'
-  import csvLoader from '../components/csvLoader.vue'
 
   export default {
     name: 'MyLayout',
@@ -178,25 +169,22 @@
     },
   methods: {
     openURL,
-            notify() {
+    notify() {
       this.$root.$emit("registerModel");
       console.log("emit")
     },
     executeGraph() {
       this.$root.$emit("executeGraphCall");
-
-
     },
     saveGraph() {
       this.$root.$emit("saveGraphCall");
-
-
     },
     downloadGraph() {
       this.$root.$emit("downloadGraphCall");
-console.log("downloadGraph")
-    }
-  ,
+    },
+    uploadGraph() {
+      this.$root.$emit("uploadGraphCall");
+    },
     loadGraph() {
       this.$root.$emit("loadGraphCall");
 
@@ -222,8 +210,7 @@ console.log("downloadGraph")
     components: {
       modelselector,
       resultViewer,
-      entityselector,
-      csvLoader
+      entityselector
     },
     beforeMount:function(){
 

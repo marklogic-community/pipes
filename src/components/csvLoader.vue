@@ -4,11 +4,11 @@
 
     <vue-dropzone ref="myVueDropzone" id="dropzone" :options="dropzoneOptions" v-on:vdropzone-files-added="added" :useCustomSlot=true>
       <div class="dropzone-custom-content">
-        <h5 class="dropzone-custom-title">Drop a file to upload full graph or CSV</h5>
+        <h5 class="dropzone-custom-title">Drop a JSON file here to upload a saved graph</h5>
+        <h5 class="dropzone-custom-title">or a CSV file to upload block definitions</h5>
         <div class="subtitle">CSV format is: source;sourceField;target;targetField;type</div>
       </div>
     </vue-dropzone>
-
 
   </div>
 </template>
@@ -36,12 +36,12 @@ export default {
   methods:{
     added(file){
 
-      console.log(file)
+      console.log("Uploaded file: ")
       let  fileReader = new FileReader();
       fileReader.addEventListener("load", function () {
         console.log(fileReader.result)
 
-        if(fileReader.result.includes("executionGraph")) {
+        if(fileReader.result.includes('"executionGraph":')) {
             let input =String(fileReader.result)
             input= input.replace(/array-node\('([\s\w]*)'\)/g, "$1").replace(/\/object-node\(\)/g, "")
             console.log(input)
