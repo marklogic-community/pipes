@@ -4,7 +4,7 @@
   <div class="column gutter-sm">
 
 <div class="spacer-div">
-      <q-btn label="Create block" @click="notifyBlockRequested()" :disabled="selectedEntity === null">
+      <q-btn label="Create Entity Block" @click="notifyBlockRequested()" :disabled="selectedEntity === null">
         <q-tooltip>
           Create block and add to library (right click)
         </q-tooltip>
