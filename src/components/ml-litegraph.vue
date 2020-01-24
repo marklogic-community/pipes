@@ -126,12 +126,16 @@
           </q-card-section>
 
           <q-list class="q-mt-md" link>
-            <q-item-label :header="true">Click graph from list to reload</q-item-label>
-            <q-item @click.native="getSavedGraph(item.uri,item.name)" tag="label" v-bind:key="item.name"
-                    v-for="(item, index) in savedGraph">
-              <q-item-label>
-                <q-item-section label>{{ item.name }}</q-item-section>
-              </q-item-label>
+            <q-item-label :header="true">Click a graph from list to reload</q-item-label>
+            <q-item @click.native="getSavedGraph(item.uri,item.name)" tag="label" v-bind:key="item.name" v-for="(item, index) in savedGraph">
+               <q-item-section avatar>
+                  <q-icon style="font-size: 1.5em" name="fas fa-project-diagram"/>
+                </q-item-section> 
+
+               <q-item-section>
+                  {{ item.name }}
+                </q-item-section>
+
             </q-item>
           </q-list>
 
@@ -433,16 +437,9 @@
         this.$axios.get('/v1/resources/vppBackendServices?rs:action=GetSavedGraph&rs:uri=' + encodeURI(uri))
           .then((response) => {
             let graph = response.data;
-
             this.loadGraphFromJson(graph)
-
-            this.$q.notify({
-              color: 'positive',
-              position: 'top',
-              message: "Loaded graph '" + graphName + "'",
-              icon: 'code'
-            })
-
+            this.notifyPositive(self,"Loaded graph '" + graphName + "'")
+            this.loadPopUpOpened = false
           })
           .catch((error) => {
             self.notifyError("GetSavedGraph", error, self);
@@ -832,7 +829,6 @@
           executionGraph: jsonGraph,
           name: this.graphName,
           metadata: this.graphMetadata
-
         }
 
 
@@ -928,6 +924,8 @@
         return result
       },
       executeGraph() {
+
+        console.log("Executing graph..")
 
         this.validationInfos = []
         this.jsonFromPreview = {};
@@ -1146,16 +1144,6 @@
         //xdmp.log(code)
         eval(code)
 
-        /*
-
-          function fn_collection(uri)
-          {
-              return fn.collection(uri);
-          }
-          LiteGraph.wrapFunctionAsNode('fn/fn_collection',fn_collection,
-              ['xs:string'],'node()*')
-      */
-
 
       }
     },
@@ -1186,37 +1174,6 @@
       this.discoverDatabases()
       this.graph = new LiteGraph.LGraph();
       this.graph_canvas = new LiteGraph.LGraphCanvas(this.$refs["mycanvas"], this.graph);
-
-
-      /*
-       node_const.pos = [200,200];
-       this.graph.add(node_const);
-       node_const.setValue(4.5);
-
-       var node_watch = LiteGraph.createNode("graph/output","result");
-       //node_watch.inputs[0].name=
-
-
-       node_watch.pos = [700,200];
-       this.graph.add(node_watch);
-
-
-
-
-       node_const.connect(0, node_watch, 0 );
-       */
-      //this.graph.renameGlobalOutput(node_watch.inputs[0].name,"result")
-      //node_watch.inputs[0].name="result"
-      // this.graph.start()
-      //this.result=this.graph.global_outputs["result"].value
-      // console.log(this.$refs["mycanvas"])
-
-
-      //const myJSON = {ans: 42};
-
-      // const formatter = new JSONFormatter(myJSON);
-
-      //  this.viewer.appendChild(formatter.render());
 
     }
     ,

@@ -28,39 +28,39 @@
         <q-btn-group>
 
           <q-btn flat round dense icon="fas fa-file" size="lg" @click.stop="loadDHFDefaultGraph()">
-            <q-tooltip>
+            <q-tooltip class="pipes-tooltip">
               Reset graph to default DHF config
             </q-tooltip>
 
           </q-btn>
           <q-btn flat round dense icon="fas fa-file-upload" size="lg" @click="uploadGraph">
-            <q-tooltip>
+             <q-tooltip class="pipes-tooltip">
               Upload graph or block definitions from file
             </q-tooltip>
           </q-btn>
           <q-btn flat round dense icon="fas fa-file-download" size="lg" @click="downloadGraph()">
-            <q-tooltip>
+             <q-tooltip class="pipes-tooltip">
               Download local copy of current graph
             </q-tooltip>
           </q-btn>
           <q-btn flat round dense icon="cloud_upload" size="lg" @click.stop="saveGraph()">
-            <q-tooltip>
+             <q-tooltip class="pipes-tooltip">
               Save current graph to the staging DB
             </q-tooltip>
           </q-btn>
           <q-btn flat round dense icon="cloud_download" size="lg" @click.stop="loadGraph()">
-            <q-tooltip>
+             <q-tooltip class="pipes-tooltip">
               Load graph from the staging DB
             </q-tooltip>
           </q-btn>
           <q-btn flat round dense icon="fas fa-play" size="lg" @click.stop="executeGraph()">
-            <q-tooltip>
+             <q-tooltip class="pipes-tooltip">
               Preview Execute Graph
             </q-tooltip>
 
           </q-btn>
           <q-btn flat round dense icon="fas fa-file-code" size="lg" @click.stop="exportDHFModule()">
-            <q-tooltip>
+             <q-tooltip class="pipes-tooltip">
               Export DHF custom step module
             </q-tooltip>
 

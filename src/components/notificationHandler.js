@@ -4,35 +4,56 @@ const Notifications = {
   methods: {
 
 // Parse out user-friendly information from ML error response and notify
-   notifyError: function(action, errorResponse, ref) {
-     var error
-     var errorDetail
-     var errorType
-
-    console.log("notifyError: " + action + ",'" + errorResponse + "'")
+   notifyError: function(action, MLErrorResponse, ref) {
+     var errorDetail, errorPath
+     var errorSummary
+     var outputError
 
     if (action === null) {
       action = "UNEXPECTED"
     }
 
-    if (errorResponse && errorResponse.response && errorResponse.response.data && errorResponse.response.data.message) {
-      errorDetail = this.getErrorDetail(errorResponse.response.data.message);
-      errorType = this.resolveErrorType(errorDetail)
-      error = "Error " + this.resolveErrorAction(action) + ": " + errorType || errorDetail
-    } else {
-      try { 
-          errorDetail = JSON.stringify(errorResponse);
-      } catch (c) {
-          errorDetail = errorResponse
-      }
-      error = "Unexpected error during " + this.resolveErrorAction(action) + ": " + errorDetail
+    if (MLErrorResponse && MLErrorResponse.response && MLErrorResponse.response.data) {
+    // we have a reponse object
+    if (MLErrorResponse.response.data.message) {
+     // console.log("responseObject type 1")
+      errorPath = "1"
+      errorDetail = this.extractErrorDetail(MLErrorResponse.response.data.message);
+      //errorSummary = this.summariseError(errorDetail)
+      
+    //  error = "Error " + this.resolveErrorAction(action) + ": " + errorType || errorDetail + " [1]"
+    } else if (MLErrorResponse.response.data && MLErrorResponse.response.data.errorResponse) {
+      errorPath = "2"
+  //    console.log("responseObject type 2 : " + JSON.stringify(MLErrorResponse.response.data))
+      // errorDetail can at this point be an errorResponse object. If so, get the message
+      if ( MLErrorResponse.response.data.errorResponse.message)
+        errorDetail = MLErrorResponse.response.data.errorResponse.message
     }
+      errorSummary = this.summariseError(errorDetail)
+
+    } else if (MLErrorResponse.message) {
+      errorPath = "3"
+      errorDetail = MLErrorResponse.message
+      errorSummary = this.summariseError(errorDetail)
+    } else {
+      errorPath = "4"
+    //  console.log("responseObject type 4")
+      try { 
+          errorDetail = JSON.stringify(MLErrorResponse);
+      } catch (c) {
+          errorDetail = MLErrorResponse
+      }
+    }
+
+  outputError = "Error " + this.resolveErrorAction(action) + ": " +  errorSummary + "<p>" + errorDetail + " [" + errorPath + "]</p>"
+  console.log("FINAL ERROR: " + outputError)
 
        ref.$q.notify({
           color: 'negative',
           position: 'top',
-          message: error,
-          icon: 'report_problem'
+          message: outputError,
+          icon: 'report_problem',
+          html: true
         })
 
   },
@@ -76,30 +97,27 @@ const Notifications = {
     return userAction;
   },
 
-  // identify useful messages from exceptions
-  resolveErrorType: function(error) {
+  // attempts to identify an easy summary of various exceptions
+  summariseError: function(error) {
     var errorMsg;
-    if (error === null) return "Undefined"
-    if (typeof error === 'string' && error !== null) {
-      if (error.includes("java.net.UnknownHostException")) return errorMsg = "Unknown host"
-      if (error.includes("Host is down") ) return "MarkLogic host cannot be contacted"
-      if (error.includes("Operation timed out") ) return "Operation timed out"
-    } else if (typeof error === 'object' && error !== null) {
-      return JSON.stringify(error)
-    }
-
-    switch(error) {
-      case '401 Unauthorized':
-        errorMsg = "Invalid credentials"
-        break;
-      default:
-          errorMsg = error
+    console.log("summariseError(" + error + ")")
+    if (error === null || error === undefined) return "Undefined"
+    if (typeof error === 'string') {
+      if (error.includes("java.net.UnknownHostException")) errorMsg = "Unknown host"
+      if (error.includes("Host is down") ) errorMsg = "MarkLogic host cannot be contacted"
+      if (error.includes("Operation timed out") ) errorMsg = "Operation timed out"
+      if (error.includes("arg1 is not of type Node") ) errorMsg = ""
+      if (error.includes("Error occured while trying to proxy to")) errorMsg = "Database connectivity lost"
+      if (error == "401 Unauthorized") errorMsg = "Invalid credentials"
+    } else if (typeof error === 'object') {
+      errorMsg = JSON.stringify(error)
     }
     return errorMsg;
   },
 
   // Depending on the situation, error response from MarkLogic can be a JSON object, or a string + JSON object concatenanted together
-  getErrorDetail: function(error) {
+  // attempts to extract error string from the incoming object
+  extractErrorDetail: function(error) {
       var msg
       if ( (typeof error === 'object' && error !== null) ) {
         msg = JSON.stringify(error)
@@ -127,8 +145,26 @@ const Notifications = {
   console.log("Incoming response: " + error )
 }
 return msg
-  }
+  },
+
+ notifyPositive(self,text) { 
+  this.$q.notify({
+    color: 'positive',
+    position: 'top',
+    message: text,
+    icon: 'code'
+  })
 }
+},
+mounted() {
+  this.$q.notify.setDefaults({
+    timeout: 1000,
+    textColor: 'white',
+    //actions: [{ icon: 'code', color: 'white' }],
+    html: true
+  })
+}
+
 }
 
 export default Notifications

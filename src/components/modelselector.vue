@@ -6,9 +6,9 @@
     <q-input ref="blockName" bottom-slots v-model="blockName" label="Block name" maxlength="40"/>
 
      <div class="spacer-div">
-      <q-btn label="Create block" @click="notifyBlockRequested()" :disabled="cleanBlockName() == ''">
-        <q-tooltip>
-          Create block and add to library
+      <q-btn label="Create Source Block" @click="notifyBlockRequested()" :disabled="cleanBlockName() == ''">
+        <q-tooltip class="pipes-tooltip">
+          Create new Source block and add to the library
         </q-tooltip>
       </q-btn>
       <q-toggle v-model="saveBlockToDB" label="Save block to database"/>
@@ -24,7 +24,8 @@
       label="Source database"
       stack-label
     >
-      <template v-slot:prepend>
+   <!-- <q-tooltip self="center right" content-class="tool-tip" v-model="toolTips">Database the block reads documents from</q-tooltip>-->
+       <template v-slot:prepend>
         <q-icon name="fas fa-database" @click.stop />
       </template>
     </q-select>
@@ -41,7 +42,9 @@
       stack-label
     >
       <template v-slot:prepend>
-        <q-icon name="fas fa-tags" @click.stop />
+        <q-icon name="fas fa-tags" @click.stop>
+         <!-- <q-tooltip self="center right" content-class="tool-tip" v-model="toolTips">Collection the block reads data from</q-tooltip>-->
+        </q-icon>
       </template>
     </q-select>
 
@@ -58,9 +61,8 @@
       </template>
     </q-input>
 
-    <div>Fields to add</div>
-
-    <q-tree
+    <div>Fields</div>
+    <q-tree class="spacer-div"
       ref="selectionTree"
       :nodes="collectionModel"
       node-key="label"
@@ -68,7 +70,12 @@
       :ticked.sync="selectedFields"
     />
 
-    <div class="q-display-1">Generation options</div>
+    <!-- Block options -->
+        <q-expansion-item
+          expand-separator
+          icon="settings"
+          label="Block Input/Output Options"
+        >
     <q-option-group
       color="secondary"
       type="toggle"
@@ -81,16 +88,31 @@
       { label: 'Create fields outputs', value: 'fieldsOutputs' }
     ]"
     />
+      </q-expansion-item>
 
-    <q-list class="q-mt-md" link>
-      <q-item-label>Saved Blocks</q-item-label>
-      <q-item tag="label" v-for="(item, index) in savedBlocks" v-bind:key="item.name"
-              @click.native="getSavedBlock(item.uri)">
-        <q-item-label>
-          <q-item-section label>{{ item.name }}</q-item-section>
-        </q-item-label>
+        <q-expansion-item
+          expand-separator
+          icon="fas fa-database"
+          label="Saved Source Blocks"
+    >
+    <q-list padding class="q-mt-md" link>
+      <q-item tag="label" v-for="(item, index) in savedBlocks" v-bind:key="item.name" @click.native="getSavedBlock(item.uri)">
+         <q-item-section avatar>
+              <div class="block">
+                <div class="block-title block">abc</div>
+                <div class="block-body block"></div>
+              </div>
+         </q-item-section>    
+         <q-item-section label>
+             <div class="text-left">
+              {{ item.name }}
+              </div>
+         </q-item-section>
       </q-item>
     </q-list>
+      </q-expansion-item>
+
+
 
   </div>
 </template>
@@ -106,7 +128,6 @@
       Notifications,
       DatabaseFilter,
       CollectionFilter
-
     ],
     data() {
       return {
@@ -136,7 +157,8 @@
         savedBlocks: [],
         blockName: "",
         newCustomFieldName:"",
-        customURI:""
+        customURI:"",
+        toolTips:true
 
       }
     },
@@ -207,9 +229,6 @@
           this.newCustomFieldName = ''
           this.resetCustomFieldValidation()
         }
-
-       
-
       },
       discoverCollections() {
         var self = this;
@@ -266,6 +285,7 @@
               this.blockLibrary.push(block.name)
 
 
+              this.notifyPositive(this,"Loaded block '" + this.blockName + "'")
             }
           })
           .catch((error) => {
@@ -408,14 +428,13 @@
           this.blockSaved = true; 
         }
 
-       // }
-
       }
     },
     mounted() {
       console.log('Nothing gets called before me!')
       this.discoverDatabases()
       this.loadSavedBlocks();
+      this.$refs.selectionTree.getNodeByKey("custom")
     }
   }
 
@@ -423,4 +442,31 @@
 
 <style>
 .spacer-div { margin-bottom: 8px; } 
+
+.block {
+  width: 30px;
+  border-top-left-radius: 5px; 
+  border-top-right-radius: 5px;
+}
+
+.block-title {
+  height: 8px;
+  background: rgb(236,75,43);
+  color:white;
+  font-size:0.2em;
+}
+
+.block-body {
+  background: rgb(176,165,143);
+  height: 20px;
+  border-top-right-radius: 0px;
+  border-top-left-radius: 0px;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px; 
+}
+
+.pipes-tooltip {
+  background-color: #7397d1;
+  font-size: 1.0em;
+}
 </style>
