@@ -130,7 +130,7 @@
             <q-item @click.native="getSavedGraph(item.uri,item.name)" tag="label" v-bind:key="item.name" v-for="(item, index) in savedGraph">
                <q-item-section avatar>
                   <q-icon style="font-size: 1.5em" name="fas fa-project-diagram"/>
-                </q-item-section> 
+                </q-item-section>
 
                <q-item-section>
                   {{ item.name }}
@@ -216,7 +216,7 @@
         </q-list>
 
      <!--  <button v-clipboard:copy="jsonFromPreview"><q-icon name="fas fa-paste"/></button> -->
- 
+
        <q-scroll-area style="height: 500px; max-width: 500px;">
             <div class="q-py-xs">
               <vue-json-pretty id="prettyJSON" :data="jsonFromPreview">
@@ -348,11 +348,11 @@
             mandatoryOutputs: [],
             count: {
               "N": {
-                msg: "You should have only one block ${config.block} in the graph.",
+                msg: "You should have only one block dhf/Custom Step Output in the graph.",
                 type: "error"
               },
               0: {
-                msg: "You should have at least one block ${config.block} in the graph.",
+                msg: "You should have at least one block dhf/Custom Step Output in the graph.",
                 type: "error"
               }
             }
