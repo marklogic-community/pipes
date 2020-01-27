@@ -42,7 +42,7 @@ For subsequent Pipes runs on the same DHF project, you can omit the deployBacken
 
 
 ## Uhm, OK, I got it up and running! How do I use it?
-Learn on Pipes Wiki [how to create your first Pipes project](https://github.com/marklogic-community/pipes/wiki/Creating-your-first-Pipes-project)
+Learn on Pipes Wiki [how to create your first Pipes project](https://github.com/marklogic-community/pipes/wiki/1.-Creating-your-first-Pipes-project)
 
 Have fun!
 
