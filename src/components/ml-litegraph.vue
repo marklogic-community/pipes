@@ -96,7 +96,7 @@
 
         <q-card-section class="row">
           <div style="min-width: 250px; max-width: 300px">
-            <q-input stack-label="true" label="Graph name" v-model="graphName"/>
+            <q-input label="Graph name" v-model="graphMetadata.title"/>
           </div>
         </q-card-section>
 
@@ -105,7 +105,7 @@
             @click="saveCurrentGraph()"
             color="primary"
             label="Save"
-            :disabled="(graphName === null || graphName === '' || graphName.trim() === '')"
+            :disabled="(graphMetadata.title === null || graphMetadata.title === '' || graphMetadata.title.trim() === '')"
           />
           <q-btn
             @click="savePopUpOpened = false"
@@ -827,11 +827,11 @@
 
         var self = this; // keep reference for notifications called from catch block
         let jsonGraph = this.graph.serialize()
-        this.graphName = this.graphName.replace(/[&#]/g, "_"); // & # causes error at download time
+        var graphName = this.graphMetadata.title.replace(/[&#]/g, "_"); // & # causes error at download time
         let graphDef = {
           models: (this.models != null) ? this.models : [],
           executionGraph: jsonGraph,
-          name: this.graphName,
+          name: graphName,
           metadata: this.graphMetadata
         }
 
@@ -842,7 +842,7 @@
             this.$q.notify({
               color: 'positive',
               position: 'top',
-              message: "Graph saved as " + self.graphName,
+              message: "Saved graph " + graphName,
               icon: 'code'
             })
           })
