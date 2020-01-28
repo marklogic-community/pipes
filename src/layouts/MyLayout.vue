@@ -13,7 +13,7 @@
           @click="leftDrawerOpen = !leftDrawerOpen"
           aria-label="Sources"
         >
-          <q-tooltip>
+          <q-tooltip content-class="pipes-tooltip">
             Settings and block creation
           </q-tooltip>
           <q-icon name="widgets"/>
@@ -28,42 +28,47 @@
         <q-btn-group>
 
           <q-btn flat round dense icon="fas fa-file" size="lg" @click.stop="loadDHFDefaultGraph()">
-            <q-tooltip class="pipes-tooltip">
+            <q-tooltip content-class="pipes-tooltip">
               Reset graph to default DHF config
             </q-tooltip>
 
           </q-btn>
           <q-btn flat round dense icon="fas fa-file-upload" size="lg" @click="uploadGraph">
-             <q-tooltip class="pipes-tooltip">
+             <q-tooltip content-class="pipes-tooltip">
               Upload graph or block definitions from file
             </q-tooltip>
           </q-btn>
           <q-btn flat round dense icon="fas fa-file-download" size="lg" @click="downloadGraph()">
-             <q-tooltip class="pipes-tooltip">
+             <q-tooltip content-class="pipes-tooltip">
               Download local copy of current graph
             </q-tooltip>
           </q-btn>
           <q-btn flat round dense icon="cloud_upload" size="lg" @click.stop="saveGraph()">
-             <q-tooltip class="pipes-tooltip">
+             <q-tooltip content-class="pipes-tooltip">
               Save current graph to the staging DB
             </q-tooltip>
           </q-btn>
           <q-btn flat round dense icon="cloud_download" size="lg" @click.stop="loadGraph()">
-             <q-tooltip class="pipes-tooltip">
+             <q-tooltip content-class="pipes-tooltip">
               Load graph from the staging DB
             </q-tooltip>
           </q-btn>
           <q-btn flat round dense icon="fas fa-play" size="lg" @click.stop="executeGraph()">
-             <q-tooltip class="pipes-tooltip">
+             <q-tooltip content-class="pipes-tooltip">
               Preview Execute Graph
             </q-tooltip>
 
           </q-btn>
           <q-btn flat round dense icon="fas fa-file-code" size="lg" @click.stop="exportDHFModule()">
-             <q-tooltip class="pipes-tooltip">
+             <q-tooltip content-class="pipes-tooltip">
               Export DHF custom step module
             </q-tooltip>
-
+          </q-btn>
+          <q-separator vertical inset></q-separator>
+          <q-btn round dense icon="fas fa-question-circle" size="lg" @click.stop="openHelp()">
+             <q-tooltip content-class="pipes-tooltip">
+              Help
+            </q-tooltip>
           </q-btn>
         </q-btn-group>
 
@@ -100,7 +105,7 @@
           <q-tab-panel name="metadata">
 
             <div class="q-gutter-md" style="max-width: 300px">
-              <q-input v-model="graphMetadata.title" filled label="Title" />
+              <q-input v-model="graphMetadata.title" filled label="Graph Name" />
               <q-input
                 filled
                 v-model="graphMetadata.version"
@@ -108,6 +113,12 @@
                 mask="##.##"
                 fill-mask
                 hint="Mask: major.minor"
+              />
+               <q-input
+                filled
+                disable
+                v-model="graphMetadata.dateCreated"
+                label="Date Created"
               />
               <q-input v-model="graphMetadata.author" filled label="Author" />
               <q-input
@@ -157,22 +168,16 @@
         rightDrawerOpen: this.$q.platform.is.desktop,
         tab:"metadata",
         graphMetadata:{
-          title:"",
+          title:"My graph",
           version:"00.01",
           author:"",
-          description:""
+          description:"",
+          dateCreated: new Date().toISOString()
         }
       }
     },
-    methods: {
-      openURL
-    },
   methods: {
     openURL,
-    notify() {
-      this.$root.$emit("registerModel");
-      console.log("emit")
-    },
     executeGraph() {
       this.$root.$emit("executeGraphCall");
     },
@@ -187,24 +192,21 @@
     },
     loadGraph() {
       this.$root.$emit("loadGraphCall");
-
-
     },
     exportDHFModule(){
-
       this.$root.$emit("exportGraphCall");
     },
     loadDHFDefaultGraph(){
-
       this.$root.$emit("loadDHFDefaultGraphCall");
       this.leftDrawerOpen = false
     },
     setGraphMetadata(meta){
-      console.log(meta)
+      console.log("Graph metadata " + (typeof metadata) + ": " + meta)
       this.graphMetadata = meta
+    },
+    openHelp() {
+      window.open("https://github.com/marklogic-community/pipes/wiki", "_pipesHelp"); 
     }
-
-
 
   },
     components: {
@@ -217,7 +219,10 @@
       console.log("init receive")
       this.$root.$on("initGraphMetadata", this.setGraphMetadata );
     },
-    mounted: function () {
+    computed: {
+      currentDateTime() {
+      return new Date()
+    }
     }
   }
 </script>
