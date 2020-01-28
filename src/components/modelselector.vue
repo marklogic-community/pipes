@@ -121,6 +121,7 @@
   import Notifications from '../components/notificationHandler.js';
   import DatabaseFilter from '../components/databaseFilter.js';
   import CollectionFilter from '../components/collectionFilter.js';
+  import { SOURCE_BLOCK_TYPE } from '../components/constants.js'
 
   export default {
     // name: 'ComponentName',
@@ -284,8 +285,20 @@
               this.$refs.selectionTree.expandAll()
               this.blockLibrary.push(block.name)
 
+              // for reload of blocks from db
+              var collection = ""
+              if ( block.collection == null || block.collection == '' ) collection = block.name
+              else collection = block.collection
 
-              this.notifyPositive(this,"Loaded block '" + this.blockName + "'")
+              let blockDef = {
+                    label: block.name,
+                    collection: collection,
+                    source: SOURCE_BLOCK_TYPE,
+                    fields: block.fields,
+                    options: block.options
+              }
+
+              this.$root.$emit("blockRequested", blockDef);
             }
           })
           .catch((error) => {
@@ -317,7 +330,7 @@
           name: this.blockName,
           database: this.selectedDatabase,
           collection: this.selectedCollection,
-          source: "Sources",
+          source: SOURCE_BLOCK_TYPE,
           fields: updatedFields, //this.selectedFields,
           options: this.blockOptions,
           metadata: blockMetadata
@@ -409,7 +422,7 @@
 
             label: this.blockName,
             collection: this.blockName,
-            source: "Sources",
+            source: SOURCE_BLOCK_TYPE,
             fields: this.$refs["selectionTree"].getTickedNodes(), //this.selectedFields,
             options: this.blockOptions,
             metadata: blockMetadata

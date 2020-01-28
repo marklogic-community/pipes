@@ -14,17 +14,23 @@ const Notifications = {
     }
 
     if (MLErrorResponse && MLErrorResponse.response && MLErrorResponse.response.data) {
+      errorPath = "0"
+
+      // ?
+      if ( MLErrorResponse.message && (typeof MLErrorResponse.message == "string") )
+      errorDetail = MLErrorResponse.message
+
     // we have a reponse object
     if (MLErrorResponse.response.data.message) {
-     // console.log("responseObject type 1")
+
       errorPath = "1"
       errorDetail = this.extractErrorDetail(MLErrorResponse.response.data.message);
-      //errorSummary = this.summariseError(errorDetail)
+      errorSummary = this.summariseError(errorDetail)
       
-    //  error = "Error " + this.resolveErrorAction(action) + ": " + errorType || errorDetail + " [1]"
+      error = "Error " + this.resolveErrorAction(action) + ": " + errorType || errorDetail + " [1]"
     } else if (MLErrorResponse.response.data && MLErrorResponse.response.data.errorResponse) {
       errorPath = "2"
-  //    console.log("responseObject type 2 : " + JSON.stringify(MLErrorResponse.response.data))
+      console.log("responseObject type 2 : " + JSON.stringify(MLErrorResponse.response.data))
       // errorDetail can at this point be an errorResponse object. If so, get the message
       if ( MLErrorResponse.response.data.errorResponse.message)
         errorDetail = MLErrorResponse.response.data.errorResponse.message
@@ -37,13 +43,14 @@ const Notifications = {
       errorSummary = this.summariseError(errorDetail)
     } else {
       errorPath = "4"
-    //  console.log("responseObject type 4")
       try { 
           errorDetail = JSON.stringify(MLErrorResponse);
       } catch (c) {
           errorDetail = MLErrorResponse
       }
     }
+
+  console.log("FINISHED MAIN LOGIC") 
 
   outputError = "Error " + this.resolveErrorAction(action) + ": " +  errorSummary + "<p>" + errorDetail + " [" + errorPath + "]</p>"
   console.log("FINAL ERROR: " + outputError)
@@ -101,7 +108,7 @@ const Notifications = {
   summariseError: function(error) {
     var errorMsg;
     console.log("summariseError(" + error + ")")
-    if (error === null || error === undefined) return "Undefined"
+    if (error === null || error === undefined) return ""
     if (typeof error === 'string') {
       if (error.includes("java.net.UnknownHostException")) errorMsg = "Unknown host"
       if (error.includes("Host is down") ) errorMsg = "MarkLogic host cannot be contacted"
