@@ -281,6 +281,7 @@
   import CollectionFilter from '../components/collectionFilter.js';
   import codeGenerationConfig from '../components/codeGenerationConfig.vue'
   import CSVLoader from '../components/csvLoader.vue';
+  import { ENTITY_BLOCK_TYPE, SOURCE_BLOCK_TYPE } from '../components/constants.js'
 
   export default {
     components: {
@@ -342,7 +343,7 @@
             mandatoryInputs: [
               {
                 name: "output",
-                msg: "The final output of the graph is not connected (in dhf/output). You won't get any result.",
+                msg: "The final output of the graph is not connected in dhf/Custom Step Output). You won't get any result.",
                 type: "error"
               }],
             mandatoryOutputs: [],
@@ -363,12 +364,12 @@
             mandatoryInputs: [
               {
                 name: "instance",
-                msg: "The input '${input.name}' of the block ${config.block} should be connected.",
+                msg: "The input '${input.name}' of the ${config.block} block should be connected.",
                 type: "error"
               },
               {
                 name: "uri",
-                msg: "If the input '${input.name}' of the block ${config.block} is not set, you might have conflicting URIs.",
+                msg: "If the input '${input.name}' of the ${config.block} block is not set, you might have conflicting URIs.",
                 type: "info"
               }
             ],
@@ -387,18 +388,21 @@
 
     },
     methods: {
-
+/*
       registerModel(blockDef) {
         console.log("register model")
         this.createBlock(blockDef)
         this.models.push(blockDef)
       },
-
+      */
       createBlock(blockDef) {
 
        console.log("createBlock called in ml-litegraph : " + JSON.stringify(blockDef))
 
         let newBlock = this.createGraphNodeFromModel(blockDef);
+
+        console.log ("newBlock : " + JSON.stringify(newBlock) )
+
         LiteGraph.registerNodeType(blockDef.source + "/" + blockDef.collection, newBlock);
         this.models.push(blockDef)
 
@@ -536,7 +540,7 @@
             blocks[map.source] = {
               "label": map.source,
               "collection": map.source,
-              "source": "Sources",
+              "source": SOURCE_BLOCK_TYPE,
               "fields": [],
               "options": ["fieldsOutputs", "nodeInput"]
             }
@@ -545,7 +549,7 @@
             blocks[map.target] = {
               "label": map.target,
               "collection": map.target,
-              "source": "Entities",
+              "source": ENTITY_BLOCK_TYPE,
               "fields": [],
               "options": ["fieldsInputs", "nodeOutput"]
             }
@@ -851,7 +855,6 @@
       ,
       resetDhfDefaultGraph() {
 
-
         this.$axios.get('/statics/graph/dhfDefaultGraph.json')
           .then((response) => {
             let defaultGraph = response.data
@@ -1155,7 +1158,7 @@
       console.log("mounted")
 
       this.$root.$on("csvLoadingRequested", this.createGraphFromMapping)
-      this.$root.$on("registerModel", this.registerModel);
+    //  this.$root.$on("registerModel", this.registerModel);
       this.$root.$on('executeGraphCall', function () {
         this.showPreview = true
       }.bind(this))
