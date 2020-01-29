@@ -65,6 +65,12 @@ public class BackendModulesManager {
         String.format("MarkLogic backend modules have been loaded."));
 
     }
+    catch (com.marklogic.client.MarkLogicIOException e) {
+      LoggerFactory.getLogger(getClass()).error(
+        String.format("Hm, failed to connect to your database: "+clientConfig.getMlHost()+":"+clientConfig.getMlStagingPort()+
+          ". Are you sure your MarkLogic server is running at that address? Aborting Pipes start."));
+      System.exit(1);
+    }
     catch (Exception e) {
       LoggerFactory.getLogger(getClass()).error(
         String.format("Aborting Pipes start-up - Failed to load modules: "+e.getMessage()));
