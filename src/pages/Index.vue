@@ -21,7 +21,7 @@
           <b>Pipes Team</b>
           <br/>
           <br/>
-          Version 0.9 / What's new :
+          Version 1.0 / What's new :
           <ul>
             <li>Simplified execution environment</li>
             <li>Automated save and deploy to project code and MarkLogic</li>

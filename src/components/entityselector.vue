@@ -34,6 +34,7 @@
 
 <script>
   import Notifications from '../components/notificationHandler.js';
+  import { ENTITY_BLOCK_TYPE } from '../components/constants.js'
 
 export default {
   // name: 'ComponentName',
@@ -106,7 +107,7 @@ export default {
 
               label: entity.label,
               collection: entity.label,
-              source:"Entities",
+              source: ENTITY_BLOCK_TYPE,
               fields : this.entityModel.children.map(item => { return  {
                   "label" : item.label,
                   "field" : item.label,
@@ -126,7 +127,7 @@ export default {
 
               label: entity.label,
               collection:  entity.label,
-              source:"Entities",
+              source: ENTITY_BLOCK_TYPE,
               fields : this.entityModel.children.map(item => { return item.label}),
               options : ["fieldsInputs","nodeOutput"]
 

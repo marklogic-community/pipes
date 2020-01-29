@@ -23,23 +23,10 @@ yarn.lock
 package-lock.json
 
 #DHF stuff
+dhf/
 .java-version
-dhf/gradle-*.properties
-dhf/gradle.properties
-dhf/src
-dhf/src
 
-dhf/marklogic-datahub-5.0.2.war
-dhf/.tmp
-dhf/build/
-dhf/data/
-dhf/entities/
-dhf/flows/
-dhf/step-definitions/
 build/
-dhf/.project
-dhf/.settings/
-dhf/mappings/
 nohup.out
 
 #java stuff
