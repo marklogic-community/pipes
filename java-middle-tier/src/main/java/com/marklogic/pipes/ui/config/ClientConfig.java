@@ -37,12 +37,12 @@ public class ClientConfig {
   @Value("${mlDhfRoot:/my/dhf}")
   private String mlDhfRoot;
 
-  public String getCustomUserRoot() {
-    return customUserRoot;
+  public String getCustomModulesRoot() {
+    return customModulesRoot;
   }
 
-  @Value("${customUserRoot}")
-  private String customUserRoot;
+  @Value("${customModulesRoot:#{null}}")
+  private String customModulesRoot;
 
   public String getMlModulesDatabase() {
     return mlModulesDatabase;

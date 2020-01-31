@@ -40,10 +40,10 @@ public class BackendModulesAppRunner implements ApplicationRunner {
     // sanity check: does the DHF root folder exist?
     File f = new File(clientConfig.getMlDhfRoot());
     if (!f.exists() || !f.isDirectory()) {
-      LoggerFactory.getLogger(getClass()).info(
+      LoggerFactory.getLogger(getClass()).error(
         String.format("It looks like this folder doesn't exist: "+ clientConfig.getMlDhfRoot()));
       LoggerFactory.getLogger(getClass()).info(
-        String.format("Pipes not able to start, check your application.properties"));
+        String.format("Pipes will not start, check your application.properties"));
       System.exit(1);
     }
 

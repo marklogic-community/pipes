@@ -93,9 +93,31 @@ public class BackendModulesManager {
         customModulesPathPrefix+"/graphHelper.sjs",
         customModulesPathPrefix+"/litegraph.sjs",
         customModulesPathPrefix+"/moment-with-locales.min.sjs",
-        customModulesPathPrefix+"/user.sjs",
+//        customModulesPathPrefix+"/user.sjs",
         "/services/vppBackendServices.sjs"
       ));
+
+
+
+
+    Boolean includeCustomUserModule=false;
+    final String CUSTOMSJSNAME="user.sjs";
+    final String CUSTOMSJSPATH=clientConfig.getCustomModulesRoot()+File.separator+CUSTOMSJSNAME;
+
+
+    if(clientConfig.getCustomModulesRoot()!=null) {
+
+
+      if( (new File(CUSTOMSJSPATH)).exists() ) {
+        includeCustomUserModule = true;
+      }
+      else {
+        LoggerFactory.getLogger(getClass()).error(
+          String.format("Looks like your custom module \""+CUSTOMSJSPATH+"\" is missing. Check your application.properties. Pipes aborting."));
+        System.exit(1);
+      }
+    }
+
 
 
     for (final String filePath : filePaths) {
@@ -105,6 +127,30 @@ public class BackendModulesManager {
       try {
         if (operation== fileOperation.Copy) {
           FileUtils.copyInputStreamToFile(is, dest);
+        }
+        else if (operation== fileOperation.Remove) {
+          dest.delete();
+        }
+        else {
+          throw new Exception("Unsupported operation: "+operation);
+        }
+
+      } catch (final IOException e) {
+        // TODO Auto-generated catch block
+//        e.printStackTrace();
+//        System.out.println(e.toString());
+        throw e;
+      }
+    }
+
+    // do the same for the custom user module
+    if (includeCustomUserModule) {
+      //final InputStream is = Application.class.getResourceAsStream(resourcesDhfRoot + filePath);
+      final File source = new File(CUSTOMSJSPATH);
+      final File dest = new File(clientConfig.getMlDhfRoot() + destinationDhfRoot + customModulesPathPrefix + File.separator +CUSTOMSJSNAME);
+      try {
+        if (operation== fileOperation.Copy) {
+          FileUtils.copyFile(source,dest);
         }
         else if (operation== fileOperation.Remove) {
           dest.delete();

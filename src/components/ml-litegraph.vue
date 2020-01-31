@@ -1019,7 +1019,7 @@
 
               })
 
-            this.$axios.get('/statics/library/user.json')
+            this.$axios.get('/statics/library/custom/user.json')
               .then((response) => {
 //console.log(response.data)
 

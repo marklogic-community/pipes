@@ -62,6 +62,10 @@
   </logger>
 
 
+  <logger name="com.marklogic.pipes.ui.Application" level="INFO" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger>
+
 
 <!--  <logger name="com.marklogic.client.impl.DatabaseClientImpl" level="WARN" additivity="false">-->
 <!--    <appender-ref ref="STDOUT" />-->
