@@ -2,7 +2,7 @@
 Copyright ©2020 MarkLogic Corporation.
 */
 
-package com.marklogic.pipes.ui;
+package com.marklogic.pipes.ui.config;
 
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
@@ -36,6 +36,13 @@ public class ClientConfig {
 
   @Value("${mlDhfRoot:/my/dhf}")
   private String mlDhfRoot;
+
+  public String getCustomUserRoot() {
+    return customUserRoot;
+  }
+
+  @Value("${customUserRoot}")
+  private String customUserRoot;
 
   public String getMlModulesDatabase() {
     return mlModulesDatabase;

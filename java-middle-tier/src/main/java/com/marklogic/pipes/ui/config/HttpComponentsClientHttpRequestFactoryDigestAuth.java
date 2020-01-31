@@ -2,7 +2,7 @@
 Copyright ©2020 MarkLogic Corporation.
 */
 
-package com.marklogic.pipes.ui;
+package com.marklogic.pipes.ui.config;
 
 import java.net.URI;
 import org.apache.http.HttpHost;

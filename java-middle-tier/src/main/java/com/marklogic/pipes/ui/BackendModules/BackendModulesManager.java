@@ -12,8 +12,8 @@ import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;
 import com.marklogic.mgmt.admin.AdminManager;
-import com.marklogic.pipes.ui.ClientConfig;
-import com.marklogic.pipes.ui.Proxy;
+import com.marklogic.pipes.ui.config.ClientConfig;
+import com.marklogic.pipes.ui.Application;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,7 +99,7 @@ public class BackendModulesManager {
 
 
     for (final String filePath : filePaths) {
-      final InputStream is = Proxy.class.getResourceAsStream(resourcesDhfRoot + filePath);
+      final InputStream is = Application.class.getResourceAsStream(resourcesDhfRoot + filePath);
       final File dest = new File(clientConfig.getMlDhfRoot() + destinationDhfRoot + filePath);
 
       try {

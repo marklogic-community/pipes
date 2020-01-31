@@ -7,10 +7,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class Proxy {
+public class Application {
 
 	public static void main(final String[] args) {
-		SpringApplication.run(Proxy.class, args);
+		SpringApplication.run(Application.class, args);
 	}
 
 }

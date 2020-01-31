@@ -68,7 +68,7 @@
 <!--  </logger>-->
 
 
-<!--  <logger name="com.marklogic.pipes.ui.Proxy" level="WARN" additivity="false">-->
+<!--  <logger name="com.marklogic.pipes.ui.Applicationcation" level="WARN" additivity="false">-->
 <!--    <appender-ref ref="STDOUT" />-->
 <!--  </logger>-->
 <!--  -->

@@ -9,7 +9,7 @@ import com.marklogic.hub.impl.StepDefinitionManagerImpl;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.pipes.ui.BackendModules.BackendModulesManager;
-import com.marklogic.pipes.ui.ClientConfig;
+import com.marklogic.pipes.ui.config.ClientConfig;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
