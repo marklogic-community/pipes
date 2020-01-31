@@ -5,6 +5,7 @@ Copyright ©2020 MarkLogic Corporation.
 package com.marklogic.pipes.ui.BackendModules;
 
 import com.marklogic.pipes.ui.config.ClientConfig;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -20,6 +21,8 @@ import java.io.File;
  */
 @Component
 public class BackendModulesAppRunner implements ApplicationRunner {
+
+  private static final Logger logger = LoggerFactory.getLogger(BackendModulesAppRunner.class);
 
   @Autowired
   BackendModulesManager backendModulesManager;
@@ -40,9 +43,9 @@ public class BackendModulesAppRunner implements ApplicationRunner {
     // sanity check: does the DHF root folder exist?
     File f = new File(clientConfig.getMlDhfRoot());
     if (!f.exists() || !f.isDirectory()) {
-      LoggerFactory.getLogger(getClass()).error(
+      logger.error(
         String.format("It looks like this folder doesn't exist: "+ clientConfig.getMlDhfRoot()));
-      LoggerFactory.getLogger(getClass()).info(
+      logger.info(
         String.format("Pipes will not start, check your application.properties"));
       System.exit(1);
     }
@@ -52,10 +55,10 @@ public class BackendModulesAppRunner implements ApplicationRunner {
     if (undeployBackend) {
       backendModulesManager.unloadPipesModules();
 
-      LoggerFactory.getLogger(getClass()).info(
+      logger.info(
         String.format("Shutting down Pipes...")
       );
-      LoggerFactory.getLogger(getClass()).info(
+      logger.info(
         String.format("So Long, and Thanks for All the Fish.")
       );
       System.exit(0);
@@ -65,7 +68,7 @@ public class BackendModulesAppRunner implements ApplicationRunner {
       backendModulesManager.copyAndDeployPipesBackend();
     }
 
-    LoggerFactory.getLogger(getClass()).info(
+    logger.info(
       String.format("Pipes running on port: "+ environment.getProperty("local.server.port")));
   }
 

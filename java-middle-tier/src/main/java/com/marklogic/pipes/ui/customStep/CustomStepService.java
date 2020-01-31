@@ -8,8 +8,10 @@ import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.impl.StepDefinitionManagerImpl;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.util.json.JSONObject;
+import com.marklogic.pipes.ui.BackendModules.BackendModulesAppRunner;
 import com.marklogic.pipes.ui.BackendModules.BackendModulesManager;
 import com.marklogic.pipes.ui.config.ClientConfig;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,7 +25,7 @@ import java.nio.file.Paths;
 
 @Service
 public class CustomStepService {
-
+  private static final Logger logger = LoggerFactory.getLogger(CustomStepService.class);
 
   @Autowired
   ClientConfig clientConfig;
@@ -72,7 +74,7 @@ public class CustomStepService {
 
   public void copyCustomStepToDhf(String customStepDocument, String customStepName)  throws IOException {
 
-    LoggerFactory.getLogger(getClass()).info(
+    logger.info(
       String.format("Now copying custom step "+ customStepName +" to your DHF project...")
     );
     String customStepsAboslutePath = clientConfig.getMlDhfRoot()+ "/src/main/ml-modules/root/custom-modules/custom/";
@@ -82,7 +84,7 @@ public class CustomStepService {
       writer.write(customStepDocument);
       writer.close();
 
-    LoggerFactory.getLogger(getClass()).info(
+    logger.info(
       String.format("Custom step has been copied."));
   };
 
@@ -122,11 +124,11 @@ public class CustomStepService {
 
 
   public void deployCustomStepToMl(String body, String customStepName) {
-    LoggerFactory.getLogger(getClass()).info(
+    logger.info(
       String.format("Now loading custom step "+ customStepName +" to your DHF modules database...")
     );
     backendModulesManager.deployMlBackendModulesToModulesDatabase(".*/"+customStepName+"/.*.sjs");
-    LoggerFactory.getLogger(getClass()).info(
+    logger.info(
       String.format("Custom step has been loaded."));
 
   }
