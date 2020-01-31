@@ -1,5 +1,5 @@
 //Copyright ©2020 MarkLogic Corporation.
-const admin = require("/MarkLogic/admin.xqy");
+
 
 const blocksCollection = "marklogic-pipes/type/savedBlock";
 const graphsCollection = "marklogic-pipes/type/savedGraph";
@@ -204,28 +204,6 @@ function getTriplesByIri(iri) {
 }
 
 
-function getIndexes(ctx) {
-  let dbConfig = admin.getConfiguration()
-  let indexDefs = admin.databaseGetRangeElementIndexes(dbConfig, (ctx.database != null) ? ctx.database.value : xdmp.database())
-
-  let indexes = {}
-  if (ctx != null && ctx.database != null) {
-    let indexDefs = admin.databaseGetRangeElementIndexes(dbConfig, (ctx.database != null) ? ctx.database.value : xdmp.database())
-
-    for (let indexDef of indexDefs) {
-
-      let index = {
-
-        localname: indexDef.xpath(".//localname/string()"),
-        namespaceUri: indexDef.xpath(".//namespace-uri/string()"),
-        scalarType: indexDef.xpath(".//scalar-type/string()"),
-      }
-      indexes[index.localname] = index
-
-    }
-  }
-  return indexes
-}
 
 function getDatabases() {
 
@@ -338,7 +316,7 @@ function InvokeExecuteGraph(input){
       if(execContext.collectionRandom) {
         let nbDocs = cts.estimate(cts.collectionQuery(execContext.collection))
         doc = cts.doc(fn.head(fn.subsequence(cts.uris(null,null,cts.collectionQuery(execContext.collection)),xdmp.random(nbDocs -1)+1)))
-        
+
       }
       else {
         if(execContext.previewUri==null || execContext.previewUri=="")
@@ -583,7 +561,7 @@ function post(context, params, input) {
   switch (params.action) {
     case "config":
       config.databases = getDatabases()
-      config.indexes = getIndexes(ctx)
+
       const invokeGetCollectionsModels = getCollectionsModels(ctx);
       config.collectionsModels = xdmp.invokeFunction(invokeGetCollectionsModels.collectionsModel, {database: (ctx.database != null) ? ctx.database.value : xdmp.database()})//getCollectionsModels(ctx)
       return config

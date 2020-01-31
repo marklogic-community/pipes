@@ -1129,7 +1129,7 @@
     "functionName": "provo",
     "blockName": "PROV-O structure",
     "library": "provenance",
-    "description" : "This block generates provo triples based on the provided inputs",
+    "description" : "This block generates provo triples based on the provided inputs.",
     "inputs": [
       {
         "name": "uri",
