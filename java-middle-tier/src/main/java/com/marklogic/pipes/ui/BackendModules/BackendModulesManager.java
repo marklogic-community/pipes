@@ -152,7 +152,8 @@ public class BackendModulesManager {
       final File dest = new File(clientConfig.getMlDhfRoot() + destinationDhfRoot + customModulesPathPrefix + File.separator +CUSTOMSJSNAME);
       try {
         if (operation== fileOperation.Copy) {
-          FileUtils.copyFile(source,dest);
+          FileUtils.copyFile(source,dest, false);
+
         }
         else if (operation== fileOperation.Remove) {
           dest.delete();
