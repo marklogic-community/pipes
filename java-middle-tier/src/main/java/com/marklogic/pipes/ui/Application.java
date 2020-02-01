@@ -4,6 +4,8 @@ Copyright ©2020 MarkLogic Corporation.
 package com.marklogic.pipes.ui;
 
 import com.marklogic.pipes.ui.config.ClientConfig;
+import com.marklogic.pipes.ui.customStep.CustomStepService;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -18,6 +20,7 @@ import java.io.File;
 
 @SpringBootApplication
 public class Application {
+  private static final Logger logger = LoggerFactory.getLogger(Application.class);
 
   @Autowired
   ClientConfig clientConfig;
@@ -34,7 +37,7 @@ public class Application {
           final String CUSTOM_JSON_NAME="user.json";
           final String customJsonPath=clientConfig.getCustomModulesRoot() +File.separator+CUSTOM_JSON_NAME;
           if ( !(new File(customJsonPath)).exists()) {
-            LoggerFactory.getLogger(getClass()).error(
+            logger.error(
               String.format("Trying to add a custom module at this location, but failing: \""+customJsonPath+"\". Check your application.properties. Pipes will not start."));
               System.exit(1);
           }
@@ -43,7 +46,7 @@ public class Application {
             registry.addResourceHandler("/statics/library/custom/**").
               addResourceLocations("file:"+customJsonPath).addResourceLocations();
 
-            LoggerFactory.getLogger(getClass()).info(
+            logger.info(
               String.format("Added custom module: \""+customJsonPath+"\". Don't forget to refresh your browser.")
             );
           }

@@ -34,6 +34,15 @@ public class ClientConfig {
   @Value("${mlStagingPort:8010}")
   private int mlStagingPort;
 
+  @Value("${mlAppServicesPort:8000}")
+  private int mlAppServicesPort;
+
+  @Value("${mlAdminPort:8001}")
+  private int mlAdminPort;
+
+  @Value("${mlManagePort:8002}")
+  private int mlManagePort;
+
   @Value("${mlDhfRoot:/my/dhf}")
   private String mlDhfRoot;
 
@@ -57,6 +66,12 @@ public class ClientConfig {
   public int getMlStagingPort() {
     return mlStagingPort;
   }
+
+  public int getMlAppServicesPort() { return mlAppServicesPort; }
+
+  public int getMlAdminPort() { return mlAdminPort; }
+
+  public int getMlManagePort() { return mlManagePort; }
 
   public String getMlHost() {
     return mlHost;

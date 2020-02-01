@@ -15,6 +15,7 @@ import com.marklogic.mgmt.admin.AdminManager;
 import com.marklogic.pipes.ui.config.ClientConfig;
 import com.marklogic.pipes.ui.Application;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -29,6 +30,7 @@ import java.util.regex.Pattern;
 
 @Repository
 public class BackendModulesManager {
+  private static final Logger logger = LoggerFactory.getLogger(BackendModulesManager.class);
 
   @Autowired
   ClientConfig clientConfig;
@@ -44,40 +46,40 @@ public class BackendModulesManager {
 
   public void copyAndDeployPipesBackend() throws Exception {
 
-    LoggerFactory.getLogger(getClass()).info(
+    logger.info(
       String.format("Will copy MarkLogic backend modules to following DHF root: %s", clientConfig.getMlDhfRoot()));
     try {
       manageMarkLogicBackendModules(fileOperation.Copy);
     }
     catch (Exception e) {
-      LoggerFactory.getLogger(getClass()).error(
-        String.format("Aborting Pipes start-up - failed to copy modules: "+e.getMessage()));
+      logger.error(
+        String.format("Aborting Pipes start-up - failed to copy modules: "+e.getMessage()),e);
       throw e;
     }
 
     try {
 
-      LoggerFactory.getLogger(getClass()).info(
+      logger.info(
         String.format("Now loading Pipes modules to your DHF modules database...")
       );
       deployMlBackendModulesToModulesDatabase(".*/pipes/.*.sjs|.*vppBackendServices.sjs");
-      LoggerFactory.getLogger(getClass()).info(
+      logger.info(
         String.format("MarkLogic backend modules have been loaded."));
 
     }
     catch (com.marklogic.client.MarkLogicIOException e) {
-      LoggerFactory.getLogger(getClass()).error(
+      logger.error(
         String.format("Hm, failed to connect to your database: "+clientConfig.getMlHost()+":"+clientConfig.getMlStagingPort()+
-          ". Are you sure your MarkLogic server is running at that address? Aborting Pipes start."));
+          ". Are you sure your MarkLogic server is running at that address? Aborting Pipes start."),e);
       System.exit(1);
     }
     catch (Exception e) {
-      LoggerFactory.getLogger(getClass()).error(
-        String.format("Aborting Pipes start-up - Failed to load modules: "+e.getMessage()));
+      logger.error(
+        String.format("Aborting Pipes start-up - Failed to load modules: "+e.getMessage()),e);
       throw e;
     }
 
-    LoggerFactory.getLogger(getClass()).info(
+    logger.info(
       String.format("Modules successfully copied and deployed."));
 
   }
@@ -112,7 +114,7 @@ public class BackendModulesManager {
         includeCustomUserModule = true;
       }
       else {
-        LoggerFactory.getLogger(getClass()).error(
+        logger.error(
           String.format("Looks like your custom module \""+CUSTOMSJSPATH+"\" is missing. Check your application.properties. Pipes aborting."));
         System.exit(1);
       }
@@ -172,12 +174,12 @@ public class BackendModulesManager {
       String folderPath=clientConfig.getMlDhfRoot() + destinationDhfRoot + customModulesPathPrefix;
       FileUtils.deleteDirectory(new File(folderPath));
 
-      LoggerFactory.getLogger(getClass()).info(
+      logger.info(
         String.format("Deleted folder "+folderPath));
     }
 
     else if (operation== fileOperation.Copy) {
-      LoggerFactory.getLogger(getClass()).info(
+      logger.info(
         String.format("MarkLogic backend modules copied to your DHF project."));
     }
 
@@ -211,25 +213,25 @@ public class BackendModulesManager {
     appConfig.setName("data-hub");
     appConfig.setRestPort(clientConfig.getMlStagingPort());
     appConfig.setHost(clientConfig.getMlHost());
-
+    appConfig.setAppServicesPort(clientConfig.getMlAppServicesPort());
     appConfig.setModulesDatabaseName(clientConfig.getMlModulesDatabase());
     return appConfig;
   }
 
   private AdminManager getAdminManager() {
     // used for restarting ML; defaults to localhost/8001/admin/admin
-    return new AdminManager(new AdminConfig(clientConfig.getMlHost(),8001, clientConfig.getMlUsername(),clientConfig.getMlPassword()));
+    return new AdminManager(new AdminConfig(clientConfig.getMlHost(),clientConfig.getMlAdminPort(), clientConfig.getMlUsername(),clientConfig.getMlPassword()));
   }
 
   private ManageClient getManageClient() {
     // not sure about port 8002
     // TO-DO: read port from gradle.properties (which ones?)
-    return new ManageClient(new ManageConfig(clientConfig.getMlHost(),8002,clientConfig.getMlUsername(),clientConfig.getMlPassword()));
+    return new ManageClient(new ManageConfig(clientConfig.getMlHost(),clientConfig.getMlManagePort(),clientConfig.getMlUsername(),clientConfig.getMlPassword()));
   }
 
   public void unloadPipesModules() throws Exception {
 
-    LoggerFactory.getLogger(getClass()).info(
+    logger.info(
       String.format("Now deleting Pipes modules from your DHF modules database...")
     );
 
@@ -246,10 +248,10 @@ public class BackendModulesManager {
 
     appDeployer.deploy(appConfig);
 
-    LoggerFactory.getLogger(getClass()).info(
+    logger.info(
       String.format("MarkLogic backend modules have been deleted."));
 
-    LoggerFactory.getLogger(getClass()).info(
+    logger.info(
       String.format("Now deleting Pipes REST extension from your DHF modules database...")
     );
 
@@ -263,13 +265,13 @@ public class BackendModulesManager {
     resourceExtensionsManager.deleteServices("vppBackendServices");
 
 
-    LoggerFactory.getLogger(getClass()).info(
+    logger.info(
       String.format("Deleted Pipes REST extension from your DHF modules database...")
     );
 
     manageMarkLogicBackendModules(fileOperation.Remove);
 
-    LoggerFactory.getLogger(getClass()).info(
+    logger.info(
       String.format("Pipes deleted.")
     );
 
