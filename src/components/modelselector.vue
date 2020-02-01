@@ -48,7 +48,7 @@
       </template>
     </q-select>
 
-    <q-input bottom-slots v-model="customURI" label="Analyze custom URI" >
+    <q-input bottom-slots v-model="customURI" label="Analyze custom URIs (space separated)" >
       <template v-slot:append>
         <q-btn round dense flat icon="play_arrow" @click="collectionChanged()"/>
       </template>
