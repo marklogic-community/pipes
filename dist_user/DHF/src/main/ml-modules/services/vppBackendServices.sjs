@@ -393,9 +393,15 @@ function getFieldsByCollection(collection,customURI) {
         }
       }
       if(customURI!=null && customURI!="") {
-        let doc =cts.doc(customURI)
-        if (doc != null)
-          docs.push(doc)
+        customURI = decodeURI(customURI).trim();
+        // replace multiple spaces by one so that spliting goes ok
+        customURI = customURI.replace(/ +/g, " ");
+        for ( const uri of customURI.split(" ")) {
+          let doc = cts.doc(uri);
+          if (doc != null) {
+            docs.push(doc);
+          }
+        }
       }
       for(let doc of docs){
         for (let node of doc.xpath(".//*")
