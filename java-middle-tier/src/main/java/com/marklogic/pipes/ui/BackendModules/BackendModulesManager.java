@@ -120,6 +120,33 @@ public class BackendModulesManager {
       }
     }
 
+    if (!includeCustomUserModule) {
+      filePaths.add( customModulesPathPrefix+"/user.sjs");
+    }
+    // do the same for the custom user module
+    else {
+      //final InputStream is = Application.class.getResourceAsStream(resourcesDhfRoot + filePath);
+      final File source = new File(CUSTOMSJSPATH);
+      final File dest = new File(clientConfig.getMlDhfRoot() + destinationDhfRoot + customModulesPathPrefix + File.separator +CUSTOMSJSNAME);
+      try {
+        if (operation== fileOperation.Copy) {
+          FileUtils.copyFile(source,dest, false);
+
+        }
+        else if (operation== fileOperation.Remove) {
+          dest.delete();
+        }
+        else {
+          throw new Exception("Unsupported operation: "+operation);
+        }
+
+      } catch (final IOException e) {
+        // TODO Auto-generated catch block
+//        e.printStackTrace();
+//        System.out.println(e.toString());
+        throw e;
+      }
+    }
 
 
     for (final String filePath : filePaths) {
@@ -145,30 +172,7 @@ public class BackendModulesManager {
       }
     }
 
-    // do the same for the custom user module
-    if (includeCustomUserModule) {
-      //final InputStream is = Application.class.getResourceAsStream(resourcesDhfRoot + filePath);
-      final File source = new File(CUSTOMSJSPATH);
-      final File dest = new File(clientConfig.getMlDhfRoot() + destinationDhfRoot + customModulesPathPrefix + File.separator +CUSTOMSJSNAME);
-      try {
-        if (operation== fileOperation.Copy) {
-          FileUtils.copyFile(source,dest, false);
 
-        }
-        else if (operation== fileOperation.Remove) {
-          dest.delete();
-        }
-        else {
-          throw new Exception("Unsupported operation: "+operation);
-        }
-
-      } catch (final IOException e) {
-        // TODO Auto-generated catch block
-//        e.printStackTrace();
-//        System.out.println(e.toString());
-        throw e;
-      }
-    }
 
     // also delete the pipes folder
     if (operation== fileOperation.Remove) {

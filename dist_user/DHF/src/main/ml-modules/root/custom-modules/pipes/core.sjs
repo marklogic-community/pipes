@@ -2748,13 +2748,40 @@ function init(LiteGraph){
 
 
   }
+
   LiteGraph.registerNodeType("controls/CheckPhoneNumber", checkPhoneNumber );
 
 
+  function xpathBlock()
+  {
+    this.addInput("node");
+    this.addOutput("nodes");
+    this.xpath = this.addWidget("text","xpath", "", function(v){}, {} );
+    this.namespaces=this.addWidget("text","namespaces", "", function(v){}, {} );
+  }
 
+  xpathBlock.title = "xpath";
+  xpathBlock.desc = "xpath";
 
-
-
+  xpathBlock.prototype.onExecute = function()
+  {
+    let input = this.getInputData(0);
+    // it seems that a source entry is outputing an array
+    if ( input instanceof Array ) {
+      input = input[0];
+    }
+    let ns = {};
+    const nstokens = this.namespaces.value.trim().split(",");
+    if ( nstokens.length % 2 === 0 ) {
+      for ( let i = 0 ; i < nstokens.length ; i+=2 ) {
+        ns[nstokens[i].trim()] = nstokens[i+1].trim();
+      }
+    }
+    const xpath = this.xpath.value
+    //xdmp.log(Sequence.from(["Namespaces",ns,"Xpath",xpath]))
+    this.setOutputData(0, input.xpath(xpath,ns) )
+  }
+  LiteGraph.registerNodeType("transform/xpath", xpathBlock );
 
 }
 
