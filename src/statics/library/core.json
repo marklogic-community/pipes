@@ -1403,5 +1403,45 @@
       "ref": null,
       "code": ""
     }
+  },
+  {
+    "functionName": "document_xpath",
+    "blockName": "xpath",
+    "library": "transform",
+    "height" :180 ,
+    "width" : 230,
+    "inputs": [
+      {
+        "name": "node",
+        "type": "nodes"
+      }
+    ],
+    "widgets": [
+      {
+        "type": "text",
+        "name" : "xpath",
+        "default" : "",
+        "description" : "",
+        "values" : []
+      },
+      {
+        "type": "text",
+        "name" : "namespaces",
+        "default" : "",
+        "description" : "",
+        "values" : []
+
+      }
+    ],
+    "outputs": [
+      {
+        "name": "nodes",
+        "type": "nodes"
+      }
+    ],
+    "function": {
+      "ref": null,
+      "code": null
+    }
   }
 ]
