@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.CacheControl;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -27,7 +28,7 @@ public class Application {
 
   @Bean
   WebMvcConfigurer configurer () {
-    return new WebMvcConfigurerAdapter() {
+    return new WebMvcConfigurer() {
       @Override
       public void addResourceHandlers (ResourceHandlerRegistry registry) {
 
@@ -44,12 +45,17 @@ public class Application {
           else {
             // file exists, let's try to add it to resources
             registry.addResourceHandler("/statics/library/custom/**").
-              addResourceLocations("file:"+customJsonPath).addResourceLocations();
+              addResourceLocations("file:"+customJsonPath).addResourceLocations().setCachePeriod(0);
 
             logger.info(
               String.format("Added custom module: \""+customJsonPath+"\". Don't forget to refresh your browser.")
             );
           }
+        }
+        else {
+          registry.addResourceHandler("/resources/**")
+            .addResourceLocations("/public", "classpath:/static/")
+            .setCachePeriod(0);
         }
 
 
