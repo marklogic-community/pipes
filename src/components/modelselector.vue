@@ -54,7 +54,7 @@
       </template>
     </q-input>
 
-    <q-input ref="customFieldName" maxlength="40" bottom-slots v-model="newCustomFieldName" label="Add custom field" 
+    <q-input ref="customFieldName" maxlength="60" bottom-slots v-model="newCustomFieldName" label="Add custom field"
      :rules="[ val => (cleanCustomFieldName(val).length >= 0 ) || 'Invalid field name']" @blur="resetCustomFieldValidation()">
       <template v-slot:append>
         <q-btn round dense flat icon="add" :disabled="cleanCustomFieldName() == ''" @click="addCustomField()"/>
