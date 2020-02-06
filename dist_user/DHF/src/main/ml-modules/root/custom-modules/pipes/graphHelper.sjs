@@ -81,6 +81,7 @@ function createGraphNodeFromModel(blockDef) {
   block.nodeType = blockDef.collection;
 
 
+
   block.prototype.onExecute = function(){
 
 
@@ -239,7 +240,6 @@ function executeGraphFromJson(jsonGraph,uri, input,context){
 
 
 
-
   if(registeredNodeType==false) {
     for (let model of jsonGraph.models)
       LiteGraph.registerNodeType(model.source + "/" + model.collection, createGraphNodeFromModel(model));
@@ -247,12 +247,15 @@ function executeGraphFromJson(jsonGraph,uri, input,context){
     coreBlocks.init(LiteGraph);
     userBlocks.init(LiteGraph);
     graph = new LiteGraph.LGraph();
-    graph.configure(jsonGraph.executionGraph)
+    // graph.configure(jsonGraph.executionGraph)
     registeredNodeType=true
   }
 
 
-  graph.stop()
+  // graph.stop()
+
+  graph.configure(jsonGraph.executionGraph)
+
 
 
   graph.addInput("input", "");
