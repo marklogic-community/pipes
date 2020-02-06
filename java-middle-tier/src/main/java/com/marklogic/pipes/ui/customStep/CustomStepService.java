@@ -54,19 +54,22 @@ public class CustomStepService {
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
 
-    for (File dir:directories) {
+    if (directories!=null) {
+      for (File dir:directories) {
 
-      StepDefinition customStep = getStepDefinition(stepDefinitionManager, clientConfig.getMlDhfRoot()+ customStepsRelativePath, dir);
+        StepDefinition customStep = getStepDefinition(stepDefinitionManager, clientConfig.getMlDhfRoot()+ customStepsRelativePath, dir);
 
-      if (customStep != null) {
+        if (customStep != null) {
 
-        customStepResponse.addStep(new CustomStep(
-          customStep.getName(),
-          clientConfig.getMlDhfRoot()+ customStepsRelativePath+customStep.getName()+"/"+customStep.getName()+stepDefinitionManager.STEP_DEFINITION_FILE_EXTENSION)
-        );
+          customStepResponse.addStep(new CustomStep(
+            customStep.getName(),
+            clientConfig.getMlDhfRoot()+ customStepsRelativePath+customStep.getName()+"/"+customStep.getName()+stepDefinitionManager.STEP_DEFINITION_FILE_EXTENSION)
+          );
 
+        }
       }
     }
+
 
     String customStepResponseString=objectMapper.writeValueAsString(customStepResponse);
     return customStepResponseString;
