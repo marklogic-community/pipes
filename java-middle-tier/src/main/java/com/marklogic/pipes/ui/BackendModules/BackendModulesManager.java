@@ -220,6 +220,10 @@ public class BackendModulesManager {
     appConfig.setHost(clientConfig.getMlHost());
     appConfig.setAppServicesPort(clientConfig.getMlAppServicesPort());
     appConfig.setModulesDatabaseName(clientConfig.getMlModulesDatabase());
+    appConfig.setRestAdminUsername(clientConfig.getMlUsername());
+    appConfig.setRestAdminPassword(clientConfig.getMlPassword());
+    appConfig.setAppServicesUsername(clientConfig.getMlUsername());
+    appConfig.setAppServicesPassword(clientConfig.getMlPassword());
     return appConfig;
   }
 
