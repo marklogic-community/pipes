@@ -1,3 +1,7 @@
+/*
+Copyright ©2020 MarkLogic Corporation.
+*/
+
 package com.marklogic.pipes.ui.customStep;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -19,9 +23,6 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-//import com.marklogic.
-
 
 @Service
 public class CustomStepService {

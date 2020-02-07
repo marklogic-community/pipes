@@ -1,3 +1,7 @@
+/*
+Copyright ©2020 MarkLogic Corporation.
+*/
+
 package com.marklogic.pipes.ui.BackendModules;
 
 import com.marklogic.appdeployer.AppConfig;

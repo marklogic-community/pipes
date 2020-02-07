@@ -13,59 +13,65 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.client.RestTemplate;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 @Configuration
+@ConfigurationProperties
+@Validated
 public class ClientConfig {
 
-  @Value("${mlHost:localhost}")
+  final String message="Can't be blank. Set in application.properties or on the command line.";
+  final String intMessage="You have to set value in application.properties or on the command line.";
+
+  @NotBlank(message = message)
   private String mlHost;
 
-  @Value("${mlUsername:admin}")
+  @NotBlank(message = message)
   private String mlUsername;
 
-  @Value("${mlPassword:admin}")
+  @NotBlank(message = message)
   private String mlPassword;
 
-  @Value("${mlStagingPort:8010}")
+  @Min(message = intMessage,value = 1)
   private int mlStagingPort;
 
-  @Value("${mlAppServicesPort:8000}")
+  @Min(message = intMessage,value = 1)
   private int mlAppServicesPort;
 
-  @Value("${mlAdminPort:8001}")
+  @Min(message = intMessage,value = 1)
   private int mlAdminPort;
 
-  @Value("${mlManagePort:8002}")
+  @Min(message = intMessage,value = 1)
   private int mlManagePort;
 
-  @Value("${mlDhfRoot:/my/dhf}")
+  @NotBlank(message = message)
   private String mlDhfRoot;
 
-  public String getCustomModulesRoot() {
-    return customModulesRoot;
-  }
+  @NotBlank(message = message)
+  private String mlModulesDatabase;
 
   @Value("${customModulesRoot:#{null}}")
   private String customModulesRoot;
 
-  public String getMlModulesDatabase() {
-    return mlModulesDatabase;
-  }
-
-  @Value("${mlModulesDatabase:data-hub-MODULES}")
-  private String mlModulesDatabase;
-
   /**
    * @return the mlStagingPort
    */
-  public int getMlStagingPort() {
-    return mlStagingPort;
-  }
+  public int getMlStagingPort() { return mlStagingPort; }
+
+  public String getCustomModulesRoot() { return customModulesRoot; }
+
+  public String getMlModulesDatabase() { return mlModulesDatabase; }
 
   public int getMlAppServicesPort() { return mlAppServicesPort; }
 
@@ -73,17 +79,53 @@ public class ClientConfig {
 
   public int getMlManagePort() { return mlManagePort; }
 
-  public String getMlHost() {
-    return mlHost;
-  }
+  public String getMlHost() { return mlHost; }
 
-  public String getMlDhfRoot() {
-    return mlDhfRoot;
-  }
+  public String getMlDhfRoot() { return mlDhfRoot; }
 
   public String getMlUsername() {return mlUsername;}
 
   public String getMlPassword() {return mlPassword;}
+
+  public void setMlHost(String mlHost) {
+    this.mlHost = mlHost;
+  }
+
+  public void setMlUsername(@Valid String mlUsername) {
+    this.mlUsername = mlUsername;
+  }
+
+  public void setMlPassword(@Valid String mlPassword) {
+    this.mlPassword = mlPassword;
+  }
+
+  public void setMlStagingPort(int mlStagingPort) {
+    this.mlStagingPort = mlStagingPort;
+  }
+
+  public void setMlAppServicesPort(int mlAppServicesPort) {
+    this.mlAppServicesPort = mlAppServicesPort;
+  }
+
+  public void setMlAdminPort(int mlAdminPort) {
+    this.mlAdminPort = mlAdminPort;
+  }
+
+  public void setMlManagePort(int mlManagePort) {
+    this.mlManagePort = mlManagePort;
+  }
+
+  public void setMlDhfRoot(String mlDhfRoot) {
+    this.mlDhfRoot = mlDhfRoot;
+  }
+
+  public void setCustomModulesRoot(String customModulesRoot) {
+    this.customModulesRoot = customModulesRoot;
+  }
+
+  public void setMlModulesDatabase(String mlModulesDatabase) {
+    this.mlModulesDatabase = mlModulesDatabase;
+  }
 
   @Autowired
   Environment environment;
@@ -107,7 +149,7 @@ public class ClientConfig {
 
   private CredentialsProvider provider() {
     CredentialsProvider provider = new BasicCredentialsProvider();
-    UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(mlUsername, mlPassword);
+    UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(getMlUsername(), getMlPassword());
     provider.setCredentials(AuthScope.ANY, credentials);
     return provider;
   }

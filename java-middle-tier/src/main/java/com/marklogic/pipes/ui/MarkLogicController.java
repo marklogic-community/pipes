@@ -1,6 +1,7 @@
 /*
 Copyright ©2020 MarkLogic Corporation.
 */
+
 package com.marklogic.pipes.ui;
 
 import java.net.URI;
