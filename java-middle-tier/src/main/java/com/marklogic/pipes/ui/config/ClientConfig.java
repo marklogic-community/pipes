@@ -11,6 +11,8 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -24,12 +26,12 @@ import org.springframework.web.client.RestTemplate;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @Configuration
 @ConfigurationProperties
 @Validated
 public class ClientConfig {
+  private static final Logger logger = LoggerFactory.getLogger(ClientConfig.class);
 
   final String message="Can't be blank. Set in application.properties or on the command line.";
   final String intMessage="You have to set value in application.properties or on the command line.";
@@ -64,14 +66,31 @@ public class ClientConfig {
   @Value("${customModulesRoot:#{null}}")
   private String customModulesRoot;
 
+  // getters  / setters
   /**
    * @return the mlStagingPort
    */
   public int getMlStagingPort() { return mlStagingPort; }
 
-  public String getCustomModulesRoot() { return customModulesRoot; }
+  public String getCustomModulesRoot() {
+    if (customModulesRoot!=null && customModulesRoot!=customModulesRoot.trim()) {
+      logger.info("I trimmed the value of customModulesRoot from \""+customModulesRoot+"\" to \""+customModulesRoot.trim()+"\"");
+      return customModulesRoot.trim();
+    }
+    else {
+      return customModulesRoot;
+    }
+  }
 
-  public String getMlModulesDatabase() { return mlModulesDatabase; }
+  public String getMlModulesDatabase() {
+    if (mlModulesDatabase!=mlModulesDatabase.trim()) {
+      logger.info("I trimmed the value of mlModulesDatabase from \""+mlModulesDatabase+"\" to \""+mlModulesDatabase.trim()+"\"");
+      return mlModulesDatabase.trim();
+    }
+    else {
+      return mlModulesDatabase;
+    }
+  }
 
   public int getMlAppServicesPort() { return mlAppServicesPort; }
 
@@ -79,13 +98,46 @@ public class ClientConfig {
 
   public int getMlManagePort() { return mlManagePort; }
 
-  public String getMlHost() { return mlHost; }
+  public String getMlHost() {
+    if (mlHost!=mlHost.trim()) {
+      logger.info("I trimmed the value of mlHost from \""+mlHost+"\" to \""+mlHost.trim()+"\"");
+      return mlHost.trim();
+    }
+    else {
+      return mlHost;
+    }
+  }
 
-  public String getMlDhfRoot() { return mlDhfRoot; }
+  public String getMlDhfRoot() {
 
-  public String getMlUsername() {return mlUsername;}
+    if (mlDhfRoot!=mlDhfRoot.trim()) {
+      logger.info("I trimmed the value of mlDhfRoot from \""+mlDhfRoot+"\" to \""+mlDhfRoot.trim()+"\"");
+      return mlDhfRoot.trim();
+    }
+    else {
+      return mlDhfRoot;
+    }
+  }
 
-  public String getMlPassword() {return mlPassword;}
+  public String getMlUsername() {
+    if (mlUsername!=mlUsername.trim()) {
+      logger.info("I trimmed the value of mlUsername from \""+mlUsername+"\" to \""+mlUsername.trim()+"\"");
+      return mlUsername.trim();
+    }
+    else {
+      return mlUsername;
+    }
+  }
+
+  public String getMlPassword() {
+    if (mlPassword!=mlPassword.trim()) {
+      logger.info("I trimmed the value of mlPassword from \""+mlPassword+"\" to \""+mlPassword.trim()+"\"");
+      return mlPassword.trim();
+    }
+    else {
+      return mlPassword;
+    }
+  }
 
   public void setMlHost(String mlHost) {
     this.mlHost = mlHost;
@@ -138,7 +190,7 @@ public class ClientConfig {
     String serverPort=environment.getProperty("server.port")!=null ? environment.getProperty("server.port") : "8081";
     int springPort = Integer.parseInt(serverPort);
 
-    HttpHost host = new HttpHost(mlHost, springPort, "http");
+    HttpHost host = new HttpHost(getMlHost(), springPort, "http");
     CloseableHttpClient client = HttpClientBuilder.create().setDefaultCredentialsProvider(provider())
         .useSystemProperties().build();
     HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactoryDigestAuth(host,
