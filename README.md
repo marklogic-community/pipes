@@ -61,6 +61,8 @@ Have fun!
 
 ![alt text](https://github.com/marklogic-community/pipes/blob/master/Pipes.png?raw=true) 
 
+## How I deploy the module with my custom blocks
+Read about it here: [Creating custom user blocks](https://github.com/marklogic-community/pipes/wiki/4.-Creating-custom-user-blocks-for-developers)
 ## How can uninstall Pipes?
 
 To remove all back-end modules that Pipes installed and delete saved data such as Blocks and Graphs from the MarkLogic database, run Pipes as follows:
