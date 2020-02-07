@@ -19,6 +19,9 @@ server.port=8081
 # MarkLogic DHF settings
 mlHost=localhost
 mlStagingPort=8010
+mlAppServicesPort=8000
+mlAdminPort=8001
+mlManagePort=8002
 mlUsername=myusername
 mlPassword=mypassword 
 mlModulesDatabase=data-hub-MODULES
@@ -34,6 +37,9 @@ server.port=8081
 # MarkLogic DHF settings
 mlHost=localhost
 mlStagingPort=8010
+mlAppServicesPort=8000
+mlAdminPort=8001
+mlManagePort=8002
 mlUsername=myusername
 mlPassword=mypassword 
 mlModulesDatabase=data-hub-MODULES
