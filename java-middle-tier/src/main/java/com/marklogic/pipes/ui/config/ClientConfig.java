@@ -73,23 +73,11 @@ public class ClientConfig {
   public int getMlStagingPort() { return mlStagingPort; }
 
   public String getCustomModulesRoot() {
-    if (customModulesRoot!=null && customModulesRoot!=customModulesRoot.trim()) {
-      logger.info("I trimmed the value of customModulesRoot from \""+customModulesRoot+"\" to \""+customModulesRoot.trim()+"\"");
-      return customModulesRoot.trim();
-    }
-    else {
       return customModulesRoot;
-    }
   }
 
   public String getMlModulesDatabase() {
-    if (mlModulesDatabase!=mlModulesDatabase.trim()) {
-      logger.info("I trimmed the value of mlModulesDatabase from \""+mlModulesDatabase+"\" to \""+mlModulesDatabase.trim()+"\"");
-      return mlModulesDatabase.trim();
-    }
-    else {
       return mlModulesDatabase;
-    }
   }
 
   public int getMlAppServicesPort() { return mlAppServicesPort; }
@@ -99,55 +87,42 @@ public class ClientConfig {
   public int getMlManagePort() { return mlManagePort; }
 
   public String getMlHost() {
-    if (mlHost!=mlHost.trim()) {
-      logger.info("I trimmed the value of mlHost from \""+mlHost+"\" to \""+mlHost.trim()+"\"");
-      return mlHost.trim();
-    }
-    else {
-      return mlHost;
-    }
+    return mlHost;
   }
 
   public String getMlDhfRoot() {
-
-    if (mlDhfRoot!=mlDhfRoot.trim()) {
-      logger.info("I trimmed the value of mlDhfRoot from \""+mlDhfRoot+"\" to \""+mlDhfRoot.trim()+"\"");
-      return mlDhfRoot.trim();
-    }
-    else {
-      return mlDhfRoot;
-    }
+    return mlDhfRoot;
   }
 
   public String getMlUsername() {
-    if (mlUsername!=mlUsername.trim()) {
-      logger.info("I trimmed the value of mlUsername from \""+mlUsername+"\" to \""+mlUsername.trim()+"\"");
-      return mlUsername.trim();
-    }
-    else {
-      return mlUsername;
-    }
+    return mlUsername;
   }
 
   public String getMlPassword() {
-    if (mlPassword!=mlPassword.trim()) {
-      logger.info("I trimmed the value of mlPassword from \""+mlPassword+"\" to \""+mlPassword.trim()+"\"");
-      return mlPassword.trim();
-    }
-    else {
-      return mlPassword;
-    }
+    return mlPassword;
   }
 
   public void setMlHost(String mlHost) {
+    if (mlHost!=mlHost.trim()) {
+      logger.warn("I trimmed the value of mlHost from \""+mlHost+"\" to \""+mlHost.trim()+"\"");
+      mlHost = mlHost.trim();
+    }
     this.mlHost = mlHost;
   }
 
   public void setMlUsername(@Valid String mlUsername) {
+    if (mlUsername!=mlUsername.trim()) {
+      logger.warn("I trimmed the value of mlUsername from \""+mlUsername+"\" to \""+mlUsername.trim()+"\"");
+      mlUsername = mlUsername.trim();
+    }
     this.mlUsername = mlUsername;
   }
 
   public void setMlPassword(@Valid String mlPassword) {
+    if (mlPassword!=mlPassword.trim()) {
+      logger.warn("I trimmed the value of mlPassword from \""+mlPassword+"\" to \""+mlPassword.trim()+"\"");
+      mlPassword = mlPassword.trim();
+    }
     this.mlPassword = mlPassword;
   }
 
@@ -168,14 +143,26 @@ public class ClientConfig {
   }
 
   public void setMlDhfRoot(String mlDhfRoot) {
+    if (mlDhfRoot!=mlDhfRoot.trim()) {
+      logger.warn("I trimmed the value of mlDhfRoot from \""+mlDhfRoot+"\" to \""+mlDhfRoot.trim()+"\"");
+      mlDhfRoot = mlDhfRoot.trim();
+    }
     this.mlDhfRoot = mlDhfRoot;
   }
 
   public void setCustomModulesRoot(String customModulesRoot) {
+    if (customModulesRoot!=null && customModulesRoot!=customModulesRoot.trim()) {
+      logger.warn("I trimmed the value of customModulesRoot from \""+customModulesRoot+"\" to \""+customModulesRoot.trim()+"\"");
+      customModulesRoot = customModulesRoot.trim();
+    }
     this.customModulesRoot = customModulesRoot;
   }
 
   public void setMlModulesDatabase(String mlModulesDatabase) {
+    if (mlModulesDatabase!=mlModulesDatabase.trim()) {
+      logger.warn("I trimmed the value of mlModulesDatabase from \""+mlModulesDatabase+"\" to \""+mlModulesDatabase.trim()+"\"");
+      mlModulesDatabase = mlModulesDatabase.trim();
+    }
     this.mlModulesDatabase = mlModulesDatabase;
   }
 
