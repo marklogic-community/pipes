@@ -415,6 +415,16 @@ function getFieldsByCollection(collection,customURI) {
           if (fn.matches(parent, "array-node\\('[\\s\\w]*'\\)$"))
             parent = parent.substring(0, parent.lastIndexOf("/"))
           path = path.replace(/array-node\('([\s\w]*)'\)/g, "$1").replace(/\/object-node\(\)/g, "")
+
+
+          let currentName = path.substring(path.lastIndexOf("/") +1)
+          if(!currentName.includes("text("))
+            path=path.replace("/" + currentName,"/text('" + currentName + "')")
+
+          let parentName = parent.substring(parent.lastIndexOf("/") +1)
+          if(!parentName.includes("text("))
+            parent=parent.replace("/" + parentName,"/text('" + parentName + "')")
+
           if (fields[path] == null) fields[path] = {
             label: node.xpath("name(.)") + " [id" + i++ + "]",
             field: node.xpath("name(.)"),
