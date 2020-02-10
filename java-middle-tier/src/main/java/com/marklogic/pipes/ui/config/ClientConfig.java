@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.web.server.ConfigurableWebServerFactory;
+import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -26,15 +28,21 @@ import org.springframework.web.client.RestTemplate;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import java.io.IOException;
+import java.net.ServerSocket;
 
 @Configuration
 @ConfigurationProperties
 @Validated
-public class ClientConfig {
+public class ClientConfig
+  implements WebServerFactoryCustomizer<ConfigurableWebServerFactory> {
+
   private static final Logger logger = LoggerFactory.getLogger(ClientConfig.class);
 
   final String message="Can't be blank. Set in application.properties or on the command line.";
   final String intMessage="You have to set value in application.properties or on the command line.";
+
+  private int containerPort;
 
   @NotBlank(message = message)
   private String mlHost;
@@ -170,14 +178,12 @@ public class ClientConfig {
   Environment environment;
 
 
-  @Bean
+  @Bean()
   public RestTemplate restTemplate() {
 
-    // assign default 8081 if not specified
-    String serverPort=environment.getProperty("server.port")!=null ? environment.getProperty("server.port") : "8081";
-    int springPort = Integer.parseInt(serverPort);
 
-    HttpHost host = new HttpHost(getMlHost(), springPort, "http");
+    HttpHost host = new HttpHost(getMlHost(), containerPort, "http");
+
     CloseableHttpClient client = HttpClientBuilder.create().setDefaultCredentialsProvider(provider())
         .useSystemProperties().build();
     HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactoryDigestAuth(host,
@@ -191,5 +197,29 @@ public class ClientConfig {
     UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(getMlUsername(), getMlPassword());
     provider.setCredentials(AuthScope.ANY, credentials);
     return provider;
+  }
+
+  @Override
+  public void customize(ConfigurableWebServerFactory factory) {
+    if (environment.getProperty("server.port")==null) {
+      // pick a random port
+      ServerSocket socket = null;
+      try {
+        socket = new ServerSocket(0);
+      } catch (IOException e) {
+        e.printStackTrace();
+        System.exit(1);
+      }
+      int port=socket.getLocalPort();
+      factory.setPort(port);
+
+      containerPort=port;
+      logger.info("Setting port: "+port);
+    }
+    else {
+    //       assign default 8081 if not specified
+    String serverPort=environment.getProperty("server.port");
+      containerPort = Integer.parseInt(serverPort);
+    }
   }
 }
