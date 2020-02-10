@@ -418,11 +418,11 @@ function getFieldsByCollection(collection,customURI) {
 
 
           let currentName = path.substring(path.lastIndexOf("/") +1)
-          if(!currentName.includes("text("))
+          if(!currentName.includes("text(") && !currentName.includes("*"))
             path=path.replace("/" + currentName,"/text('" + currentName + "')")
 
           let parentName = parent.substring(parent.lastIndexOf("/") +1)
-          if(!parentName.includes("text("))
+          if(!parentName.includes("text(") && !parentName.includes("*"))
             parent=parent.replace("/" + parentName,"/text('" + parentName + "')")
 
           if (fields[path] == null) fields[path] = {
