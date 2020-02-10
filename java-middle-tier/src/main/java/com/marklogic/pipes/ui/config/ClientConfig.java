@@ -202,19 +202,22 @@ public class ClientConfig
   @Override
   public void customize(ConfigurableWebServerFactory factory) {
     if (environment.getProperty("server.port")==null) {
-      // pick a random port
-      ServerSocket socket = null;
-      try {
-        socket = new ServerSocket(0);
-      } catch (IOException e) {
-        e.printStackTrace();
-        System.exit(1);
+      // pick an unused port starting from 8080
+      int port=8080;
+      boolean portFound=false;
+      while (!portFound) {
+        ServerSocket socket = null;
+        try {
+          socket = new ServerSocket(port);
+          factory.setPort(port);
+          logger.info("Setting port: "+port);
+          containerPort=port;
+          portFound=true;
+        } catch (IOException e) {
+          //port used, moving on
+          port++;
+        }
       }
-      int port=socket.getLocalPort();
-      factory.setPort(port);
-
-      containerPort=port;
-      logger.info("Setting port: "+port);
     }
     else {
     //       assign default 8081 if not specified
