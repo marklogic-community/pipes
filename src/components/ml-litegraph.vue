@@ -127,28 +127,50 @@
 
           <q-list class="q-mt-md" link>
             <q-item-label :header="true">Click a graph from list to reload</q-item-label>
-            <q-item @click.native="getSavedGraph(item.uri,item.name)" tag="label" v-bind:key="item.name" v-for="(item, index) in savedGraph">
+            <q-item @click.native.prevent="getSavedGraph(graph.uri,graph.name)" tag="label" v-bind:key="graph.name" v-for="(graph, index) in savedGraph">
                <q-item-section avatar>
                   <q-icon style="font-size: 1.5em" name="fas fa-project-diagram"/>
                 </q-item-section>
 
                <q-item-section>
-                  {{ item.name }}
+                  {{ graph.name }}
+                </q-item-section>
+
+                 <q-item-section side>
+                  <q-btn flat outline @click.native.stop="deleteGraphURI = graph.uri; deleteGraphName = graph.name + (graph.version != null && graph.version != '' ? '-' + graph.version : ''); confirmDeleteGraph = true" size="sm" icon="fas fa-trash-alt">
+                    <q-tooltip self="top middle" content-class="pipes-tooltip">Delete '{{graph.name}}-{{graph.version}}'</q-tooltip>
+                  </q-btn>
                 </q-item-section>
 
             </q-item>
           </q-list>
 
-          <div class="q-pa-sm">
-            <q-btn
+        <div class="q-pa-md doc-container">
+          <div class="row justify-center">
+         <!--<div class="q-pa-sm">-->
+            <q-btn class="center"
               @click="loadPopUpOpened = false"
               color="primary"
               label="Close"
             />
-          </div>
+         </div>
+         </div>
         </q-card>
       </div>
     </q-dialog>
+
+        <q-dialog v-model="confirmDeleteGraph" persistent>
+          <q-card>
+            <q-card-section class="row items-center">
+              <q-avatar icon="fas fa-trash-alt" color="primary" text-color="red"></q-avatar>
+            <span class="q-ml-sm">Are you sure you want to delete <b>{{deleteGraphName}}</b>?</span>
+            </q-card-section>
+            <q-card-actions align="right">
+              <q-btn flat label="Cancel" color="primary" v-close-popup></q-btn>
+              <q-btn flat label="Delete" color="primary" @click="deleteGraph(deleteGraphName,deleteGraphURI)" v-close-popup></q-btn>
+            </q-card-actions>
+            </q-card>
+        </q-dialog>
 
     <q-dialog v-model="showPreview">
       <q-card>
@@ -304,6 +326,9 @@
         editJson: false,
         editCases: false,
         saveToDB: false,
+        confirmDeleteGraph: false,
+        deleteGraphName: "",
+        deleteGraphURI: "",
         graphMetadata: {
           title: "",
           version: "00.01",
@@ -449,7 +474,7 @@
             self.notifyError("GetSavedGraph", error, self);
           })
       },
-      loadSavedGraph() {
+      listSavedGraphs() {
 
         var self = this; // keep reference for notifications called from catch block
         this.$axios.get('/v1/resources/vppBackendServices?rs:action=ListSavedGraph')
@@ -681,8 +706,25 @@
 
 
       },
-      downloadGraph() {
+          deleteGraph(graphName, graphURI) {
+          console.log("Deleting graph " + graphName + " (" + graphURI +")")
+           var self = this
 
+         this.$axios.delete('/v1/resources/vppBackendServices?rs:action=deleteGraph&rs:URI=' +graphURI)
+          .then((response) => {
+              this.$q.notify({
+              color: 'positive',
+              position: 'top',
+              message: "Graph <b>'" + graphName + "'</b> deleted",
+              icon: 'code'
+              })
+              this.listSavedGraphs()
+          }
+          ) .catch((error) => {
+              self.notifyError("Deleting Graph", error, self);
+            })
+     },
+      downloadGraph() {
 
         let jsonGraph = this.graph.serialize()
         let graphDef = {
@@ -838,7 +880,7 @@
 
         this.$axios.post('/v1/resources/vppBackendServices?rs:action=SaveGraph', graphDef)
           .then((response) => {
-
+            this.savePopUpOpened = false; // close dialog 
             this.$q.notify({
               color: 'positive',
               position: 'top',
@@ -981,7 +1023,7 @@
       },
       loadGraph(event) {
 
-        this.loadSavedGraph()
+        this.listSavedGraphs()
         this.loadPopUpOpened = true;
 
       },

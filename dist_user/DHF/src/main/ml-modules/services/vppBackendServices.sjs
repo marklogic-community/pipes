@@ -493,6 +493,26 @@ function saveBlock(input,params){
 
 }
 
+function deleteBlock(URI){
+
+  xdmp.invokeFunction(() => {
+      declareUpdate();
+      if (xdmp.documentGetCollections(URI).includes(blocksCollection)){ // security. can only delete blocks
+      console.log("Deleting Pipes block " + URI)
+      xdmp.documentDelete(URI)
+      }
+    })
+}
+
+function deleteGraph(URI){
+
+  xdmp.invokeFunction(() => {
+      declareUpdate();
+      if (xdmp.documentGetCollections(URI).includes(graphsCollection)) // security. can only delete graphs
+      xdmp.documentDelete(URI)
+    })
+}
+
 function getSavedGraph(params){
   return fn.doc(params.uri)
 
@@ -630,7 +650,6 @@ function post(context, params, input) {
     // code block
   }
 
-
 };
 
 function put(context, params, input) {
@@ -638,7 +657,28 @@ function put(context, params, input) {
 };
 
 function deleteFunction(context, params) {
-  // return at most one document node
+
+  var response
+  context.outputTypes = [];
+  context.outputTypes.push('application/json');
+ 
+  switch (params.action) {
+    case "deleteBlock":
+      if (params.URI && params.URI != null && params.URI != '') {
+          response = deleteBlock(params.URI)
+      }
+      break;
+    case "deleteGraph":
+      if (params.URI && params.URI != null && params.URI != '') {
+          response = deleteGraph(params.URI)
+      }
+      break;   
+   default:
+    // code block
+  }
+ 
+ return response
+
 };
 
 exports.GET = get;
