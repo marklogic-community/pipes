@@ -96,22 +96,43 @@
           label="Saved Source Blocks"
     >
     <q-list padding class="q-mt-md" link>
-      <q-item tag="label" v-for="(item, index) in savedBlocks" v-bind:key="item.name" @click.native="getSavedBlock(item.uri)">
+      <q-item tag="label" v-for="(block, index) in savedBlocks" v-bind:key="block.name" 
+      @click.native.prevent="getSavedBlock(block.uri)">
          <q-item-section avatar>
               <div class="block">
                 <div class="block-title block">abc</div>
                 <div class="block-body block"></div>
               </div>
-         </q-item-section>    
+         </q-item-section>   
+
          <q-item-section label>
              <div class="text-left">
-              {{ item.name }}
+              {{ block.name }}
               </div>
          </q-item-section>
+
+          <q-item-section side>
+           <q-btn flat outline @click.capture.stop="deleteBlockURI = block.uri; deleteBlockName = block.name; confirmBlockDelete = true" size="sm" icon="fas fa-trash-alt">
+              <q-tooltip self="top middle" content-class="pipes-tooltip">Delete '{{block.name}}'</q-tooltip>
+           </q-btn>
+         </q-item-section>
+
       </q-item>
     </q-list>
-      </q-expansion-item>
 
+    <q-dialog v-model="confirmBlockDelete" persistent>
+          <q-card>
+            <q-card-section class="row items-center">
+              <q-avatar icon="fas fa-trash-alt" color="primary" text-color="red"></q-avatar>
+            <span class="q-ml-sm">Are you sure you want to delete <b>{{deleteBlockName}}</b>?</span>
+            </q-card-section>
+            <q-card-actions align="right">
+              <q-btn flat label="Cancel" color="primary" v-close-popup></q-btn>
+              <q-btn flat label="Delete" color="primary" @click="deleteBlock(deleteBlockURI,deleteBlockName)" v-close-popup></q-btn>
+            </q-card-actions>
+            </q-card>
+        </q-dialog>
+      </q-expansion-item>
 
 
   </div>
@@ -142,6 +163,8 @@
         selectedCollection: null,
         availableCollections: [],
         availableDatabases: [],
+        confirmBlockDelete: false,
+        deleteBlockName: "",
         collectionModel: [
           {
           label: 'source',
@@ -304,6 +327,25 @@
           .catch((error) => {
              self.notifyError("ListSavedBlock", error, self);
           })
+      },
+      deleteBlock(blockURI, blockName) {
+          console.log("Deleting block: " + JSON.stringify(blockName))
+           var self = this
+
+         this.$axios.delete('/v1/resources/vppBackendServices?rs:action=deleteBlock&rs:URI=' + blockURI)
+          .then((response) => {
+              this.$q.notify({
+              color: 'positive',
+              position: 'top',
+              message: "Source Block <b>'" + blockName + "'</b> deleted",
+              icon: 'code'
+  })
+      this.loadSavedBlocks()
+          })
+          .catch((error) => {
+            self.notifyError("Deleting Block", error, self);
+          })
+
       },
       saveBlock() {
         var self = this;
