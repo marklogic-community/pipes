@@ -237,13 +237,18 @@
 
         </q-list>
 
-     <!--  <button v-clipboard:copy="jsonFromPreview"><q-icon name="fas fa-paste"/></button> -->
+      <q-card align="right">
+      <q-btn @click="copyResultToClipboard(jsonFromPreview)" :ripple="{ color: 'green' }">
+         <q-tooltip self="top middle" content-class="pipes-tooltip">Copy to clipboard</q-tooltip>
+        <q-icon name="fas fa-paste"/>
+      </q-btn>
+      </q-card>
+
 
        <q-scroll-area style="height: 500px; max-width: 500px;">
             <div class="q-py-xs">
               <vue-json-pretty id="prettyJSON" :data="jsonFromPreview">
               </vue-json-pretty>
-
             </div>
           </q-scroll-area>
         </q-card-section>
@@ -297,6 +302,7 @@
 
   import {LiteGraph} from 'litegraph.js';
   import {saveAs} from 'file-saver';
+  import { copyToClipboard } from 'quasar'
   import VueJsonPretty from 'vue-json-pretty';
   import Notifications from '../components/notificationHandler.js';
   import DatabaseFilter from '../components/databaseFilter.js';
@@ -1012,6 +1018,17 @@
         }
 
 
+      },
+      copyResultToClipboard(result) {
+        var document;
+        document = ((typeof result == "object") ? JSON.stringify(result) : result)
+      copyToClipboard(document)
+  .then(() => {
+   console.log("Copied to clip board!")
+  })
+  .catch(() => {
+    console.log("Faild to copy to clip board!")
+  })
       },
       setCurrrentDatabase(db) {
 
