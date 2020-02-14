@@ -34,12 +34,13 @@
 
 <script>
   import Notifications from '../components/notificationHandler.js';
-  import { ENTITY_BLOCK_TYPE } from '../components/constants.js'
+  import { ENTITY_BLOCK_TYPE, BLOCK_FIELDS, BLOCK_FIELD, BLOCK_LABEL, BLOCK_PATH, BLOCK_TYPE,BLOCK_COLLECTION,BLOCK_SOURCE,BLOCK_OPTIONS,BLOCK_OPTION_FIELDS_INPUT, BLOCK_OPTION_NODE_OUTPUT } from '../components/constants.js'
+  import EntityManager from '../components/entityManager.js';
 
 export default {
-  // name: 'ComponentName',
   mixins: [
-      Notifications
+      Notifications,
+      EntityManager
     ],
   data () {
     return {
@@ -47,7 +48,7 @@ export default {
       selectedEntity:null,
       entityModel:{children:[]},
     columns: [
-      {
+      { 
         name: 'Property',
         required: true,
         label: 'Property',
@@ -65,39 +66,18 @@ export default {
         style: 'font-size: 8px'
       }
             ]
-
     }
 
   },
   methods:{
-
-
-    getEntities() {
-      var self = this;
-      this.$axios.get('/v1/resources/vppBackendServices?rs:action=DHFEntities')
-              .then((response) => {
-                this.availableEntities = response.data
-              })
-              .catch((error) => {
-                self.notifyError("LoadingEntities", error, self);
-              })
-    },
+    
     entityChanged(){
+      console.log("Getting entity properties for Entity: " + this.selectedEntity.value)
       this.$axios.get('/v1/resources/vppBackendServices?rs:action=DHFEntityProperties&rs:entity=' +  this.selectedEntity.value)
               .then((response) => {
                 this.entityModel = response.data
               })
-             /* .catch(() => {
-                this.$q.notify({
-                  color: 'negative',
-                  position: 'top',
-                  message: 'Entity Block creation failed',
-                  icon: 'report_problem'
-                })
-              })*/
-
     },
-
 
       notifyBlockRequested() {
 
@@ -105,16 +85,16 @@ export default {
 
           let blockDef = {
 
-              label: entity.label,
-              collection: entity.label,
-              source: ENTITY_BLOCK_TYPE,
-              fields : this.entityModel.children.map(item => { return  {
-                  "label" : item.label,
-                  "field" : item.label,
-                  "path":  "//"  + item.label
+              [BLOCK_LABEL]: entity.label,
+              [BLOCK_COLLECTION]: entity.label,
+              [BLOCK_SOURCE]: ENTITY_BLOCK_TYPE,
+              [BLOCK_FIELDS] : this.entityModel.children.map(item => { return  {
+              [BLOCK_LABEL] : item.label,
+              [BLOCK_FIELD] : item.label,
+              [BLOCK_PATH]:  "//"  + item.label
                 }
               }),
-              options : ["fieldsInputs","nodeOutput"]
+              [BLOCK_OPTIONS] : [BLOCK_OPTION_FIELDS_INPUT,BLOCK_OPTION_NODE_OUTPUT]
 
           }
           this.$root.$emit("blockRequested",blockDef);
@@ -125,12 +105,11 @@ export default {
 
           let blockDef = {
 
-              label: entity.label,
-              collection:  entity.label,
-              source: ENTITY_BLOCK_TYPE,
-              fields : this.entityModel.children.map(item => { return item.label}),
-              options : ["fieldsInputs","nodeOutput"]
-
+              [BLOCK_LABEL]: entity.label,
+              [BLOCK_COLLECTION]:  entity.label,
+              [BLOCK_SOURCE]: ENTITY_BLOCK_TYPE,
+              [BLOCK_FIELDS] : this.entityModel.children.map(item => { return item.label}),
+              [BLOCK_OPTIONS] : [BLOCK_OPTION_FIELDS_INPUT,BLOCK_OPTION_NODE_OUTPUT]
           }
 
           this.$axios.put('/v1/resources/savedBlock',blockDef)
@@ -143,9 +122,16 @@ export default {
       }
   },
   mounted() {
-    console.log('Nothing gets called before me!')
-    this.getEntities();
+ 
+ this.getEntities()
+      .then( (response) => {
+        this.availableEntities = response.data
+              }).catch((error) => {
+                self.notifyError("LoadingEntities", error, self);
+       })
+
   }
+
 }
 </script>
 

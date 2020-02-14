@@ -142,7 +142,8 @@
   import Notifications from '../components/notificationHandler.js';
   import DatabaseFilter from '../components/databaseFilter.js';
   import CollectionFilter from '../components/collectionFilter.js';
-  import { SOURCE_BLOCK_TYPE } from '../components/constants.js'
+  import { SOURCE_BLOCK_TYPE, BLOCK_FIELDS, BLOCK_FIELD, BLOCK_LABEL, BLOCK_TYPE, BLOCK_OPTIONS,
+  BLOCK_OPTION_NODE_INPUT, BLOCK_OPTION_FIELDS_OUTPUT, BLOCK_CHILDREN, BLOCK_PATH, BLOCK_COLLECTION, BLOCK_SOURCE } from '../components/constants.js'
 
   export default {
     // name: 'ComponentName',
@@ -176,7 +177,7 @@
           }
 
         ],
-        blockOptions: ["nodeInput", "fieldsOutputs"],
+        blockOptions: [BLOCK_OPTION_NODE_INPUT, BLOCK_OPTION_FIELDS_OUTPUT],
         savedGraph: [],
         savedBlocks: [],
         blockName: "",
@@ -224,7 +225,7 @@
       blockIsInLibrary(name) {
           var found = false;
           for(var i = 0; i < this.blockLibrary.length; i++) {
-            if (this.blockLibrary[i].label == name) {
+            if (this.blockLibrary[i][BLOCK_LABEL] == name) {
             found = true;
             break;
         }
@@ -240,12 +241,14 @@
         if ( ! this.$refs.selectionTree.getNodeByKey(fieldName) ) {
 
         this.collectionModel[1].children.push({
-            "label":fieldName,
-            "children":[],
-            "field" : fieldName,
-            "path":  "//"  + fieldName,
-            "type": "custom"
+            [BLOCK_LABEL]:fieldName,
+            [BLOCK_CHILDREN]:[],
+            [BLOCK_FIELD] : fieldName,
+            [BLOCK_PATH]:  "//"  + fieldName,
+            [BLOCK_TYPE]: "custom"
         })
+
+        console.log("collectionModel = " + JSON.stringify( this.collectionModel[1] ))
 
         this.$refs.selectionTree.setExpanded("custom",true)
         
@@ -371,10 +374,10 @@
         let blockDef = {
           name: this.blockName,
           database: this.selectedDatabase,
-          collection: this.selectedCollection,
-          source: SOURCE_BLOCK_TYPE,
-          fields: updatedFields, //this.selectedFields,
-          options: this.blockOptions,
+          [BLOCK_COLLECTION]: this.selectedCollection,
+          [BLOCK_SOURCE]: SOURCE_BLOCK_TYPE,
+          [BLOCK_FIELDS]: updatedFields, //this.selectedFields,
+          [BLOCK_OPTIONS]: this.blockOptions,
           metadata: blockMetadata
         }
 
@@ -394,11 +397,11 @@
                 var fieldName = reloadedBlock.fields[i].label
                 
                 this.collectionModel[1].children.push({
-                  "label":fieldName,
-                  "children":[],
-                  "field" : fieldName,
-                  "path":  "//"  + fieldName,
-                  "type": "custom"
+                  [BLOCK_LABEL]:fieldName,
+                  [BLOCK_CHILDREN]:[],
+                  [BLOCK_FIELD] : fieldName,
+                  [BLOCK_PATH]:  "//"  + fieldName,
+                  [BLOCK_TYPE]: "custom"
                 })
                 
             } 
@@ -462,10 +465,10 @@
 
           let blockDef = { 
 
-            label: this.blockName,
+            [BLOCK_LABEL]: this.blockName,
             collection: this.blockName,
             source: SOURCE_BLOCK_TYPE,
-            fields: this.$refs["selectionTree"].getTickedNodes(), //this.selectedFields,
+            [BLOCK_FIELDS]: this.$refs["selectionTree"].getTickedNodes(), //this.selectedFields,
             options: this.blockOptions,
             metadata: blockMetadata
 
