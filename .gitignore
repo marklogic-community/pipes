@@ -25,6 +25,10 @@ package-lock.json
 #DHF stuff
 dhf/
 .java-version
+ml-backend/gradle.properties
+ml-backend/.project
+ml-backend/.settings/
+
 
 build/
 nohup.out
