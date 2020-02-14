@@ -8,6 +8,12 @@ const DatabaseFilter = {
 // Parse out code, config, security, and schemas DBs. Should be off limits for Pipes to write into 
     filterDatabases: function(databases) {
 
+   function compare(a, b) {
+        if (a.label > b.label) return 1;
+        if (b.label > a.label) return -1;
+      return 0;
+      }    
+
    var offLimitDatabaseConfig =
    [
       { matchType: "endsIn", values: [ "-TRIGGERS","-SCHEMAS", "-MODULES"]},
@@ -21,7 +27,7 @@ const DatabaseFilter = {
                     database => ( ! this.dbNameMatches(database.label,offLimitDatabaseConfig) )  
                 )
             }
-            return filtered.sort()
+            return filtered.sort(compare)
         },
 
  dbNameMatches(dbName, offLimitDatabaseConfig) {

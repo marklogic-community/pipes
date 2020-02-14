@@ -5,6 +5,12 @@ const CollectionFilter = {
 
 // Parse out DHF and MarkLogic reserved collections, plus Pipes data collections 
 filterCollections: function(collections) {
+
+  function compare(a, b) {
+    if (a.label > b.label) return 1;
+    if (b.label > a.label) return -1;
+  return 0;
+  }
         var filtered = []
         if (collections !== null && typeof collections === 'object' && collections.length >= 1) {
           filtered = collections.filter(
@@ -13,7 +19,7 @@ filterCollections: function(collections) {
             )
           )
         }
-        return filtered;
+        return filtered.sort(compare);
       }
 }
 
