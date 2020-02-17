@@ -310,7 +310,7 @@
   import codeGenerationConfig from '../components/codeGenerationConfig.vue'
   import CSVLoader from '../components/csvLoader.vue';
   import EntityManager from '../components/entityManager.js';
-  import { ENTITY_BLOCK_TYPE, SOURCE_BLOCK_TYPE, BLOCK_PATH, BLOCK_LABEL, BLOCK_FIELDS, BLOCK_FIELD,BLOCK_COLLECTION,BLOCK_SOURCE,BLOCK_OPTIONS, 
+  import { ENTITY_BLOCK_TYPE, SOURCE_BLOCK_TYPE, BLOCK_PATH, BLOCK_LABEL, BLOCK_FIELDS, BLOCK_FIELD,BLOCK_COLLECTION,BLOCK_SOURCE,BLOCK_OPTIONS,
   BLOCK_OPTION_FIELDS_INPUT, BLOCK_OPTION_FIELDS_OUTPUT, BLOCK_OPTION_NODE_INPUT, BLOCK_OPTION_NODE_OUTPUT } from '../components/constants.js'
 
   export default {
@@ -458,11 +458,10 @@
                 self.notifyError("LoadingEntities", error, self);
               })
       },
-      
+
       loadGraphFromJson(graph) {
 
        this.checkEntityBlocks(graph)
-
         for (let model of graph.models) {
           let newBlock = this.createGraphNodeFromModel(model);
           LiteGraph.registerNodeType(model.source + "/" + model.collection, newBlock);
@@ -597,7 +596,7 @@
           }
 
           if (map.sourceField != null && map.sourceField != "") {
-              var block =  
+              var block =
               {
                 [BLOCK_LABEL]: map.sourceField,
                 [BLOCK_FIELD]: map.sourceField,
@@ -608,7 +607,7 @@
           }
 
           if (map.targetField != null && map.targetField != "") {
-            var block =             
+            var block =
             {
               [BLOCK_LABEL]: map.targetField,
               [BLOCK_FIELD]: map.targetField,
@@ -704,7 +703,15 @@
           this.computeSize();
           this.size = [this.size[0] + 50, this.size[1] + 30]
 
+
+
         }
+
+
+        block.status=blockDef.status
+
+        block.prototype.notify = function(node){this.$root.$emit("nodeSelected",node)}.bind(this);
+        block.prototype.onSelected = function(){this.notify(this) };
 
         block.title = blockDef.collection;
         block.nodeType = blockDef.collection;
@@ -766,7 +773,7 @@
 
         this.$axios.post('/v1/resources/vppBackendServices?rs:action=SaveGraph', graphDef)
           .then((response) => {
-            this.savePopUpOpened = false; // close dialog 
+            this.savePopUpOpened = false; // close dialog
             this.$q.notify({
               color: 'positive',
               position: 'top',
@@ -925,13 +932,24 @@
         if (block.properties.ctsQuery)
           message = 'Double click block to edit the lookup query'
 
-        if (message != null)
+      if(message!=null  && message !="")
+        this.$q.notify({
+          color: 'primary',
+          position: 'center',
+          message: message,
+          icon: 'info',
+          timeout: 1000
+        })
+
+
+        const selectedModel = this.models.filter(item => item.collection == block.title)
+        if (selectedModel.length >0  && selectedModel[0].status && selectedModel[0].status!="")
           this.$q.notify({
-            color: 'secondary',
+            color: 'negative',
             position: 'center',
-            message: message,
-            icon: 'info',
-            timeout: 800
+            message: selectedModel[0].status,
+            icon: 'error',
+            timeout: 1000
           })
       },
       discoverDatabases() {
@@ -1116,7 +1134,7 @@
       this.discoverDatabases()
       this.graph = new LiteGraph.LGraph();
       this.graph_canvas = new LiteGraph.LGraphCanvas(this.$refs["mycanvas"], this.graph);
-              
+
   }
     ,
     created() {

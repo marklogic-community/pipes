@@ -4,8 +4,8 @@ const EntityManager = {
 
   methods: {
 
-  getEntities: function() {   
-    return this.$axios.get('/v1/resources/vppBackendServices?rs:action=DHFEntities') 
+  getEntities: function() {
+    return this.$axios.get('/v1/resources/vppBackendServices?rs:action=DHFEntities')
   },
 
   // checks the Entity blocks in a graph against current Entities in database
@@ -20,7 +20,7 @@ const EntityManager = {
         return false;
       }
       }
-      return true; 
+      return true;
     }
 
     var self = this;
@@ -31,7 +31,7 @@ const EntityManager = {
       dbEntities = response.data
 
     for (let model of graph.models) {
-                  
+
                 if ( model.source == "Entities" ) {
 
                   console.log("Checking entity " + model.label + "...")
@@ -49,6 +49,7 @@ const EntityManager = {
 
                   if ( ! entityExists ) {
                     console.log("Warning: ENTITY '" + model.label + "' IN GRAPH DOES NOT EXIST IN DATABASE")
+                    model.status="Warning: ENTITY '" + model.label + "' IN GRAPH DOES NOT EXIST IN DATABASE"
                   } else {
 
            this.$axios.get('/v1/resources/vppBackendServices?rs:action=DHFEntityProperties&rs:entity=' + entityID)
@@ -58,7 +59,7 @@ const EntityManager = {
               var BlockEntitypropertiesArray = []
               if ( entityProperties != null) {
                 for (let prop of entityProperties.children) DBEntitypropertiesArray.push(prop.label)
-              } 
+              }
               if ( model.fields != null) {
                 for (let prop of model.fields) BlockEntitypropertiesArray.push(prop.label)
               }
@@ -70,10 +71,10 @@ const EntityManager = {
                 console.log("Entity properties in DB: " + JSON.stringify(DBEntitypropertiesArray))
               }
             })
-             
+
           }
                 }
-    } 
+    }
 
   })
 
