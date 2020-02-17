@@ -461,7 +461,7 @@
 
       loadGraphFromJson(graph) {
 
-       this.checkEntityBlocks(graph)
+
         for (let model of graph.models) {
           let newBlock = this.createGraphNodeFromModel(model);
           LiteGraph.registerNodeType(model.source + "/" + model.collection, newBlock);
@@ -477,6 +477,8 @@
         this.$root.$emit("initGraphMetadata", this.graphMetadata)
 
         this.notifyPositive(self,"Loaded graph " + this.graphMetadata.title)
+
+        this.checkEntityBlocks(graph,this.graph)
         this.showUploadGraph = false
 
       }
@@ -650,7 +652,7 @@
 
 
         let block = function () {
-          this.blockDef = Object.assign({}, blockDef, {})
+          this.blockDef = blockDef // Object.assign({}, blockDef, {})
           this.doc = {
             input: null,
             output: null
@@ -708,7 +710,7 @@
         }
 
 
-        block.status=blockDef.status
+
 
         block.prototype.notify = function(node){this.$root.$emit("nodeSelected",node)}.bind(this);
         block.prototype.onSelected = function(){this.notify(this) };
@@ -938,18 +940,18 @@
           position: 'center',
           message: message,
           icon: 'info',
-          timeout: 1000
+          timeout: 3000
         })
 
 
-        const selectedModel = this.models.filter(item => item.collection == block.title)
-        if (selectedModel.length >0  && selectedModel[0].status && selectedModel[0].status!="")
+
+        if (this.msg!="")
           this.$q.notify({
             color: 'negative',
             position: 'center',
-            message: selectedModel[0].status,
+            message: block.msg,
             icon: 'error',
-            timeout: 1000
+            timeout: 3000
           })
       },
       discoverDatabases() {

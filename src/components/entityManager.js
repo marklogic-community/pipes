@@ -8,8 +8,21 @@ const EntityManager = {
     return this.$axios.get('/v1/resources/vppBackendServices?rs:action=DHFEntities')
   },
 
+    updateBlockStatus: function (graph,nodeId,msg){
+
+  for (let node of graph._nodes)
+    if(node.type==nodeId){
+
+      node.bgcolor="red"
+      node.msg = msg
+
+    }
+
+
+    },
+
   // checks the Entity blocks in a graph against current Entities in database
-  checkEntityBlocks: function(graph) {
+  checkEntityBlocks: function(graph,loadedGraph) {
 
     console.log("Checking Entity Blocks in Graph..")
 
@@ -49,7 +62,8 @@ const EntityManager = {
 
                   if ( ! entityExists ) {
                     console.log("Warning: ENTITY '" + model.label + "' IN GRAPH DOES NOT EXIST IN DATABASE")
-                    model.status="Warning: ENTITY '" + model.label + "' IN GRAPH DOES NOT EXIST IN DATABASE"
+                    //model.status="Warning: ENTITY '" + model.label + "' IN GRAPH DOES NOT EXIST IN DATABASE"
+                    this.updateBlockStatus(loadedGraph,model.source + "/" + model.collection,"Warning: ENTITY '" + model.label + "' IN GRAPH DOES NOT EXIST IN DATABASE")
                   } else {
 
            this.$axios.get('/v1/resources/vppBackendServices?rs:action=DHFEntityProperties&rs:entity=' + entityID)
@@ -69,6 +83,12 @@ const EntityManager = {
                 console.log("Warning: ENTITY '" + model.label + "' IS NOT THE SAME IN GRAPH AND DATABASE!")
                 console.log("Entity properties in graph: " + JSON.stringify(BlockEntitypropertiesArray))
                 console.log("Entity properties in DB: " + JSON.stringify(DBEntitypropertiesArray))
+                this.updateBlockStatus(loadedGraph,model.source + "/" + model.collection,`
+                Warning: ENTITY '${model.label}' IS NOT THE SAME IN GRAPH AND DATABASE!<br/>
+                Entity properties in graph: ${JSON.stringify(BlockEntitypropertiesArray)} <br/>
+                Entity properties in DB: ${JSON.stringify(DBEntitypropertiesArray)}<br/>
+                You should recreate the block in the graph.
+                `)
               }
             })
 
