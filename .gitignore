@@ -40,6 +40,7 @@ java-middle-tier/bin/
 java-middle-tier/.classpath
 java-middle-tier/.project
 java-middle-tier/.settings/
+java-middle-tier/src/test/resources/application.properties
 
 #windows stuff
 gradle/

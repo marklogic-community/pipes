@@ -1,0 +1,62 @@
+{
+  "name": "9WmK2oPQun",
+  "database": {
+    "value": "11948715645976432197",
+    "label": "data-hub-STAGING"
+  },
+  "collection": {
+    "label": "customer-ingest",
+    "value": "customer-ingest",
+    "sublabel": "1000 documents"
+  },
+  "source": "Sources",
+  "fields": [
+    {
+      "label": "city [id16]",
+      "customField": false
+    },
+    {
+      "label": "country [id18]",
+      "customField": false
+    },
+    {
+      "label": "dob [id14]",
+      "customField": false
+    },
+    {
+      "label": "email [id11]",
+      "customField": false
+    },
+    {
+      "label": "first_name [id9]",
+      "customField": false
+    },
+    {
+      "label": "gender [id12]",
+      "customField": false
+    },
+    {
+      "label": "id [id8]",
+      "customField": false
+    },
+    {
+      "label": "last_name [id10]",
+      "customField": false
+    },
+    {
+      "label": "street [id15]",
+      "customField": false
+    },
+    {
+      "label": "zipcode [id17]",
+      "customField": false
+    }
+  ],
+  "options": [
+    "nodeInput",
+    "fieldsOutputs"
+  ],
+  "metadata": {
+    "dateCreated": "2020-02-18T08:51:08.928Z"
+  }
+}
