@@ -42,6 +42,10 @@ public class ClientConfig
   final String message="Can't be blank. Set in application.properties or on the command line.";
   final String intMessage="You have to set value in application.properties or on the command line.";
 
+  public int getContainerPort() {
+    return containerPort;
+  }
+
   private int containerPort;
 
   @NotBlank(message = message)
