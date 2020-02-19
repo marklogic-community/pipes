@@ -21,7 +21,8 @@ dependencies {
   implementation 'com.marklogic:ml-app-deployer:3.17.0'
   implementation 'com.marklogic:marklogic-data-hub:5.1.0'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-zuul'
+  implementation 'org.springframework.security:spring-security-web:5.2.2.RELEASE'
+  implementation 'org.springframework.security:spring-security-config:5.2.2.RELEASE'
 	implementation 'org.springframework.session:spring-session-core'
 	implementation 'commons-io:commons-io:2.5'
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {

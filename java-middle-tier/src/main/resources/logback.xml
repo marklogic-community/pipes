@@ -12,7 +12,7 @@
     </encoder>
   </appender>
 
-  <root level="ERROR">
+  <root level="INFO">
     <appender-ref ref="STDOUT" />
   </root>
 
@@ -21,6 +21,10 @@
     </logger>
 
   <logger name="com.marklogic.pipes.ui.customStep.CustomStepService" level="INFO" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger>
+
+  <logger name=" org.springframework.boot.autoconfigure.security" level="INFO" additivity="false">
     <appender-ref ref="STDOUT" />
   </logger>
 

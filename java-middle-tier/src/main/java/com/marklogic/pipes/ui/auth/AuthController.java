@@ -65,7 +65,7 @@ public class AuthController extends AbstractController {
     try {
       URI uri = new URI("http", null, server, port, listSavedBlocksPath, listSavedBlocksQuery, null);
 
-      ResponseEntity<String> responseEntity = clientConfig.restTemplate().exchange(uri, HttpMethod.GET,
+      ResponseEntity<String> responseEntity = restTemplate.exchange(uri, HttpMethod.GET,
         null, String.class);
 
     } catch (URISyntaxException e) {

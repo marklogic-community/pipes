@@ -182,19 +182,19 @@ public class ClientConfig
   Environment environment;
 
 
-  @Bean()
-  public RestTemplate restTemplate() {
-
-
-    HttpHost host = new HttpHost(getMlHost(), containerPort, "http");
-
-    CloseableHttpClient client = HttpClientBuilder.create().setDefaultCredentialsProvider(provider())
-        .useSystemProperties().build();
-    HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactoryDigestAuth(host,
-        client);
-
-    return new RestTemplate(requestFactory);
-  }
+//  @Bean()
+//  public RestTemplate restTemplate() {
+//
+//
+//    HttpHost host = new HttpHost(getMlHost(), containerPort, "http");
+//
+//    CloseableHttpClient client = HttpClientBuilder.create().setDefaultCredentialsProvider(provider())
+//        .useSystemProperties().build();
+//    HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactoryDigestAuth(host,
+//        client);
+//
+//    return new RestTemplate(requestFactory);
+//  }
 
   private CredentialsProvider provider() {
     CredentialsProvider provider = new BasicCredentialsProvider();
