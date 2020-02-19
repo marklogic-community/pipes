@@ -1,4 +1,5 @@
 .jar
+java-middle-tier/lib/
 .quasar
 .DS_Store
 .thumbs.db
