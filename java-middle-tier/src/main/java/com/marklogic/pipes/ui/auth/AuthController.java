@@ -4,7 +4,7 @@ Copyright ©2020 MarkLogic Corporation.
 
 package com.marklogic.pipes.ui.auth;
 
-import com.marklogic.pipes.ui.AbstractController;
+import com.marklogic.pipes.ui.AbstractLoggingClass;
 import com.marklogic.pipes.ui.config.ClientConfig;
 import com.marklogic.pipes.ui.config.HttpComponentsClientHttpRequestFactoryDigestAuth;
 import org.apache.http.HttpHost;
@@ -35,8 +35,8 @@ import java.net.URISyntaxException;
  * instantiate a DatabaseClient, thereby assuming that the login credentials correspond to a MarkLogic user.
  */
 @RestController
-@RequestMapping("/api/auth")
-public class AuthController extends AbstractController {
+//@RequestMapping("/api/auth")
+public class AuthController extends AbstractLoggingClass {
 
 	protected final static String SESSION_USERNAME_KEY = "pipes-username";
 	protected final static String SESSION_REST_TEMPLATE_KEY = "pipes-rest-template";

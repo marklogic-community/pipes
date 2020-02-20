@@ -4,7 +4,7 @@ Copyright ©2020 MarkLogic Corporation.
 
 package com.marklogic.pipes.ui.customStep;
 
-import com.marklogic.pipes.ui.AbstractController;
+import com.marklogic.pipes.ui.AbstractLoggingClass;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 @RestController
-public class CustomStepController extends AbstractController {
+public class CustomStepController extends AbstractLoggingClass {
 
   private final CustomStepService customStepService;
 
