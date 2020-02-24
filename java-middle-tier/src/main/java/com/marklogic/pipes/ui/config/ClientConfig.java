@@ -220,10 +220,10 @@ public class ClientConfig
     return provider;
   }
 
-  public ResourceServices getService() {
-    PipesResourceManager pipesResourceManager=new PipesResourceManager(client());
-    return pipesResourceManager.getServices();
-  }
+//  public ResourceServices getService() {
+//    PipesResourceManager pipesResourceManager=new PipesResourceManager(client());
+//    return pipesResourceManager.getServices();
+//  }
 
   public ResourceServices getService(DatabaseClient client) {
     PipesResourceManager pipesResourceManager=new PipesResourceManager(client);
