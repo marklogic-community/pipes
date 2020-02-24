@@ -229,8 +229,8 @@
 
       console.log("init receive")
       this.$root.$on("initGraphMetadata", this.setGraphMetadata );
-      this.$root.$on("logIn", logIn );
-      this.$root.$on("logOut", logOut );
+      this.$root.$on("logIn", this.logIn );
+      this.$root.$on("logOut", this.logOut );
     },
     computed: {
       currentDateTime() {
