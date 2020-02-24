@@ -360,7 +360,7 @@
         deleteGraphURI: "",
         dbEntities: [],
         graphMetadata: {
-          title: "",
+          title: "My Graph",
           version: "00.01",
           author: "",
           description: ""
@@ -816,7 +816,6 @@
             let defaultGraph = response.data
             defaultGraph.models = this.models
             this.loadGraphFromJson(defaultGraph)
-            this.updateGraphInSession(false)
           })
       }
       ,
