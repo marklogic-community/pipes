@@ -57,7 +57,7 @@ public class AuthController extends AbstractLoggingClass {
     parameters.add("action","ListSavedBlock");
 
     try {
-      service.get(parameters,new StringHandle()); 
+      service.get(parameters,new StringHandle());
     } catch (Exception e) {
       response.setStatus(HttpStatus.UNAUTHORIZED.value());
       e.printStackTrace();
