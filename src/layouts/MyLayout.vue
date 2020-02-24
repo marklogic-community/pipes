@@ -3,6 +3,7 @@
   <q-layout view="hHh lpR fFf">
     <q-header elevated>
       <q-toolbar
+
         :glossy="$q.theme === 'mat'"
         :inverted="$q.theme === 'ios'"
       >
@@ -25,7 +26,7 @@
           <div slot="subtitle">Draw your ideas</div>
         </q-toolbar-title>
 
-        <q-btn-group>
+        <q-btn-group   v-if="loggedIn">
 
           <q-btn flat round dense icon="fas fa-file" size="lg" @click.stop="loadDHFDefaultGraph()">
             <q-tooltip content-class="pipes-tooltip">
@@ -77,6 +78,7 @@
     </q-header>
 
     <q-drawer
+      v-if="loggedIn"
       v-model="leftDrawerOpen"
       elevated
       bordered
@@ -164,6 +166,7 @@
     name: 'MyLayout',
     data () {
       return {
+        loggedIn:false,
         leftDrawerOpen: this.$q.platform.is.desktop,
         rightDrawerOpen: this.$q.platform.is.desktop,
         tab:"metadata",
@@ -205,7 +208,15 @@
       this.graphMetadata = meta
     },
     openHelp() {
-      window.open("https://github.com/marklogic-community/pipes/wiki", "_pipesHelp"); 
+      window.open("https://github.com/marklogic-community/pipes/wiki", "_pipesHelp");
+    },
+    logIn(){
+      this.loggedIn=true
+
+    },
+    logOut(){
+      this.loggedIn=false
+      this.$router.push({path:"/"})
     }
 
   },
@@ -218,6 +229,8 @@
 
       console.log("init receive")
       this.$root.$on("initGraphMetadata", this.setGraphMetadata );
+      this.$root.$on("logIn", logIn );
+      this.$root.$on("logOut", logOut );
     },
     computed: {
       currentDateTime() {
