@@ -297,12 +297,13 @@
   </div>
 
 
+
 </template>
 <script>
 
   import {LiteGraph} from 'litegraph.js';
   import {saveAs} from 'file-saver';
-  import { copyToClipboard } from 'quasar'
+  import { copyToClipboard } from 'quasar';
   import VueJsonPretty from 'vue-json-pretty';
   import Notifications from '../components/notificationHandler.js';
   import DatabaseFilter from '../components/databaseFilter.js';
@@ -310,7 +311,7 @@
   import codeGenerationConfig from '../components/codeGenerationConfig.vue'
   import CSVLoader from '../components/csvLoader.vue';
   import EntityManager from '../components/entityManager.js';
-  import { ENTITY_BLOCK_TYPE, SOURCE_BLOCK_TYPE, BLOCK_PATH, BLOCK_LABEL, BLOCK_FIELDS, BLOCK_FIELD,BLOCK_COLLECTION,BLOCK_SOURCE,BLOCK_OPTIONS,
+  import { ENTITY_BLOCK_TYPE, SOURCE_BLOCK_TYPE, BLOCK_PATH, BLOCK_LABEL, BLOCK_FIELDS, BLOCK_FIELD,BLOCK_COLLECTION,BLOCK_SOURCE,BLOCK_OPTIONS, 
   BLOCK_OPTION_FIELDS_INPUT, BLOCK_OPTION_FIELDS_OUTPUT, BLOCK_OPTION_NODE_INPUT, BLOCK_OPTION_NODE_OUTPUT } from '../components/constants.js'
 
   export default {
@@ -372,13 +373,14 @@
         availableDB: [],
         docUri: null,
         graphPreviewExecuting: false,
+        confirmBrowserRefresh: true,
         validationConfigs: [
           {
             block: "dhf/output",
             mandatoryInputs: [
               {
                 name: "output",
-                msg: "The final output of the graph is not connected in Custom Step Output. You won't get any result.",
+                msg: "The final output of the graph is not connected to Custom Step Output. You won't get any result.",
                 type: "error"
               }],
             mandatoryOutputs: [],
@@ -458,9 +460,10 @@
                 self.notifyError("LoadingEntities", error, self);
               })
       },
-
+      
       loadGraphFromJson(graph) {
 
+       this.checkEntityBlocks(graph)
 
         for (let model of graph.models) {
           let newBlock = this.createGraphNodeFromModel(model);
@@ -477,8 +480,6 @@
         this.$root.$emit("initGraphMetadata", this.graphMetadata)
 
         this.notifyPositive(self,"Loaded graph " + this.graphMetadata.title)
-
-        this.checkEntityBlocks(graph,this.graph)
         this.showUploadGraph = false
 
       }
@@ -598,7 +599,7 @@
           }
 
           if (map.sourceField != null && map.sourceField != "") {
-              var block =
+              var block =  
               {
                 [BLOCK_LABEL]: map.sourceField,
                 [BLOCK_FIELD]: map.sourceField,
@@ -609,7 +610,7 @@
           }
 
           if (map.targetField != null && map.targetField != "") {
-            var block =
+            var block =             
             {
               [BLOCK_LABEL]: map.targetField,
               [BLOCK_FIELD]: map.targetField,
@@ -650,9 +651,8 @@
       ,
       createGraphNodeFromModel(blockDef) {
 
-
         let block = function () {
-          this.blockDef = blockDef // Object.assign({}, blockDef, {})
+          this.blockDef = Object.assign({}, blockDef, {})
           this.doc = {
             input: null,
             output: null
@@ -705,15 +705,7 @@
           this.computeSize();
           this.size = [this.size[0] + 50, this.size[1] + 30]
 
-
-
         }
-
-
-
-
-        block.prototype.notify = function(node){this.$root.$emit("nodeSelected",node)}.bind(this);
-        block.prototype.onSelected = function(){this.notify(this) };
 
         block.title = blockDef.collection;
         block.nodeType = blockDef.collection;
@@ -775,7 +767,7 @@
 
         this.$axios.post('/v1/resources/vppBackendServices?rs:action=SaveGraph', graphDef)
           .then((response) => {
-            this.savePopUpOpened = false; // close dialog
+            this.savePopUpOpened = false; // close dialog 
             this.$q.notify({
               color: 'positive',
               position: 'top',
@@ -788,8 +780,7 @@
           })
 
 
-      }
-      ,
+      },
       resetDhfDefaultGraph() {
 
         this.$axios.get('/statics/graph/dhfDefaultGraph.json')
@@ -797,7 +788,7 @@
             let defaultGraph = response.data
             defaultGraph.models = this.models
             this.loadGraphFromJson(defaultGraph)
-
+            this.updateGraphInSession(false)
           })
       }
       ,
@@ -823,7 +814,6 @@
           msg: msg
         })
       },
-
       checkConfiguration(graph, configs) {
         let result = []
         for (let config of configs) {
@@ -854,13 +844,8 @@
 
             if (config.count[0])
               this.addInfos(result, config.count[0].type, eval("`" + config.count[0].msg + "`"))
-
-
           }
-
-
         }
-
         return result
       },
       executeGraph() {
@@ -912,9 +897,7 @@
         }
       },
       saveGraph(event) {
-
         this.savePopUpOpened = true;
-
       },
       loadGraph(event) {
 
@@ -922,6 +905,11 @@
         this.loadPopUpOpened = true;
 
       },
+    preventNav(event) {
+      // browser alert when screen refreshed
+      event.preventDefault()
+      event.returnValue = ""
+    },
       selectNode(block) {
         console.log(block)
         let message = null
@@ -934,24 +922,13 @@
         if (block.properties.ctsQuery)
           message = 'Double click block to edit the lookup query'
 
-      if(message!=null  && message !="")
-        this.$q.notify({
-          color: 'primary',
-          position: 'center',
-          message: message,
-          icon: 'info',
-          timeout: 3000
-        })
-
-
-
-        if (this.msg!="")
+        if (message != null)
           this.$q.notify({
-            color: 'negative',
+            color: 'secondary',
             position: 'center',
-            message: block.msg,
-            icon: 'error',
-            timeout: 3000
+            message: message,
+            icon: 'info',
+            timeout: 800
           })
       },
       discoverDatabases() {
@@ -969,7 +946,6 @@
 
             this.$axios.get('/statics/library/custom/user.json')
               .then((response) => {
-//console.log(response.data)
 
                 this.registerBlocksByConf(response.data, LiteGraph)
 
@@ -1134,11 +1110,20 @@
       this.$root.$on("nodeSelected", this.selectNode);
       this.$root.$on("loadDHFDefaultGraphCall", this.resetDhfDefaultGraph);
       this.discoverDatabases()
+
       this.graph = new LiteGraph.LGraph();
       this.graph_canvas = new LiteGraph.LGraphCanvas(this.$refs["mycanvas"], this.graph);
-
+        
+  },
+beforeMount() {
+  if (this.confirmBrowserRefresh == true) {
+    window.addEventListener("beforeunload", this.preventNav)
+    this.$once("hook:beforeDestroy", () => {
+      window.removeEventListener("beforeunload", this.preventNav);
+    }
+    )
   }
-    ,
+},
     created() {
       this.$root.$on('blockRequested', this.createBlock)
 
