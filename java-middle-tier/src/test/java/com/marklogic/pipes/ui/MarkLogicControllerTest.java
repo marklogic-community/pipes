@@ -7,12 +7,17 @@ package com.marklogic.pipes.ui;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
+import com.marklogic.client.admin.ResourceExtensionsManager;
 import com.marklogic.client.document.JSONDocumentManager;
+import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.InputStreamHandle;
+import com.marklogic.client.io.JacksonHandle;
+import com.marklogic.client.io.StringHandle;
+import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.pipes.ui.config.ClientConfig;
-import org.json.JSONArray;
+import com.marklogic.pipes.ui.config.PipesResourceManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -168,6 +173,26 @@ class MarkLogicControllerTest {
     }
   }
 
+  @Test
+  void SaveGraphWithDbclient() {
+
+    String payload = "{\"models\":[],\"executionGraph\":{\"last_node_id\":2,\"last_link_id\":1,\"nodes\":[{\"id\":2,\"type\":\"dhf/output\",\"pos\":[1308,434],\"size\":[180,160],\"flags\":{},\"order\":1,\"mode\":0,\"inputs\":[{\"name\":\"output\",\"type\":0,\"link\":1}],\"properties\":{}},{\"id\":1,\"type\":\"dhf/input\",\"pos\":[248,489],\"size\":[180,60],\"flags\":{},\"order\":0,\"mode\":0,\"outputs\":[{\"name\":\"input\",\"type\":\"\",\"links\":[1]},{\"name\":\"uri\",\"type\":\"\",\"links\":null},{\"name\":\"collections\",\"type\":\"\",\"links\":null}],\"properties\":{}}],\"links\":[[1,1,0,2,0,0]],\"groups\":[],\"config\":{},\"version\":0.4},\"name\":\"test-save-graph\",\"metadata\":{\"title\":\"test-save-graph\",\"version\":\"00.01\",\"author\":\"\"}}";
+    String payload1="{\"paramname\":\"value\"}";
+
+    DatabaseClient client=getDatabaseClient();
+    PipesResourceManager pipesResourceManager=new PipesResourceManager(client);
+
+    ResourceServices services = pipesResourceManager.getServices();
+
+    RequestParameters params=new RequestParameters();
+    params.add("action", "SaveGraph");
+
+    StringHandle output = new StringHandle();
+    output = services.post(params,new StringHandle().withMimetype("text/plain").with(payload), new StringHandle());
+
+    System.out.println(output);
+  }
+
   /**
    * Tests loading a graph. It 1st creates a graph then tries to load. In the end, it will delete it, too.
    *
@@ -193,15 +218,8 @@ class MarkLogicControllerTest {
   void SaveSourceBlock() throws Exception {
 
     try {
-      String request = "/v1/resources/vppBackendServices?rs:action=SaveBlock";
-
-      // get the payload from resources
-      final InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(CREATE_SOURCE_BLOCK_PAYLOAD_JSON);
-      InputStreamHandle handle = new InputStreamHandle(is);
-
-      String payload = handle.toString();
-
-      mockMvc.perform(post(request).content(payload)).andExpect(status().isOk());
+      createSourceBlockHelper();
+      String request;
 
       // now check for existance of block
       request = "/v1/resources/vppBackendServices?rs:action=ListSavedBlock";
@@ -236,5 +254,75 @@ class MarkLogicControllerTest {
 
   }
 
+  private void createSourceBlockHelper() throws Exception {
+    String request = "/v1/resources/vppBackendServices?rs:action=SaveBlock";
+
+    // get the payload from resources
+    final InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(CREATE_SOURCE_BLOCK_PAYLOAD_JSON);
+    InputStreamHandle handle = new InputStreamHandle(is);
+
+    String payload = handle.toString();
+
+    mockMvc.perform(post(request).content(payload)).andExpect(status().isOk());
+  }
+
+  @Test
+  void GetSavedBlocksWithMlDbClient() {
+
+
+    try {
+      createSourceBlockHelper();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    DatabaseClient client=getDatabaseClient();
+    PipesResourceManager pipesResourceManager=new PipesResourceManager(client);
+
+    ResourceServices services = pipesResourceManager.getServices();
+
+    RequestParameters params=new RequestParameters();
+    params.add("action", "ListSavedBlock");
+
+    String[] mimetypes = new String[] { "text/plain" };
+
+    ResourceServices.ServiceResultIterator resultItr =
+      services.get(params, mimetypes);
+
+    ResourceServices.ServiceResult result = resultItr.next();
+    JsonNode jsonNode=result.getContent(new JacksonHandle()).get();
+
+
+    Boolean uriFound=false;
+    for (JsonNode arrayMember:jsonNode) {
+      if (arrayMember.get("uri").textValue().equals("/marklogic-pipes/savedBlock/9WmK2oPQun.json")) {
+        uriFound=true;
+        break;
+      }
+    }
+
+    if (!uriFound) {
+      fail("Source block failed to save");
+    }
+
+    deleteSourceBlock();
+    resultItr.close();
+  }
+
+  @Test
+  void LoginTestWrongUserPass() throws Exception {
+    String username="somefakeusername";
+    String password="somenonexistingpassword";
+    String request = "/login";
+    String payload= String.format("{\"username\":\"%s\",\"password\":\"%s\"}",username,password);
+    this.mockMvc.perform(post(request).content(payload).contentType("application/json")).andExpect(status().isUnauthorized());
+  }
+
+  @Test
+  void LoginTestWrongPayload() throws Exception {
+    String request = "/login";
+    String payload="{\"someparam\":\"somevalue\"}";
+    this.mockMvc.perform(post(request).content(payload).contentType("application/json")).andExpect(status().isBadRequest());
+  }
 
 }

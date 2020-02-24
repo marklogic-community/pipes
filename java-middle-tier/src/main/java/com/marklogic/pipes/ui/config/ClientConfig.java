@@ -4,6 +4,10 @@ Copyright ©2020 MarkLogic Corporation.
 
 package com.marklogic.pipes.ui.config;
 
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.DatabaseClientFactory;
+import com.marklogic.client.extensions.ResourceServices;
+import com.marklogic.client.util.RequestParameters;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -25,11 +29,13 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.Map;
 
 @Configuration
 @ConfigurationProperties
@@ -181,20 +187,31 @@ public class ClientConfig
   @Autowired
   Environment environment;
 
+  public DatabaseClient client() {
+    return DatabaseClientFactory.newClient(
+      getMlHost(),
+      getMlStagingPort(),
+      new DatabaseClientFactory.DigestAuthContext(getMlUsername(), getMlPassword()));
+  }
 
-//  @Bean()
-//  public RestTemplate restTemplate() {
-//
-//
-//    HttpHost host = new HttpHost(getMlHost(), containerPort, "http");
-//
-//    CloseableHttpClient client = HttpClientBuilder.create().setDefaultCredentialsProvider(provider())
-//        .useSystemProperties().build();
-//    HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactoryDigestAuth(host,
-//        client);
-//
-//    return new RestTemplate(requestFactory);
-//  }
+  public DatabaseClient client(String username, String password) {
+    return DatabaseClientFactory.newClient(
+      getMlHost(),
+      getMlStagingPort(),
+      new DatabaseClientFactory.DigestAuthContext(username, password));
+  }
+
+  public RequestParameters extractParams(HttpServletRequest request) {
+    Map<String, String[]> requestParams = request.getParameterMap();
+
+    RequestParameters params=new RequestParameters();
+    for (Map.Entry<String, String[]> entry : requestParams.entrySet()) {
+      String newKey = entry.getKey().replace("rs:","");
+      params.add(newKey,entry.getValue()[0]);
+    }
+
+    return params;
+  }
 
   private CredentialsProvider provider() {
     CredentialsProvider provider = new BasicCredentialsProvider();
@@ -203,11 +220,23 @@ public class ClientConfig
     return provider;
   }
 
+  public ResourceServices getService() {
+    PipesResourceManager pipesResourceManager=new PipesResourceManager(client());
+    return pipesResourceManager.getServices();
+  }
+
+  public ResourceServices getService(DatabaseClient client) {
+    PipesResourceManager pipesResourceManager=new PipesResourceManager(client);
+    return pipesResourceManager.getServices();
+  }
+
+
   @Override
   public void customize(ConfigurableWebServerFactory factory) {
     if (environment.getProperty("server.port")==null) {
       // pick an unused port starting from 8080
-      int port=8080;
+      int port=8080; // starting value
+
       boolean portFound=false;
       while (!portFound) {
         ServerSocket socket = null;

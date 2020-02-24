@@ -6,12 +6,21 @@ package com.marklogic.pipes.ui;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.extensions.ResourceServices;
+import com.marklogic.client.io.Format;
+import com.marklogic.client.io.StringHandle;
+import com.marklogic.client.util.RequestParameters;
 import com.marklogic.pipes.ui.config.ClientConfig;
+import com.marklogic.pipes.ui.config.PipesResourceManager;
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +29,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
 @RestController
 public class MarkLogicController extends AbstractLoggingClass
@@ -33,36 +41,34 @@ public class MarkLogicController extends AbstractLoggingClass
     @ResponseBody
     public String mirrorRestGet(HttpMethod method, HttpServletRequest request, HttpSession session) throws URISyntaxException {
 
-        String server = clientConfig.getMlHost();
-        int port = clientConfig.getMlStagingPort();
+      ResourceServices service = clientConfig.getService();
 
-        URI uri = new URI("http", null, server, port, request.getRequestURI(), request.getQueryString(), null);
+      RequestParameters params = clientConfig.extractParams(request);
 
-        // get the RestTemplate from the session object
-        RestTemplate restTemplate=(RestTemplate) session.getAttribute("SESSION_REST_TEMPLATE_KEY");
+      StringHandle output = new StringHandle();
+      output=service.get(params,new StringHandle().withFormat(Format.TEXT));
 
-        ResponseEntity<String> responseEntity = restTemplate.exchange(uri, method, null, String.class);
-
-        return responseEntity.getBody();
+      return output.toString();
     }
 
-    @RequestMapping(value = "/v1/**", method = RequestMethod.POST)
+
+
+  @RequestMapping(value = "/v1/**", method = RequestMethod.POST)
     @ResponseBody
     public String mirrorRestPost(@RequestBody String body, HttpMethod method, HttpServletRequest request, HttpSession session)
             throws URISyntaxException {
 
-        String server = clientConfig.getMlHost();
-        int port = clientConfig.getMlStagingPort();
+      ResourceServices service = clientConfig.getService();
+      RequestParameters params = clientConfig.extractParams(request);
 
-        URI uri = new URI("http", null, server, port, request.getRequestURI(), request.getQueryString(), null);
+      StringHandle bodyHandle = new StringHandle().withMimetype("text/plain").with(body);
 
-      // get the RestTemplate from the session object
-      RestTemplate restTemplate=(RestTemplate) session.getAttribute("SESSION_REST_TEMPLATE_KEY");
+      StringHandle output = new StringHandle();
 
-        ResponseEntity<String> responseEntity = restTemplate.exchange(uri, method,
-                new HttpEntity<String>(body), String.class);
+      output = service.post(params, bodyHandle, new StringHandle());
 
-        return responseEntity.getBody();
+      return output.toString();
+
     }
 
     @RequestMapping(value = "/v1/**", method = RequestMethod.PUT)
@@ -70,35 +76,32 @@ public class MarkLogicController extends AbstractLoggingClass
     public String mirrorRestPut(@RequestBody String body, HttpMethod method, HttpServletRequest request, HttpSession session)
             throws URISyntaxException {
 
-        String server = clientConfig.getMlHost();
-        int port = clientConfig.getMlStagingPort();
+      ResourceServices service = clientConfig.getService();
+      RequestParameters params = clientConfig.extractParams(request);
 
-        URI uri = new URI("http", null, server, port, request.getRequestURI(), request.getQueryString(), null);
+      StringHandle bodyHandle = new StringHandle().withMimetype("text/plain").with(body);
 
-      // get the RestTemplate from the session object
-      RestTemplate restTemplate=(RestTemplate) session.getAttribute("SESSION_REST_TEMPLATE_KEY");
+      StringHandle output = new StringHandle();
 
+      output = service.put(params, bodyHandle, new StringHandle());
 
-      ResponseEntity<String> responseEntity = restTemplate.exchange(uri, method,
-                new HttpEntity<String>(body), String.class);
-
-        return responseEntity.getBody();
+      return output.toString();
     }
 
   @RequestMapping(value = "/v1/**", method = RequestMethod.DELETE)
   @ResponseBody
   public String mirrorRestDelete(HttpMethod method, HttpServletRequest request,  HttpSession session) throws URISyntaxException {
 
-    String server = clientConfig.getMlHost();
-    int port = clientConfig.getMlStagingPort();
+    ResourceServices service = clientConfig.getService();
+    RequestParameters params = clientConfig.extractParams(request);
 
-    URI uri = new URI("http", null, server, port, request.getRequestURI(), request.getQueryString(), null);
+    StringHandle bodyHandle = new StringHandle().withMimetype("text/plain").with("");
 
-    // get the RestTemplate from the session object
-    RestTemplate restTemplate=(RestTemplate) session.getAttribute("SESSION_REST_TEMPLATE_KEY");
+    StringHandle output = new StringHandle();
 
-    ResponseEntity<String> responseEntity = restTemplate.exchange(uri, method, null, String.class);
+    service.delete(params,new StringHandle());
 
-    return responseEntity.getBody();
+    return output.toString();
+
   }
 }

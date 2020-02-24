@@ -26,6 +26,9 @@ dependencies {
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
+  annotationProcessor group: 'org.springframework.boot', name: 'spring-boot-configuration-processor'
+
+
 }
 
 dependencyManagement {
