@@ -259,6 +259,22 @@
       <CSVLoader/>
     </q-dialog>
 
+   <q-dialog v-model="showConfigScreen" @hide="persistSettings()">
+     <q-card>
+        <q-toolbar>
+          <q-avatar>
+            <q-icon name="fas fa-cog"/>
+          </q-avatar>
+          <q-toolbar-title>Settings</q-toolbar-title>
+        </q-toolbar>
+       <q-card-section class="row">
+          <div style="min-width: 250px; max-width: 300px">
+            <q-checkbox label="Confirm browser refresh?" v-model="advancedSettings.confirmBrowserRefresh"/>
+          </div>
+      </q-card-section>
+      </q-card>
+    </q-dialog>
+
     <q-dialog v-model="isExported">
       <q-card>
         <q-card-section>
@@ -294,16 +310,15 @@
       </q-card>
     </q-dialog>
 
+     <button v-shortkey.once="['ctrl','shift', 'x']" @shortkey="openSettingsDialog()"/></button>
   </div>
-
-
 
 </template>
 <script>
 
   import {LiteGraph} from 'litegraph.js';
   import {saveAs} from 'file-saver';
-  import { copyToClipboard } from 'quasar';
+  import { LocalStorage, copyToClipboard } from 'quasar';
   import VueJsonPretty from 'vue-json-pretty';
   import Notifications from '../components/notificationHandler.js';
   import DatabaseFilter from '../components/databaseFilter.js';
@@ -311,8 +326,11 @@
   import codeGenerationConfig from '../components/codeGenerationConfig.vue'
   import CSVLoader from '../components/csvLoader.vue';
   import EntityManager from '../components/entityManager.js';
+  import Vue from 'vue';
+  Vue.use(require('vue-shortkey'))
   import { ENTITY_BLOCK_TYPE, SOURCE_BLOCK_TYPE, BLOCK_PATH, BLOCK_LABEL, BLOCK_FIELDS, BLOCK_FIELD,BLOCK_COLLECTION,BLOCK_SOURCE,BLOCK_OPTIONS, 
   BLOCK_OPTION_FIELDS_INPUT, BLOCK_OPTION_FIELDS_OUTPUT, BLOCK_OPTION_NODE_INPUT, BLOCK_OPTION_NODE_OUTPUT } from '../components/constants.js'
+  const ADVANCED_SETTINGS_KEY = "pipes.settings"
 
   export default {
     components: {
@@ -325,7 +343,8 @@
       Notifications,
       DatabaseFilter,
       CollectionFilter,
-      EntityManager
+      EntityManager,
+      LocalStorage
     ],
     data() {
       return {
@@ -373,7 +392,10 @@
         availableDB: [],
         docUri: null,
         graphPreviewExecuting: false,
-        confirmBrowserRefresh: true,
+        advancedSettings: {
+          confirmBrowserRefresh: true
+        },
+        showConfigScreen: false,
         validationConfigs: [
           {
             block: "dhf/output",
@@ -558,6 +580,12 @@
 
         return result; //JavaScript object
         // return JSON.stringify(result); //JSON
+      },
+      openSettingsDialog() {
+        this.showConfigScreen = true
+      },
+      persistSettings() {
+        this.$q.localStorage.set(ADVANCED_SETTINGS_KEY, this.advancedSettings) 
       },
       createGraphFromMapping(csvData) {
 
@@ -905,10 +933,12 @@
         this.loadPopUpOpened = true;
 
       },
-    preventNav(event) {
+    browserRefreshConfirm(event) {
       // browser alert when screen refreshed
-      event.preventDefault()
-      event.returnValue = ""
+      if ( this.advancedSettings.confirmBrowserRefresh == true ) {
+        event.preventDefault()
+        event.returnValue = ""
+      }
     },
       selectNode(block) {
         console.log(block)
@@ -1113,16 +1143,22 @@
 
       this.graph = new LiteGraph.LGraph();
       this.graph_canvas = new LiteGraph.LGraphCanvas(this.$refs["mycanvas"], this.graph);
+
+      if (this.$q.localStorage.getItem(ADVANCED_SETTINGS_KEY) == null) {
+          this.persistSettings()
+      } else {
+          console.log("Restoring settings:")
+          this.advancedSettings = this.$q.localStorage.getItem(ADVANCED_SETTINGS_KEY)
+          console.log(JSON.stringify(this.advancedSettings))
+      }
         
   },
 beforeMount() {
-  if (this.confirmBrowserRefresh == true) {
-    window.addEventListener("beforeunload", this.preventNav)
+    window.addEventListener("beforeunload", this.browserRefreshConfirm)
     this.$once("hook:beforeDestroy", () => {
-      window.removeEventListener("beforeunload", this.preventNav);
+      window.removeEventListener("beforeunload", this.browserRefreshConfirm);
     }
     )
-  }
 },
     created() {
       this.$root.$on('blockRequested', this.createBlock)

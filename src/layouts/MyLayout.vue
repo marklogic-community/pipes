@@ -164,7 +164,7 @@
     name: 'MyLayout',
     data () {
       return {
-        leftDrawerOpen: this.$q.platform.is.desktop,
+        leftDrawerOpen: false, // this.$q.platform.is.desktop,
         rightDrawerOpen: this.$q.platform.is.desktop,
         tab:"metadata",
         graphMetadata:{
