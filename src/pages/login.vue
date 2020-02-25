@@ -1,6 +1,7 @@
 <template>
   <q-page class="column items-center">
-    <div  style="max-width: 500px; min-width: 300px"  >
+
+    <div  style="padding-top:30px;max-width: 500px; min-width: 300px"  >
 
       <q-form
 
@@ -9,8 +10,8 @@
         <q-input
           filled
           v-model="username"
-          label="Login"
-          hint="Your MarkLogic login and password"
+          label="Username"
+          hint="Your MarkLogic username and password"
           lazy-rules
           :rules="[ val => val && val.length > 0 || 'Please type something']"
         />
