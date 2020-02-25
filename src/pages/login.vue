@@ -26,7 +26,7 @@
 
         <div>
           <q-btn label="Login" type="submit" color="primary" @click="loginToPipes" />
-          <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
+          <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" @click="function(){this.username=''; this.password=''}.bind(this)" />
         </div>
       </q-form>
 
