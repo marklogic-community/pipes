@@ -55,6 +55,17 @@ export default {
 
 
     }
-    }
+    },
+
+  mounted: function () {
+    this.$axios.get('/status').then(response => {
+
+      if(response.data && response.data.authenticated) {
+        this.$root.$emit("logIn");
+        this.$router.push({path: "/home"})
+      }
+    })
+
+  }
 }
 </script>

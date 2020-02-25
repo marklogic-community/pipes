@@ -79,7 +79,8 @@ module.exports = function (ctx) {
         'QTabPanel',
         'QSeparator',
         'QScrollArea',
-        'QCheckbox'
+        'QCheckbox',
+        'QForm'
 
       ],
 
