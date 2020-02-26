@@ -19,6 +19,9 @@ server.port=8081
 # MarkLogic DHF settings
 mlHost=localhost
 mlStagingPort=8010
+mlAppServicesPort=8000
+mlAdminPort=8001
+mlManagePort=8002
 mlUsername=myusername
 mlPassword=mypassword 
 mlModulesDatabase=data-hub-MODULES
@@ -34,6 +37,9 @@ server.port=8081
 # MarkLogic DHF settings
 mlHost=localhost
 mlStagingPort=8010
+mlAppServicesPort=8000
+mlAdminPort=8001
+mlManagePort=8002
 mlUsername=myusername
 mlPassword=mypassword 
 mlModulesDatabase=data-hub-MODULES
@@ -43,12 +49,30 @@ mlDhfRoot=C:/Users/user/dev/test-pipes
 ```
 
 Pipes requires several backend modules to be installed on MarkLogic.
-When you run the Pipes jar for the first time, use the following command:
-```java -jar marklogic-pipes-1.0-beta.1.jar --deployBackend=true```
-This will start the Pipes UI, as well as copying modules to the appropriate location within your DHF project and loading these modules to the modules database specified in your application.properties 
+They can be installed in 2 ways:
+
+1) When you run the Pipes jar for the first time, use the following command:
+```java -jar marklogic-pipes-1.0-beta.3.jar --deployBackend=true```.
+This will start the Pipes UI, as well as copy the modules to the appropriate location within your DHF project and load these modules to the modules database specified in your application.properties 
+
+2) We bundled Pipes modules using [mlBundle](https://github.com/marklogic-community/ml-gradle/wiki/Bundles). To use this bundle in your DHF project, add the following to `build.gradle`:
+
+    ```
+    repositories {
+        maven {url 'https://dl.bintray.com/marklogic-community/Maven/'}
+    }
+    
+    dependencies {
+        mlBundle "com.marklogic:pipes-modules:1.0-beta.3"
+    }
+    ```
+
+    Now, you can run Pipes with ```java -jar marklogic-pipes-1.0-beta.3.jar```
+
+
 
 You probably care about security. If you don't want to put your username and password into a plain text file, you can remove them from the properties file and instead pass them as a parameter to the Pipes jar. Example:  
-```java -jar marklogic-pipes-1.0-beta.1.jar --mlUsername=MYUSER --Password=MYPASSWORD```
+```java -jar marklogic-pipes-1.0-beta-3.jar --mlUsername=MYUSER --Password=MYPASSWORD```
 
 Pipes UI is now running on localhost and the port that you've specified in the application.properties under value server.port. Example: [localhost:8081](http://localhost:8081)
 
@@ -61,10 +85,12 @@ Have fun!
 
 ![alt text](https://github.com/marklogic-community/pipes/blob/master/Pipes.png?raw=true) 
 
+## How I deploy the module with my custom blocks
+Read about it here: [Creating custom user blocks](https://github.com/marklogic-community/pipes/wiki/4.-Creating-custom-user-blocks-for-developers)
 ## How can uninstall Pipes?
 
 To remove all back-end modules that Pipes installed and delete saved data such as Blocks and Graphs from the MarkLogic database, run Pipes as follows:
 
-```java -jar marklogic-pipes-1.0-beta.1.jar --undeployBackend=true```
+```java -jar marklogic-pipes-1.0-beta.3.jar --undeployBackend=true```
 
 This will remove the database-side code libraries as well as any saved data created by Pipes, such as Blocks and Graphs.

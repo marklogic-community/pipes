@@ -1,0 +1,67 @@
+plugins {
+  id "java"
+  id "maven-publish"
+  id "com.jfrog.bintray" version "1.8.4"
+}
+
+repositories {
+	jcenter()
+	mavenLocal()
+}
+
+group = "com.marklogic"
+version = "1.0-beta.3"
+
+configurations {
+  modules
+}
+
+task modulesJar(type: Jar) {
+	description = "Jar up the Pipes MarkLogic modules into a package that can be published"
+	from("src/main/ml-modules") {
+		into("pipes/ml-modules")
+	}
+	destinationDir file("build/libs")
+	baseName "pipes-modules"
+}
+
+artifacts {
+  modules modulesJar
+}
+
+// Setup publishing of both a jar (containing the src/main/java code) and the modules zip
+// Can eventually include a test jar (containing some src/test/java code) if desired
+// Run "gradle publishtomavenlocal" to publish these locally
+publishing {
+	publications {
+		mainModules(MavenPublication) {
+			artifactId "pipes-modules"
+			artifact modulesJar
+		}
+	}
+}
+
+if (project.hasProperty("myBintrayUser")) {
+	bintray {
+		user = project.findProperty("myBintrayUser")
+		key = project.findProperty("myBintrayKey")
+		publications = ["mainModules"]
+		publish = true
+		pkg {
+			repo = "Maven"
+			name = "pipes"
+			userOrg = 'marklogic-community'
+			licenses = ["Apache-2.0"]
+			websiteUrl = "https://github.com/marklogic-community/pipes"
+			vcsUrl = "https://github.com/marklogic-community/pipes.git"
+			issueTrackerUrl = "https://github.com/marklogic-community/pipes/issues"
+			githubRepo = "marklogic-community/pipes"
+			githubReleaseNotesFile = "README.md"
+			labels = ['marklogic']
+			version {
+				name = project.version
+				released = new Date()
+			}
+		}
+	}
+}

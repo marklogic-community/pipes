@@ -1,6 +1,7 @@
 /*
 Copyright ©2020 MarkLogic Corporation.
 */
+
 package com.marklogic.pipes.ui;
 
 import java.net.URI;
@@ -71,4 +72,18 @@ public class MarkLogicController
 
         return responseEntity.getBody();
     }
+
+  @RequestMapping(value = "/v1/**", method = RequestMethod.DELETE)
+  @ResponseBody
+  public String mirrorRestDelete(HttpMethod method, HttpServletRequest request) throws URISyntaxException {
+
+    String server = clientConfig.getMlHost();
+    int port = clientConfig.getMlStagingPort();
+
+    URI uri = new URI("http", null, server, port, request.getRequestURI(), request.getQueryString(), null);
+
+    ResponseEntity<String> responseEntity = clientConfig.restTemplate().exchange(uri, method, null, String.class);
+
+    return responseEntity.getBody();
+  }
 }

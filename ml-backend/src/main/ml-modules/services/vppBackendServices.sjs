@@ -415,6 +415,16 @@ function getFieldsByCollection(collection,customURI) {
           if (fn.matches(parent, "array-node\\('[\\s\\w]*'\\)$"))
             parent = parent.substring(0, parent.lastIndexOf("/"))
           path = path.replace(/array-node\('([\s\w]*)'\)/g, "$1").replace(/\/object-node\(\)/g, "")
+
+
+          let currentName = path.substring(path.lastIndexOf("/") +1)
+          if(!currentName.includes("text(") && !currentName.includes("*"))
+            path=path.replace("/" + currentName,"/text('" + currentName + "')")
+
+          let parentName = parent.substring(parent.lastIndexOf("/") +1)
+          if(!parentName.includes("text(") && !parentName.includes("*"))
+            parent=parent.replace("/" + parentName,"/text('" + parentName + "')")
+
           if (fields[path] == null) fields[path] = {
             label: node.xpath("name(.)") + " [id" + i++ + "]",
             field: node.xpath("name(.)"),
@@ -481,6 +491,26 @@ function saveBlock(input,params){
     }, {"database": targetDb, "update": "true"}
   )
 
+}
+
+function deleteBlock(URI){
+
+  xdmp.invokeFunction(() => {
+      declareUpdate();
+      if (xdmp.documentGetCollections(URI).includes(blocksCollection)){ // security. can only delete blocks
+      console.log("Deleting Pipes block " + URI)
+      xdmp.documentDelete(URI)
+      }
+    })
+}
+
+function deleteGraph(URI){
+
+  xdmp.invokeFunction(() => {
+      declareUpdate();
+      if (xdmp.documentGetCollections(URI).includes(graphsCollection)) // security. can only delete graphs
+      xdmp.documentDelete(URI)
+    })
 }
 
 function getSavedGraph(params){
@@ -620,7 +650,6 @@ function post(context, params, input) {
     // code block
   }
 
-
 };
 
 function put(context, params, input) {
@@ -628,7 +657,28 @@ function put(context, params, input) {
 };
 
 function deleteFunction(context, params) {
-  // return at most one document node
+
+  var response
+  context.outputTypes = [];
+  context.outputTypes.push('application/json');
+ 
+  switch (params.action) {
+    case "deleteBlock":
+      if (params.URI && params.URI != null && params.URI != '') {
+          response = deleteBlock(params.URI)
+      }
+      break;
+    case "deleteGraph":
+      if (params.URI && params.URI != null && params.URI != '') {
+          response = deleteGraph(params.URI)
+      }
+      break;   
+   default:
+    // code block
+  }
+ 
+ return response
+
 };
 
 exports.GET = get;

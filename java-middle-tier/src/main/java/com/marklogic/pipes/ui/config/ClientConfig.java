@@ -11,60 +11,81 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.web.server.ConfigurableWebServerFactory;
+import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.client.RestTemplate;
 
-@Configuration
-public class ClientConfig {
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import java.io.IOException;
+import java.net.ServerSocket;
 
-  @Value("${mlHost:localhost}")
+@Configuration
+@ConfigurationProperties
+@Validated
+public class ClientConfig
+  implements WebServerFactoryCustomizer<ConfigurableWebServerFactory> {
+
+  private static final Logger logger = LoggerFactory.getLogger(ClientConfig.class);
+
+  final String message="Can't be blank. Set in application.properties or on the command line.";
+  final String intMessage="You have to set value in application.properties or on the command line.";
+
+  private int containerPort;
+
+  @NotBlank(message = message)
   private String mlHost;
 
-  @Value("${mlUsername:admin}")
+  @NotBlank(message = message)
   private String mlUsername;
 
-  @Value("${mlPassword:admin}")
+  @NotBlank(message = message)
   private String mlPassword;
 
-  @Value("${mlStagingPort:8010}")
+  @Min(message = intMessage,value = 1)
   private int mlStagingPort;
 
-  @Value("${mlAppServicesPort:8000}")
+  @Min(message = intMessage,value = 1)
   private int mlAppServicesPort;
 
-  @Value("${mlAdminPort:8001}")
+  @Min(message = intMessage,value = 1)
   private int mlAdminPort;
 
-  @Value("${mlManagePort:8002}")
+  @Min(message = intMessage,value = 1)
   private int mlManagePort;
 
-  @Value("${mlDhfRoot:/my/dhf}")
+  @NotBlank(message = message)
   private String mlDhfRoot;
 
-  public String getCustomModulesRoot() {
-    return customModulesRoot;
-  }
+  @NotBlank(message = message)
+  private String mlModulesDatabase;
 
   @Value("${customModulesRoot:#{null}}")
   private String customModulesRoot;
 
-  public String getMlModulesDatabase() {
-    return mlModulesDatabase;
-  }
-
-  @Value("${mlModulesDatabase:data-hub-MODULES}")
-  private String mlModulesDatabase;
-
+  // getters  / setters
   /**
    * @return the mlStagingPort
    */
-  public int getMlStagingPort() {
-    return mlStagingPort;
+  public int getMlStagingPort() { return mlStagingPort; }
+
+  public String getCustomModulesRoot() {
+      return customModulesRoot;
+  }
+
+  public String getMlModulesDatabase() {
+      return mlModulesDatabase;
   }
 
   public int getMlAppServicesPort() { return mlAppServicesPort; }
@@ -81,22 +102,88 @@ public class ClientConfig {
     return mlDhfRoot;
   }
 
-  public String getMlUsername() {return mlUsername;}
+  public String getMlUsername() {
+    return mlUsername;
+  }
 
-  public String getMlPassword() {return mlPassword;}
+  public String getMlPassword() {
+    return mlPassword;
+  }
+
+  public void setMlHost(String mlHost) {
+    if (mlHost!=mlHost.trim()) {
+      logger.warn("I trimmed the value of mlHost from \""+mlHost+"\" to \""+mlHost.trim()+"\"");
+      mlHost = mlHost.trim();
+    }
+    this.mlHost = mlHost;
+  }
+
+  public void setMlUsername(@Valid String mlUsername) {
+    if (mlUsername!=mlUsername.trim()) {
+      logger.warn("I trimmed the value of mlUsername from \""+mlUsername+"\" to \""+mlUsername.trim()+"\"");
+      mlUsername = mlUsername.trim();
+    }
+    this.mlUsername = mlUsername;
+  }
+
+  public void setMlPassword(@Valid String mlPassword) {
+    if (mlPassword!=mlPassword.trim()) {
+      logger.warn("I trimmed the value of mlPassword from \""+mlPassword+"\" to \""+mlPassword.trim()+"\"");
+      mlPassword = mlPassword.trim();
+    }
+    this.mlPassword = mlPassword;
+  }
+
+  public void setMlStagingPort(int mlStagingPort) {
+    this.mlStagingPort = mlStagingPort;
+  }
+
+  public void setMlAppServicesPort(int mlAppServicesPort) {
+    this.mlAppServicesPort = mlAppServicesPort;
+  }
+
+  public void setMlAdminPort(int mlAdminPort) {
+    this.mlAdminPort = mlAdminPort;
+  }
+
+  public void setMlManagePort(int mlManagePort) {
+    this.mlManagePort = mlManagePort;
+  }
+
+  public void setMlDhfRoot(String mlDhfRoot) {
+    if (mlDhfRoot!=mlDhfRoot.trim()) {
+      logger.warn("I trimmed the value of mlDhfRoot from \""+mlDhfRoot+"\" to \""+mlDhfRoot.trim()+"\"");
+      mlDhfRoot = mlDhfRoot.trim();
+    }
+    this.mlDhfRoot = mlDhfRoot;
+  }
+
+  public void setCustomModulesRoot(String customModulesRoot) {
+    if (customModulesRoot!=null && customModulesRoot!=customModulesRoot.trim()) {
+      logger.warn("I trimmed the value of customModulesRoot from \""+customModulesRoot+"\" to \""+customModulesRoot.trim()+"\"");
+      customModulesRoot = customModulesRoot.trim();
+    }
+    this.customModulesRoot = customModulesRoot;
+  }
+
+  public void setMlModulesDatabase(String mlModulesDatabase) {
+    if (mlModulesDatabase!=mlModulesDatabase.trim()) {
+      logger.warn("I trimmed the value of mlModulesDatabase from \""+mlModulesDatabase+"\" to \""+mlModulesDatabase.trim()+"\"");
+      mlModulesDatabase = mlModulesDatabase.trim();
+    }
+    this.mlModulesDatabase = mlModulesDatabase;
+  }
 
   @Autowired
   Environment environment;
 
 
-  @Bean
+  @Bean()
   public RestTemplate restTemplate() {
 
-    // assign default 8081 if not specified
-    String serverPort=environment.getProperty("server.port")!=null ? environment.getProperty("server.port") : "8081";
-    int springPort = Integer.parseInt(serverPort);
 
-    HttpHost host = new HttpHost(mlHost, springPort, "http");
+    HttpHost host = new HttpHost(getMlHost(), containerPort, "http");
+
     CloseableHttpClient client = HttpClientBuilder.create().setDefaultCredentialsProvider(provider())
         .useSystemProperties().build();
     HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactoryDigestAuth(host,
@@ -107,8 +194,35 @@ public class ClientConfig {
 
   private CredentialsProvider provider() {
     CredentialsProvider provider = new BasicCredentialsProvider();
-    UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(mlUsername, mlPassword);
+    UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(getMlUsername(), getMlPassword());
     provider.setCredentials(AuthScope.ANY, credentials);
     return provider;
+  }
+
+  @Override
+  public void customize(ConfigurableWebServerFactory factory) {
+    if (environment.getProperty("server.port")==null) {
+      // pick an unused port starting from 8080
+      int port=8080;
+      boolean portFound=false;
+      while (!portFound) {
+        ServerSocket socket = null;
+        try {
+          socket = new ServerSocket(port);
+          factory.setPort(port);
+          logger.info("Setting port: "+port);
+          containerPort=port;
+          portFound=true;
+        } catch (IOException e) {
+          //port used, moving on
+          port++;
+        }
+      }
+    }
+    else {
+    //       assign default 8081 if not specified
+    String serverPort=environment.getProperty("server.port");
+      containerPort = Integer.parseInt(serverPort);
+    }
   }
 }

@@ -44,6 +44,7 @@ module.exports = function (ctx) {
       },
       components: [
         'QLayout',
+        'QAvatar',
         'QHeader',
         'QDrawer',
         'QPageContainer',
@@ -89,7 +90,8 @@ module.exports = function (ctx) {
 
       // Quasar plugins
       plugins: [
-        'Notify'
+        'Notify',
+        'LocalStorage'
       ]
     },
 
@@ -113,7 +115,7 @@ module.exports = function (ctx) {
       proxy: {
         // proxy all requests starting with /api to jsonplaceholder
         '/v1': {
-          target: 'http://localhost:8010/' ,
+             target: 'http://localhost:8010/' ,
           // pathRewrite: {
           //   '^/api': ''
           // }

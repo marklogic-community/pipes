@@ -27,7 +27,7 @@ const Notifications = {
       errorDetail = this.extractErrorDetail(MLErrorResponse.response.data.message);
       errorSummary = this.summariseError(errorDetail)
       
-      error = "Error " + this.resolveErrorAction(action) + ": " + errorType || errorDetail + " [1]"
+     // error = "Error " + this.resolveErrorAction(action) + ": " + errorSummary || errorDetail + " [1]"
     } else if (MLErrorResponse.response.data && MLErrorResponse.response.data.errorResponse) {
       errorPath = "2"
       console.log("responseObject type 2 : " + JSON.stringify(MLErrorResponse.response.data))

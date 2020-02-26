@@ -96,22 +96,43 @@
           label="Saved Source Blocks"
     >
     <q-list padding class="q-mt-md" link>
-      <q-item tag="label" v-for="(item, index) in savedBlocks" v-bind:key="item.name" @click.native="getSavedBlock(item.uri)">
+      <q-item tag="label" v-for="(block, index) in savedBlocks" v-bind:key="block.name" 
+      @click.native.prevent="getSavedBlock(block.uri)">
          <q-item-section avatar>
               <div class="block">
                 <div class="block-title block">abc</div>
                 <div class="block-body block"></div>
               </div>
-         </q-item-section>    
+         </q-item-section>   
+
          <q-item-section label>
              <div class="text-left">
-              {{ item.name }}
+              {{ block.name }}
               </div>
          </q-item-section>
+
+          <q-item-section side>
+           <q-btn flat outline @click.capture.stop="deleteBlockURI = block.uri; deleteBlockName = block.name; confirmBlockDelete = true" size="sm" icon="fas fa-trash-alt">
+              <q-tooltip self="top middle" content-class="pipes-tooltip">Delete '{{block.name}}'</q-tooltip>
+           </q-btn>
+         </q-item-section>
+
       </q-item>
     </q-list>
-      </q-expansion-item>
 
+    <q-dialog v-model="confirmBlockDelete" persistent>
+          <q-card>
+            <q-card-section class="row items-center">
+              <q-avatar icon="fas fa-trash-alt" color="primary" text-color="red"></q-avatar>
+            <span class="q-ml-sm">Are you sure you want to delete <b>{{deleteBlockName}}</b>?</span>
+            </q-card-section>
+            <q-card-actions align="right">
+              <q-btn flat label="Cancel" color="primary" v-close-popup></q-btn>
+              <q-btn flat label="Delete" color="primary" @click="deleteBlock(deleteBlockURI,deleteBlockName)" v-close-popup></q-btn>
+            </q-card-actions>
+            </q-card>
+        </q-dialog>
+      </q-expansion-item>
 
 
   </div>
@@ -121,7 +142,8 @@
   import Notifications from '../components/notificationHandler.js';
   import DatabaseFilter from '../components/databaseFilter.js';
   import CollectionFilter from '../components/collectionFilter.js';
-  import { SOURCE_BLOCK_TYPE } from '../components/constants.js'
+  import { SOURCE_BLOCK_TYPE, BLOCK_FIELDS, BLOCK_FIELD, BLOCK_LABEL, BLOCK_TYPE, BLOCK_OPTIONS,
+  BLOCK_OPTION_NODE_INPUT, BLOCK_OPTION_FIELDS_OUTPUT, BLOCK_CHILDREN, BLOCK_PATH, BLOCK_COLLECTION, BLOCK_SOURCE } from '../components/constants.js'
 
   export default {
     // name: 'ComponentName',
@@ -142,6 +164,8 @@
         selectedCollection: null,
         availableCollections: [],
         availableDatabases: [],
+        confirmBlockDelete: false,
+        deleteBlockName: "",
         collectionModel: [
           {
           label: 'source',
@@ -153,7 +177,7 @@
           }
 
         ],
-        blockOptions: ["nodeInput", "fieldsOutputs"],
+        blockOptions: [BLOCK_OPTION_NODE_INPUT, BLOCK_OPTION_FIELDS_OUTPUT],
         savedGraph: [],
         savedBlocks: [],
         blockName: "",
@@ -201,7 +225,7 @@
       blockIsInLibrary(name) {
           var found = false;
           for(var i = 0; i < this.blockLibrary.length; i++) {
-            if (this.blockLibrary[i].label == name) {
+            if (this.blockLibrary[i][BLOCK_LABEL] == name) {
             found = true;
             break;
         }
@@ -217,12 +241,14 @@
         if ( ! this.$refs.selectionTree.getNodeByKey(fieldName) ) {
 
         this.collectionModel[1].children.push({
-            "label":fieldName,
-            "children":[],
-            "field" : fieldName,
-            "path":  "//"  + fieldName,
-            "type": "custom"
+            [BLOCK_LABEL]:fieldName,
+            [BLOCK_CHILDREN]:[],
+            [BLOCK_FIELD] : fieldName,
+            [BLOCK_PATH]:  "//"  + fieldName,
+            [BLOCK_TYPE]: "custom"
         })
+
+        console.log("collectionModel = " + JSON.stringify( this.collectionModel[1] ))
 
         this.$refs.selectionTree.setExpanded("custom",true)
         
@@ -305,6 +331,25 @@
              self.notifyError("ListSavedBlock", error, self);
           })
       },
+      deleteBlock(blockURI, blockName) {
+          console.log("Deleting block: " + JSON.stringify(blockName))
+           var self = this
+
+         this.$axios.delete('/v1/resources/vppBackendServices?rs:action=deleteBlock&rs:URI=' + blockURI)
+          .then((response) => {
+              this.$q.notify({
+              color: 'positive',
+              position: 'top',
+              message: "Source Block <b>'" + blockName + "'</b> deleted",
+              icon: 'code'
+  })
+      this.loadSavedBlocks()
+          })
+          .catch((error) => {
+            self.notifyError("Deleting Block", error, self);
+          })
+
+      },
       saveBlock() {
         var self = this;
 
@@ -329,10 +374,10 @@
         let blockDef = {
           name: this.blockName,
           database: this.selectedDatabase,
-          collection: this.selectedCollection,
-          source: SOURCE_BLOCK_TYPE,
-          fields: updatedFields, //this.selectedFields,
-          options: this.blockOptions,
+          [BLOCK_COLLECTION]: this.selectedCollection,
+          [BLOCK_SOURCE]: SOURCE_BLOCK_TYPE,
+          [BLOCK_FIELDS]: updatedFields, //this.selectedFields,
+          [BLOCK_OPTIONS]: this.blockOptions,
           metadata: blockMetadata
         }
 
@@ -352,11 +397,11 @@
                 var fieldName = reloadedBlock.fields[i].label
                 
                 this.collectionModel[1].children.push({
-                  "label":fieldName,
-                  "children":[],
-                  "field" : fieldName,
-                  "path":  "//"  + fieldName,
-                  "type": "custom"
+                  [BLOCK_LABEL]:fieldName,
+                  [BLOCK_CHILDREN]:[],
+                  [BLOCK_FIELD] : fieldName,
+                  [BLOCK_PATH]:  "//"  + fieldName,
+                  [BLOCK_TYPE]: "custom"
                 })
                 
             } 
@@ -420,10 +465,10 @@
 
           let blockDef = { 
 
-            label: this.blockName,
+            [BLOCK_LABEL]: this.blockName,
             collection: this.blockName,
             source: SOURCE_BLOCK_TYPE,
-            fields: this.$refs["selectionTree"].getTickedNodes(), //this.selectedFields,
+            [BLOCK_FIELDS]: this.$refs["selectionTree"].getTickedNodes(), //this.selectedFields,
             options: this.blockOptions,
             metadata: blockMetadata
 

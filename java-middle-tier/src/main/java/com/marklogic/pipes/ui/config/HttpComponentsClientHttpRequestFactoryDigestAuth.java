@@ -4,12 +4,9 @@ Copyright ©2020 MarkLogic Corporation.
 
 package com.marklogic.pipes.ui.config;
 
-import java.net.URI;
 import org.apache.http.HttpHost;
 import org.apache.http.client.AuthCache;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.auth.DigestScheme;
 import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -17,6 +14,8 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+
+import java.net.URI;
 
 public class HttpComponentsClientHttpRequestFactoryDigestAuth
   extends HttpComponentsClientHttpRequestFactory {
@@ -44,7 +43,7 @@ public class HttpComponentsClientHttpRequestFactoryDigestAuth
 
         // Add AuthCache to the execution context
         BasicHttpContext localcontext = new BasicHttpContext();
-        localcontext.setAttribute(ClientContext.AUTH_CACHE, authCache);
+        localcontext.setAttribute(HttpClientContext.AUTH_CACHE, authCache);
         return localcontext;
     }
 }

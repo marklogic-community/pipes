@@ -127,28 +127,50 @@
 
           <q-list class="q-mt-md" link>
             <q-item-label :header="true">Click a graph from list to reload</q-item-label>
-            <q-item @click.native="getSavedGraph(item.uri,item.name)" tag="label" v-bind:key="item.name" v-for="(item, index) in savedGraph">
+            <q-item @click.native.prevent="getSavedGraph(graph.uri,graph.name)" tag="label" v-bind:key="graph.name" v-for="(graph, index) in savedGraph">
                <q-item-section avatar>
                   <q-icon style="font-size: 1.5em" name="fas fa-project-diagram"/>
                 </q-item-section>
 
                <q-item-section>
-                  {{ item.name }}
+                  {{ graph.name }}
+                </q-item-section>
+
+                 <q-item-section side>
+                  <q-btn flat outline @click.native.stop="deleteGraphURI = graph.uri; deleteGraphName = graph.name + (graph.version != null && graph.version != '' ? '-' + graph.version : ''); confirmDeleteGraph = true" size="sm" icon="fas fa-trash-alt">
+                    <q-tooltip self="top middle" content-class="pipes-tooltip">Delete '{{graph.name}}-{{graph.version}}'</q-tooltip>
+                  </q-btn>
                 </q-item-section>
 
             </q-item>
           </q-list>
 
-          <div class="q-pa-sm">
-            <q-btn
+        <div class="q-pa-md doc-container">
+          <div class="row justify-center">
+         <!--<div class="q-pa-sm">-->
+            <q-btn class="center"
               @click="loadPopUpOpened = false"
               color="primary"
               label="Close"
             />
-          </div>
+         </div>
+         </div>
         </q-card>
       </div>
     </q-dialog>
+
+        <q-dialog v-model="confirmDeleteGraph" persistent>
+          <q-card>
+            <q-card-section class="row items-center">
+              <q-avatar icon="fas fa-trash-alt" color="primary" text-color="red"></q-avatar>
+            <span class="q-ml-sm">Are you sure you want to delete <b>{{deleteGraphName}}</b>?</span>
+            </q-card-section>
+            <q-card-actions align="right">
+              <q-btn flat label="Cancel" color="primary" v-close-popup></q-btn>
+              <q-btn flat label="Delete" color="primary" @click="deleteGraph(deleteGraphName,deleteGraphURI)" v-close-popup></q-btn>
+            </q-card-actions>
+            </q-card>
+        </q-dialog>
 
     <q-dialog v-model="showPreview">
       <q-card>
@@ -215,13 +237,18 @@
 
         </q-list>
 
-     <!--  <button v-clipboard:copy="jsonFromPreview"><q-icon name="fas fa-paste"/></button> -->
+      <q-card align="right">
+      <q-btn @click="copyResultToClipboard(jsonFromPreview)" :ripple="{ color: 'green' }">
+         <q-tooltip self="top middle" content-class="pipes-tooltip">Copy to clipboard</q-tooltip>
+        <q-icon name="fas fa-paste"/>
+      </q-btn>
+      </q-card>
+
 
        <q-scroll-area style="height: 500px; max-width: 500px;">
             <div class="q-py-xs">
               <vue-json-pretty id="prettyJSON" :data="jsonFromPreview">
               </vue-json-pretty>
-
             </div>
           </q-scroll-area>
         </q-card-section>
@@ -230,6 +257,22 @@
 
      <q-dialog v-model="showUploadGraph">
       <CSVLoader/>
+    </q-dialog>
+
+   <q-dialog v-model="showConfigScreen" @hide="persistSettings()">
+     <q-card>
+        <q-toolbar>
+          <q-avatar>
+            <q-icon name="fas fa-cog"/>
+          </q-avatar>
+          <q-toolbar-title>Settings</q-toolbar-title>
+        </q-toolbar>
+       <q-card-section class="row">
+          <div style="min-width: 250px; max-width: 300px">
+            <q-checkbox label="Confirm browser refresh?" v-model="advancedSettings.confirmBrowserRefresh"/>
+          </div>
+      </q-card-section>
+      </q-card>
     </q-dialog>
 
     <q-dialog v-model="isExported">
@@ -267,21 +310,27 @@
       </q-card>
     </q-dialog>
 
+     <button v-shortkey.once="['ctrl','shift', 'x']" @shortkey="openSettingsDialog()"/></button>
   </div>
-
 
 </template>
 <script>
 
   import {LiteGraph} from 'litegraph.js';
   import {saveAs} from 'file-saver';
+  import { LocalStorage, copyToClipboard } from 'quasar';
   import VueJsonPretty from 'vue-json-pretty';
   import Notifications from '../components/notificationHandler.js';
   import DatabaseFilter from '../components/databaseFilter.js';
   import CollectionFilter from '../components/collectionFilter.js';
   import codeGenerationConfig from '../components/codeGenerationConfig.vue'
   import CSVLoader from '../components/csvLoader.vue';
-  import { ENTITY_BLOCK_TYPE, SOURCE_BLOCK_TYPE } from '../components/constants.js'
+  import EntityManager from '../components/entityManager.js';
+  import Vue from 'vue';
+  Vue.use(require('vue-shortkey'))
+  import { ENTITY_BLOCK_TYPE, SOURCE_BLOCK_TYPE, BLOCK_PATH, BLOCK_LABEL, BLOCK_FIELDS, BLOCK_FIELD,BLOCK_COLLECTION,BLOCK_SOURCE,BLOCK_OPTIONS, 
+  BLOCK_OPTION_FIELDS_INPUT, BLOCK_OPTION_FIELDS_OUTPUT, BLOCK_OPTION_NODE_INPUT, BLOCK_OPTION_NODE_OUTPUT } from '../components/constants.js'
+  const ADVANCED_SETTINGS_KEY = "pipes.settings"
 
   export default {
     components: {
@@ -293,7 +342,9 @@
     mixins: [
       Notifications,
       DatabaseFilter,
-      CollectionFilter
+      CollectionFilter,
+      EntityManager,
+      LocalStorage
     ],
     data() {
       return {
@@ -304,8 +355,12 @@
         editJson: false,
         editCases: false,
         saveToDB: false,
+        confirmDeleteGraph: false,
+        deleteGraphName: "",
+        deleteGraphURI: "",
+        dbEntities: [],
         graphMetadata: {
-          title: "",
+          title: "My Graph",
           version: "00.01",
           author: "",
           description: ""
@@ -337,23 +392,27 @@
         availableDB: [],
         docUri: null,
         graphPreviewExecuting: false,
+        advancedSettings: {
+          confirmBrowserRefresh: true
+        },
+        showConfigScreen: false,
         validationConfigs: [
           {
             block: "dhf/output",
             mandatoryInputs: [
               {
                 name: "output",
-                msg: "The final output of the graph is not connected in dhf/Custom Step Output). You won't get any result.",
+                msg: "The final output of the graph is not connected to Custom Step Output. You won't get any result.",
                 type: "error"
               }],
             mandatoryOutputs: [],
             count: {
               "N": {
-                msg: "You should have only one block dhf/Custom Step Output in the graph.",
+                msg: "You should have only one Custom Step Output block in the graph.",
                 type: "error"
               },
               0: {
-                msg: "You should have at least one block dhf/Custom Step Output in the graph.",
+                msg: "You should have at least one Custom Step Output block in the graph.",
                 type: "error"
               }
             }
@@ -388,16 +447,10 @@
 
     },
     methods: {
-/*
-      registerModel(blockDef) {
-        console.log("register model")
-        this.createBlock(blockDef)
-        this.models.push(blockDef)
-      },
-      */
+
       createBlock(blockDef) {
 
-       console.log("createBlock called in ml-litegraph : " + JSON.stringify(blockDef))
+       console.log("createBlock request to create block: " + JSON.stringify(blockDef))
 
         let newBlock = this.createGraphNodeFromModel(blockDef);
 
@@ -417,7 +470,22 @@
       addMapping() {
         this.currentProperties.push({source: "val", target: "newVal"})
       },
+
+      getDatabaseEntities() {
+      var self = this;
+      this.$axios.get('/v1/resources/vppBackendServices?rs:action=DHFEntities')
+              .then((response) => {
+                this.availableEntities = response.data
+                console.log("Got entities: " + JSON.stringify(this.availableEntities))
+              })
+              .catch((error) => {
+                self.notifyError("LoadingEntities", error, self);
+              })
+      },
+      
       loadGraphFromJson(graph) {
+
+       this.checkEntityBlocks(graph)
 
         for (let model of graph.models) {
           let newBlock = this.createGraphNodeFromModel(model);
@@ -432,6 +500,9 @@
         if (graph.metadata && graph.metadata.version != null) this.graphMetadata.version = graph.metadata.version; else this.graphMetadata.version = ""
         if (graph.metadata && graph.metadata.description != null) this.graphMetadata.description = graph.description; else this.graphMetadata.description = ""
         this.$root.$emit("initGraphMetadata", this.graphMetadata)
+
+        this.notifyPositive(self,"Loaded graph " + this.graphMetadata.title)
+        this.showUploadGraph = false
 
       }
       ,
@@ -449,7 +520,7 @@
             self.notifyError("GetSavedGraph", error, self);
           })
       },
-      loadSavedGraph() {
+      listSavedGraphs() {
 
         var self = this; // keep reference for notifications called from catch block
         this.$axios.get('/v1/resources/vppBackendServices?rs:action=ListSavedGraph')
@@ -465,18 +536,6 @@
         this.collectionForPreview = ""
         this.availableCollections = []
         this.discoverCollections()
-      },
-      // Filter out DHF and MarkLogic reserved collections
-      filterCollections(collections) {
-        var filtered = []
-        if (collections !== null && typeof collections === 'object' && collections.length >= 1) {
-          filtered = collections.filter(
-            collection => (!collection.label.startsWith('http://marklogic.com/')
-              && (!collection.label.startsWith('marklogic-pipes/'))
-            )
-          )
-        }
-        return filtered;
       },
       discoverCollections() {
 
@@ -522,6 +581,12 @@
         return result; //JavaScript object
         // return JSON.stringify(result); //JSON
       },
+      openSettingsDialog() {
+        this.showConfigScreen = true
+      },
+      persistSettings() {
+        this.$q.localStorage.set(ADVANCED_SETTINGS_KEY, this.advancedSettings) 
+      },
       createGraphFromMapping(csvData) {
 
         console.log("loading CSV")
@@ -536,40 +601,52 @@
 
         for (let map of mappings) {
 
-          if (map.source != null && blocks[map.source] == null)
-            blocks[map.source] = {
-              "label": map.source,
-              "collection": map.source,
-              "source": SOURCE_BLOCK_TYPE,
-              "fields": [],
-              "options": ["fieldsOutputs", "nodeInput"]
+          if (map.source != null && blocks[map.source] == null) {
+            var block = {
+              [BLOCK_LABEL]: map.source,
+              [BLOCK_COLLECTION]: map.source,
+              [BLOCK_SOURCE]: SOURCE_BLOCK_TYPE,
+              [BLOCK_FIELDS]: [],
+              [BLOCK_OPTIONS]: [BLOCK_OPTION_FIELDS_OUTPUT, BLOCK_OPTION_NODE_INPUT]
             }
+            console.log("Adding block [1] : " + JSON.stringify(block))
+            blocks[map.source] = block
+          }
 
-          if (map.target != null && blocks[map.target] == null)
-            blocks[map.target] = {
-              "label": map.target,
-              "collection": map.target,
-              "source": ENTITY_BLOCK_TYPE,
-              "fields": [],
-              "options": ["fieldsInputs", "nodeOutput"]
+          if (map.target != null && blocks[map.target] == null) {
+             var block =
+             {
+              [BLOCK_LABEL]: map.target,
+              [BLOCK_COLLECTION]: map.target,
+              [BLOCK_SOURCE]: ENTITY_BLOCK_TYPE,
+              [BLOCK_FIELDS]: [],
+              [BLOCK_OPTIONS]: [BLOCK_OPTION_FIELDS_INPUT, BLOCK_OPTION_NODE_OUTPUT]
             }
+            console.log("Adding block [2] : " + JSON.stringify(block))
+            blocks[map.target] = block
+          }
 
+          if (map.sourceField != null && map.sourceField != "") {
+              var block =  
+              {
+                [BLOCK_LABEL]: map.sourceField,
+                [BLOCK_FIELD]: map.sourceField,
+                [BLOCK_PATH]: "//text('" + map.sourceField + "')"
+              }
+              console.log("Adding block [3] : " + JSON.stringify(block))
+              blocks[map.source].fields.push(block)
+          }
 
-          if (map.sourceField != null && map.sourceField != "") blocks[map.source].fields.push(
+          if (map.targetField != null && map.targetField != "") {
+            var block =             
             {
-              "label": map.sourceField,
-              "field": map.sourceField,
-              "path": "//text('" + map.sourceField + "')"
+              [BLOCK_LABEL]: map.targetField,
+              [BLOCK_FIELD]: map.targetField,
+              [BLOCK_PATH]: "//text('" + map.targetField + "')"
             }
-          )
-          if (map.targetField != null && map.targetField != "") blocks[map.target].fields.push(
-            {
-              "label": map.targetField,
-              "field": map.targetField,
-              "path": "//text('" + map.targetField + "')"
-            }
-          )
-
+            console.log("Adding block [4] : " + JSON.stringify(block))
+            blocks[map.target].fields.push(block)
+        }
         }
 
         let ii = 0
@@ -583,16 +660,6 @@
           this.graph.add(tmpBlock);
           blockCache[item] = tmpBlock;
         })
-        /*
-            Object.keys(outputs).map(item => {
-
-              this.createBlock(outputs[item])
-              let tmpBlock = LiteGraph.createNode(outputs[item].source + "/" + outputs[item].collection);
-              tmpBlock.pos = [600, 200 + (oi++) * 200];
-              this.graph.add(tmpBlock);
-              outputs[item].block=tmpBlock;
-            })
-            */
 
         for (let map of mappings) {
 
@@ -609,15 +676,8 @@
 
         }
       }
-      //  })
-
-
-      //  }
-
-
       ,
       createGraphNodeFromModel(blockDef) {
-
 
         let block = function () {
           this.blockDef = Object.assign({}, blockDef, {})
@@ -679,10 +739,26 @@
         block.nodeType = blockDef.collection;
         return block
 
-
       },
-      downloadGraph() {
+          deleteGraph(graphName, graphURI) {
+          console.log("Deleting graph " + graphName + " (" + graphURI +")")
+           var self = this
 
+         this.$axios.delete('/v1/resources/vppBackendServices?rs:action=deleteGraph&rs:URI=' +graphURI)
+          .then((response) => {
+              this.$q.notify({
+              color: 'positive',
+              position: 'top',
+              message: "Graph <b>'" + graphName + "'</b> deleted",
+              icon: 'code'
+              })
+              this.listSavedGraphs()
+          }
+          ) .catch((error) => {
+              self.notifyError("Deleting Graph", error, self);
+            })
+     },
+      downloadGraph() {
 
         let jsonGraph = this.graph.serialize()
         let graphDef = {
@@ -690,9 +766,7 @@
           executionGraph: jsonGraph,
           name: this.graphName,
           metadata: this.graphMetadata
-
         }
-
 
         var blob = new Blob([JSON.stringify(graphDef)], {
           type: "text/plain;charset=utf-8",
@@ -705,123 +779,7 @@
 
       },
       exportDHFModule() {
-        //console.log("export DHF module")
         this.showCodeGenConfig = true
-
-
-        //  let jsonGraph = this.graph.serialize()
-        //   let request = {
-        //     models: (this.models != null) ? this.models : [],
-        //     executionGraph: jsonGraph
-        //
-        //   }
-        //
-        //   let begin = "const DataHub = require(\"/data-hub/5/datahub.sjs\");\n" +
-        //       "var gHelper  = require(\"/custom-modules/graphHelper\")\n" +
-        //     "const datahub = new DataHub();\n" +
-        //     "\n" +
-        //     "\n" +
-        //     "function getGraphDefinition() {\n" +
-        //     "\n" +
-        //     "  return "
-        //
-        //   let end = "}\n" +
-        //     "\n" +
-        //     "function main(content, options) {\n" +
-        //     "\n" +
-        //     "  //grab the doc id/uri\n" +
-        //     "  let id = content.uri;\n" +
-        //     "\n" +
-        //     "  //here we can grab and manipulate the context metadata attached to the document\n" +
-        //     "  let context = content.context;\n" +
-        //     "\n" +
-        //     "  //let's set our output format, so we know what we're exporting\n" +
-        //     "  let outputFormat = options.outputFormat ? options.outputFormat.toLowerCase() : datahub.flow.consts.DEFAULT_FORMAT;\n" +
-        //     "\n" +
-        //     "  //here we check to make sure we're not trying to push out a binary or text document, just xml or json\n" +
-        //     "  if (outputFormat !== datahub.flow.consts.JSON && outputFormat !== datahub.flow.consts.XML) {\n" +
-        //     "    datahub.debug.log({\n" +
-        //     "      message: 'The output format of type ' + outputFormat + ' is invalid. Valid options are ' + datahub.flow.consts.XML + ' or ' + datahub.flow.consts.JSON + '.',\n" +
-        //     "      type: 'error'\n" +
-        //     "    });\n" +
-        //     "    throw Error('The output format of type ' + outputFormat + ' is invalid. Valid options are ' + datahub.flow.consts.XML + ' or ' + datahub.flow.consts.JSON + '.');\n" +
-        //     "  }\n" +
-        //     "\n" +
-        //     "  /*\n" +
-        //     "  This scaffolding assumes we obtained the document from the database. If you are inserting information, you will\n" +
-        //     "  have to map data from the content.value appropriately and create an instance (object), headers (object), and triples\n" +
-        //     "  (array) instead of using the flowUtils functions to grab them from a document that was pulled from MarkLogic.\n" +
-        //     "  Also you do not have to check if the document exists as in the code below.\n" +
-        //     "\n" +
-        //     "  Example code for using data that was sent to MarkLogic server for the document\n" +
-        //     "  let instance = content.value;\n" +
-        //     "  let triples = [];\n" +
-        //     "  let headers = {};\n" +
-        //     "   */\n" +
-        //     "\n" +
-        //     "  //Here we check to make sure it's still there before operating on it\n" +
-        //     "  if (!fn.docAvailable(id)) {\n" +
-        //     "    datahub.debug.log({message: 'The document with the uri: ' + id + ' could not be found.', type: 'error'});\n" +
-        //     "    throw Error('The document with the uri: ' + id + ' could not be found.')\n" +
-        //     "  }\n" +
-        //     "\n" +
-        //     "  //grab the 'doc' from the content value space\n" +
-        //     "  let doc = content.value;\n" +
-        //     "\n" +
-        //     "  // let's just grab the root of the document if its a Document and not a type of Node (ObjectNode or XMLNode)\n" +
-        //     "  //if (doc && (doc instanceof Document || doc instanceof XMLDocument)) {\n" +
-        //     "  //  doc = fn.head(doc.root);\n" +
-        //     "  //}\n" +
-        //     "\n" +
-        //     "  /*\n" +
-        //     "  //get our instance, default shape of envelope is envelope/instance, else it'll return an empty object/array\n" +
-        //     "  let instance = datahub.flow.flowUtils.getInstance(doc) || {};\n" +
-        //     "\n" +
-        //     "  // get triples, return null if empty or cannot be found\n" +
-        //     "  let triples = datahub.flow.flowUtils.getTriples(doc) || [];\n" +
-        //     "\n" +
-        //     "  //gets headers, return null if cannot be found\n" +
-        //     "  let headers = datahub.flow.flowUtils.getHeaders(doc) || {};\n" +
-        //     "\n" +
-        //     "  //If you want to set attachments, uncomment here\n" +
-        //     "  // instance['$attachments'] = doc;\n" +
-        //     "  */\n" +
-        //     "\n" +
-        //     "\n" +
-        //     "\n" +
-        //     "  //insert code to manipulate the instance, triples, headers, uri, context metadata, etc.\n" +
-        //     "\n" +
-        //     "\n" +
-        //     "  let results = gHelper.executeGraphStep(doc,id,getGraphDefinition(),{collections: xdmp.documentGetCollections(id)})\n" +
-        //     /* "\n" +
-        //      "  //form our envelope here now, specifying our output format\n" +
-        //      " // let envelope = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);\n" +
-        //      "\n" +
-        //      "  //assign our envelope value\n" +
-        //      "  content.value = instance.output;\n" +
-        //      "\n" +
-        //      "  //assign the uri we want, in this case the same\n" +
-        //      "  content.uri = (instance.uri!=null)?instance.uri:id;\n" +
-        //      "\n" +
-        //      "context.collections = (instance.collections!=null)?instance.collections:context.collections;" +
-        //      "  //assign the context we want\n" +
-        //      "  content.context = context;\n" +
-        //      "\n" +
-        //      "  //now let's return out our content to be written\n" +*/
-        //     "  return results;\n" +
-        //     "}\n" +
-        //     "\n" +
-        //     "module.exports = {\n" +
-        //     "  main: main\n" +
-        //     "};\n"
-        //
-        //   var blob = new Blob([begin + JSON.stringify(request) + end], {
-        //     type: "text/plain;charset=utf-8",
-        //     endings: "transparent"
-        //   });
-        //   saveAs(blob, "main.sjs");
-        // //  this.isExported=true
-
       },
       saveCurrentGraph() {
 
@@ -835,10 +793,9 @@
           metadata: this.graphMetadata
         }
 
-
         this.$axios.post('/v1/resources/vppBackendServices?rs:action=SaveGraph', graphDef)
           .then((response) => {
-
+            this.savePopUpOpened = false; // close dialog 
             this.$q.notify({
               color: 'positive',
               position: 'top',
@@ -851,8 +808,7 @@
           })
 
 
-      }
-      ,
+      },
       resetDhfDefaultGraph() {
 
         this.$axios.get('/statics/graph/dhfDefaultGraph.json')
@@ -860,7 +816,6 @@
             let defaultGraph = response.data
             defaultGraph.models = this.models
             this.loadGraphFromJson(defaultGraph)
-
           })
       }
       ,
@@ -886,7 +841,6 @@
           msg: msg
         })
       },
-
       checkConfiguration(graph, configs) {
         let result = []
         for (let config of configs) {
@@ -917,13 +871,8 @@
 
             if (config.count[0])
               this.addInfos(result, config.count[0].type, eval("`" + config.count[0].msg + "`"))
-
-
           }
-
-
         }
-
         return result
       },
       executeGraph() {
@@ -975,16 +924,21 @@
         }
       },
       saveGraph(event) {
-
         this.savePopUpOpened = true;
-
       },
       loadGraph(event) {
 
-        this.loadSavedGraph()
+        this.listSavedGraphs()
         this.loadPopUpOpened = true;
 
       },
+    browserRefreshConfirm(event) {
+      // browser alert when screen refreshed
+      if ( this.advancedSettings.confirmBrowserRefresh == true ) {
+        event.preventDefault()
+        event.returnValue = ""
+      }
+    },
       selectNode(block) {
         console.log(block)
         let message = null
@@ -1021,7 +975,6 @@
 
             this.$axios.get('/statics/library/custom/user.json')
               .then((response) => {
-//console.log(response.data)
 
                 this.registerBlocksByConf(response.data, LiteGraph)
 
@@ -1090,6 +1043,17 @@
         }
 
 
+      },
+      copyResultToClipboard(result) {
+        var document;
+        document = ((typeof result == "object") ? JSON.stringify(result) : result)
+      copyToClipboard(document)
+  .then(() => {
+   console.log("Copied to clip board!")
+  })
+  .catch(() => {
+    console.log("Faild to copy to clip board!")
+  })
       },
       setCurrrentDatabase(db) {
 
@@ -1175,11 +1139,26 @@
       this.$root.$on("nodeSelected", this.selectNode);
       this.$root.$on("loadDHFDefaultGraphCall", this.resetDhfDefaultGraph);
       this.discoverDatabases()
+
       this.graph = new LiteGraph.LGraph();
       this.graph_canvas = new LiteGraph.LGraphCanvas(this.$refs["mycanvas"], this.graph);
 
+      if (this.$q.localStorage.getItem(ADVANCED_SETTINGS_KEY) == null) {
+          this.persistSettings()
+      } else {
+          console.log("Restoring settings:")
+          this.advancedSettings = this.$q.localStorage.getItem(ADVANCED_SETTINGS_KEY)
+          console.log(JSON.stringify(this.advancedSettings))
+      }
+        
+  },
+beforeMount() {
+    window.addEventListener("beforeunload", this.browserRefreshConfirm)
+    this.$once("hook:beforeDestroy", () => {
+      window.removeEventListener("beforeunload", this.browserRefreshConfirm);
     }
-    ,
+    )
+},
     created() {
       this.$root.$on('blockRequested', this.createBlock)
 

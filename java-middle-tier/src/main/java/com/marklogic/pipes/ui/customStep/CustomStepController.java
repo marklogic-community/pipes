@@ -1,3 +1,7 @@
+/*
+Copyright ©2020 MarkLogic Corporation.
+*/
+
 package com.marklogic.pipes.ui.customStep;
 
 import org.springframework.http.HttpMethod;

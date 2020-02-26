@@ -84,5 +84,9 @@
     <appender-ref ref="STDOUT" />
   </logger>
 
+  <logger name="com.marklogic.pipes.ui.config.ClientConfig" level="INFO" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger>
+
 
 </configuration>
