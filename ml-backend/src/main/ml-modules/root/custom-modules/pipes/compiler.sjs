@@ -1,12 +1,12 @@
-'use strict'
+'use strict';
 
 function findStartNode(graph) {
-  let startNode = graph.executionGraph.nodes.filter(x=>x.type==='dhf/input').map(x=>x.id);
+  let startNode = graph.executionGraph == null || graph.executionGraph.nodes == null ? null : graph.executionGraph.nodes.filter(x=>x.type==='dhf/input').map(x=>x.id);
   startNode = startNode == null || startNode.length === 0 ? null : startNode;
   return startNode;
 }
 function findFinalNode(graph) {
-  let startNode = graph.executionGraph.nodes.filter(x=>x.type==='dhf/output').map(x=>x.id);
+  let startNode = graph.executionGraph == null || graph.executionGraph.nodes == null ? null : graph.executionGraph.nodes.filter(x=>x.type==='dhf/output').map(x=>x.id);
   startNode = startNode == null || startNode.length === 0 ? null : startNode;
   return startNode;
 }
@@ -41,7 +41,7 @@ function initLiteGraph(jsonGraph) {
   const userBlocks = require("/custom-modules/pipes/user");
   const coreBlocks = require("/custom-modules/pipes/core");
   const gHelper  = require("/custom-modules/pipes/graphHelper");
-  for (let model of jsonGraph.models) {
+  for (let model of jsonGraph.models || []) {
     LiteGraph.registerNodeType(model.source + "/" + model.collection, gHelper.createGraphNodeFromModel(model));
   }
   coreBlocks.init(LiteGraph);
@@ -136,7 +136,7 @@ function compileGraphToJavaScriptWithOptions(jsonGraph,options) {
   for (const nodeId of nodeGenerationOrder ) {
     const node = getNode(jsonGraph.executionGraph.nodes,nodeId);
     const inputs = determineInputVariables(jsonGraph.executionGraph,node);
-    const outputs = determineOutputVariables(z.executionGraph,node);
+    const outputs = determineOutputVariables(jsonGraph.executionGraph,node);
     sourceCode.push(...generateCode(options,jsonGraph,node,inputs,outputs,functions));
   }
   let identSpace = options.identSpaceCount ? options.identSpaceCount : 1;

@@ -2150,7 +2150,7 @@ function init(LiteGraph){
       code.push("const "+tempVarPrefix+"v5='"+propertiesWidgets.widgets.v5+"';");
       template = template.replace("v4", tempVarPrefix + "v5")
     }
-    code.push("const "+outputVariables.output0+" = eval(`'"+template+"`);");
+    code.push("const "+outputVariables.output0+" = eval(`'"+template+"'`);");
     return code;
   };
 
