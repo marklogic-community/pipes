@@ -4,6 +4,9 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices;
 
+/**
+ * For accessing the vppBackendServices resource extension (custom REST API)
+ */
 public class PipesResourceManager extends ResourceManager {
 
   static final public String NAME = "vppBackendServices";

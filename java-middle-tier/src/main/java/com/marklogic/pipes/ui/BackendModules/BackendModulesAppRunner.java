@@ -4,9 +4,9 @@ Copyright ©2020 MarkLogic Corporation.
 
 package com.marklogic.pipes.ui.BackendModules;
 
+import com.marklogic.pipes.ui.auth.AbstractLoggingClass;
+import com.marklogic.pipes.ui.auth.AuthService;
 import com.marklogic.pipes.ui.config.ClientConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -20,13 +20,10 @@ import java.io.File;
  * BackendModulesManager
  */
 @Component
-public class BackendModulesAppRunner implements ApplicationRunner {
-
-  private static final Logger logger = LoggerFactory.getLogger(BackendModulesAppRunner.class);
+public class BackendModulesAppRunner extends AbstractLoggingClass implements ApplicationRunner {
 
   @Autowired
   BackendModulesManager backendModulesManager;
-
 
   @Autowired
   Environment environment;
@@ -34,11 +31,17 @@ public class BackendModulesAppRunner implements ApplicationRunner {
   @Autowired
   ClientConfig clientConfig;
 
+  @Autowired
+  AuthService authService;
+
   @Override
   public void run(ApplicationArguments args) throws Exception {
 
     boolean deployBackend = args.containsOption("deployBackend");
     boolean undeployBackend = args.containsOption("undeployBackend");
+
+    final boolean credentialsRequired=deployBackend || undeployBackend;
+    final boolean credentialsSupplied= (clientConfig.getMlUsername()!=null) && (clientConfig.getMlPassword()!=null);
 
     // sanity check: does the DHF root folder exist?
     File f = new File(clientConfig.getMlDhfRoot());
@@ -48,6 +51,19 @@ public class BackendModulesAppRunner implements ApplicationRunner {
       logger.info(
         String.format("Pipes will not start, check your application.properties"));
       System.exit(1);
+    }
+
+    if (credentialsRequired && !credentialsSupplied) {
+      logger.error("Credentials are required to deploy or undeploy Pipes modules. No credentials suppplied, Pipes will not start.");
+      System.exit(1);
+    }
+
+    // if credentials are supplied, let's log in the user
+    if (credentialsSupplied) {
+      if (!authService.tryAuthorize(clientConfig, clientConfig.getMlUsername(), clientConfig.getMlPassword())){
+        logger.error("Wrong credentials provided, can't log in user. Pipes will not start.");
+        System.exit(1);
+      }
     }
 
     // if command line param "teardown" has been specified and it's true,

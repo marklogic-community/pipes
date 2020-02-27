@@ -8,9 +8,7 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
-import com.marklogic.pipes.ui.AbstractLoggingClass;
 import com.marklogic.pipes.ui.config.ClientConfig;
-import com.marklogic.pipes.ui.config.PipesResourceManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,6 +33,8 @@ public class AuthController extends AbstractLoggingClass {
 	@Autowired
 	private ClientConfig clientConfig;
 
+	@Autowired AuthService authService;
+
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public SessionStatus login(@RequestBody LoginRequest request, HttpSession session, HttpServletResponse response) {
 		logger.info("Logging in user: " + request.getUsername());
@@ -46,33 +46,21 @@ public class AuthController extends AbstractLoggingClass {
       return new SessionStatus(false);
     }
 
-    // the user will be logging in by successfully creating the RestTemplate
-    // and doing a basic Pipes request
-    DatabaseClient client=clientConfig.client(request.getUsername(),request.getPassword());
-
-    // call ListSavedBlock as a sanity check
-    ResourceServices service = clientConfig.getService(client);
-
-    RequestParameters parameters = new RequestParameters();
-    parameters.add("action","ListSavedBlock");
-
-    try {
-      service.get(parameters,new StringHandle());
-    } catch (Exception e) {
+    if (authService.tryAuthorize(clientConfig,request.getUsername(), request.getPassword())) {
+      session.setAttribute(SESSION_USERNAME_KEY, request.getUsername());
+      session.setAttribute(SESSION_SERVICE, authService.getService());
+      logger.info("Logged in successfully.");
+      return new SessionStatus(true);
+    }
+    else {
       response.setStatus(HttpStatus.UNAUTHORIZED.value());
-      e.printStackTrace();
       return new SessionStatus(false);
     }
 
-		session.setAttribute(SESSION_USERNAME_KEY, request.getUsername());
-		session.setAttribute(SESSION_SERVICE, service);
-
-		logger.info("Logged in successfully.");
-		return new SessionStatus(true);
-
 	}
 
-	@RequestMapping(value = "/logout", method = RequestMethod.POST)
+
+  @RequestMapping(value = "/logout", method = RequestMethod.POST)
 	public void logout(HttpSession session, HttpServletResponse response) {
 		logger.info("Logging out: " + getAuthenticatedUsername(session));
 
@@ -82,6 +70,11 @@ public class AuthController extends AbstractLoggingClass {
 
 	@RequestMapping(value = "/status", method = RequestMethod.GET)
 	public SessionStatus status(HttpSession session) {
+	  if (authService.isAuthorized() && getAuthenticatedUsername(session)==null) {
+      session.setAttribute(SESSION_USERNAME_KEY, authService.getUsername());
+      session.setAttribute(SESSION_SERVICE, authService.getService());
+    }
+
 		String username = getAuthenticatedUsername(session);
 		return new SessionStatus(username, username != null);
 	}
@@ -89,5 +82,7 @@ public class AuthController extends AbstractLoggingClass {
 	private String getAuthenticatedUsername(HttpSession session) {
 		return (String) session.getAttribute(SESSION_USERNAME_KEY);
 	}
+
+
 
 }

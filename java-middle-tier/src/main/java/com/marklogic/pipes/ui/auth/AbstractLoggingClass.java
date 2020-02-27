@@ -1,4 +1,4 @@
-package com.marklogic.pipes.ui;
+package com.marklogic.pipes.ui.auth;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

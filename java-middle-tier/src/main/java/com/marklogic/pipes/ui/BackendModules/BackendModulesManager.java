@@ -16,6 +16,7 @@ import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;
 import com.marklogic.mgmt.admin.AdminManager;
+import com.marklogic.pipes.ui.auth.AuthService;
 import com.marklogic.pipes.ui.config.ClientConfig;
 import com.marklogic.pipes.ui.Application;
 import org.apache.commons.io.FileUtils;
@@ -38,6 +39,9 @@ public class BackendModulesManager {
 
   @Autowired
   ClientConfig clientConfig;
+
+  @Autowired
+  AuthService authService;
 
   final String resourcesDhfRoot = "/dhf/src/main/ml-modules";
   final String destinationDhfRoot = "/src/main/ml-modules";
@@ -198,9 +202,9 @@ public class BackendModulesManager {
     // ".*/pipes/.*.sjs|.*vppBackendServices.sjs"
     Pattern pattern=Pattern.compile(patternString);
 
-    ManageClient client = getManageClient();
-    AdminManager manager = getAdminManager();
-    AppConfig appConfig = getAppConfig();
+    ManageClient client = authService.getManageClient();
+    AdminManager manager = authService.getAdminManager();
+    AppConfig appConfig = authService.getAppConfig();
 
     AppDeployer appDeployer = new SimpleAppDeployer(client, manager, new LoadModulesCommand());
 
@@ -216,31 +220,6 @@ public class BackendModulesManager {
 
   }
 
-  private AppConfig getAppConfig() {
-    // AppConfig contains all configuration about the application being deployed
-    AppConfig appConfig = new AppConfig(new File(clientConfig.getMlDhfRoot()));
-    appConfig.setName("data-hub");
-    appConfig.setRestPort(clientConfig.getMlStagingPort());
-    appConfig.setHost(clientConfig.getMlHost());
-    appConfig.setAppServicesPort(clientConfig.getMlAppServicesPort());
-    appConfig.setModulesDatabaseName(clientConfig.getMlModulesDatabase());
-    appConfig.setRestAdminUsername(clientConfig.getMlUsername());
-    appConfig.setRestAdminPassword(clientConfig.getMlPassword());
-    appConfig.setAppServicesUsername(clientConfig.getMlUsername());
-    appConfig.setAppServicesPassword(clientConfig.getMlPassword());
-    return appConfig;
-  }
-
-  private AdminManager getAdminManager() {
-    // used for restarting ML; defaults to localhost/8001/admin/admin
-    return new AdminManager(new AdminConfig(clientConfig.getMlHost(),clientConfig.getMlAdminPort(), clientConfig.getMlUsername(),clientConfig.getMlPassword()));
-  }
-
-  private ManageClient getManageClient() {
-    // not sure about port 8002
-    // TO-DO: read port from gradle.properties (which ones?)
-    return new ManageClient(new ManageConfig(clientConfig.getMlHost(),clientConfig.getMlManagePort(),clientConfig.getMlUsername(),clientConfig.getMlPassword()));
-  }
 
   public void unloadPipesModules() throws Exception {
 
@@ -248,9 +227,9 @@ public class BackendModulesManager {
       String.format("Now deleting Pipes modules from your DHF modules database...")
     );
 
-    ManageClient client = getManageClient();
-    AdminManager manager = getAdminManager();
-    AppConfig appConfig = getAppConfig();
+    ManageClient client = authService.getManageClient();
+    AdminManager manager = authService.getAdminManager();
+    AppConfig appConfig = authService.getAppConfig();
 
     // will use the DeleteModulesCommand
     AppDeployer appDeployer = new SimpleAppDeployer(client, manager, new DeleteModulesCommand("*/pipes/*.sjs"));

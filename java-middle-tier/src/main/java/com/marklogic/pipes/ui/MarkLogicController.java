@@ -4,28 +4,20 @@ Copyright ©2020 MarkLogic Corporation.
 
 package com.marklogic.pipes.ui;
 
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
+import com.marklogic.pipes.ui.auth.AbstractLoggingClass;
 import com.marklogic.pipes.ui.config.ClientConfig;
-import com.marklogic.pipes.ui.config.PipesResourceManager;
-import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

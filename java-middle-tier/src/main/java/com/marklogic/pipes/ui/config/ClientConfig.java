@@ -8,13 +8,6 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.util.RequestParameters;
-import org.apache.http.HttpHost;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +15,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.web.server.ConfigurableWebServerFactory;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -57,10 +47,10 @@ public class ClientConfig
   @NotBlank(message = message)
   private String mlHost;
 
-  @NotBlank(message = message)
+//  @NotBlank(message = message)
   private String mlUsername;
 
-  @NotBlank(message = message)
+//  @NotBlank(message = message)
   private String mlPassword;
 
   @Min(message = intMessage,value = 1)
@@ -213,17 +203,6 @@ public class ClientConfig
     return params;
   }
 
-  private CredentialsProvider provider() {
-    CredentialsProvider provider = new BasicCredentialsProvider();
-    UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(getMlUsername(), getMlPassword());
-    provider.setCredentials(AuthScope.ANY, credentials);
-    return provider;
-  }
-
-//  public ResourceServices getService() {
-//    PipesResourceManager pipesResourceManager=new PipesResourceManager(client());
-//    return pipesResourceManager.getServices();
-//  }
 
   public ResourceServices getService(DatabaseClient client) {
     PipesResourceManager pipesResourceManager=new PipesResourceManager(client);
