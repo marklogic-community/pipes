@@ -27,6 +27,7 @@
         <div>
           <q-btn label="Login" type="submit" color="primary" @click="loginToPipes" />
           <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" @click="function(){this.username=''; this.password=''}.bind(this)" />
+
         </div>
       </q-form>
 
@@ -41,18 +42,29 @@ export default {
     return {
       username:"",
 
-      password:""
+      password:"",
+      loginmessage:""
     }
   },
   methods: {
 
     loginToPipes() {
+
       let payload = {"username":this.username, "password": this.password}
       this.$axios.post('/login', payload).then(response => {
 
         this.$root.$emit("logIn");
         this.$router.push({path:"/home"})
       })
+        .catch((error) => {
+          this.$q.notify({
+            color: 'negative',
+            position: 'center',
+            message: "Login failed",
+            icon: 'info',
+            timeout: 800
+          })
+        })
 
 
     }
@@ -66,6 +78,7 @@ export default {
         this.$router.push({path: "/home"})
       }
     })
+
 
   }
 }
