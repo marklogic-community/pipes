@@ -87,6 +87,7 @@ var gHelper  = require("/custom-modules/pipes/graphHelper")
 const datahub = new DataHub();
 
 `
+        const beginCoreFunctions = `const coreFunctions = require("/custom-modules/pipes/coreFunctions.sjs");`
 const interpret1=`
 function getGraphDefinition() {
   return `
@@ -182,7 +183,7 @@ module.exports = {
 
         let code = null;
         if ( this.selectedOptions.indexOf("compileToJavaScript") >= 0 && this.isCompilerError == false && this.sourceCode != null ) {
-           code = begin+end1+compiledend2+this.sourceCode+end3;
+           code = begin+beginCoreFunctions+end1+compiledend2+this.sourceCode+end3;
         } else {
             code = begin+interpret1+JSON.stringify(request)+interpret2+end1+interpretend2+end3;
         }
