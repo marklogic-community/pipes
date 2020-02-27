@@ -589,15 +589,19 @@ function get(context, params) {
 
 function post(context, params, input) {
 
-  let config = {}
+  let config = {};
 
   let ctx = JSON.parse(input);
-
+  xdmp.log(Sequence.from(["POST",params,input]));
 
   switch (params.action) {
+    case "compile":
+      let compiler = require("/custom-modules/pipes/compiler.sjs");
+      let output = compiler.compileGraphToJavaScript(ctx);
+      xdmp.log(Sequence.from(["COMPILER OUTPUT",output]));
+      return output;
     case "config":
-      config.databases = getDatabases()
-
+      config.databases = getDatabases();
       const invokeGetCollectionsModels = getCollectionsModels(ctx);
       config.collectionsModels = xdmp.invokeFunction(invokeGetCollectionsModels.collectionsModel, {database: (ctx.database != null) ? ctx.database.value : xdmp.database()})//getCollectionsModels(ctx)
       return config

@@ -167,7 +167,7 @@
     data () {
       return {
         loggedIn:false,
-        leftDrawerOpen: this.$q.platform.is.desktop,
+        leftDrawerOpen: false,
         rightDrawerOpen: this.$q.platform.is.desktop,
         tab:"metadata",
         graphMetadata:{

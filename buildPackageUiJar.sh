@@ -28,7 +28,7 @@ echo "Deleting existing builds in java-middle-tier/build/libs..."
 rm -f java-middle-tier/build/libs/*
 
 echo "Building the jar..."
-java-middle-tier/gradlew bootJar -p java-middle-tier --warn
+java-middle-tier/gradlew clean bootJar -p java-middle-tier --warn
 
 
 if [[ $1 !=  "release" ]]
