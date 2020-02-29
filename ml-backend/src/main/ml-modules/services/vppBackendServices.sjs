@@ -73,7 +73,7 @@ function mapper(item, cfg) {
 
 function parseGroup(group) {
 
-  if(group.children!=null) {
+  if (group.children != null) {
     let queries = []
     xdmp.log(group)
 
@@ -108,7 +108,7 @@ function parseGroup(group) {
       default:
         return cts.trueQuery()
     }
-  }else
+  } else
     return cts.trueQuery()
 
 }
@@ -204,7 +204,6 @@ function getTriplesByIri(iri) {
 }
 
 
-
 function getDatabases() {
 
   return xdmp.databases().toArray().map(db => {
@@ -214,10 +213,11 @@ function getDatabases() {
       label: xdmp.databaseName(db)
     }
 
-  }).sort((item1,item2)=>{ if(item1.label>item2.label) return 1; else if (item1.label<item2.label) return -1; else 0;})
+  }).sort((item1, item2) => {
+    if (item1.label > item2.label) return 1; else if (item1.label < item2.label) return -1; else 0;
+  })
 
 }
-
 
 
 function getCollectionsModels(ctx) {
@@ -229,13 +229,13 @@ function getCollectionsModels(ctx) {
       if (ctx != null && ctx.collectionIncl != null && ctx.collectionIncl.length > 0) {
         ctx.collectionIncl.map(item => {
           cts.collectionMatch(item).toArray().map(item2 => {
-            collections[item2] = getFieldsByCollection(item2,"")
+            collections[item2] = getFieldsByCollection(item2, "")
           })
         })
       } else {
 
         for (let col of fn.subsequence(cts.collections(), 1, 15)) {
-          collections[col] = getFieldsByCollection(col,"")
+          collections[col] = getFieldsByCollection(col, "")
 
         }
 
@@ -251,7 +251,7 @@ function getCollectionsModels(ctx) {
 }
 
 
-function getCollectionDetails(){
+function getCollectionDetails() {
   return {
     CollectionDetails: function CollectionDetails() {
       return cts.values(cts.collectionReference(), null, ["item-frequency", "frequency-order"]).toArray().map(collection => {
@@ -270,7 +270,7 @@ function getCollectionDetails(){
   }
 }
 
-function getDHFEntities(){
+function getDHFEntities() {
 
   return sem.sparql(
     "SELECT DISTINCT ?value ?label WHERE {?value <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>	 <http://marklogic.com/entity-services#EntityType>. \
@@ -279,11 +279,11 @@ function getDHFEntities(){
       }").toArray()
 }
 
-function getDHFEntityProperties(entity){
+function getDHFEntityProperties(entity) {
 
-  let entityModel ={
-    "label" : entity,
-    "children" :null
+  let entityModel = {
+    "label": entity,
+    "children": null
   }
 
   entityModel.children = sem.sparql(
@@ -292,7 +292,7 @@ function getDHFEntityProperties(entity){
       ?entity <http://marklogic.com/entity-services#property> ?property.\
       ?property <http://marklogic.com/entity-services#title> ?label.\
       OPTIONAL {?property <http://marklogic.com/entity-services#datatype>|<http://marklogic.com/entity-services#ref> ?type.}\
-      }",{"entity" : sem.iri(entityModel.label)}).toArray()
+      }", {"entity": sem.iri(entityModel.label)}).toArray()
   return entityModel
 }
 
@@ -304,22 +304,20 @@ function isIterable(obj) {
   return typeof obj[Symbol.iterator] === 'function';
 }
 
-function InvokeExecuteGraph(input){
-
+function InvokeExecuteGraph(input) {
 
 
   return {
     execute: function execute() {
-      let gHelper  = require("/custom-modules/pipes/graphHelper")
+      let gHelper = require("/custom-modules/pipes/graphHelper")
       let execContext = JSON.parse(input)
       let doc = null
-      if(execContext.collectionRandom) {
+      if (execContext.collectionRandom) {
         let nbDocs = cts.estimate(cts.collectionQuery(execContext.collection))
-        doc = cts.doc(fn.head(fn.subsequence(cts.uris(null,null,cts.collectionQuery(execContext.collection)),xdmp.random(nbDocs -1)+1)))
+        doc = cts.doc(fn.head(fn.subsequence(cts.uris(null, null, cts.collectionQuery(execContext.collection)), xdmp.random(nbDocs - 1) + 1)))
 
-      }
-      else {
-        if(execContext.previewUri==null || execContext.previewUri=="")
+      } else {
+        if (execContext.previewUri == null || execContext.previewUri == "")
           doc = fn.head(fn.collection(execContext.collection))
         else
           doc = cts.doc(execContext.previewUri)
@@ -327,40 +325,40 @@ function InvokeExecuteGraph(input){
       let uri = fn.baseUri(doc)
 
       console.log("input=", input)
-      console.log("execContext=",execContext)
-      console.log("execContext.collection=",execContext.collection)
-      console.log("execContext[\"collection\"]=",execContext["collection"])
+      console.log("execContext=", execContext)
+      console.log("execContext.collection=", execContext.collection)
+      console.log("execContext[\"collection\"]=", execContext["collection"])
       console.log("input.collection=", input.collection)
       console.log("uri=", uri);
 
-      return gHelper.executeGraphFromJson(execContext.jsonGraph,uri, doc,{collections: xdmp.documentGetCollections(uri)})
+      return gHelper.executeGraphFromJson(execContext.jsonGraph, uri, doc, {collections: xdmp.documentGetCollections(uri)})
 
     }
   }
 }
 
-function executeGraph(input,params){
+function executeGraph(input, params) {
 
   const invokeExecuteGraph = InvokeExecuteGraph(input)
   let db = (params.database != null) ? params.database : xdmp.database()
   let targetDb = (params.toDatabase != null) ? params.toDatabase : xdmp.database()
-  let result =  xdmp.invokeFunction(invokeExecuteGraph.execute, {database: db})
+  let result = xdmp.invokeFunction(invokeExecuteGraph.execute, {database: db})
 
-  if(params.save=="true" ) {
+  if (params.save == "true") {
 
     let jsonResults = JSON.parse(xdmp.quote(result))
-    if(!Array.isArray(jsonResults)){
+    if (!Array.isArray(jsonResults)) {
 
-      jsonResults=[jsonResults]
+      jsonResults = [jsonResults]
 
     }
 
-    for(let r of jsonResults) {
+    for (let r of jsonResults) {
 
       let saveDoc = r
-      let uri = (saveDoc.uri)?saveDoc.uri:sem.uuidString()
-      let doc = (saveDoc.value)?saveDoc.value:saveDoc
-      let collections =  (saveDoc.context && saveDoc.context.collections)? saveDoc.context.collections:"vpp"
+      let uri = (saveDoc.uri) ? saveDoc.uri : sem.uuidString()
+      let doc = (saveDoc.value) ? saveDoc.value : saveDoc
+      let collections = (saveDoc.context && saveDoc.context.collections) ? saveDoc.context.collections : "vpp"
 
       xdmp.invokeFunction(() => {
 
@@ -378,72 +376,66 @@ function executeGraph(input,params){
 }
 
 
-function getFieldsByCollection(collection,customURI) {
+function getFieldsByCollection(collection, customURI) {
 
   return {
     FieldsByCollection: function FieldsByCollection() {
       let i = 0
       let fields = {}
-      let docs =[]
+      let docs = []
       let nbDocs = fn.count(fn.collection(collection))
-      if(collection!=null && collection!="") {
+      if (collection != null && collection != "") {
         for (let j = 0; j < 10; j++) {
           docs.push(fn.head(fn.subsequence(fn.collection(collection), xdmp.random(nbDocs))))
           //let doc = fn.head(fn.collection(collection))
         }
       }
-      if(customURI!=null && customURI!="") {
+      if (customURI != null && customURI != "") {
         customURI = decodeURI(customURI).trim();
         // replace multiple spaces by one so that spliting goes ok
         customURI = customURI.replace(/ +/g, " ");
-        for ( const uri of customURI.split(" ")) {
+        for (const uri of customURI.split(" ")) {
           let doc = cts.doc(uri);
           if (doc != null) {
             docs.push(doc);
           }
         }
       }
-      for(let doc of docs){
-        for (let node of doc.xpath(".//*")
-          ) {
-          let path = xdmp.path(node)
+      docs.map(doc => doc.xpath(".//*").toArray().map(node => {
 
-          //path = fn.replace(path, "/object-node\\(\\)\\[\\d*\\]", "/object-node()")
-          path = fn.replace(path, "\\[\\d*\\]", "")
-          let parent = path.replace(node.xpath("name(.)"),"")
-          parent= parent.substring(0, parent.lastIndexOf("/"))
-          if (fn.matches(parent, "array-node\\('[\\s\\w]*'\\)$"))
-            parent = parent.substring(0, parent.lastIndexOf("/"))
-          path = path.replace(/array-node\('([\s\w]*)'\)/g, "$1").replace(/\/object-node\(\)/g, "")
+        let name = fn.name(node)
+        let path = String(xdmp.path(node)).replace(/\/object-node\(\)/g, "").replace(/\[\d*\]/g, "").replace(/null-node\('([\s\w]*)'\)/g, "$1")
+        let lastSlash = path.lastIndexOf("/")
+        let nodeLastPath = path.substring(lastSlash)
+        let parentPath = path.substring(0, lastSlash)
+        let newParentPath = parentPath.replace(/array-node\('([\s\w]*)'\)/g, "$1")
+        //if(nodeLastPath.includes("object-node()")) nodeLastPath = nodeLastPath.replace(/\/object-node\(\)/,"")
+        path = newParentPath + nodeLastPath
+        if (nodeLastPath.includes("array-node")) path += "/*"
+        if (newParentPath == "") newParentPath = "/"
 
 
-          let currentName = path.substring(path.lastIndexOf("/") +1)
-          if(!currentName.includes("text(") && !currentName.includes("*"))
-            path=path.replace("/" + currentName,"/text('" + currentName + "')")
-
-          let parentName = parent.substring(parent.lastIndexOf("/") +1)
-          if(!parentName.includes("text(") && !parentName.includes("*"))
-            parent=parent.replace("/" + parentName,"/text('" + parentName + "')")
-
-          if (fields[path] == null) fields[path] = {
-            label: node.xpath("name(.)") + " [id" + i++ + "]",
-            field: node.xpath("name(.)"),
-            value: node.xpath("name(.)"),
-            path: path,
-            type: node.nodeType,
-            children: [],
-            parent: parent
-          }
-          if (fields[path].parent == "") fields[path].parent = "/"
+        if (fields[path.replace("/*", "").replace(/array-node\('([\s\w]*)'\)/g, "$1")] == null) fields[path.replace("/*", "").replace(/array-node\('([\s\w]*)'\)/g, "$1")] = {
+          label: name + " [id" + i++ + "]",
+          field: node.xpath("name(.)"),
+          value: node.xpath("name(.)"),
+          path: path,
+          type: node.nodeType,
+          children: [],
+          parent: newParentPath
         }
-      }
 
+
+      }))
+      //return fields
       let results = []
       Object.keys(fields).map(item => {
         results.push(fields[item])
       })
 
-      results=results.sort((a,b) => { return a.label.localeCompare(b.label)})
+      results = results.sort((a, b) => {
+        return a.label.localeCompare(b.label)
+      })
 
       for (let path of Object.keys(fields)) {
 
@@ -456,21 +448,24 @@ function getFieldsByCollection(collection,customURI) {
 
 
       return results.filter(item => item.parent == "/")
+
+
     }
+
   }
 }
 
-function getSavedBlock(params){
+function getSavedBlock(params) {
   return fn.doc(params.uri)
 
 }
 
-function listSavedBlock(params){
+function listSavedBlock(params) {
 
   let results = []
   for (let graph of cts.search(cts.andQuery([
     cts.collectionQuery(blocksCollection),
-    ((params.q!=null)?params.q:cts.trueQuery())
+    ((params.q != null) ? params.q : cts.trueQuery())
   ])))
     results.push({
       uri: fn.baseUri(graph),
@@ -480,50 +475,50 @@ function listSavedBlock(params){
   return results
 }
 
-function saveBlock(input,params){
+function saveBlock(input, params) {
   let graph = JSON.parse(input)
   let targetDb = (params.toDatabase != null) ? params.toDatabase : xdmp.database()
   xdmp.invokeFunction(() => {
 
-      xdmp.documentInsert("/marklogic-pipes/savedBlock/" + graph.name + ".json", graph,  null
-        , blocksCollection  )
+      xdmp.documentInsert("/marklogic-pipes/savedBlock/" + graph.name + ".json", graph, null
+        , blocksCollection)
 
     }, {"database": targetDb, "update": "true"}
   )
 
 }
 
-function deleteBlock(URI){
+function deleteBlock(URI) {
 
   xdmp.invokeFunction(() => {
-      declareUpdate();
-      if (xdmp.documentGetCollections(URI).includes(blocksCollection)){ // security. can only delete blocks
+    declareUpdate();
+    if (xdmp.documentGetCollections(URI).includes(blocksCollection)) { // security. can only delete blocks
       console.log("Deleting Pipes block " + URI)
       xdmp.documentDelete(URI)
-      }
-    })
+    }
+  })
 }
 
-function deleteGraph(URI){
+function deleteGraph(URI) {
 
   xdmp.invokeFunction(() => {
-      declareUpdate();
-      if (xdmp.documentGetCollections(URI).includes(graphsCollection)) // security. can only delete graphs
+    declareUpdate();
+    if (xdmp.documentGetCollections(URI).includes(graphsCollection)) // security. can only delete graphs
       xdmp.documentDelete(URI)
-    })
+  })
 }
 
-function getSavedGraph(params){
+function getSavedGraph(params) {
   return fn.doc(params.uri)
 
 }
 
-function listSavedGraph(params){
+function listSavedGraph(params) {
 
   let results = []
   for (let graph of cts.search(cts.andQuery([
     cts.collectionQuery(graphsCollection),
-    ((params.q!=null)?params.q:cts.trueQuery())
+    ((params.q != null) ? params.q : cts.trueQuery())
   ])))
     results.push({
       uri: fn.baseUri(graph),
@@ -533,13 +528,13 @@ function listSavedGraph(params){
   return results
 }
 
-function saveGraph(input,params){
+function saveGraph(input, params) {
   let graph = JSON.parse(input);
   let targetDb = (params.toDatabase != null) ? params.toDatabase : xdmp.database()
   xdmp.invokeFunction(() => {
 
-      xdmp.documentInsert("/marklogic-pipes/savedGraph/" + graph.name + ".json", graph,  null
-        , graphsCollection  )
+      xdmp.documentInsert("/marklogic-pipes/savedGraph/" + graph.name + ".json", graph, null
+        , graphsCollection)
 
     }, {"database": targetDb, "update": "true"}
   )
@@ -550,10 +545,9 @@ function saveGraph(input,params){
 function get(context, params) {
 
 
-
   switch (params.action) {
     case "collectionModel":
-      const invokeGetFieldsByCollection = getFieldsByCollection(params.collection,params.customURI)
+      const invokeGetFieldsByCollection = getFieldsByCollection(params.collection, params.customURI)
       return xdmp.invokeFunction(invokeGetFieldsByCollection.FieldsByCollection, {database: (params.database != null) ? params.database : xdmp.database()})
       break;
     case "collectionDetails":
@@ -562,7 +556,7 @@ function get(context, params) {
       break;
     case "databasesDetails":
       return getDatabases()
-    break;
+      break;
     case "DHFEntities":
       return getDHFEntities();
       break;
@@ -592,13 +586,13 @@ function post(context, params, input) {
   let config = {};
 
   let ctx = JSON.parse(input);
-  xdmp.log(Sequence.from(["POST",params,input]));
+  xdmp.log(Sequence.from(["POST", params, input]));
 
   switch (params.action) {
     case "compile":
       let compiler = require("/custom-modules/pipes/compiler.sjs");
       let output = compiler.compileGraphToJavaScript(ctx);
-      xdmp.log(Sequence.from(["COMPILER OUTPUT",output]));
+      xdmp.log(Sequence.from(["COMPILER OUTPUT", output]));
       return output;
     case "config":
       config.databases = getDatabases();
@@ -630,7 +624,7 @@ function post(context, params, input) {
       return getDHFEntityProperties(params.entity);
       break;
     case "ExecuteGraph":
-      return executeGraph(input,params)
+      return executeGraph(input, params)
       break;
     case "GetSavedBlock":
       return getSavedBlock(params)
@@ -639,7 +633,7 @@ function post(context, params, input) {
       return listSavedBlock(params)
       break;
     case "SaveBlock":
-      return saveBlock(input,params)
+      return saveBlock(input, params)
       break;
     case "GetSavedGraph":
       return getSavedGraph(params)
@@ -648,7 +642,7 @@ function post(context, params, input) {
       return listSavedGraph(params)
       break;
     case "SaveGraph":
-      return saveGraph(input,params)
+      return saveGraph(input, params)
       break;
     default:
     // code block
@@ -665,23 +659,23 @@ function deleteFunction(context, params) {
   var response
   context.outputTypes = [];
   context.outputTypes.push('application/json');
- 
+
   switch (params.action) {
     case "deleteBlock":
       if (params.URI && params.URI != null && params.URI != '') {
-          response = deleteBlock(params.URI)
+        response = deleteBlock(params.URI)
       }
       break;
     case "deleteGraph":
       if (params.URI && params.URI != null && params.URI != '') {
-          response = deleteGraph(params.URI)
+        response = deleteGraph(params.URI)
       }
-      break;   
-   default:
+      break;
+    default:
     // code block
   }
- 
- return response
+
+  return response
 
 };
 
