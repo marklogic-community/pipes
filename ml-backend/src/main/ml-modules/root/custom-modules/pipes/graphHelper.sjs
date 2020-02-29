@@ -166,7 +166,7 @@ function createGraphNodeFromModel(blockDef) {
 
         if(!this.doc.input.toObject) {
 
-          this.doc.input = fn.head(xdmp.unquote(String(this.doc.input)))
+          this.doc.input = fn.head(xdmp.unquote(JSON.stringify(this.doc.input)))
         }
       }
     }
