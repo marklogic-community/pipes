@@ -279,7 +279,7 @@ function init(LiteGraph){
        this.graph.setOutputData( "output", content );}
      else {*/
     let output =  this.getInputData(0)
-    if(output.constructor === Array){
+    if(output && output.constructor === Array){
       let globalArray = []
       flattenArray(globalArray,output)
       this.graph.setOutputData( "output",globalArray )
