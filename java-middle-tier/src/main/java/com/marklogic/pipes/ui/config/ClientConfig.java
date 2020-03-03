@@ -211,5 +211,4 @@ public class ClientConfig
     PipesResourceManager pipesResourceManager=new PipesResourceManager(client);
     return pipesResourceManager.getServices();
   }
-  
 }
