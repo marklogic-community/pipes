@@ -11,7 +11,7 @@
           Create new Source block and add to the library
         </q-tooltip>
       </q-btn>
-      <q-toggle v-model="saveBlockToDB" label="Save block to database"/>
+     <!-- <q-toggle v-model="saveBlockToDB" label="Save block to database"/>-->
       </div>
 
     <q-select
@@ -93,7 +93,7 @@
         <q-expansion-item
           expand-separator
           icon="fas fa-database"
-          label="Saved Source Blocks"
+          label="Source Blocks"
     >
     <q-list padding class="q-mt-md" link>
       <q-item tag="label" v-for="(block, index) in savedBlocks" v-bind:key="block.name" 
