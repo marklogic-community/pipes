@@ -13,8 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.web.server.ConfigurableWebServerFactory;
-import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.validation.annotation.Validated;
@@ -23,15 +21,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import java.io.IOException;
-import java.net.ServerSocket;
 import java.util.Map;
 
 @Configuration
 @ConfigurationProperties
 @Validated
 public class ClientConfig
-  implements WebServerFactoryCustomizer<ConfigurableWebServerFactory> {
+//  implements WebServerFactoryCustomizer<ConfigurableWebServerFactory>
+{
+
+  @Autowired
+  Environment environment;
 
   private static final Logger logger = LoggerFactory.getLogger(ClientConfig.class);
 
@@ -40,6 +40,10 @@ public class ClientConfig
 
   public int getContainerPort() {
     return containerPort;
+  }
+
+  public void setContainerPort(int containerPort) {
+    this.containerPort = containerPort;
   }
 
   private int containerPort;
@@ -174,8 +178,7 @@ public class ClientConfig
     this.mlModulesDatabase = mlModulesDatabase;
   }
 
-  @Autowired
-  Environment environment;
+
 
   public DatabaseClient client() {
     return DatabaseClientFactory.newClient(
@@ -208,33 +211,5 @@ public class ClientConfig
     PipesResourceManager pipesResourceManager=new PipesResourceManager(client);
     return pipesResourceManager.getServices();
   }
-
-
-  @Override
-  public void customize(ConfigurableWebServerFactory factory) {
-    if (environment.getProperty("server.port")==null) {
-      // pick an unused port starting from 8080
-      int port=8080; // starting value
-
-      boolean portFound=false;
-      while (!portFound) {
-        ServerSocket socket = null;
-        try {
-          socket = new ServerSocket(port);
-          factory.setPort(port);
-          logger.info("Setting port: "+port);
-          containerPort=port;
-          portFound=true;
-        } catch (IOException e) {
-          //port used, moving on
-          port++;
-        }
-      }
-    }
-    else {
-    //       assign default 8081 if not specified
-    String serverPort=environment.getProperty("server.port");
-      containerPort = Integer.parseInt(serverPort);
-    }
-  }
+  
 }
