@@ -1,7 +1,7 @@
 <template>
   <q-page class="column items-center">
 
-    <div  style="padding-top:30px;max-width: 500px; min-width: 300px"  >
+    <div  style="padding-top:30px;max-width: 500px; min-width: 300px"  v-if="showLogin">
 
       <q-form
 
@@ -41,7 +41,7 @@ export default {
   data () {
     return {
       username:"",
-
+      showLogin:false,
       password:"",
       loginmessage:""
     }
@@ -69,15 +69,19 @@ export default {
 
     }
     },
+  beforeCreate() {
+  this.$axios.get('/status').then(response => {
 
+    if(response.data && response.data.authenticated) {
+      this.$root.$emit("logIn");
+      this.$router.push({path: "/home"})
+    }
+    else this.showLogin=true
+  })
+
+},
   mounted: function () {
-    this.$axios.get('/status').then(response => {
 
-      if(response.data && response.data.authenticated) {
-        this.$root.$emit("logIn");
-        this.$router.push({path: "/home"})
-      }
-    })
 
 
   }
