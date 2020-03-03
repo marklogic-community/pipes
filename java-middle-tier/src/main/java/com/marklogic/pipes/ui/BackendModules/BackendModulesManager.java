@@ -98,6 +98,7 @@ public class BackendModulesManager {
     ArrayList<String> filePaths = new ArrayList<String>(
       Arrays.asList(
         customModulesPathPrefix+"/core.sjs",
+        customModulesPathPrefix+"/coreFunctions.sjs",
         customModulesPathPrefix+"/compiler.sjs",
         customModulesPathPrefix+"/compilerFlowControlGraph.sjs",
         customModulesPathPrefix+"/entity-services-lib-vpp.sjs",

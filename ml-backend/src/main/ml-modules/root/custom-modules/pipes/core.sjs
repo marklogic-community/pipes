@@ -279,7 +279,7 @@ function init(LiteGraph){
        this.graph.setOutputData( "output", content );}
      else {*/
     let output =  this.getInputData(0)
-    if(output.constructor === Array){
+    if(output && output.constructor === Array){
       let globalArray = []
       flattenArray(globalArray,output)
       this.graph.setOutputData( "output",globalArray )
@@ -1671,6 +1671,16 @@ function init(LiteGraph){
 
   }
 
+  currentDate.prototype.onCodeGeneration = function(tempVarPrefix,inputVariables,outputVariables,propertiesWidgets) {
+
+
+    let code = [];
+    code.push("const "+outputVariables.output0+" = coreFunctions.getCurrentDate('" + propertiesWidgets.properties.currentDate + "')");
+    return code;
+
+
+  }
+
   currentDate.prototype.onDrawBackground = function(ctx)
   {
     if(this.flags.collapsed)
@@ -2449,6 +2459,20 @@ function init(LiteGraph){
     this.setOutputData(3, result )
 
   }
+
+  split.prototype.onCodeGeneration = function(tempVarPrefix,inputVariables,outputVariables,propertiesWidgets) {
+
+    let code = [];
+    code.push("const " + tempVarPrefix + "splitValues = coreFunctions.split("+inputVariables.input0+",'"+propertiesWidgets.widgets.splitChar+"');")
+    code.push("const "+outputVariables.output0+" = " + tempVarPrefix + "splitValues[0]");
+    code.push("const "+outputVariables.output1+" = " + tempVarPrefix + "splitValues[1]");
+    code.push("const "+outputVariables.output2+" = " + tempVarPrefix + "splitValues[2]");
+    code.push("const "+outputVariables.output3+" = " + tempVarPrefix + "splitValues");
+    return code;
+
+
+  }
+
   LiteGraph.registerNodeType("string/Split", split );
 
 

@@ -102,6 +102,7 @@ function createGraphNodeFromModel(blockDef) {
       code.push("let "+tempVarPrefix+"output"+i+" = null;");
       if (this.blockDef.options.indexOf("nodeInput") > -1) {
         let path = "." + this.blockDef.fields[i].path;
+        path = path.replace(/'/g,"\\'")
         code.push("let "+tempVarPrefix+"path"+i+" = '"+path+"';");
         code.push("let "+tempVarPrefix+"v"+i+" = "+tempVarPrefix+"doc.xpath('"+path+"')");
         code.push("if ( "+tempVarPrefix+"v"+i+" == null || fn.count( "+tempVarPrefix+"v"+i+" ) == 0) {");
@@ -165,7 +166,7 @@ function createGraphNodeFromModel(blockDef) {
 
         if(!this.doc.input.toObject) {
 
-          this.doc.input = fn.head(xdmp.unquote(String(this.doc.input)))
+          this.doc.input = fn.head(xdmp.unquote(JSON.stringify(this.doc.input)))
         }
       }
     }
