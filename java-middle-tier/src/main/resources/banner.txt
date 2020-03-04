@@ -5,4 +5,4 @@
 | |      | || |_| || ____||___ |
 |_|      |_||  __/ |_____)(___/
             |_|
-for MarkLogic Data Hub v.1.0
+for MarkLogic Data Hub v.1.0-beta.3
