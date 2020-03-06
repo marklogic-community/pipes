@@ -586,13 +586,13 @@ function post(context, params, input) {
   let config = {};
 
   let ctx = JSON.parse(input);
-  xdmp.log(Sequence.from(["POST", params, input]));
+  //xdmp.log(Sequence.from(["POST", params, input]));
 
   switch (params.action) {
     case "compile":
       let compiler = require("/custom-modules/pipes/compiler.sjs");
       let output = compiler.compileGraphToJavaScript(ctx);
-      xdmp.log(Sequence.from(["COMPILER OUTPUT", output]));
+      //xdmp.log(Sequence.from(["COMPILER OUTPUT", output]));
       return output;
     case "config":
       config.databases = getDatabases();

@@ -95,7 +95,7 @@ function compileGraphToJavaScriptWithOptions(jsonGraph,options) {
   // STEP 3: Build the flow graph
   const PipesFlowControlGraph = require("/custom-modules/pipes/compilerFlowControlGraph.sjs")
   const flowGraph = new PipesFlowControlGraph();
-  flowGraph.initFromLiteGraph(jsonGraph);
+  flowGraph.initFromLiteGraph(LiteGraph,startNode,jsonGraph);
   // STEP 4: Check there is a path between start node and end node
   const paths = flowGraph.getAllPaths(startNode,finalNode);
   if ( paths == null || paths.length == 0) {
@@ -272,6 +272,7 @@ function generateCode(options,jsonGraph,node,ins,outs,functions) {
         }
         functions.push("// Inputs: "+JSON.stringify(ins));
         functions.push("// Outputs: "+JSON.stringify(outs));
+        functions.push("// Poperties/widgets: "+JSON.stringify(propertiesWidgets));
       }
       functions.push(...code);
       functions.push("return {"+dataOut.join(",")+"};");

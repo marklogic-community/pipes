@@ -1367,8 +1367,10 @@ function init(LiteGraph){
   StringConstant.title = "Constant";
   StringConstant.desc = "Constant value";
 
-
-
+  StringConstant.prototype.onDeadNodeRemoval = function()  {
+    // this node is not dead.
+    return false;
+  }
 
   StringConstant.prototype.onExecute = function()
   {
@@ -1377,8 +1379,8 @@ function init(LiteGraph){
 
   StringConstant.prototype.onCodeGeneration = function(tempVarPrefix,inputVariables,outputVariables,propertiesWidgets) {
     let code = [];
-    if ( "string" in propertiesWidgets) {
-      code.push("const " + outputVariables.output0 + " = '" + propertiesWidgets.properties.string + "';");
+    if ( propertiesWidgets.widgets && "string" in propertiesWidgets.widgets) {
+      code.push("const " + outputVariables.output0 + " = '" + propertiesWidgets.widgets.string + "';");
     } else {
       code.push("const " + outputVariables.output0 + " = '';");
     }
@@ -2257,24 +2259,26 @@ function init(LiteGraph){
 
   }
 
-
-
   uuidString.title = "UUID";
   uuidString.desc = "Generate UUID with prefix";
 
-
-
-
+  uuidString.prototype.onDeadNodeRemoval = function()  {
+    // this node is not dead.
+    return false;
+  }
 
   uuidString.prototype.onExecute = function()
   {
-
-
     let prefix = this.prefix.value
-
     this.setOutputData(0, prefix + sem.uuidString() );
   }
 
+
+  uuidString.prototype.onCodeGeneration = function(tempVarPrefix,inputVariables,outputVariables,propertiesWidgets) {
+    let code = [];
+    code.push("const "+outputVariables.output0+" = '" + propertiesWidgets.widgets.prefix + "'+sem.uuidString()");
+    return code;
+  }
 
   LiteGraph.registerNodeType("string/uuid", uuidString );
 
@@ -2461,7 +2465,6 @@ function init(LiteGraph){
   }
 
   split.prototype.onCodeGeneration = function(tempVarPrefix,inputVariables,outputVariables,propertiesWidgets) {
-
     let code = [];
     code.push("const " + tempVarPrefix + "splitValues = coreFunctions.split("+inputVariables.input0+",'"+propertiesWidgets.widgets.splitChar+"');")
     code.push("const "+outputVariables.output0+" = " + tempVarPrefix + "splitValues[0]");
@@ -2469,8 +2472,6 @@ function init(LiteGraph){
     code.push("const "+outputVariables.output2+" = " + tempVarPrefix + "splitValues[2]");
     code.push("const "+outputVariables.output3+" = " + tempVarPrefix + "splitValues");
     return code;
-
-
   }
 
   LiteGraph.registerNodeType("string/Split", split );
