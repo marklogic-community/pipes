@@ -105,18 +105,37 @@ module.exports = function (ctx) {
       // gzip: true,
       // analyze: true,
       // extractCSS: false,
+      devtool: 'source-map',
       extendWebpack (cfg) {
       }
     },
 
     devServer: {
       // https: true,
-      // port: 8080,
+      port: 8085,
       open: true, // opens browser window automatically
       proxy: {
         // proxy all requests starting with /api to jsonplaceholder
         '/v1': {
-             target: 'http://localhost:8010/' ,
+          target: 'http://localhost:8081/',
+          // pathRewrite: {
+          //   '^/api': ''
+          // }
+        },
+        '/status': {
+          target: 'http://localhost:8081/',
+          // pathRewrite: {
+          //   '^/api': ''
+          // }
+        },
+        '/login': {
+          target: 'http://localhost:8081/',
+          // pathRewrite: {
+          //   '^/api': ''
+          // }
+        },
+        '/logout': {
+          target: 'http://localhost:8081/',
           // pathRewrite: {
           //   '^/api': ''
           // }

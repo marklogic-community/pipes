@@ -65,7 +65,9 @@ public class AuthController extends AbstractLoggingClass {
 		logger.info("Logging out: " + getAuthenticatedUsername(session));
 
 		session.invalidate();
+		authService.setAuthorized(false);
 		response.setStatus(HttpStatus.NO_CONTENT.value());
+
 	}
 
 	@RequestMapping(value = "/status", method = RequestMethod.GET)

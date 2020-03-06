@@ -74,7 +74,7 @@ public class AuthService extends AbstractLoggingClass {
   private String password=null;
 
 
-  private void setAuthorized(Boolean authorized) {
+  public void setAuthorized(Boolean authorized) {
     isAuthorized = authorized;
   }
   private void setService(ResourceServices service) {
