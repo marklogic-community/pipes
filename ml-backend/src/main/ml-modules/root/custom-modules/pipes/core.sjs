@@ -2921,8 +2921,6 @@ function init(LiteGraph){
   xpathBlock.prototype.onExecute = function()
   {
     let input = this.getInputData(0);
-    // it seems that a source entry is outputing an array
-    input = input[0];
     let ns = {};
     const nstokens = this.namespaces.value.trim().split(",");
     if ( nstokens.length % 2 === 0 ) {
@@ -2933,7 +2931,7 @@ function init(LiteGraph){
     const xpath = this.xpath.value;
     xdmp.trace(BLOCK_RUNTIME_DEBUG_TRACE,Sequence.from(["Xpath: Input",input,"NS",ns]));
     //xdmp.log(Sequence.from(["Namespaces",ns,"Xpath",xpath]))
-    const output = input.xpath(xpath,ns);
+    const output = (input instanceof Array ? input[0] : input).xpath(xpath,ns);
     xdmp.trace(BLOCK_RUNTIME_DEBUG_TRACE,Sequence.from(["Xpath: Output",output]));
     this.setOutputData(0, output )
   }
@@ -2951,7 +2949,7 @@ function init(LiteGraph){
       }
     }
     let nsString = JSON.stringify(ns);
-    code.push("const "+outputVariables.output0+" = "+inputVariables.input0+"[0].xpath('"+propertiesWidgets.widgets.xpath+"',"+nsString+");");
+    code.push("const "+outputVariables.output0+" = ("+inputVariables.input0+" instanceof Array ? "+inputVariables.input0+"[0] : "+inputVariables.input0+").xpath('"+propertiesWidgets.widgets.xpath+"',"+nsString+");");
     return code;
   };
 
