@@ -10,13 +10,17 @@ const EntityManager = {
 
     updateBlockStatus: function (graph,nodeId,msg){
 
-  for (let node of graph._nodes)
+  if (graph && graph._nodes) {
+
+   for (let node of graph._nodes)
     if(node.type==nodeId){
 
       node.bgcolor="red"
       node.msg = msg
 
     }
+
+  }
 
 
     },
@@ -47,7 +51,7 @@ const EntityManager = {
 
                 if ( model.source == "Entities" ) {
 
-                  console.log("Checking entity " + model.label + "...")
+             //     console.log("Checking entity " + model.label + "...")
 
                   var entityExists = false
                   var entityID = ""

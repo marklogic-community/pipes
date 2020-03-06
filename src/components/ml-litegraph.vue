@@ -172,6 +172,44 @@
             </q-card>
         </q-dialog>
 
+       <q-dialog v-model="confirmResetGraph" persistent>
+          <q-card>
+            <q-card-section class="row items-center">
+              <q-avatar icon="fas fa-trash-alt" color="primary" text-color="red"></q-avatar>
+            <span class="q-ml-sm">Are you sure you want to reset the graph?</span>
+            </q-card-section>
+            <q-card-actions align="right">
+              <q-btn flat label="Cancel" color="primary" v-close-popup></q-btn>
+              <q-btn flat label="Reset" color="primary" @click="" v-close-popup></q-btn>
+            </q-card-actions>
+            </q-card>
+        </q-dialog>
+
+        <q-dialog v-model="showBlockOnGraphNoDelete" persistent>
+          <q-card>
+            <q-card-section class="row items-center">
+              <q-avatar icon="fas fa-trash-alt" color="primary" text-color="red"></q-avatar>
+            <span class="q-ml-sm">You must remove this block from the graph before deleting</span>
+            </q-card-section>
+            <q-card-actions align="right">
+              <q-btn flat label="OK" color="primary" v-close-popup></q-btn>
+            </q-card-actions>
+            </q-card>
+        </q-dialog>
+
+       <q-dialog v-model="warnBlockOnGraph" persistent>
+          <q-card>
+            <q-card-section class="row items-center">
+              <q-avatar icon="fas fa-exclamation" color="primary" text-color="red">
+              </q-avatar>
+            <span><b>{{ warnBlockName }}</b> is being used on the graph. All current instances must be removed before you can save a new definition</span>
+            </q-card-section>
+            <q-card-actions align="right">
+              <q-btn flat label="OK" color="primary" v-close-popup></q-btn>
+            </q-card-actions>
+            </q-card>
+        </q-dialog>
+
     <q-dialog v-model="showPreview">
       <q-card>
         <q-card-section class="row items-center">
@@ -301,7 +339,7 @@
         </q-card-section>
 
         <q-card-section class="q-pt-none">
-          <code-generation-config :graph="graph" :models="models" :is-exported="isExported"></code-generation-config>
+          <code-generation-config :graph="graph" :models="this.blockModels" :is-exported="isExported"></code-generation-config>
         </q-card-section>
 
         <q-card-actions align="right" class="bg-white text-teal">
@@ -318,6 +356,7 @@
 
   import {LiteGraph} from 'litegraph.js';
   import {saveAs} from 'file-saver';
+  import {Vuex} from "vuex";
   import { LocalStorage, copyToClipboard } from 'quasar';
   import VueJsonPretty from 'vue-json-pretty';
   import Notifications from '../components/notificationHandler.js';
@@ -326,6 +365,7 @@
   import codeGenerationConfig from '../components/codeGenerationConfig.vue'
   import CSVLoader from '../components/csvLoader.vue';
   import EntityManager from '../components/entityManager.js';
+  import LiteGraphHelper from '../components/liteGraphHelper.js'
   import Vue from 'vue';
   Vue.use(require('vue-shortkey'))
   import { ENTITY_BLOCK_TYPE, SOURCE_BLOCK_TYPE, BLOCK_PATH, BLOCK_LABEL, BLOCK_FIELDS, BLOCK_FIELD,BLOCK_COLLECTION,BLOCK_SOURCE,BLOCK_OPTIONS, 
@@ -344,7 +384,8 @@
       DatabaseFilter,
       CollectionFilter,
       EntityManager,
-      LocalStorage
+      LocalStorage,
+      LiteGraphHelper
     ],
     data() {
       return {
@@ -356,6 +397,10 @@
         editCases: false,
         saveToDB: false,
         confirmDeleteGraph: false,
+        confirmResetGraph: false,
+        warnBlockOnGraph: false,
+        warnBlockName: "",
+        showBlockOnGraphNoDelete: false,
         deleteGraphName: "",
         deleteGraphURI: "",
         dbEntities: [],
@@ -371,9 +416,8 @@
         ],
         opened: true,
         isExported: false,
-        graph: null,
+        graph: null,                // LiteGraphObject
         results: null,
-        models: [],
         showPreview: false,
         showCodeGenConfig: false,
         showUploadGraph: false,
@@ -446,18 +490,44 @@
       }
 
     },
+     computed: {
+    blockModels: function () {
+      return this.$store.getters.models
+  }
+     },
     methods: {
 
       createBlock(blockDef) {
 
+        var blockInList = false;
+
        console.log("createBlock request to create block: " + JSON.stringify(blockDef))
 
-        let newBlock = this.createGraphNodeFromModel(blockDef);
+       if ( this.isblockInModelList(this.graph,blockDef.source + "/" + blockDef.collection )) {
+         console.log("Block is in the model list")
+       } 
 
-        console.log ("newBlock : " + JSON.stringify(newBlock) )
+       if ( this.isblockOnGraph(this.graph,blockDef.source + "/" + blockDef.collection )) {
+         console.log("BLOCK IS ON THE GRAPH")
+         this.warnBlockName = blockDef.label
+         this.warnBlockOnGraph = true
+       } else {
+         console.log("Removing the block")
+         this.$store.commit('removeBlock',blockDef)
+         this.doBlockAdd(blockDef)
+       }
 
-        LiteGraph.registerNodeType(blockDef.source + "/" + blockDef.collection, newBlock);
-        this.models.push(blockDef)
+      },
+
+      doBlockAdd(blockDef) {
+       console.log("Adding block: " + JSON.stringify(blockDef))
+       let newBlock = this.createGraphNodeFromModel(blockDef);
+
+      this.$store.commit('addBlock', blockDef)
+
+       console.log("newBlock : " + JSON.stringify(newBlock) )
+       LiteGraph.registerNodeType(blockDef.source + "/" + blockDef.collection, newBlock);
+      // this.models.push(blockDef)
 
         this.$q.notify({
           color: 'positive',
@@ -465,8 +535,8 @@
           message: "New block is now available in the library (right click)",
           icon: 'code'
         })
-
       },
+
       addMapping() {
         this.currentProperties.push({source: "val", target: "newVal"})
       },
@@ -486,14 +556,30 @@
       loadGraphFromJson(graph) {
 
        this.checkEntityBlocks(graph)
+       this.graphStatistics(graph.executionGraph)
+       this.$store.commit('clearBlocks')
 
+      // Filter blocks to remove any duplicates from graph (take latest. legacy bug?)
+       var blockMap = new Map();
         for (let model of graph.models) {
-          let newBlock = this.createGraphNodeFromModel(model);
-          LiteGraph.registerNodeType(model.source + "/" + model.collection, newBlock);
+          blockMap.set(model.source + "/" + model.collection, model);
         }
-        this.models = graph.models
 
-        this.graph.configure(graph.executionGraph)
+        for (let blockKey of blockMap.keys()) {
+             // console.log("block in map: " + blockKey)
+              var model = blockMap.get(blockKey)
+              let newBlock = this.createGraphNodeFromModel(model);
+              this.$store.commit('addBlock', model)
+              LiteGraph.registerNodeType(model.source + "/" + model.collection, newBlock);
+          }
+
+        this.findDuplicateBlocks(graph.models)
+
+        try {
+          this.graph.configure(graph.executionGraph)
+        } catch (e) {
+          console.log("Caught warning during litegraph.configure " + e)
+        }
 
         if (graph.metadata && graph.metadata.title != null) this.graphMetadata.title = graph.metadata.title; else this.graphMetadata.title = ""
         if (graph.metadata && graph.metadata.author != null) this.graphMetadata.author = graph.metadata.author; else this.graphMetadata.author = ""
@@ -762,7 +848,7 @@
 
         let jsonGraph = this.graph.serialize()
         let graphDef = {
-          models: (this.models != null) ? this.models : [],
+          models: (this.blockModels != null) ? this.blockModels : [],
           executionGraph: jsonGraph,
           name: this.graphName,
           metadata: this.graphMetadata
@@ -786,8 +872,9 @@
         var self = this; // keep reference for notifications called from catch block
         let jsonGraph = this.graph.serialize()
         var graphName = this.graphMetadata.title.replace(/[&#]/g, "_"); // & # causes error at download time
+        const blocks = this.blockModels
         let graphDef = {
-          models: (this.models != null) ? this.models : [],
+          models: (blocks != null) ? blocks : [],
           executionGraph: jsonGraph,
           name: graphName,
           metadata: this.graphMetadata
@@ -814,7 +901,7 @@
         this.$axios.get('/statics/graph/dhfDefaultGraph.json')
           .then((response) => {
             let defaultGraph = response.data
-            defaultGraph.models = this.models
+            defaultGraph.models = this.blockModels
             this.loadGraphFromJson(defaultGraph)
           })
       }
@@ -905,7 +992,7 @@
           let jsonGraph = this.graph.serialize()
           let request = {
             jsonGraph: {
-              models: (this.models != null) ? this.models : [],
+              models: (this.blockModels != null) ? this.blockModels : [],
               executionGraph: jsonGraph
 
             },
@@ -931,7 +1018,15 @@
         this.listSavedGraphs()
         this.loadPopUpOpened = true;
 
-      },
+      }, 
+      
+    checkGraphBlockDelete(blockKey) {
+      if ( this.isblockOnGraph(this.graph,blockKey) ) {
+        this.showBlockOnGraphNoDelete = true
+      } else {
+        this.$store.commit('removeBlock',blockKey)
+      }
+    },
     browserRefreshConfirm(event) {
       // browser alert when screen refreshed
       if ( this.advancedSettings.confirmBrowserRefresh == true ) {
@@ -990,16 +1085,14 @@
             self.notifyError("databasesDetails", error, self);
           })
       },
+      listGraphBlocks() {
+          this.listTheGraphBlocks(this.graph, this.blockModels)
+      },
       discoverCollections() {
         var self = this;
         let dbOption = ""
         if (this.selectedDB != null && this.selectedDB != "") {
           dbOption += "&rs:database=" + this.selectedDB.value
-          // this.$root.$emit("databaseChanged",
-          //   {selectedDatabase: this.selectedDatabase,availableDatabases:this.availableDatabases
-          //   }
-
-          // );
         }
 
         this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionDetails' + dbOption)
@@ -1026,20 +1119,12 @@
 
           if (block.node_over.properties != null) this.currentCtsQuery = block.node_over.properties
           this.editQuery = true
-
-
-          //console.log(this.$refs)
-
         }
 
         if (block.node_over && block.node_over.properties && block.node_over.properties.testCases) {
 
           if (block.node_over.properties != null) this.currentCases = block.node_over.properties.testCases
           this.editCases = true
-
-
-          //console.log(this.$refs)
-
         }
 
 
@@ -1138,17 +1223,22 @@
       this.$root.$on("nodeDblClicked", this.DblClickNode);
       this.$root.$on("nodeSelected", this.selectNode);
       this.$root.$on("loadDHFDefaultGraphCall", this.resetDhfDefaultGraph);
+      this.$root.$on("listGraphBlocks", this.listGraphBlocks);
+      this.$root.$on("checkGraphBlockDelete", this.checkGraphBlockDelete);
+
       this.discoverDatabases()
 
       this.graph = new LiteGraph.LGraph();
       this.graph_canvas = new LiteGraph.LGraphCanvas(this.$refs["mycanvas"], this.graph);
 
+      this.$store.commit('clearBlocks')
+
       if (this.$q.localStorage.getItem(ADVANCED_SETTINGS_KEY) == null) {
           this.persistSettings()
       } else {
           console.log("Restoring settings:")
-          this.advancedSettings = this.$q.localStorage.getItem(ADVANCED_SETTINGS_KEY)
-          console.log(JSON.stringify(this.advancedSettings))
+          var storedSettings = this.$q.localStorage.getItem(ADVANCED_SETTINGS_KEY)
+          this.advancedSettings.confirmBrowserRefresh = storedSettings.confirmBrowserRefresh != null ? storedSettings.confirmBrowserRefresh : true
       }
         
   },
@@ -1166,7 +1256,6 @@ beforeMount() {
 
   }
 </script>
-
 
 <style>
 </style>

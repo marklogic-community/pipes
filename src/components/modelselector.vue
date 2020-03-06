@@ -3,15 +3,14 @@
 
   <div class="column gutter-sm">
    
-    <q-input ref="blockName" bottom-slots v-model="blockName" label="Block name" maxlength="40"/>
+    <q-input style="font-size: 1.5em" ref="blockName" bottom-slots v-model="blockName" label="Block name" maxlength="40"/>
 
      <div class="spacer-div">
-      <q-btn label="Create Source Block" @click="notifyBlockRequested()" :disabled="cleanBlockName() == ''">
+      <q-btn :label="blockButtonLabel" @click="notifyBlockRequested()" :disabled="cleanBlockName() == ''">
         <q-tooltip class="pipes-tooltip">
           Create new Source block and add to the library
         </q-tooltip>
       </q-btn>
-     <!-- <q-toggle v-model="saveBlockToDB" label="Save block to database"/>-->
       </div>
 
     <q-select
@@ -95,26 +94,35 @@
           icon="fas fa-database"
           label="Source Blocks"
     >
-    <q-list padding class="q-mt-md" link>
-      <q-item tag="label" v-for="(block, index) in savedBlocks" v-bind:key="block.name" 
-      @click.native.prevent="getSavedBlock(block.uri)">
+    <q-list padding>
+
+      <q-item tag="label" v-for="(block, index) in this.sourceBlocks" v-bind:key="block.source + '/' + block.label" @click.native.prevent="">
+
          <q-item-section avatar>
               <div class="block">
+                <q-tooltip self="top middle" content-class="pipes-tooltip">{{block}}</q-tooltip>
                 <div class="block-title block">abc</div>
-                <div class="block-body block"></div>
+                <div class="block-body block">
+                  <div :class="block.source"/>
+                </div>
               </div>
-         </q-item-section>   
+         </q-item-section>  
 
-         <q-item-section label>
+       <q-item-section label>
              <div class="text-left">
-              {{ block.name }}
+              {{ block.label }}
               </div>
          </q-item-section>
 
-          <q-item-section side>
-           <q-btn flat outline @click.capture.stop="deleteBlockURI = block.uri; deleteBlockName = block.name; confirmBlockDelete = true" size="sm" icon="fas fa-trash-alt">
-              <q-tooltip self="top middle" content-class="pipes-tooltip">Delete '{{block.name}}'</q-tooltip>
-           </q-btn>
+         <q-item-section top side>
+            <div class="text-grey-8 q-gutter-xs">
+            <q-btn @click.capture.stop="restoreBlockToForm(block)" flat outline size="sm" style="color: #419e5a" icon="fas fa-arrow-up">
+              <q-tooltip self="top middle" content-class="pipes-tooltip">Restore block settings for reuse'</q-tooltip>
+            </q-btn> 
+            <q-btn @click.capture.stop="deleteBlock(block,block.label,true)" flat outline size="sm" style="color: #b81220" icon="fas fa-trash-alt">
+              <q-tooltip self="top middle" content-class="pipes-tooltip">Delete '{{block.label}}'</q-tooltip>
+            </q-btn>
+            </div>
          </q-item-section>
 
       </q-item>
@@ -128,7 +136,7 @@
             </q-card-section>
             <q-card-actions align="right">
               <q-btn flat label="Cancel" color="primary" v-close-popup></q-btn>
-              <q-btn flat label="Delete" color="primary" @click="deleteBlock(deleteBlockURI,deleteBlockName)" v-close-popup></q-btn>
+              <q-btn flat label="Delete" color="primary" @click="deleteBlock(block,false)" v-close-popup></q-btn>
             </q-card-actions>
             </q-card>
         </q-dialog>
@@ -144,20 +152,22 @@
   import CollectionFilter from '../components/collectionFilter.js';
   import { SOURCE_BLOCK_TYPE, BLOCK_FIELDS, BLOCK_FIELD, BLOCK_LABEL, BLOCK_TYPE, BLOCK_OPTIONS,
   BLOCK_OPTION_NODE_INPUT, BLOCK_OPTION_FIELDS_OUTPUT, BLOCK_CHILDREN, BLOCK_PATH, BLOCK_COLLECTION, BLOCK_SOURCE } from '../components/constants.js'
+  import LiteGraphHelper from '../components/liteGraphHelper.js'
 
   export default {
     // name: 'ComponentName',
     mixins: [
       Notifications,
       DatabaseFilter,
-      CollectionFilter
+      CollectionFilter,
+      LiteGraphHelper
     ],
     data() {
       return {
+        blockButtonLabel: "Create Source Block",
         selectedCollection: "",
         saveBlockToDB:false,
         blockSaved: false,
-        blockLibrary: [], // keep track of created blocks for pre-existance check
         selectedDatabase:null,
         selectedFields: [],
         selectedFieldsNodes:null,
@@ -166,6 +176,7 @@
         availableDatabases: [],
         confirmBlockDelete: false,
         deleteBlockName: "",
+        deleteBlockKey: "",
         collectionModel: [
           {
           label: 'source',
@@ -179,7 +190,6 @@
         ],
         blockOptions: [BLOCK_OPTION_NODE_INPUT, BLOCK_OPTION_FIELDS_OUTPUT],
         savedGraph: [],
-        savedBlocks: [],
         blockName: "",
         newCustomFieldName:"",
         customURI:"",
@@ -188,11 +198,45 @@
       }
     },
     computed: {
-      blockStatusIcon() {
-    	    return (this.blockSaved ? 'check' : 'sticky-note');
-    }
+      sourceBlocks: function () {
+        return this.$store.state.models.filter(function (block) {
+        return block.source == "Sources"
+    })
+  }
     },
     methods: {
+
+      logBlock(block) {
+        console.log(JSON.stringify(block))
+      },
+
+      setDatabaseCollectionsDropdowns(dbName, collectionName) {
+        console.log( "setDatabaseDropdown: " + dbName + "," + collectionName )
+        if ( dbName == null || dbName == '') return;
+        for (var x = 0; x < this.availableDatabases.length; x++) {
+          if ( this.availableDatabases[x].label == dbName ) {
+            this.selectedDatabase = this.availableDatabases[x]
+
+            var self = this
+            this.discoverCollectionsPromise().then((response) => {
+            this.availableCollections = self.filterCollections(response.data)
+            if (collectionName !== null && collectionName !== '') {
+              console.log("Trying to select collection " + collectionName)
+              for (var x = 0; x < self.availableCollections.length; x++) {
+                  if ( self.availableCollections[x].label == collectionName ) {
+                  self.selectedCollection = self.availableCollections[x]
+                  self.discoverModel( this.selectedCollection,"")
+                  return
+                  }
+              }
+            }
+          })
+          .catch((error) => {
+            self.notifyError("collectionDetails", error, self);
+          })
+          }
+        }
+      },
       selectFieldPath(node){
         console.log(node)
       }
@@ -222,16 +266,7 @@
       cleanBlockName() {
         return this.blockName.trim().replace(/  +/g, ' ');
       },
-      blockIsInLibrary(name) {
-          var found = false;
-          for(var i = 0; i < this.blockLibrary.length; i++) {
-            if (this.blockLibrary[i][BLOCK_LABEL] == name) {
-            found = true;
-            break;
-        }
-      }
-        return found
-      },
+
       addCustomField(){
 
         if ( this.cleanCustomFieldName() !== '' ) {
@@ -257,13 +292,16 @@
           this.resetCustomFieldValidation()
         }
       },
+      collectionIsAvailable(collection) {
+        console.log("Available collections:")
+        console.log( JSON.stringify( this.availableCollections ) )
+      },
       discoverCollections() {
         var self = this;
         let dbOption =""
         if(this.selectedDatabase!=null && this.selectedDatabase!="") {
           dbOption += "&rs:database=" + this.selectedDatabase.value
         }
-
           this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionDetails' + dbOption )
           .then((response) => {
             this.availableCollections = self.filterCollections(response.data)
@@ -271,6 +309,13 @@
           .catch((error) => {
             self.notifyError("collectionDetails", error, self);
           })
+      },
+       discoverCollectionsPromise() {
+        let dbOption =""
+        if(this.selectedDatabase!=null && this.selectedDatabase!="") {
+          dbOption += "&rs:database=" + this.selectedDatabase.value
+        }
+          return this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionDetails' + dbOption )
       },
       discoverDatabases() {
         var self = this;
@@ -282,8 +327,10 @@
             self.notifyError("databasesDetails", error,self);
           })
       },
+      // loadSavedBlocks now retrieves blocks from graph
       loadSavedBlocks() {
          var self = this
+         /*
          this.$axios.get('/v1/resources/vppBackendServices?rs:action=ListSavedBlock')
           .then((response) => {
             this.savedBlocks = response.data;
@@ -291,63 +338,54 @@
           .catch((error) => {
             self.notifyError("ListSavedBlock", error, self);
           })
+          */
+
       },
-      getSavedBlock(uri) {
-        //if(uri!=null)
-        var self = this;
-       this.$axios.get('/v1/resources/vppBackendServices?rs:action=GetSavedBlock&rs:uri=' + encodeURI(uri))
-          .then((response) => {
-            let block = response.data;
-            if (block != null) {
-              self.collectionModel[0].children=[] // clear model and selected fields
-              self.collectionModel[1].children=[]
+      
+      // Restore block to main editing panel. Foremerly from db, now from graph
+      restoreBlockToForm(block) {
+        console.log("Restoring source block to form: " + block.label)
+
+              this.collectionModel[0].children=[] // clear model and selected fields
+              this.collectionModel[1].children=[]
               this.selectedFields=[]
-              this.blockName = block.name
-              this.selectedDatabase=block.database
-              this.selectedCollection =block.collection
-              this.discoverModel( this.selectedCollection,"")
-              this.blockOptions = block.options;
-              this.restoreFields(block) // restore fields from block
-              this.$refs.selectionTree.expandAll()
-              this.blockLibrary.push(block.name)
+              this.blockName = block.label
+          //    this.selectedDatabase=block.database  -- GRAPH BLOCK DOES NOT HAVE DB DETAIL
 
-              // for reload of blocks from db
-              var collection = ""
-              if ( block.collection == null || block.collection == '' ) collection = block.name
-              else collection = block.collection
+          var blockSourceDatabase, blockSourceCollection
+          if (block.metadata.sourceDatabase && block.metadata.sourceDatabase != '') blockSourceDatabase = block.metadata.sourceDatabase
+          if (block.metadata.sourceCollection && block.metadata.sourceCollection != '') blockSourceCollection = block.metadata.sourceCollection
 
-              let blockDef = {
-                    label: block.name,
-                    collection: collection,
-                    source: SOURCE_BLOCK_TYPE,
-                    fields: block.fields,
-                    options: block.options
-              }
+          this.setDatabaseCollectionsDropdowns(blockSourceDatabase,blockSourceCollection)
 
-              this.$root.$emit("blockRequested", blockDef);
-            }
-          })
-          .catch((error) => {
-             self.notifyError("ListSavedBlock", error, self);
-          })
+            this.discoverModel( this.selectedCollection,"")
+            this.blockOptions = block.options;
+            this.restoreFields(block) // restore fields from block
+
       },
-      deleteBlock(blockURI, blockName) {
-          console.log("Deleting block: " + JSON.stringify(blockName))
-           var self = this
+      
+      // remove block Model list
+      deleteBlock(block, showDialog) {
 
-         this.$axios.delete('/v1/resources/vppBackendServices?rs:action=deleteBlock&rs:URI=' + blockURI)
-          .then((response) => {
-              this.$q.notify({
-              color: 'positive',
-              position: 'top',
-              message: "Source Block <b>'" + blockName + "'</b> deleted",
-              icon: 'code'
-  })
-      this.loadSavedBlocks()
-          })
-          .catch((error) => {
-            self.notifyError("Deleting Block", error, self);
-          })
+        this.$root.$emit("checkGraphBlockDelete",block.source + "/" + block.collection)
+
+        /*
+
+        if ( this.isblockOnGraph(this.graph, blockName) ) {
+          this.confirmBlockDelete = true
+        } else {
+
+        if ( showDialog ) {
+          this.deleteBlockKey = blockKey
+          this.deleteBlockName = blockName
+          this.confirmBlockDelete = true
+          return
+        }
+        }
+          console.log("Deleting block: " + blockName)
+
+          this.$store.commit("removeBlock",blockKey)
+          */
 
       },
       saveBlock() {
@@ -391,9 +429,10 @@
       },
       // Restore collection fields and custom fields after block reload 
       restoreFields(reloadedBlock) {
+
           if ( reloadedBlock.fields.length > 0) {
           for (var i = 0; i < reloadedBlock.fields.length; i++) {
-            if ( (reloadedBlock.fields[i].customField == true) ) {
+            if ( (reloadedBlock.fields[i].type == 'custom') ) {
                 var fieldName = reloadedBlock.fields[i].label
                 
                 this.collectionModel[1].children.push({
@@ -406,7 +445,14 @@
                 
             } 
             // add all field regardless of type to "selected" so check boxes in tree are filled in
+            console.log("Adding field back to tree:" + reloadedBlock.fields[i].label)
             this.selectedFields.push(reloadedBlock.fields[i].label)
+
+            if ( this.collectionModel[0].children.length > 0 )
+            this.$refs["selectionTree"].setExpanded("source",true)
+
+            if ( this.collectionModel[1].children.length > 0 )
+            this.$refs["selectionTree"].setExpanded("custom",true)
          } 
           }
       },
@@ -449,6 +495,7 @@
 
         this.blockName = this.cleanBlockName()
 
+/*
             if ( this.blockIsInLibrary(this.blockName) )
             {
                 this.$q.notify({
@@ -458,10 +505,15 @@
                     icon: 'report_problem'
                 })
             }
+*/
 
-            else {
+         //   else {
            
-          let blockMetadata = { "dateCreated" : new Date().toISOString() }
+          let blockMetadata = { 
+            "dateCreated" : new Date().toISOString(),
+            "sourceDatabase" : this.selectedDatabase.label ,
+            "sourceCollection" : this.selectedCollection.value        
+          }
 
           let blockDef = { 
 
@@ -471,28 +523,28 @@
             [BLOCK_FIELDS]: this.$refs["selectionTree"].getTickedNodes(), //this.selectedFields,
             options: this.blockOptions,
             metadata: blockMetadata
-
           }
 
-          if (this.saveBlockToDB) { 
+      /*    if (this.saveBlockToDB) { 
             var ref = this
             this.saveBlock().then(() => {
                   ref.loadSavedBlocks()
           });
+          */
            
-          }
-          this.blockLibrary.push(blockDef)
+         // }
+      //    this.blockLibrary.push(blockDef) TODO
           this.$root.$emit("blockRequested", blockDef);
           this.blockSaved = true; 
-        }
+        //}
 
       }
     },
     mounted() {
-      console.log('Nothing gets called before me!')
       this.discoverDatabases()
       this.loadSavedBlocks();
       this.$refs.selectionTree.getNodeByKey("custom")
+      console.log( "VUEX:" + this.$store.state.models )
     }
   }
 
@@ -526,5 +578,13 @@
 .pipes-tooltip {
   background-color: #7397d1;
   font-size: 1.0em;
+}
+
+.Entities {
+   background: red;
+}
+
+.Sources {
+  background: blue;
 }
 </style>

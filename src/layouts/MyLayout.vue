@@ -96,7 +96,7 @@
             @click.stop="executeGraph()"
           >
             <q-tooltip content-class="pipes-tooltip">
-              Preview Execute Graph
+              Preview Graph Execution
             </q-tooltip>
 
           </q-btn>
@@ -135,6 +135,9 @@
             size="lg"
             @click.stop="logOut()"
           >
+           <q-tooltip content-class="pipes-tooltip">
+              Log out
+            </q-tooltip>
           </q-btn>
         </q-btn-group>
 
@@ -290,7 +293,7 @@ export default {
       this.leftDrawerOpen = false
     },
     setGraphMetadata (meta) {
-      console.log("Graph metadata " + (typeof metadata) + ": " + meta)
+     // console.log("Graph metadata " + (typeof metadata) + ": " + meta)
       this.graphMetadata = meta
     },
     openHelp () {
