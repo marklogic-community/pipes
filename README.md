@@ -10,7 +10,7 @@ Pipes is designed to run on MarkLogic 10.0-2 (with DHF 5.1.0 installed).
 ## Great! How do I run it?
 To use Pipes you will need to have an instance of MarkLogic with the [Data Hub](https://docs.marklogic.com/datahub/index.html) installed.
 
-Next, download the Pipes jar from the [Releases](https://github.com/marklogic-community/pipes/releases) section. In the same directory where you placed the jar, create an application.properties file with following content (for Linux/Unix/Mac):
+Next, download the Pipes jar from the [Releases](https://github.com/marklogic-community/pipes/releases) section. In the same directory where you placed the jar, create an ```application.properties``` file with following content (for Linux/Unix/Mac):
 
 ```
 # this is where the UI will be running, make sure the port is not used
@@ -47,6 +47,14 @@ mlModulesDatabase=data-hub-MODULES
 # this is the root of your DHF project to deploy backend modules to
 mlDhfRoot=C:/Users/user/dev/test-pipes
 ```
+### Can I use another filename instead of ```application.properties```?
+Yes. Assuming you want to use a filename ```myEnvironment.properites```, add a parameter 
+
+```spring.config.name=--myEnvironment.properites``` 
+
+when running the jar.
+
+#### Backend modules
 
 Pipes requires several backend modules to be installed on MarkLogic.
 They can be installed in 2 ways:
