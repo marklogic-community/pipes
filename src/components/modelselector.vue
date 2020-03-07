@@ -388,6 +388,7 @@
           */
 
       },
+      /*
       saveBlock() {
         var self = this;
 
@@ -427,6 +428,7 @@
             self.notifyError("SaveBlock", error, self);
           })
       },
+      */
       // Restore collection fields and custom fields after block reload 
       restoreFields(reloadedBlock) {
 
@@ -494,25 +496,11 @@
       notifyBlockRequested() {
 
         this.blockName = this.cleanBlockName()
-
-/*
-            if ( this.blockIsInLibrary(this.blockName) )
-            {
-                this.$q.notify({
-                    color: 'negative',
-                    position: 'top',
-                    message: 'Block with this name already in library. Please use another name',
-                    icon: 'report_problem'
-                })
-            }
-*/
-
-         //   else {
            
           let blockMetadata = { 
             "dateCreated" : new Date().toISOString(),
-            "sourceDatabase" : this.selectedDatabase.label ,
-            "sourceCollection" : this.selectedCollection.value        
+            "sourceDatabase" : this.selectedDatabase != null ? this.selectedDatabase.label : '' ,
+            "sourceCollection" : this.selectedDatabase != null ? this.selectedCollection.value : ''      
           }
 
           let blockDef = { 
@@ -525,18 +513,8 @@
             metadata: blockMetadata
           }
 
-      /*    if (this.saveBlockToDB) { 
-            var ref = this
-            this.saveBlock().then(() => {
-                  ref.loadSavedBlocks()
-          });
-          */
-           
-         // }
-      //    this.blockLibrary.push(blockDef) TODO
           this.$root.$emit("blockRequested", blockDef);
           this.blockSaved = true; 
-        //}
 
       }
     },

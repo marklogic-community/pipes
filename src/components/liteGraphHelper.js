@@ -45,20 +45,43 @@ const LiteGraphHelper = {
       return isInList
     },
 
+    isblockOnGraph(liteGraph, blockKey) {
+      console.log("Checking if on graph")
+     return ( liteGraph.findNodesByType(blockKey).length > 0)
+    },
+
+    searchTree(element, blockKey){
+      if(element.type == blockKey){
+           return element;
+      }else if (element.children != null){
+           var i;
+           var result = null;
+           for(i=0; result == null && i < element.children.length; i++){
+                result = searchTree(element.children[i], blockKey);
+           }
+           return result;
+      }
+      return null;
+ },
+
+
   isblockOnGraph(liteGraph, blockName) {
     console.log("blockIsOnGraph " + blockName)
     var isOnGraph = false
     var g = liteGraph.serialize()
-    for (var x = 0; x < g.nodes.length; x++) {
-      //console.log("Checking " + g.nodes[x].type)
-      if ( g.nodes[x].type == blockName ) {
-        console.log("Block is on graph: " + JSON.stringify(g.nodes[x]))
-        isOnGraph = true
-        break
+    return JSON.stringify( g ).includes(blockName)
+  },
+
+/*
+  inspectGraph(nodeList, blockName) {
+    for (var x = 0; x < nodeList.length; x++) {
+      if ( nodeList[x].type == blockName ) {
+        console.log("Block is on graph: " + JSON.stringify(nodeList[x]))
+        return true
       }
     }
-    return isOnGraph
 },
+*/
 
 // Graphs have duplicate blocks - analyse this
 findDuplicateBlocks: function(pipesModels) {
