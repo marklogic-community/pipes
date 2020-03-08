@@ -578,7 +578,7 @@
         try {
           this.graph.configure(graph.executionGraph)
         } catch (e) {
-          console.log("Caught warning during litegraph.configure " + e)
+          console.log("Caught warning during litegraph.configure: " + e)
         }
 
         if (graph.metadata && graph.metadata.title != null) this.graphMetadata.title = graph.metadata.title; else this.graphMetadata.title = ""
@@ -589,7 +589,6 @@
 
         this.notifyPositive(self,"Loaded graph " + this.graphMetadata.title)
         this.showUploadGraph = false
-
       }
       ,
       getSavedGraph(uri, graphName) {
@@ -848,7 +847,7 @@
 
         let jsonGraph = this.graph.serialize()
         let graphDef = {
-          models: (this.blockModels != null) ? this.blockModels : [],
+          models: this.blockModels,
           executionGraph: jsonGraph,
           name: this.graphName,
           metadata: this.graphMetadata
@@ -874,7 +873,7 @@
         var graphName = this.graphMetadata.title.replace(/[&#]/g, "_"); // & # causes error at download time
         const blocks = this.blockModels
         let graphDef = {
-          models: (blocks != null) ? blocks : [],
+          models: blocks,
           executionGraph: jsonGraph,
           name: graphName,
           metadata: this.graphMetadata
@@ -992,7 +991,7 @@
           let jsonGraph = this.graph.serialize()
           let request = {
             jsonGraph: {
-              models: (this.blockModels != null) ? this.blockModels : [],
+              models: this.blockModels,
               executionGraph: jsonGraph
 
             },

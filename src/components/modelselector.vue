@@ -117,7 +117,7 @@
          <q-item-section top side>
             <div class="text-grey-8 q-gutter-xs">
             <q-btn @click.capture.stop="restoreBlockToForm(block)" flat outline size="sm" style="color: #419e5a" icon="fas fa-arrow-up">
-              <q-tooltip self="top middle" content-class="pipes-tooltip">Restore block settings for reuse'</q-tooltip>
+              <q-tooltip self="top middle" content-class="pipes-tooltip">Restore block settings to form above</q-tooltip>
             </q-btn> 
             <q-btn @click.capture.stop="deleteBlock(block,block.label,true)" flat outline size="sm" style="color: #b81220" icon="fas fa-trash-alt">
               <q-tooltip self="top middle" content-class="pipes-tooltip">Delete '{{block.label}}'</q-tooltip>
@@ -221,7 +221,7 @@
             this.discoverCollectionsPromise().then((response) => {
             this.availableCollections = self.filterCollections(response.data)
             if (collectionName !== null && collectionName !== '') {
-              console.log("Trying to select collection " + collectionName)
+              console.log("Trying to auto-select block collection " + collectionName)
               for (var x = 0; x < self.availableCollections.length; x++) {
                   if ( self.availableCollections[x].label == collectionName ) {
                   self.selectedCollection = self.availableCollections[x]
@@ -352,6 +352,10 @@
               this.blockName = block.label
           //    this.selectedDatabase=block.database  -- GRAPH BLOCK DOES NOT HAVE DB DETAIL
 
+          if (block.metadata.customURIs && block.metadata.customURIs !== null) {
+              this.customURI = block.metadata.customURIs
+          }
+
           var blockSourceDatabase, blockSourceCollection
           if (block.metadata.sourceDatabase && block.metadata.sourceDatabase != '') blockSourceDatabase = block.metadata.sourceDatabase
           if (block.metadata.sourceCollection && block.metadata.sourceCollection != '') blockSourceCollection = block.metadata.sourceCollection
@@ -450,12 +454,10 @@
             console.log("Adding field back to tree:" + reloadedBlock.fields[i].label)
             this.selectedFields.push(reloadedBlock.fields[i].label)
 
-            if ( this.collectionModel[0].children.length > 0 )
-            this.$refs["selectionTree"].setExpanded("source",true)
+         }
 
             if ( this.collectionModel[1].children.length > 0 )
-            this.$refs["selectionTree"].setExpanded("custom",true)
-         } 
+            this.$refs["selectionTree"].setExpanded("custom",true) 
           }
       },
       discoverModel(collection,customURI) {
@@ -473,6 +475,9 @@
         this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionModel' + dbOption)
           .then((response) => {
             this.collectionModel[0].children = response.data
+            if ( response.data != null && response.data.length > 0  ) {
+              this.$refs.selectionTree.setExpanded("source",true)
+            }
           })
           .catch(() => {
             this.$q.notify({
@@ -500,7 +505,8 @@
           let blockMetadata = { 
             "dateCreated" : new Date().toISOString(),
             "sourceDatabase" : this.selectedDatabase != null ? this.selectedDatabase.label : '' ,
-            "sourceCollection" : this.selectedDatabase != null ? this.selectedCollection.value : ''      
+            "sourceCollection" : this.selectedDatabase != null ? this.selectedCollection.value : '',
+            "customURIs" : this.customURI  
           }
 
           let blockDef = { 
