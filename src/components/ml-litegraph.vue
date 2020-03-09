@@ -185,7 +185,7 @@
             </q-card>
         </q-dialog>
 
-        <q-dialog v-model="showBlockOnGraphNoDelete" persistent>
+        <q-dialog v-model="BlockDeletion.showBlockOnGraphNoDelete" persistent>
           <q-card>
             <q-card-section class="row items-center">
               <q-avatar icon="fas fa-trash-alt" color="primary" text-color="red"></q-avatar>
@@ -329,6 +329,18 @@
       </q-card>
     </q-dialog>
 
+    <q-dialog v-model="BlockDeletion.confirmBlockDelete" persistent>
+          <q-card>
+            <q-card-section class="row items-center">
+              <q-avatar icon="fas fa-trash-alt" color="primary" text-color="red"></q-avatar>
+            <span class="q-ml-sm">Are you sure you want to delete <b>{{this.BlockDeletion.delBlockName}}</b>?</span>
+            </q-card-section>
+            <q-card-actions align="right">
+              <q-btn flat label="Cancel" color="primary" v-close-popup></q-btn>
+              <q-btn flat label="Delete" color="primary" @click="BlockDeletion.deleteBlockNow = true; checkGraphBlockDelete(BlockDeletion.delBlock)" v-close-popup></q-btn>
+            </q-card-actions>
+            </q-card>
+        </q-dialog>
 
     <q-dialog
       v-model="showCodeGenConfig"
@@ -348,7 +360,7 @@
       </q-card>
     </q-dialog>
 
-     <button v-shortkey.once="['ctrl','shift', 'x']" @shortkey="openSettingsDialog()"/></button>
+     <button v-shortkey.once="['ctrl','shift', 'x']" @shortkey="openSettingsDialog()"/>
   </div>
 
 </template>
@@ -400,9 +412,15 @@
         confirmResetGraph: false,
         warnBlockOnGraph: false,
         warnBlockName: "",
-        showBlockOnGraphNoDelete: false,
         deleteGraphName: "",
         deleteGraphURI: "",
+        BlockDeletion: {
+            showBlockOnGraphNoDelete: false,
+            confirmBlockDelete: false,
+            deleteBlockNow: false,
+            delBlock: null,
+            delBlockName: ""
+        },
         dbEntities: [],
         graphMetadata: {
           title: "My Graph",
@@ -1021,11 +1039,33 @@
 
       }, 
       
-    checkGraphBlockDelete(blockKey) {
-      if ( this.isblockOnGraph(this.graph,blockKey) ) {
-        this.showBlockOnGraphNoDelete = true
-      } else {
+    // Remove block from modelList, checking the graph first  
+    checkGraphBlockDelete(block) {
+
+      if ( block == null ) return;
+
+       const blockKey = block.source + "/" + block.label
+
+      console.log("checkGraphBlockDelete " + blockKey )
+
+      this.BlockDeletion.delBlockName = block.label;
+      this.BlockDeletion.delBlock = block;
+
+      if ( this.BlockDeletion.deleteBlockNow ) {
+
+        this.BlockDeletion.deleteBlockNow = false;
+        this.BlockDeletion.delBlock = null;
+        this.BlockDeletion.delBlockName = '';
+        console.log("Deleting block from list: " + blockKey)
         this.$store.commit('removeBlock',blockKey)
+
+      } else {
+ 
+      if ( this.isblockOnGraph(this.graph,blockKey) ) {
+        this.BlockDeletion.showBlockOnGraphNoDelete = true
+      } else {
+        this.BlockDeletion.confirmBlockDelete = true
+      }
       }
     },
     browserRefreshConfirm(event) {
@@ -1226,6 +1266,7 @@
       this.$root.$on("loadDHFDefaultGraphCall", this.resetDhfDefaultGraph);
       this.$root.$on("listGraphBlocks", this.listGraphBlocks);
       this.$root.$on("checkGraphBlockDelete", this.checkGraphBlockDelete);
+      this.$root.$on('blockRequested', this.createBlock);
 
       this.discoverDatabases()
 
@@ -1250,10 +1291,9 @@ beforeMount() {
     }
     )
 },
-    created() {
-      this.$root.$on('blockRequested', this.createBlock)
-
-    }
+beforeDestroy() {
+  this.$root.$off('blockRequested', this.createBlock); // de-register otherwise double events occur
+}
 
   }
 </script>

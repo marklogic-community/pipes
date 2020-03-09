@@ -2,16 +2,18 @@
 <template>
 
   <div class="column gutter-sm">
+
+    <q-form @submit="notifyBlockRequested">
    
     <q-input style="font-size: 1.5em" ref="blockName" bottom-slots v-model="blockName" label="Block name" maxlength="40"/>
 
-     <div class="spacer-div">
-      <q-btn :label="blockButtonLabel" @click.prevent="notifyBlockRequested()" :disabled="cleanBlockName() == ''">
-        <q-tooltip class="pipes-tooltip">
-          Create new Source block and add to the library
-        </q-tooltip>
-      </q-btn>
-      </div>
+    <div class="spacer-div">
+
+    <q-btn type="submit" :label="blockButtonLabel" :disabled="cleanBlockName() == ''">
+      <q-tooltip class="pipes-tooltip">Create new Source block and add to the library</q-tooltip>
+    </q-btn>
+    
+    </div>
 
     <q-select
       name="databaseSelector"
@@ -25,7 +27,7 @@
     >
    <!-- <q-tooltip self="center right" content-class="tool-tip" v-model="toolTips">Database the block reads documents from</q-tooltip>-->
        <template v-slot:prepend>
-        <q-icon name="fas fa-database" @click.stop />
+        <q-icon name="fas fa-database"/>
       </template>
     </q-select>
 
@@ -35,13 +37,12 @@
       :options.sync="availableCollections"
       @input="collectionChanged"
       filled
-
       separator
       label="Source collection"
       stack-label
     >
       <template v-slot:prepend>
-        <q-icon name="fas fa-tags" @click.stop>
+        <q-icon name="fas fa-tags">
          <!-- <q-tooltip self="center right" content-class="tool-tip" v-model="toolTips">Collection the block reads data from</q-tooltip>-->
         </q-icon>
       </template>
@@ -49,14 +50,14 @@
 
     <q-input bottom-slots v-model="customURI" label="Analyze custom URIs (space separated)" >
       <template v-slot:append>
-        <q-btn round dense flat icon="play_arrow" @click="collectionChanged()"/>
+        <q-btn round dense flat icon="play_arrow" @click="collectionChanged"/>
       </template>
     </q-input>
 
     <q-input ref="customFieldName" maxlength="60" bottom-slots v-model="newCustomFieldName" label="Add custom field"
-     :rules="[ val => (cleanCustomFieldName(val).length >= 0 ) || 'Invalid field name']" @blur="resetCustomFieldValidation()">
+     :rules="[ val => (cleanCustomFieldName(val).length >= 0 ) || 'Invalid field name']" @blur="resetCustomFieldValidation">
       <template v-slot:append>
-        <q-btn round dense flat icon="add" :disabled="cleanCustomFieldName() == ''" @click="addCustomField()"/>
+        <q-btn round dense flat icon="add" :disabled="cleanCustomFieldName() == ''" @click="addCustomField"/>
       </template>
     </q-input>
 
@@ -87,7 +88,9 @@
       { label: 'Create fields outputs', value: 'fieldsOutputs' }
     ]"
     />
+
       </q-expansion-item>
+   </q-form>
 
         <q-expansion-item
           expand-separator
@@ -128,20 +131,7 @@
       </q-item>
     </q-list>
 
-    <q-dialog v-model="confirmBlockDelete" persistent>
-          <q-card>
-            <q-card-section class="row items-center">
-              <q-avatar icon="fas fa-trash-alt" color="primary" text-color="red"></q-avatar>
-            <span class="q-ml-sm">Are you sure you want to delete <b>{{deleteBlockName}}</b>?</span>
-            </q-card-section>
-            <q-card-actions align="right">
-              <q-btn flat label="Cancel" color="primary" v-close-popup></q-btn>
-              <q-btn flat label="Delete" color="primary" @click="deleteBlock(block,false)" v-close-popup></q-btn>
-            </q-card-actions>
-            </q-card>
-        </q-dialog>
-      </q-expansion-item>
-
+    </q-expansion-item>
 
   </div>
 </template>
@@ -167,16 +157,12 @@
         blockButtonLabel: "Create Source Block",
         selectedCollection: "",
         saveBlockToDB:false,
-        blockSaved: false,
         selectedDatabase:null,
         selectedFields: [],
         selectedFieldsNodes:null,
         selectedCollection: null,
         availableCollections: [],
         availableDatabases: [],
-        confirmBlockDelete: false,
-        deleteBlockName: "",
-        deleteBlockKey: "",
         collectionModel: [
           {
           label: 'source',
@@ -194,7 +180,6 @@
         newCustomFieldName:"",
         customURI:"",
         toolTips:true
-
       }
     },
     computed: {
@@ -292,10 +277,6 @@
           this.resetCustomFieldValidation()
         }
       },
-      collectionIsAvailable(collection) {
-        console.log("Available collections:")
-        console.log( JSON.stringify( this.availableCollections ) )
-      },
       discoverCollections() {
         var self = this;
         let dbOption =""
@@ -310,6 +291,7 @@
             self.notifyError("collectionDetails", error, self);
           })
       },
+      // same as discoverCollections but returns promise so we can set dropdown after retreiving collection list
        discoverCollectionsPromise() {
         let dbOption =""
         if(this.selectedDatabase!=null && this.selectedDatabase!="") {
@@ -327,22 +309,8 @@
             self.notifyError("databasesDetails", error,self);
           })
       },
-      // loadSavedBlocks now retrieves blocks from graph
-      loadSavedBlocks() {
-         var self = this
-         /*
-         this.$axios.get('/v1/resources/vppBackendServices?rs:action=ListSavedBlock')
-          .then((response) => {
-            this.savedBlocks = response.data;
-          })
-          .catch((error) => {
-            self.notifyError("ListSavedBlock", error, self);
-          })
-          */
-
-      },
       
-      // Restore block to main editing panel. Foremerly from db, now from graph
+      // Restore block to main editing panel. Formerly from db, now from graph
       restoreBlockToForm(block) {
         console.log("Restoring source block to form: " + block.label)
 
@@ -370,69 +338,8 @@
       
       // remove block Model list
       deleteBlock(block, showDialog) {
-
-        this.$root.$emit("checkGraphBlockDelete",block.source + "/" + block.collection)
-
-        /*
-
-        if ( this.isblockOnGraph(this.graph, blockName) ) {
-          this.confirmBlockDelete = true
-        } else {
-
-        if ( showDialog ) {
-          this.deleteBlockKey = blockKey
-          this.deleteBlockName = blockName
-          this.confirmBlockDelete = true
-          return
-        }
-        }
-          console.log("Deleting block: " + blockName)
-
-          this.$store.commit("removeBlock",blockKey)
-          */
-
+        this.$root.$emit("checkGraphBlockDelete",block)
       },
-      /*
-      saveBlock() {
-        var self = this;
-
-        let blockMetadata = { "dateCreated" : new Date().toISOString() }
-         var updatedFields = []
-
-        if ( this.selectedFields !== null) {
-
-        // Identify collection and custom fields
-
-        for (var x = 0; x < this.selectedFields.length; x++) {
-    
-        var field = this.selectedFields[x]
-        var isCustomField = false;
-        for (var i = 0; isCustomField == false && i < self.collectionModel[1].children.length; i++) {
-                isCustomField = (this.selectedFields[i] == field) 
-          }
-                updatedFields.push({"label" : field, "customField" : isCustomField});
-        }
-        }
-
-        let blockDef = {
-          name: this.blockName,
-          database: this.selectedDatabase,
-          [BLOCK_COLLECTION]: this.selectedCollection,
-          [BLOCK_SOURCE]: SOURCE_BLOCK_TYPE,
-          [BLOCK_FIELDS]: updatedFields, //this.selectedFields,
-          [BLOCK_OPTIONS]: this.blockOptions,
-          metadata: blockMetadata
-        }
-
-        return this.$axios.post('/v1/resources/vppBackendServices?rs:action=SaveBlock', blockDef)
-          .then((response) => {
-            this.savedGraph = response.data
-          })
-          .catch((error) => {
-            self.notifyError("SaveBlock", error, self);
-          })
-      },
-      */
       // Restore collection fields and custom fields after block reload 
       restoreFields(reloadedBlock) {
 
@@ -462,7 +369,7 @@
       },
       discoverModel(collection,customURI) {
         let dbOption =""
-        if(this.selectedDatabase!=null && this.selectedDatabase!="") {
+        if (this.selectedDatabase!=null && this.selectedDatabase!="") {
           dbOption += "&rs:database=" + this.selectedDatabase.value
         }
 
@@ -500,6 +407,8 @@
 
       notifyBlockRequested() {
 
+        console.log( 'notifyBlockRequested called' )
+
         this.blockName = this.cleanBlockName()
            
           let blockMetadata = { 
@@ -520,15 +429,12 @@
           }
 
           this.$root.$emit("blockRequested", blockDef);
-          this.blockSaved = true; 
 
       }
+
     },
     mounted() {
       this.discoverDatabases()
-      this.loadSavedBlocks();
-      this.$refs.selectionTree.getNodeByKey("custom")
-      console.log( "VUEX:" + this.$store.state.models )
     }
   }
 
