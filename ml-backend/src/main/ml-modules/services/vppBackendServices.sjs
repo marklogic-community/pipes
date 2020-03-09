@@ -343,10 +343,11 @@ function executeGraph(input, params) {
   let db = (params.database != null) ? params.database : xdmp.database()
   let targetDb = (params.toDatabase != null) ? params.toDatabase : xdmp.database()
   let result = xdmp.invokeFunction(invokeExecuteGraph.execute, {database: db})
-
+  let jsonResults = result
   if (params.save == "true") {
 
-    let jsonResults = JSON.parse(xdmp.quote(result))
+    if(jsonResults.toArray) jsonResults = jsonResults.toArray()
+    //let jsonResults = JSON.parse(xdmp.quote(result))
     if (!Array.isArray(jsonResults)) {
 
       jsonResults = [jsonResults]

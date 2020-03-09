@@ -8,6 +8,10 @@ const PNF = require('/custom-modules/pipes/google-libphonenumber.sjs').PhoneNumb
 const phoneUtil = require('/custom-modules/pipes/google-libphonenumber.sjs').PhoneNumberUtil.getInstance();
 const BLOCK_RUNTIME_DEBUG_TRACE = "pipesBlockRuntimeDebug";
 
+const DataHub = require("/data-hub/5/datahub.sjs");
+const datahub = new DataHub();
+
+
 function init(LiteGraph){
 
 
@@ -117,7 +121,7 @@ function init(LiteGraph){
     this.properties = {};
     var that = this;
 
-
+    this.format = this.addWidget("combo","format", "json", function(v){}, { values:["json","xml"]} );
 
     this.size = [180, 60];
   }
@@ -176,12 +180,17 @@ function init(LiteGraph){
 
 
 
-    let result = {'envelope' : {}} ;
+    //let result = {'envelope' : {}} ;
     // if(this.getInputData(0)==undefined) {
-    result.envelope.headers = (this.getInputData(0)!=undefined)?this.getInputData(0):{};
-    result.envelope.triples = (this.getInputData(1)!=undefined)?this.getInputData(1):{};
-    result.envelope.instance = (this.getInputData(2)!=undefined)?this.getInputData(2):{};
-    result.envelope.attachments  = (this.getInputData(3)!=undefined)?this.getInputData(3):{};
+    let headers = (this.getInputData(0)!=undefined)?this.getInputData(0):{};
+    let triples = (this.getInputData(1)!=undefined)?this.getInputData(1):[];
+    let instance = (this.getInputData(2)!=undefined)?this.getInputData(2):{};
+    let attachments  = (this.getInputData(3)!=undefined)?this.getInputData(3):{};
+
+
+
+    let result = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, this.format.value)
+
 
     let defaultCollections = (this.graph.inputs["collections"]!=null)?this.graph.inputs["collections"].value:null
     let defaultUri = (this.graph.inputs["uri"]!=null)?this.graph.inputs["uri"].value:sem.uuidString()
