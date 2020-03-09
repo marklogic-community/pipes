@@ -6,6 +6,9 @@ package com.marklogic.pipes.ui.auth;
 
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.DatabaseClientFactory;
+import com.marklogic.client.ext.SecurityContextType;
+import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager;
 import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
@@ -128,11 +131,30 @@ public class AuthService extends AbstractLoggingClass {
     appConfig.setRestAdminPassword(getPassword());
     appConfig.setAppServicesUsername(getUsername());
     appConfig.setAppServicesPassword(getPassword());
+
+    // hope this is enough for connecting to DHS
+    if (clientConfig.getMlUseSsl()) {
+      appConfig.setAppServicesSimpleSslConfig();
+    }
+
     return appConfig;
   }
 
   public AdminManager createAdminManager() {
     // used for restarting ML; defaults to localhost/8001/admin/admin
+    AdminConfig adminConfig=new AdminConfig(  clientConfig.getMlHost(),
+      clientConfig.getMlAdminPort(),
+      getUsername(),
+      getPassword());
+
+    // hope this is enough for connecting to DHS
+    if (clientConfig.getMlUseSsl()) {
+      adminConfig.setConfigureSimpleSsl(true);
+//      appConfig.setAppServicesSecurityContextType(SecurityContextType.BASIC);
+//      appConfig.setAppServicesTrustManager(new SimpleX509TrustManager());
+//      appConfig.setAppServicesSslHostnameVerifier(DatabaseClientFactory.SSLHostnameVerifier.ANY);
+    }
+    
     return new AdminManager(new AdminConfig(
       clientConfig.getMlHost(),
       clientConfig.getMlAdminPort(),

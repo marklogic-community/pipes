@@ -6,6 +6,7 @@ package com.marklogic.pipes.ui.config;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
+import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager;
 import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.util.RequestParameters;
 import org.slf4j.Logger;
@@ -196,13 +197,32 @@ public class ClientConfig
   }
 
   public DatabaseClient client(String username, String password) {
+    DatabaseClient databaseClient = null;
 
+    if (getMlUseSsl() == true) {
+      DatabaseClientFactory.SecurityContext dbSecurityContext = new DatabaseClientFactory.BasicAuthContext(username,
+        password);
 
+      dbSecurityContext.withSSLContext(
+        SimpleX509TrustManager.newSSLContext(),
+        new SimpleX509TrustManager());
 
-    return DatabaseClientFactory.newClient(
-      getMlHost(),
-      getMlStagingPort(),
-      new DatabaseClientFactory.DigestAuthContext(username, password));
+      dbSecurityContext
+        .withSSLHostnameVerifier(com.marklogic.client.DatabaseClientFactory.SSLHostnameVerifier.ANY);
+
+      databaseClient = DatabaseClientFactory.newClient(getMlHost(),
+        getMlStagingPort(), dbSecurityContext);
+    }
+    else {
+
+      databaseClient=DatabaseClientFactory.newClient(
+        getMlHost(),
+        getMlStagingPort(),
+        new DatabaseClientFactory.DigestAuthContext(username,password));
+
+    }
+
+    return databaseClient;
   }
 
   public RequestParameters extractParams(HttpServletRequest request) {
