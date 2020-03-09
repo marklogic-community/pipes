@@ -352,13 +352,13 @@
               this.blockName = block.label
           //    this.selectedDatabase=block.database  -- GRAPH BLOCK DOES NOT HAVE DB DETAIL
 
-          if (block.metadata.customURIs && block.metadata.customURIs !== null) {
+          if (block.metadata && block.metadata.customURIs && block.metadata.customURIs !== null) {
               this.customURI = block.metadata.customURIs
           }
 
           var blockSourceDatabase, blockSourceCollection
-          if (block.metadata.sourceDatabase && block.metadata.sourceDatabase != '') blockSourceDatabase = block.metadata.sourceDatabase
-          if (block.metadata.sourceCollection && block.metadata.sourceCollection != '') blockSourceCollection = block.metadata.sourceCollection
+          if (block.metadata && block.metadata.sourceDatabase && block.metadata.sourceDatabase != '') blockSourceDatabase = block.metadata.sourceDatabase
+          if (block.metadata && block.metadata.sourceCollection && block.metadata.sourceCollection != '') blockSourceCollection = block.metadata.sourceCollection
 
           this.setDatabaseCollectionsDropdowns(blockSourceDatabase,blockSourceCollection)
 
