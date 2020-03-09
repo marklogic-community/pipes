@@ -32,12 +32,12 @@ const LiteGraphHelper = {
     }
   },
 
-  isblockInModelList: function(pipesModels, blockName) {
-      console.log("blockInModelList " + blockName)
+  isblockInModelList: function(pipesModels, blockKey) {
+      console.log("blockInModelList: " + blockKey)
       var isInList = false
       for (var i = 0; i < pipesModels.length; i++) { 
-        console.log("Checking " + pipesModels[i].label)
-        if ( pipesModels[i].label == blockName ) {
+        console.log("Checking against: " + pipesModels[i].source + "/" + pipesModels[i].label)
+        if ( (pipesModels[i].source + "/" + pipesModels[i].label) == blockName ) {
           isInList = true
           break
         }

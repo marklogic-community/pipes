@@ -6,7 +6,7 @@
     <q-input style="font-size: 1.5em" ref="blockName" bottom-slots v-model="blockName" label="Block name" maxlength="40"/>
 
      <div class="spacer-div">
-      <q-btn :label="blockButtonLabel" @click="notifyBlockRequested()" :disabled="cleanBlockName() == ''">
+      <q-btn :label="blockButtonLabel" @click.prevent="notifyBlockRequested()" :disabled="cleanBlockName() == ''">
         <q-tooltip class="pipes-tooltip">
           Create new Source block and add to the library
         </q-tooltip>

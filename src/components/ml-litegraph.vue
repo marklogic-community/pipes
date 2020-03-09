@@ -502,18 +502,19 @@
         var blockInList = false;
 
        console.log("createBlock request to create block: " + JSON.stringify(blockDef))
-
-       if ( this.isblockInModelList(this.graph,blockDef.source + "/" + blockDef.collection )) {
-         console.log("Block is in the model list")
-       } 
+       blockInList = this.isblockInModelList(this.graph,blockDef.source + "/" + blockDef.collection )
 
        if ( this.isblockOnGraph(this.graph,blockDef.source + "/" + blockDef.collection )) {
-         console.log("BLOCK IS ON THE GRAPH")
+         console.log("Warning: Block is being used on the graph")
          this.warnBlockName = blockDef.label
          this.warnBlockOnGraph = true
        } else {
-         console.log("Removing the block")
-         this.$store.commit('removeBlock',blockDef)
+         if (blockInList) {
+            console.log("Replacing the block")
+            this.$store.commit('removeBlock',blockDef)
+         } else {
+           console.log("Adding new block")
+         }
          this.doBlockAdd(blockDef)
        }
 
@@ -521,13 +522,14 @@
 
       doBlockAdd(blockDef) {
        console.log("Adding block: " + JSON.stringify(blockDef))
-       let newBlock = this.createGraphNodeFromModel(blockDef);
 
-      this.$store.commit('addBlock', blockDef)
+       let newBlock = this.createGraphNodeFromModel(blockDef);
+       this.$store.commit('addBlock', blockDef)
+
+       console.log("Block model list now has " + this.blockModels.length + " blocks")
 
        console.log("newBlock : " + JSON.stringify(newBlock) )
        LiteGraph.registerNodeType(blockDef.source + "/" + blockDef.collection, newBlock);
-      // this.models.push(blockDef)
 
         this.$q.notify({
           color: 'positive',
