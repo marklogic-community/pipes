@@ -51,11 +51,19 @@ public class ClientConfig
   @NotBlank(message = message)
   private String mlHost;
 
-//  @NotBlank(message = message)
   private String mlUsername;
 
-//  @NotBlank(message = message)
   private String mlPassword;
+
+  public Boolean getMlUseSsl() {
+    return mlUseSsl;
+  }
+
+  public void setMlUseSsl(Boolean mlUseSsl) {
+    this.mlUseSsl = mlUseSsl;
+  }
+
+  private Boolean mlUseSsl;
 
   @Min(message = intMessage,value = 1)
   private int mlStagingPort;
@@ -188,6 +196,9 @@ public class ClientConfig
   }
 
   public DatabaseClient client(String username, String password) {
+
+
+
     return DatabaseClientFactory.newClient(
       getMlHost(),
       getMlStagingPort(),
