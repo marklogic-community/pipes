@@ -21,7 +21,12 @@ export default function () {
     },
     getters: {
     models: state => { return state.models },
-    getGraphMetadata: (state) => (field) => { return state.GraphMetadata[field] }
+    getGraphMetadata: (state) => (field) => { return state.GraphMetadata[field] },
+    sourceBlocks: state => {
+      return this.$store.state.models.filter(function (block) {
+      return block.source == "Sources"
+  })
+}
     },
     mutations: {
     addBlock(state, block) {
@@ -43,9 +48,10 @@ export default function () {
         state.models.push(block) 
 
     },
-    removeBlock: (state, rmblock) => {
-        const i = state.models.map(block => block.label).indexOf(rmblock.label);
-        state.models.splice(i, 1);
+    // blockKey should be block.source/block.label
+    removeBlock: (state, blockKey) => {
+      const i = state.models.map(item => (item.source + "/" + item.label)).indexOf(blockKey);
+      state.models.splice(i, 1);
       },
     clearBlocks(state) { state.models = [] }
     }

@@ -333,7 +333,7 @@
           <q-card>
             <q-card-section class="row items-center">
               <q-avatar icon="fas fa-trash-alt" color="primary" text-color="red"></q-avatar>
-            <span class="q-ml-sm">Are you sure you want to delete <b>{{this.BlockDeletion.delBlockName}}</b>?</span>
+            <span class="q-ml-sm">Are you sure you want to delete souece block <b>{{this.BlockDeletion.delBlockName}}</b>?</span>
             </q-card-section>
             <q-card-actions align="right">
               <q-btn flat label="Cancel" color="primary" v-close-popup></q-btn>
@@ -1248,7 +1248,6 @@
       console.log("mounted")
 
       this.$root.$on("csvLoadingRequested", this.createGraphFromMapping)
-    //  this.$root.$on("registerModel", this.registerModel);
       this.$root.$on('executeGraphCall', function () {
         this.showPreview = true
       }.bind(this))
@@ -1292,7 +1291,26 @@ beforeMount() {
     )
 },
 beforeDestroy() {
-  this.$root.$off('blockRequested', this.createBlock); // de-register otherwise double events occur
+  // de-register events otherwise multiple occur
+   this.$root.$off('blockRequested', this.createBlock);
+   this.$root.$off("loadGraphJsonCall", this.loadGraphFromJson);
+
+
+   this.$root.$off("csvLoadingRequested", this.createGraphFromMapping)
+   this.$root.$off("databaseChanged", this.setCurrrentDatabase);
+   this.$root.$off("saveGraphCall", this.saveGraph);
+   this.$root.$off("downloadGraphCall", this.downloadGraph);
+   this.$root.$off("uploadGraphCall", function () {
+        this.showUploadGraph = true
+      }.bind(this))
+      this.$root.$off("loadGraphCall", this.loadGraph);
+      this.$root.$off("loadGraphJsonCall", this.loadGraphFromJson);
+      this.$root.$off("exportGraphCall", this.exportDHFModule);
+      this.$root.$off("nodeDblClicked", this.DblClickNode);
+      this.$root.$off("nodeSelected", this.selectNode);
+      this.$root.$off("loadDHFDefaultGraphCall", this.resetDhfDefaultGraph);
+      this.$root.$off("listGraphBlocks", this.listGraphBlocks);
+      this.$root.$off("checkGraphBlockDelete", this.checkGraphBlockDelete);
 }
 
   }
