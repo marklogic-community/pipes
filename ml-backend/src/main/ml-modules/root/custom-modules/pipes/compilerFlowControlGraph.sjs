@@ -4,7 +4,7 @@ module.exports = class PipesFlowControlGraph {
     this.allPaths = []
   }
 
-  initFromLiteGraph(litegraphJSON) {
+  initFromLiteGraph(LiteGraph,startNode,litegraphJSON) {
     let arr = [];
     this.graph.clear();
     for ( const node of litegraphJSON.executionGraph.nodes || [] ){
@@ -15,6 +15,11 @@ module.exports = class PipesFlowControlGraph {
           const toNode = outputData.nodeId;
           this.addEdge(fromNode,toNode);
         }
+      }
+      let bc = new LiteGraph.registered_node_types[node.type]();
+      if ( ( "onDeadNodeRemoval" in bc  && bc.onDeadNodeRemoval() === false ) ) {
+        // artificial add a depedency
+        this.addEdge(startNode,fromNode)
       }
     }
     return arr;
@@ -67,7 +72,9 @@ module.exports = class PipesFlowControlGraph {
     let allNodes = new Set();
     this.graph.forEach(function(value, key, map) { allNodes.add(key); value.forEach(allNodes.add,allNodes)});
     let dead = new Set([...allNodes].filter(x => !liveNodes.has(x)));
-    dead.forEach(x=>this.removeNode(x))
+    dead.forEach(x=>{
+          this.removeNode(x)
+    });
   }
 
   isCyclicUtil(i, visited,  recStack)  {

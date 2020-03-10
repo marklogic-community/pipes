@@ -2,7 +2,7 @@ module.exports = {
 
   getCurrentDate,
 
-  split
+  split,
 
 };
 
