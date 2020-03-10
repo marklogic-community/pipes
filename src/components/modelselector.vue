@@ -159,7 +159,6 @@
         saveBlockToDB:false,
         selectedDatabase:null,
         selectedFields: [],
-        selectedFieldsNodes:null,
         selectedCollection: null,
         availableCollections: [],
         availableDatabases: [],
@@ -227,14 +226,27 @@
       }
       ,
       collectionChanged() {
-       // console.log(this.selectedCollection)
+        this.selectedFields = [];
         this.discoverModel(this.selectedCollection,this.customURI)
       },
-       resetBlockFields() {
-        this.newCustomFieldName = null
-        this.blockName = null
+       resetBlockFormFields() {
+        this.newCustomFieldName = ''
+        this.blockName = ''
         this.selectedDatabase = null
-        this.$refs.customFieldName.resetValidation()
+        this.selectedCollection = null
+        this.selectedFields = []
+        this.collectionModel = [
+          {
+          label: 'source',
+            children: []
+        },
+          {
+            label: 'custom',
+            children: []
+          }
+
+        ]
+      //  this.$refs.customFieldName.resetValidation()
       },
       resetCustomFieldValidation() {
         this.newCustomFieldName= this.cleanCustomFieldName()
@@ -435,6 +447,10 @@
     },
     mounted() {
       this.discoverDatabases()
+      this.$root.$on('resetBlockFormFields', this.resetBlockFormFields);
+    },
+    beforeDestroy() {
+      this.$root.$on('resetBlockFormFields', this.resetBlockFormFields);
     }
   }
 

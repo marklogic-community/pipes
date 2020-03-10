@@ -33,21 +33,22 @@ const LiteGraphHelper = {
   },
 
   isblockInModelList: function(pipesModels, blockKey) {
-      console.log("blockInModelList: " + blockKey)
       var isInList = false
       for (var i = 0; i < pipesModels.length; i++) { 
         console.log("Checking against: " + pipesModels[i].source + "/" + pipesModels[i].label)
-        if ( (pipesModels[i].source + "/" + pipesModels[i].label) == blockName ) {
+        if ( (pipesModels[i].source + "/" + pipesModels[i].label) == blockKey ) {
           isInList = true
           break
         }
       }
+      console.log("Block " + blockKey + " " + (isInList ? "is" : "isn't") + " in the list" )
       return isInList
     },
 
     isblockOnGraph(liteGraph, blockKey) {
-      console.log("Checking if on graph")
-     return ( liteGraph.findNodesByType(blockKey).length > 0)
+     const isOnGraph = liteGraph.findNodesByType(blockKey).length > 0
+     console.log(blockKey + " is currently" + (isOngraph ? "" : " not") + " used on the graph")
+     return isOnGraph
     },
 
     searchTree(element, blockKey){
@@ -66,7 +67,7 @@ const LiteGraphHelper = {
 
 
   isblockOnGraph(liteGraph, blockName) {
-    console.log("blockIsOnGraph " + blockName)
+    //console.log("blockIsOnGraph " + blockName)
     var isOnGraph = false
     var g = liteGraph.serialize()
     return JSON.stringify( g ).includes(blockName)
@@ -85,7 +86,6 @@ const LiteGraphHelper = {
 
 // Graphs have duplicate blocks - analyse this
 findDuplicateBlocks: function(pipesModels) {
-  console.log("findDuplicateBlocks ")
   var checkArray = []
   for (var i = 0; i < pipesModels.length; i++) { 
     if ( pipesModels[i].source == "Sources" || pipesModels[i].source == 'Entities' ) checkArray.push(pipesModels[i])

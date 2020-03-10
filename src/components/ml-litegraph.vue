@@ -189,7 +189,7 @@
           <q-card>
             <q-card-section class="row items-center">
               <q-avatar icon="fas fa-trash-alt" color="primary" text-color="red"></q-avatar>
-            <span class="q-ml-sm">You must remove this block from the graph before deleting</span>
+            <span class="q-ml-sm">You must remove all <b>{{ this.BlockDeletion.delBlockName }}</b> blocks from the graph before deleting</span>
             </q-card-section>
             <q-card-actions align="right">
               <q-btn flat label="OK" color="primary" v-close-popup></q-btn>
@@ -333,7 +333,7 @@
           <q-card>
             <q-card-section class="row items-center">
               <q-avatar icon="fas fa-trash-alt" color="primary" text-color="red"></q-avatar>
-            <span class="q-ml-sm">Are you sure you want to delete souece block <b>{{this.BlockDeletion.delBlockName}}</b>?</span>
+            <span class="q-ml-sm">Are you sure you want to delete source block <b>{{this.BlockDeletion.delBlockName}}</b>?</span>
             </q-card-section>
             <q-card-actions align="right">
               <q-btn flat label="Cancel" color="primary" v-close-popup></q-btn>
@@ -518,43 +518,49 @@
       createBlock(blockDef) {
 
         var blockInList = false;
+        const BLOCK_KEY = blockDef.source + "/" + blockDef.collection
+        blockInList = this.isblockInModelList(this.blockModels,BLOCK_KEY )
 
-       console.log("createBlock request to create block: " + JSON.stringify(blockDef))
-       blockInList = this.isblockInModelList(this.graph,blockDef.source + "/" + blockDef.collection )
-
-       if ( this.isblockOnGraph(this.graph,blockDef.source + "/" + blockDef.collection )) {
-         console.log("Warning: Block is being used on the graph")
+       if ( this.isblockOnGraph(this.graph,BLOCK_KEY )) {
+         console.log("Warning: Block " + BLOCK_KEY + " is being used on the graph")
          this.warnBlockName = blockDef.label
          this.warnBlockOnGraph = true
        } else {
          if (blockInList) {
-            console.log("Replacing the block")
-            this.$store.commit('removeBlock',blockDef)
-         } else {
-           console.log("Adding new block")
-         }
+            console.log("Block " + BLOCK_KEY + " was already in list. Replacing.")
+            console.log("DEBUG: this.$store.commit('removeBlock') :" + JSON.stringify(blockDef) )
+            this.$store.commit('removeBlock',BLOCK_KEY)
+         } 
          this.doBlockAdd(blockDef)
        }
 
       },
 
       doBlockAdd(blockDef) {
+
        console.log("Adding block: " + JSON.stringify(blockDef))
-
-       let newBlock = this.createGraphNodeFromModel(blockDef);
        this.$store.commit('addBlock', blockDef)
+       console.log("Block model list now contains " + this.blockModels.length + " blocks")
 
-       console.log("Block model list now has " + this.blockModels.length + " blocks")
+       const BLOCK_KEY = blockDef.source + "/" + blockDef.collection
 
-       console.log("newBlock : " + JSON.stringify(newBlock) )
-       LiteGraph.registerNodeType(blockDef.source + "/" + blockDef.collection, newBlock);
+       const liteGraphNode = this.createGraphNodeFromModel(blockDef);
 
+       console.log("Registering block into LiteGraph as " + BLOCK_KEY + ": " + JSON.stringify(liteGraphNode) )
+       LiteGraph.registerNodeType(BLOCK_KEY, liteGraphNode);
+
+       this.$root.$emit("resetBlockFormFields")
+
+       this.notifyPositive(this,"New block is now available in the library (right click)")
+
+/*
         this.$q.notify({
           color: 'positive',
           position: 'top',
           message: "New block is now available in the library (right click)",
           icon: 'code'
         })
+        */
       },
 
       addMapping() {
