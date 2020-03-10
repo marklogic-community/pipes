@@ -528,7 +528,6 @@
        } else {
          if (blockInList) {
             console.log("Block " + BLOCK_KEY + " was already in list. Replacing.")
-            console.log("DEBUG: this.$store.commit('removeBlock') :" + JSON.stringify(blockDef) )
             this.$store.commit('removeBlock',BLOCK_KEY)
          } 
          this.doBlockAdd(blockDef)
@@ -540,27 +539,19 @@
 
        console.log("Adding block: " + JSON.stringify(blockDef))
        this.$store.commit('addBlock', blockDef)
-       console.log("Block model list now contains " + this.blockModels.length + " blocks")
 
        const BLOCK_KEY = blockDef.source + "/" + blockDef.collection
-
        const liteGraphNode = this.createGraphNodeFromModel(blockDef);
 
        console.log("Registering block into LiteGraph as " + BLOCK_KEY + ": " + JSON.stringify(liteGraphNode) )
        LiteGraph.registerNodeType(BLOCK_KEY, liteGraphNode);
 
+       //console.log("Menu now has: " + JSON.stringify(LiteGraph.getNodeType( BLOCK_KEY )) )
+
        this.$root.$emit("resetBlockFormFields")
 
-       this.notifyPositive(this,"New block is now available in the library (right click)")
+       this.notifyPositive(this, blockDef.label + " is now available in the library (right click)")
 
-/*
-        this.$q.notify({
-          color: 'positive',
-          position: 'top',
-          message: "New block is now available in the library (right click)",
-          icon: 'code'
-        })
-        */
       },
 
       addMapping() {
@@ -1064,7 +1055,9 @@
         this.BlockDeletion.delBlockName = '';
         console.log("Deleting block from list: " + blockKey)
         this.$store.commit('removeBlock',blockKey)
-
+        var block = LiteGraph.getNodeType( blockKey )
+        console.log("LiteGraph has: " + JSON.stringify( LiteGraph.registered_node_types[blockKey] ) )
+        console.log("Block is: " + JSON.stringify( block ) )
       } else {
  
       if ( this.isblockOnGraph(this.graph,blockKey) ) {

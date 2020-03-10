@@ -21,7 +21,6 @@ export default function () {
     },
     getters: {
     models: state => { return state.models },
-    getGraphMetadata: (state) => (field) => { return state.GraphMetadata[field] },
     sourceBlocks: state => {
       return this.$store.state.models.filter(function (block) {
       return block.source == "Sources"

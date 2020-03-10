@@ -9,7 +9,7 @@
 
     <div class="spacer-div">
 
-    <q-btn type="submit" :label="blockButtonLabel" :disabled="cleanBlockName() == ''">
+    <q-btn type="submit" :label="buttonLabel" :disabled="cleanBlockName() == ''">
       <q-tooltip class="pipes-tooltip">Create new Source block and add to the library</q-tooltip>
     </q-btn>
     
@@ -94,7 +94,7 @@
 
         <q-expansion-item
           expand-separator
-          icon="fas fa-database"
+          icon="fas fa-cube"
           label="Source Blocks"
     >
     <q-list padding>
@@ -103,7 +103,9 @@
 
          <q-item-section avatar>
               <div class="block">
-                <q-tooltip self="top middle" content-class="pipes-tooltip">{{block}}</q-tooltip>
+                <q-tooltip class="pipes-tooltip">
+                <!-- <vue-json-pretty :data="block"/> -->
+               </q-tooltip>
                 <div class="block-title block">abc</div>
                 <div class="block-body block">
                   <div :class="block.source"/>
@@ -137,6 +139,7 @@
 </template>
 
 <script>
+  import VueJsonPretty from 'vue-json-pretty'
   import Notifications from '../components/notificationHandler.js';
   import DatabaseFilter from '../components/databaseFilter.js';
   import CollectionFilter from '../components/collectionFilter.js';
@@ -146,6 +149,9 @@
 
   export default {
     // name: 'ComponentName',
+    components: {
+      VueJsonPretty
+    },
     mixins: [
       Notifications,
       DatabaseFilter,
@@ -186,14 +192,20 @@
         return this.$store.state.models.filter(function (block) {
         return block.source == "Sources"
     })
-  }
+  },
+      blockModels: function () {
+      return this.$store.getters.models
+  },
+    buttonLabel: function(){
+      if ( this.blockName.trim() == '' ) return "CREATE SOURCE BLOCK"
+      return this.isblockInModelList(this.blockModels, "Sources/" + this.blockName) ? "UPDATE SOURCE BLOCK" : "CREATE SOURCE BLOCK"
+    }
     },
     methods: {
 
       logBlock(block) {
         console.log(JSON.stringify(block))
       },
-
       setDatabaseCollectionsDropdowns(dbName, collectionName) {
         console.log( "setDatabaseDropdown: " + dbName + "," + collectionName )
         if ( dbName == null || dbName == '') return;
@@ -229,6 +241,7 @@
         this.selectedFields = [];
         this.discoverModel(this.selectedCollection,this.customURI)
       },
+      // Restore block form to default values (after block creation)
        resetBlockFormFields() {
         this.newCustomFieldName = ''
         this.blockName = ''
@@ -244,8 +257,10 @@
             label: 'custom',
             children: []
           }
-
         ]
+
+         this.blockOptions = [BLOCK_OPTION_NODE_INPUT, BLOCK_OPTION_FIELDS_OUTPUT]
+
       //  this.$refs.customFieldName.resetValidation()
       },
       resetCustomFieldValidation() {
@@ -330,7 +345,6 @@
               this.collectionModel[1].children=[]
               this.selectedFields=[]
               this.blockName = block.label
-          //    this.selectedDatabase=block.database  -- GRAPH BLOCK DOES NOT HAVE DB DETAIL
 
           if (block.metadata && block.metadata.customURIs && block.metadata.customURIs !== null) {
               this.customURI = block.metadata.customURIs
