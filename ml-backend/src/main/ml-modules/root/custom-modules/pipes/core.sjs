@@ -8,6 +8,8 @@ const PNF = require('/custom-modules/pipes/google-libphonenumber.sjs').PhoneNumb
 const phoneUtil = require('/custom-modules/pipes/google-libphonenumber.sjs').PhoneNumberUtil.getInstance();
 const BLOCK_RUNTIME_DEBUG_TRACE = "pipesBlockRuntimeDebug";
 
+const coreFunctions = require("/custom-modules/pipes/coreFunctions.sjs")
+
 const DataHub = require("/data-hub/5/datahub.sjs");
 const datahub = new DataHub();
 
@@ -188,6 +190,10 @@ function init(LiteGraph){
     let attachments  = (this.getInputData(3)!=undefined)?this.getInputData(3):{};
 
 
+    if(instance.toObject && this.format.value=="json") {
+      instance = instance.toObject()
+      instance["$attachments"] = attachments
+    }
 
     let result = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, this.format.value)
 
@@ -1405,13 +1411,20 @@ function init(LiteGraph){
 
   function featureLookupBlock()
   {
-    this.addInput("query");
     this.addInput("var1");
     this.addInput("var2");
-    this.addOutput("value");
-    this.query = this.addWidget("text","query", "", function(v){}, {} );
-    this.valuePath = this.addWidget("text","valuePath", "", function(v){}, {} );
-    this.ctsQuery = this.addProperty("ctsQuery" );
+    this.nbOutputValues = this.addWidget("text","nbOutputValues", "string", function(v){},  { } );
+    this.database = this.addWidget("text","database", "string", function(v){},  { } );
+    this.value0Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
+    this.value1Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
+    this.value2Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
+    this.value3Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
+    this.value4Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
+    this.addOutput("val0");
+    this.addOutput("val1");
+    this.addOutput("val2");
+    this.addOutput("val3");
+    this.addOutput("val4");
 
   }
 
@@ -1422,8 +1435,13 @@ function init(LiteGraph){
 
   featureLookupBlock.prototype.onExecute = function()
   {
-    //let output = "lookup(" + this.getInputData(0) + "," + this.getInputData(1) + "," + this.getInputData(2) + ")"
+    let var1 = this.getInputData(0)
+    let var2 = this.getInputData(1)
+    coreFunctions.lookUp(this, var1,var2,this.nbOutputValues.value, this.properties.ctsQuery)
 
+
+    //let output = "lookup(" + this.getInputData(0) + "," + this.getInputData(1) + "," + this.getInputData(2) + ")"
+/*
     let query = this.getInputData(0)
 
     if(query==undefined || query==null) {
@@ -1444,7 +1462,7 @@ function init(LiteGraph){
     if(foundDoc!=null) this.setOutputData( 0, foundDoc.xpath(this.valuePath.value))
     //this.setOutputData( 0, output );
 
-
+*/
   }
 
 //register in the system
