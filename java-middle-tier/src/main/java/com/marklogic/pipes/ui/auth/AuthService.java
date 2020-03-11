@@ -7,7 +7,10 @@ package com.marklogic.pipes.ui.auth;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.extensions.ResourceServices;
+import com.marklogic.client.io.SearchHandle;
 import com.marklogic.client.io.StringHandle;
+import com.marklogic.client.query.QueryManager;
+import com.marklogic.client.query.StringQueryDefinition;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
@@ -94,22 +97,24 @@ public class AuthService extends AbstractLoggingClass {
 
     DatabaseClient client=clientConfig.client(username,password);
 
-    // call ListSavedBlock as a sanity check
-    ResourceServices service = clientConfig.getService(client);
 
     setAuthorized(true);
 
-    RequestParameters parameters = new RequestParameters();
-    parameters.add("action","ListSavedBlock");
+    QueryManager queryManager = client.newQueryManager();
+    StringQueryDefinition stringQueryDefinition= queryManager.newStringDefinition();
+    stringQueryDefinition.setCriteria("");
+
 
     boolean authorized=true;
     try {
-      service.get(parameters,new StringHandle());
+      queryManager.search(stringQueryDefinition, new SearchHandle());
     } catch (Exception e) {
       setAuthorized(false); //failed
       e.printStackTrace();
     }
 
+
+    ResourceServices service = clientConfig.getService(client);
     setService(service);
     setUsername(username);
     setPassword(password);
