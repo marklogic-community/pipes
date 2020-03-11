@@ -159,11 +159,9 @@ public class AuthService extends AbstractLoggingClass {
       adminConfig.setConfigureSimpleSsl(true);
     }
 
-    return new AdminManager(new AdminConfig(
-      clientConfig.getMlHost(),
-      clientConfig.getMlAdminPort(),
-      getUsername(),
-      getPassword()));
+    AdminManager adminManager = new AdminManager();
+    adminManager.setAdminConfig(adminConfig);
+    return adminManager;
   }
 
   public ManageClient createManageClient() {
@@ -175,7 +173,10 @@ public class AuthService extends AbstractLoggingClass {
     if (clientConfig.getMlUseSsl()) {
       manageConfig.setConfigureSimpleSsl(true);
     }
-    return new ManageClient(manageConfig);
+
+    ManageClient manageClient = new ManageClient();
+    manageClient.setManageConfig(manageConfig);
+    return manageClient;
   }
 
 }
