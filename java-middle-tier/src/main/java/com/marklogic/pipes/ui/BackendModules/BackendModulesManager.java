@@ -12,6 +12,10 @@ import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.admin.ResourceExtensionsManager;
+import com.marklogic.client.ext.modulesloader.ModulesFinder;
+import com.marklogic.client.ext.modulesloader.impl.AssetFileLoader;
+import com.marklogic.client.ext.modulesloader.impl.DefaultModulesFinder;
+import com.marklogic.client.ext.modulesloader.impl.DefaultModulesLoader;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;
@@ -142,10 +146,12 @@ public class BackendModulesManager {
       try {
         if (operation== fileOperation.Copy) {
           FileUtils.copyFile(source,dest, false);
+          logger.info("Copied "+source.getAbsolutePath()+" to "+dest.getAbsolutePath());
 
         }
         else if (operation== fileOperation.Remove) {
           dest.delete();
+          logger.info("Deleted "+dest.getAbsolutePath());
         }
         else {
           throw new Exception("Unsupported operation: "+operation);
@@ -167,9 +173,11 @@ public class BackendModulesManager {
       try {
         if (operation== fileOperation.Copy) {
           FileUtils.copyInputStreamToFile(is, dest);
+          logger.info("Copied "+ filePath +" to "+dest.getAbsolutePath());
         }
         else if (operation== fileOperation.Remove) {
           dest.delete();
+          logger.info("Deleted "+dest.getAbsolutePath());
         }
         else {
           throw new Exception("Unsupported operation: "+operation);
@@ -177,8 +185,7 @@ public class BackendModulesManager {
 
       } catch (final IOException e) {
         // TODO Auto-generated catch block
-//        e.printStackTrace();
-//        System.out.println(e.toString());
+
         throw e;
       }
     }
@@ -205,22 +212,16 @@ public class BackendModulesManager {
     // ".*/pipes/.*.sjs|.*vppBackendServices.sjs"
     Pattern pattern=Pattern.compile(patternString);
 
-    ManageClient client = authService.getManageClient();
-    AdminManager manager = authService.getAdminManager();
-    AppConfig appConfig = authService.getAppConfig();
+    DatabaseClient client = authService.getModulesDatabaseClient();
 
-    AppDeployer appDeployer = new SimpleAppDeployer(client, manager, new LoadModulesCommand());
+      AssetFileLoader assetFileLoader = new AssetFileLoader(client); // Uses the REST API to load asset modules
+    DefaultModulesLoader modulesLoader = new DefaultModulesLoader(assetFileLoader);
 
-    // Setting batch size just to verify that nothing blows up when doing so
-    appConfig.setModulesLoaderBatchSize(1);
+    modulesLoader.setIncludeFilenamePattern(pattern);
 
-    // push /pipes/ modules
-    appConfig.setModuleFilenamesIncludePattern(pattern);
-    // Call it
-    appDeployer.deploy(appConfig);
-
-
-
+    String path= clientConfig.getMlDhfRoot()+"/src/main/ml-modules";
+    ModulesFinder modulesFinder = new DefaultModulesFinder(); // Allows for adjusting where modules are stored on a filesystem
+    modulesLoader.loadModules(path, modulesFinder, client);
   }
 
 

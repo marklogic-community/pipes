@@ -5,28 +5,22 @@ Copyright ©2020 MarkLogic Corporation.
 package com.marklogic.pipes.ui.auth;
 
 import com.marklogic.appdeployer.AppConfig;
-import com.marklogic.appdeployer.DefaultAppConfigFactory;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager;
 import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.SearchHandle;
-import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StringQueryDefinition;
-import com.marklogic.client.util.RequestParameters;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;
 import com.marklogic.mgmt.admin.AdminManager;
-import com.marklogic.mgmt.util.SimplePropertySource;
 import com.marklogic.pipes.ui.config.ClientConfig;
-import org.apache.catalina.authenticator.jaspic.SimpleServerAuthContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.net.ssl.SSLContext;
 import java.io.File;
 
 @Service
@@ -40,6 +34,11 @@ public class AuthService extends AbstractLoggingClass {
 
   private ManageClient manageClient;
   private AdminManager adminManager;
+
+
+
+  private DatabaseClient databaseClient;
+  private DatabaseClient modulesDbClient;
 
   public ManageClient getManageClient() {
     return manageClient;
@@ -100,7 +99,7 @@ public class AuthService extends AbstractLoggingClass {
 
   public Boolean tryAuthorize(ClientConfig clientConfig, String username, String password) {
 
-    DatabaseClient client=clientConfig.client(username,password);
+    DatabaseClient client=clientConfig.createClient(username,password,null);
 
 
     setAuthorized(true);
@@ -123,9 +122,17 @@ public class AuthService extends AbstractLoggingClass {
     setService(service);
     setUsername(username);
     setPassword(password);
+    setDatabaseClient(client);
+
+    DatabaseClient modulesDbClient= clientConfig.createModulesDbClient(username,password);
+    setModulesDbClient(modulesDbClient);
 
     init();
     return isAuthorized();
+  }
+
+  private void setModulesDbClient(DatabaseClient modulesDbClient) {
+    this.modulesDbClient = modulesDbClient;
   }
 
   public AppConfig createAppConfig() {
@@ -223,4 +230,15 @@ public class AuthService extends AbstractLoggingClass {
     return manageClient;
   }
 
+  public DatabaseClient getDatabaseClient() {
+    return databaseClient;
+  }
+
+  public void setDatabaseClient(DatabaseClient databaseClient) {
+    this.databaseClient = databaseClient;
+  }
+
+  public DatabaseClient getModulesDatabaseClient() {
+    return modulesDbClient;
+  }
 }

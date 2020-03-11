@@ -189,14 +189,7 @@ public class ClientConfig
 
 
 
-  public DatabaseClient client() {
-    return DatabaseClientFactory.newClient(
-      getMlHost(),
-      getMlStagingPort(),
-      new DatabaseClientFactory.DigestAuthContext(getMlUsername(), getMlPassword()));
-  }
-
-  public DatabaseClient client(String username, String password) {
+  public DatabaseClient createClient(String username, String password, String database) {
     DatabaseClient databaseClient = null;
 
     if (getMlUseSsl() == true) {
@@ -211,15 +204,32 @@ public class ClientConfig
       dbSecurityContext
         .withSSLHostnameVerifier(com.marklogic.client.DatabaseClientFactory.SSLHostnameVerifier.ANY);
 
-      databaseClient = DatabaseClientFactory.newClient(getMlHost(),
-        getMlStagingPort(), dbSecurityContext);
+      if (database == null) {
+        databaseClient = DatabaseClientFactory.newClient(getMlHost(),
+          getMlStagingPort(), dbSecurityContext);
+      }
+      else {
+        databaseClient = DatabaseClientFactory.newClient(getMlHost(),
+          getMlStagingPort(), database, dbSecurityContext);
+      }
+
     }
     else {
 
-      databaseClient=DatabaseClientFactory.newClient(
-        getMlHost(),
-        getMlStagingPort(),
-        new DatabaseClientFactory.DigestAuthContext(username,password));
+      if (database == null) {
+        databaseClient=DatabaseClientFactory.newClient(
+          getMlHost(),
+          getMlStagingPort(),
+          new DatabaseClientFactory.DigestAuthContext(username,password));
+      }
+      else {
+        databaseClient=DatabaseClientFactory.newClient(
+          getMlHost(),
+          getMlStagingPort(),
+          database,
+          new DatabaseClientFactory.DigestAuthContext(username,password));
+      }
+
 
     }
 
@@ -242,5 +252,9 @@ public class ClientConfig
   public ResourceServices getService(DatabaseClient client) {
     PipesResourceManager pipesResourceManager=new PipesResourceManager(client);
     return pipesResourceManager.getServices();
+  }
+
+  public DatabaseClient createModulesDbClient(String username, String password) {
+    return createClient(username,password,getMlModulesDatabase());
   }
 }
