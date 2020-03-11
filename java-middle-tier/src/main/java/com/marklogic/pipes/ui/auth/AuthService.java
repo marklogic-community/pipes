@@ -5,6 +5,7 @@ Copyright ©2020 MarkLogic Corporation.
 package com.marklogic.pipes.ui.auth;
 
 import com.marklogic.appdeployer.AppConfig;
+import com.marklogic.appdeployer.DefaultAppConfigFactory;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.ext.SecurityContextType;
@@ -19,6 +20,7 @@ import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;
 import com.marklogic.mgmt.admin.AdminManager;
+import com.marklogic.mgmt.util.SimplePropertySource;
 import com.marklogic.pipes.ui.config.ClientConfig;
 import org.apache.catalina.authenticator.jaspic.SimpleServerAuthContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -141,7 +143,25 @@ public class AuthService extends AbstractLoggingClass {
 
     // hope this is enough for connecting to DHS
     if (clientConfig.getMlUseSsl()) {
+
       appConfig.setAppServicesSimpleSslConfig();
+
+
+      DatabaseClientFactory.SecurityContext dbSecurityContext = new DatabaseClientFactory.BasicAuthContext(getUsername(),
+        getPassword());
+
+      dbSecurityContext.withSSLContext(
+        SimpleX509TrustManager.newSSLContext(),
+        new SimpleX509TrustManager());
+
+      dbSecurityContext
+        .withSSLHostnameVerifier(com.marklogic.client.DatabaseClientFactory.SSLHostnameVerifier.ANY);
+
+      appConfig.setRestSecurityContextType(SecurityContextType.BASIC);
+      appConfig.setAppServicesTrustManager(new SimpleX509TrustManager());
+      appConfig.setAppServicesSslHostnameVerifier(com.marklogic.client.DatabaseClientFactory.SSLHostnameVerifier.ANY);
+
+
     }
 
     return appConfig;
@@ -157,6 +177,18 @@ public class AuthService extends AbstractLoggingClass {
     // hope this is enough for connecting to DHS
     if (clientConfig.getMlUseSsl()) {
       adminConfig.setConfigureSimpleSsl(true);
+
+      DatabaseClientFactory.SecurityContext dbSecurityContext = new DatabaseClientFactory.BasicAuthContext(getUsername(),
+        getPassword());
+
+      dbSecurityContext.withSSLContext(
+        SimpleX509TrustManager.newSSLContext(),
+        new SimpleX509TrustManager());
+
+      dbSecurityContext
+        .withSSLHostnameVerifier(com.marklogic.client.DatabaseClientFactory.SSLHostnameVerifier.ANY);
+
+      adminConfig.setSslContext(dbSecurityContext.getSSLContext());
     }
 
     AdminManager adminManager = new AdminManager();
@@ -172,6 +204,18 @@ public class AuthService extends AbstractLoggingClass {
 
     if (clientConfig.getMlUseSsl()) {
       manageConfig.setConfigureSimpleSsl(true);
+
+      DatabaseClientFactory.SecurityContext dbSecurityContext = new DatabaseClientFactory.BasicAuthContext(getUsername(),
+        getPassword());
+
+      dbSecurityContext.withSSLContext(
+        SimpleX509TrustManager.newSSLContext(),
+        new SimpleX509TrustManager());
+
+      dbSecurityContext
+        .withSSLHostnameVerifier(com.marklogic.client.DatabaseClientFactory.SSLHostnameVerifier.ANY);
+
+      manageConfig.setSecuritySslContext(dbSecurityContext.getSSLContext());
     }
 
     ManageClient manageClient = new ManageClient();
