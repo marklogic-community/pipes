@@ -20,9 +20,11 @@ import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;
 import com.marklogic.mgmt.admin.AdminManager;
 import com.marklogic.pipes.ui.config.ClientConfig;
+import org.apache.catalina.authenticator.jaspic.SimpleServerAuthContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.net.ssl.SSLContext;
 import java.io.File;
 
 @Service
@@ -155,11 +157,8 @@ public class AuthService extends AbstractLoggingClass {
     // hope this is enough for connecting to DHS
     if (clientConfig.getMlUseSsl()) {
       adminConfig.setConfigureSimpleSsl(true);
-//      appConfig.setAppServicesSecurityContextType(SecurityContextType.BASIC);
-//      appConfig.setAppServicesTrustManager(new SimpleX509TrustManager());
-//      appConfig.setAppServicesSslHostnameVerifier(DatabaseClientFactory.SSLHostnameVerifier.ANY);
     }
-    
+
     return new AdminManager(new AdminConfig(
       clientConfig.getMlHost(),
       clientConfig.getMlAdminPort(),
@@ -168,13 +167,15 @@ public class AuthService extends AbstractLoggingClass {
   }
 
   public ManageClient createManageClient() {
-    // not sure about port 8002
-    // TO-DO: read port from gradle.properties (which ones?)
-    return new ManageClient(new ManageConfig(
-      clientConfig.getMlHost(),
+    ManageConfig manageConfig = new ManageConfig( clientConfig.getMlHost(),
       clientConfig.getMlManagePort(),
       getUsername(),
-      getPassword()));
+      getPassword());
+
+    if (clientConfig.getMlUseSsl()) {
+      manageConfig.setConfigureSimpleSsl(true);
+    }
+    return new ManageClient(manageConfig);
   }
 
 }
