@@ -40,26 +40,6 @@ public class AuthService extends AbstractLoggingClass {
   private DatabaseClient databaseClient;
   private DatabaseClient modulesDbClient;
 
-  public ManageClient getManageClient() {
-    return manageClient;
-  }
-
-  public AdminManager getAdminManager() {
-    return adminManager;
-  }
-
-  public AppConfig getAppConfig() {
-    return appConfig;
-  }
-
-  private AppConfig appConfig;
-
-  public void init() {
-    manageClient=createManageClient();
-    adminManager= createAdminManager();
-    appConfig= createAppConfig();
-  }
-
   public String getUsername() {
     return username;
   }
@@ -101,15 +81,12 @@ public class AuthService extends AbstractLoggingClass {
 
     DatabaseClient client=clientConfig.createClient(username,password,null);
 
-
     setAuthorized(true);
 
     QueryManager queryManager = client.newQueryManager();
     StringQueryDefinition stringQueryDefinition= queryManager.newStringDefinition();
     stringQueryDefinition.setCriteria("");
 
-
-    boolean authorized=true;
     try {
       queryManager.search(stringQueryDefinition, new SearchHandle());
     } catch (Exception e) {
@@ -127,107 +104,11 @@ public class AuthService extends AbstractLoggingClass {
     DatabaseClient modulesDbClient= clientConfig.createModulesDbClient(username,password);
     setModulesDbClient(modulesDbClient);
 
-    init();
     return isAuthorized();
   }
 
   private void setModulesDbClient(DatabaseClient modulesDbClient) {
     this.modulesDbClient = modulesDbClient;
-  }
-
-  public AppConfig createAppConfig() {
-    // AppConfig contains all configuration about the application being deployed
-    AppConfig appConfig = new AppConfig(new File(clientConfig.getMlDhfRoot()));
-    appConfig.setName("data-hub");
-    appConfig.setRestPort(clientConfig.getMlStagingPort());
-    appConfig.setHost(clientConfig.getMlHost());
-    appConfig.setAppServicesPort(clientConfig.getMlAppServicesPort());
-    appConfig.setModulesDatabaseName(clientConfig.getMlModulesDatabase());
-    appConfig.setRestAdminUsername(getUsername());
-    appConfig.setRestAdminPassword(getPassword());
-    appConfig.setAppServicesUsername(getUsername());
-    appConfig.setAppServicesPassword(getPassword());
-
-    // hope this is enough for connecting to DHS
-    if (clientConfig.getMlUseSsl()) {
-
-      appConfig.setAppServicesSimpleSslConfig();
-
-
-      DatabaseClientFactory.SecurityContext dbSecurityContext = new DatabaseClientFactory.BasicAuthContext(getUsername(),
-        getPassword());
-
-      dbSecurityContext.withSSLContext(
-        SimpleX509TrustManager.newSSLContext(),
-        new SimpleX509TrustManager());
-
-      dbSecurityContext
-        .withSSLHostnameVerifier(com.marklogic.client.DatabaseClientFactory.SSLHostnameVerifier.ANY);
-
-      appConfig.setRestSecurityContextType(SecurityContextType.BASIC);
-      appConfig.setAppServicesTrustManager(new SimpleX509TrustManager());
-      appConfig.setAppServicesSslHostnameVerifier(com.marklogic.client.DatabaseClientFactory.SSLHostnameVerifier.ANY);
-
-
-    }
-
-    return appConfig;
-  }
-
-  public AdminManager createAdminManager() {
-    // used for restarting ML; defaults to localhost/8001/admin/admin
-    AdminConfig adminConfig=new AdminConfig(  clientConfig.getMlHost(),
-      clientConfig.getMlAdminPort(),
-      getUsername(),
-      getPassword());
-
-    // hope this is enough for connecting to DHS
-    if (clientConfig.getMlUseSsl()) {
-      adminConfig.setConfigureSimpleSsl(true);
-
-      DatabaseClientFactory.SecurityContext dbSecurityContext = new DatabaseClientFactory.BasicAuthContext(getUsername(),
-        getPassword());
-
-      dbSecurityContext.withSSLContext(
-        SimpleX509TrustManager.newSSLContext(),
-        new SimpleX509TrustManager());
-
-      dbSecurityContext
-        .withSSLHostnameVerifier(com.marklogic.client.DatabaseClientFactory.SSLHostnameVerifier.ANY);
-
-      adminConfig.setSslContext(dbSecurityContext.getSSLContext());
-    }
-
-    AdminManager adminManager = new AdminManager();
-    adminManager.setAdminConfig(adminConfig);
-    return adminManager;
-  }
-
-  public ManageClient createManageClient() {
-    ManageConfig manageConfig = new ManageConfig( clientConfig.getMlHost(),
-      clientConfig.getMlManagePort(),
-      getUsername(),
-      getPassword());
-
-    if (clientConfig.getMlUseSsl()) {
-      manageConfig.setConfigureSimpleSsl(true);
-
-      DatabaseClientFactory.SecurityContext dbSecurityContext = new DatabaseClientFactory.BasicAuthContext(getUsername(),
-        getPassword());
-
-      dbSecurityContext.withSSLContext(
-        SimpleX509TrustManager.newSSLContext(),
-        new SimpleX509TrustManager());
-
-      dbSecurityContext
-        .withSSLHostnameVerifier(com.marklogic.client.DatabaseClientFactory.SSLHostnameVerifier.ANY);
-
-      manageConfig.setSecuritySslContext(dbSecurityContext.getSSLContext());
-    }
-
-    ManageClient manageClient = new ManageClient();
-    manageClient.setManageConfig(manageConfig);
-    return manageClient;
   }
 
   public DatabaseClient getDatabaseClient() {
