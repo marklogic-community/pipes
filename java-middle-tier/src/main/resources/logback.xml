@@ -12,7 +12,7 @@
     </encoder>
   </appender>
 
-  <root level="INFO">
+  <root level="WARN">
     <appender-ref ref="STDOUT" />
   </root>
 
@@ -49,9 +49,9 @@
   </logger>
 
 
-<!--  <logger name="com.marklogic.client.ext.batch.DefaultBatchHandler" level="WARN" additivity="false">-->
-<!--    <appender-ref ref="STDOUT" />-->
-<!--  </logger>-->
+  <logger name="com.marklogic.client.ext.batch.DefaultBatchHandler" level="INFO" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger>
 <!--  -->
 <!--    <logger name="com.marklogic.mgmt.ManageClient" level="WARN" additivity="false">-->
 <!--    <appender-ref ref="STDOUT" />-->
