@@ -286,10 +286,6 @@
     "library": "feature",
     "inputs": [
       {
-        "name": "query",
-        "type": null
-      },
-      {
         "name": "var1",
         "type": null
       },
@@ -311,15 +307,21 @@
     "widgets": [
       {
         "type": "text",
-        "name": "query",
-        "default": "cts.collectionQuery(\"${var1}\")",
+        "name": "nbOutputValues",
+        "default": "1",
+        "values": "1",
+        "callback": "let nb = this.outputs.length;for(let i=0;i<nb;i++) {this.removeOutput(0);}; this.widgets=this.widgets.slice(0,2) ;for(let i=0;i<parseInt(v);i++) {this.addOutput('value' + i,null);this.addWidget(\"text\", \"value\" + i + \"Path\" , '', function (v) {})};"
+      },
+      {
+        "type": "combo",
+        "name": "database",
+        "default": "#DATABASES#",
         "values": []
 
       },
-
       {
         "type": "text",
-        "name": "valuePath",
+        "name": "value0Path",
         "default": "/path/to/value/string()",
         "values": []
 
@@ -327,7 +329,7 @@
 
     "outputs": [
       {
-        "name": "value",
+        "name": "value0",
         "type": null
       }
     ],
@@ -1443,5 +1445,35 @@
       "ref": null,
       "code": null
     }
+  },
+  {
+    "functionName": "parseWsrlPhoneBookHtml",
+    "blockName": "parseWsrlPhoneBookHtml",
+    "library": "user",
+    "description" : "This block generates an UUID string",
+    "inputs": [
+      {
+        "name": "in",
+        "type": null
+      }
+    ],
+
+    "widgets": [
+
+
+    ],
+    "properties": [],
+    "outputs": [
+
+      {
+        "name": "out",
+        "type": null
+      }
+    ],
+    "function": {
+      "ref": null,
+      "code": ""
+    }
+
   }
 ]
