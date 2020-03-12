@@ -51,7 +51,7 @@ public class CustomStepController extends AbstractLoggingClass {
       customStepService.copyCustomStepToDhf(body, customStepName);
 
       if (request.getParameter("deploy")!=null && request.getParameter("deploy").equals("true")) {
-        customStepService.deployCustomStepToMl(body, customStepName);
+        customStepService.loadCustomStepToMl(body, customStepName);
       }
 
       return new ResponseEntity<>(null,HttpStatus.OK);
