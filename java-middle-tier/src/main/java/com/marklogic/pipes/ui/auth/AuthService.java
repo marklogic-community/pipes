@@ -84,8 +84,7 @@ public class AuthService extends AbstractLoggingClass {
     setAuthorized(true);
 
     QueryManager queryManager = client.newQueryManager();
-    StringQueryDefinition stringQueryDefinition= queryManager.newStringDefinition();
-    stringQueryDefinition.setCriteria("");
+    StringQueryDefinition stringQueryDefinition= queryManager.newStringDefinition().withCriteria("");
 
     try {
       queryManager.search(stringQueryDefinition, new SearchHandle());

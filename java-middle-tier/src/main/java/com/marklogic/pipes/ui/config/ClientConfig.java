@@ -192,7 +192,7 @@ public class ClientConfig
   public DatabaseClient createClient(String username, String password, String database) {
     DatabaseClient databaseClient = null;
 
-    if (getMlUseSsl() == true) {
+    if (getMlUseSsl() !=null && getMlUseSsl() == true) {
 
       DatabaseClientFactory.SecurityContext dbSecurityContext = new DatabaseClientFactory.BasicAuthContext(username,
         password);
