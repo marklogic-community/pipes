@@ -4,10 +4,6 @@ Copyright ©2020 MarkLogic Corporation.
 
 package com.marklogic.pipes.ui.auth;
 
-import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.extensions.ResourceServices;
-import com.marklogic.client.io.StringHandle;
-import com.marklogic.client.util.RequestParameters;
 import com.marklogic.pipes.ui.config.ClientConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,7 +20,6 @@ import javax.servlet.http.HttpSession;
  * instantiate a DatabaseClient, thereby assuming that the login credentials correspond to a MarkLogic user.
  */
 @RestController
-//@RequestMapping("/api/auth")
 public class AuthController extends AbstractLoggingClass {
 
 	protected final static String SESSION_USERNAME_KEY = "pipes-username";

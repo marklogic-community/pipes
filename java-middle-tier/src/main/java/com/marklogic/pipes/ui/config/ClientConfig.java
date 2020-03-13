@@ -6,6 +6,7 @@ package com.marklogic.pipes.ui.config;
 
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
+import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager;
 import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.util.RequestParameters;
 import org.slf4j.Logger;
@@ -51,11 +52,19 @@ public class ClientConfig
   @NotBlank(message = message)
   private String mlHost;
 
-//  @NotBlank(message = message)
   private String mlUsername;
 
-//  @NotBlank(message = message)
   private String mlPassword;
+
+  public Boolean getMlUseSsl() {
+    return mlUseSsl;
+  }
+
+  public void setMlUseSsl(Boolean mlUseSsl) {
+    this.mlUseSsl = mlUseSsl;
+  }
+
+  private Boolean mlUseSsl;
 
   @Min(message = intMessage,value = 1)
   private int mlStagingPort;
@@ -180,18 +189,51 @@ public class ClientConfig
 
 
 
-  public DatabaseClient client() {
-    return DatabaseClientFactory.newClient(
-      getMlHost(),
-      getMlStagingPort(),
-      new DatabaseClientFactory.DigestAuthContext(getMlUsername(), getMlPassword()));
-  }
+  public DatabaseClient createClient(String username, String password, String database) {
+    DatabaseClient databaseClient = null;
 
-  public DatabaseClient client(String username, String password) {
-    return DatabaseClientFactory.newClient(
-      getMlHost(),
-      getMlStagingPort(),
-      new DatabaseClientFactory.DigestAuthContext(username, password));
+    if (getMlUseSsl() !=null && getMlUseSsl() == true) {
+
+      DatabaseClientFactory.SecurityContext dbSecurityContext = new DatabaseClientFactory.BasicAuthContext(username,
+        password);
+
+      dbSecurityContext.withSSLContext(
+        SimpleX509TrustManager.newSSLContext(),
+        new SimpleX509TrustManager());
+
+      dbSecurityContext
+        .withSSLHostnameVerifier(com.marklogic.client.DatabaseClientFactory.SSLHostnameVerifier.ANY);
+
+      if (database == null) {
+        databaseClient = DatabaseClientFactory.newClient(getMlHost(),
+          getMlStagingPort(), dbSecurityContext);
+      }
+      else {
+        databaseClient = DatabaseClientFactory.newClient(getMlHost(),
+          getMlStagingPort(), database, dbSecurityContext);
+      }
+
+    }
+    else {
+
+      if (database == null) {
+        databaseClient=DatabaseClientFactory.newClient(
+          getMlHost(),
+          getMlStagingPort(),
+          new DatabaseClientFactory.DigestAuthContext(username,password));
+      }
+      else {
+        databaseClient=DatabaseClientFactory.newClient(
+          getMlHost(),
+          getMlStagingPort(),
+          database,
+          new DatabaseClientFactory.DigestAuthContext(username,password));
+      }
+
+
+    }
+
+    return databaseClient;
   }
 
   public RequestParameters extractParams(HttpServletRequest request) {
@@ -210,5 +252,9 @@ public class ClientConfig
   public ResourceServices getService(DatabaseClient client) {
     PipesResourceManager pipesResourceManager=new PipesResourceManager(client);
     return pipesResourceManager.getServices();
+  }
+
+  public DatabaseClient createModulesDbClient(String username, String password) {
+    return createClient(username,password,getMlModulesDatabase());
   }
 }

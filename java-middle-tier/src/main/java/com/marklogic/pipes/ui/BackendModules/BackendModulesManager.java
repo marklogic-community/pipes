@@ -12,10 +12,18 @@ import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.admin.ResourceExtensionsManager;
+import com.marklogic.client.document.DocumentWriteSet;
+import com.marklogic.client.document.JSONDocumentManager;
+import com.marklogic.client.ext.modulesloader.ModulesFinder;
+import com.marklogic.client.ext.modulesloader.impl.AssetFileLoader;
+import com.marklogic.client.ext.modulesloader.impl.DefaultModulesFinder;
+import com.marklogic.client.ext.modulesloader.impl.DefaultModulesLoader;
+import com.marklogic.client.query.*;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;
 import com.marklogic.mgmt.admin.AdminManager;
+import com.marklogic.mgmt.api.database.Database;
 import com.marklogic.pipes.ui.auth.AuthService;
 import com.marklogic.pipes.ui.config.ClientConfig;
 import com.marklogic.pipes.ui.Application;
@@ -142,10 +150,12 @@ public class BackendModulesManager {
       try {
         if (operation== fileOperation.Copy) {
           FileUtils.copyFile(source,dest, false);
+          logger.info("Copied "+source.getAbsolutePath()+" to "+dest.getAbsolutePath());
 
         }
         else if (operation== fileOperation.Remove) {
           dest.delete();
+          logger.info("Deleted "+dest.getAbsolutePath());
         }
         else {
           throw new Exception("Unsupported operation: "+operation);
@@ -167,9 +177,11 @@ public class BackendModulesManager {
       try {
         if (operation== fileOperation.Copy) {
           FileUtils.copyInputStreamToFile(is, dest);
+          logger.info("Copied "+ filePath +" to "+dest.getAbsolutePath());
         }
         else if (operation== fileOperation.Remove) {
           dest.delete();
+          logger.info("Deleted "+dest.getAbsolutePath());
         }
         else {
           throw new Exception("Unsupported operation: "+operation);
@@ -177,8 +189,7 @@ public class BackendModulesManager {
 
       } catch (final IOException e) {
         // TODO Auto-generated catch block
-//        e.printStackTrace();
-//        System.out.println(e.toString());
+
         throw e;
       }
     }
@@ -205,22 +216,17 @@ public class BackendModulesManager {
     // ".*/pipes/.*.sjs|.*vppBackendServices.sjs"
     Pattern pattern=Pattern.compile(patternString);
 
-    ManageClient client = authService.getManageClient();
-    AdminManager manager = authService.getAdminManager();
-    AppConfig appConfig = authService.getAppConfig();
+    DatabaseClient client = authService.getModulesDatabaseClient();
 
-    AppDeployer appDeployer = new SimpleAppDeployer(client, manager, new LoadModulesCommand());
+      AssetFileLoader assetFileLoader = new AssetFileLoader(client); // Uses the REST API to load asset modules
+    DefaultModulesLoader modulesLoader = new DefaultModulesLoader(assetFileLoader);
 
-    // Setting batch size just to verify that nothing blows up when doing so
-    appConfig.setModulesLoaderBatchSize(1);
+    modulesLoader.setIncludeFilenamePattern(pattern);
 
-    // push /pipes/ modules
-    appConfig.setModuleFilenamesIncludePattern(pattern);
-    // Call it
-    appDeployer.deploy(appConfig);
+    String path= clientConfig.getMlDhfRoot()+"/src/main/ml-modules";
+    ModulesFinder modulesFinder = new DefaultModulesFinder(); // Allows for adjusting where modules are stored on a filesystem
 
-
-
+    modulesLoader.loadModules(path, modulesFinder, client);
   }
 
 
@@ -230,18 +236,17 @@ public class BackendModulesManager {
       String.format("Now deleting Pipes modules from your DHF modules database...")
     );
 
-    ManageClient client = authService.getManageClient();
-    AdminManager manager = authService.getAdminManager();
-    AppConfig appConfig = authService.getAppConfig();
 
-    // will use the DeleteModulesCommand
-    AppDeployer appDeployer = new SimpleAppDeployer(client, manager, new DeleteModulesCommand("*/pipes/*.sjs"));
+    DatabaseClient databaseClient = authService.getModulesDatabaseClient();
 
-    // Setting batch size just to verify that nothing blows up when doing so
-    appConfig.setModulesLoaderBatchSize(1);
+    JSONDocumentManager jsonDocumentManager= databaseClient.newJSONDocumentManager();
+    // TO-DO delete files
+    QueryManager qm = databaseClient.newQueryManager();
+    DeleteQueryDefinition deleteQueryDefinition = qm.newDeleteDefinition();
 
+    deleteQueryDefinition.setDirectory("/custom-modules/pipes/");
 
-    appDeployer.deploy(appConfig);
+    qm.delete(deleteQueryDefinition);
 
     logger.info(
       String.format("MarkLogic backend modules have been deleted."));
@@ -250,11 +255,8 @@ public class BackendModulesManager {
       String.format("Now deleting Pipes REST extension from your DHF modules database...")
     );
 
-    // will use MarkLogic Client API for this
-    // so need a DatabaseClient instance
-    DatabaseClient dbClient = DatabaseClientFactory.newClient(
-      clientConfig.getMlHost(), clientConfig.getMlStagingPort(),
-      new DatabaseClientFactory.DigestAuthContext(clientConfig.getMlUsername(), clientConfig.getMlPassword()));
+
+    DatabaseClient dbClient=authService.getDatabaseClient();
 
     ResourceExtensionsManager resourceExtensionsManager = dbClient.newServerConfigManager().newResourceExtensionsManager();
     resourceExtensionsManager.deleteServices("vppBackendServices");

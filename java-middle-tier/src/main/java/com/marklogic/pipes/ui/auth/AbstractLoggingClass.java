@@ -1,3 +1,7 @@
+/*
+Copyright ©2020 MarkLogic Corporation.
+*/
+
 package com.marklogic.pipes.ui.auth;
 
 import org.slf4j.Logger;

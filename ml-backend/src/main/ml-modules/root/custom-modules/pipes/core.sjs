@@ -8,6 +8,12 @@ const PNF = require('/custom-modules/pipes/google-libphonenumber.sjs').PhoneNumb
 const phoneUtil = require('/custom-modules/pipes/google-libphonenumber.sjs').PhoneNumberUtil.getInstance();
 const BLOCK_RUNTIME_DEBUG_TRACE = "pipesBlockRuntimeDebug";
 
+const coreFunctions = require("/custom-modules/pipes/coreFunctions.sjs")
+
+const DataHub = require("/data-hub/5/datahub.sjs");
+const datahub = new DataHub();
+
+
 function init(LiteGraph){
 
 
@@ -117,7 +123,7 @@ function init(LiteGraph){
     this.properties = {};
     var that = this;
 
-
+    this.format = this.addWidget("combo","format", "json", function(v){}, { values:["json","xml"]} );
 
     this.size = [180, 60];
   }
@@ -176,12 +182,21 @@ function init(LiteGraph){
 
 
 
-    let result = {'envelope' : {}} ;
+    //let result = {'envelope' : {}} ;
     // if(this.getInputData(0)==undefined) {
-    result.envelope.headers = (this.getInputData(0)!=undefined)?this.getInputData(0):{};
-    result.envelope.triples = (this.getInputData(1)!=undefined)?this.getInputData(1):{};
-    result.envelope.instance = (this.getInputData(2)!=undefined)?this.getInputData(2):{};
-    result.envelope.attachments  = (this.getInputData(3)!=undefined)?this.getInputData(3):{};
+    let headers = (this.getInputData(0)!=undefined)?this.getInputData(0):{};
+    let triples = (this.getInputData(1)!=undefined)?this.getInputData(1):[];
+    let instance = (this.getInputData(2)!=undefined)?this.getInputData(2):{};
+    let attachments  = (this.getInputData(3)!=undefined)?this.getInputData(3):{};
+
+
+    if(instance.toObject && this.format.value=="json") {
+      instance = instance.toObject()
+      instance["$attachments"] = attachments
+    }
+
+    let result = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, this.format.value)
+
 
     let defaultCollections = (this.graph.inputs["collections"]!=null)?this.graph.inputs["collections"].value:null
     let defaultUri = (this.graph.inputs["uri"]!=null)?this.graph.inputs["uri"].value:sem.uuidString()
@@ -1367,8 +1382,10 @@ function init(LiteGraph){
   StringConstant.title = "Constant";
   StringConstant.desc = "Constant value";
 
-
-
+  StringConstant.prototype.onDeadNodeRemoval = function()  {
+    // this node is not dead.
+    return false;
+  }
 
   StringConstant.prototype.onExecute = function()
   {
@@ -1377,8 +1394,8 @@ function init(LiteGraph){
 
   StringConstant.prototype.onCodeGeneration = function(tempVarPrefix,inputVariables,outputVariables,propertiesWidgets) {
     let code = [];
-    if ( "string" in propertiesWidgets) {
-      code.push("const " + outputVariables.output0 + " = '" + propertiesWidgets.properties.string + "';");
+    if ( propertiesWidgets.widgets && "string" in propertiesWidgets.widgets) {
+      code.push("const " + outputVariables.output0 + " = '" + propertiesWidgets.widgets.string + "';");
     } else {
       code.push("const " + outputVariables.output0 + " = '';");
     }
@@ -1394,13 +1411,20 @@ function init(LiteGraph){
 
   function featureLookupBlock()
   {
-    this.addInput("query");
     this.addInput("var1");
     this.addInput("var2");
-    this.addOutput("value");
-    this.query = this.addWidget("text","query", "", function(v){}, {} );
-    this.valuePath = this.addWidget("text","valuePath", "", function(v){}, {} );
-    this.ctsQuery = this.addProperty("ctsQuery" );
+    this.nbOutputValues = this.addWidget("text","nbOutputValues", "string", function(v){},  { } );
+    this.database = this.addWidget("text","database", "string", function(v){},  { } );
+    this.value0Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
+    this.value1Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
+    this.value2Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
+    this.value3Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
+    this.value4Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
+    this.addOutput("val0");
+    this.addOutput("val1");
+    this.addOutput("val2");
+    this.addOutput("val3");
+    this.addOutput("val4");
 
   }
 
@@ -1411,8 +1435,13 @@ function init(LiteGraph){
 
   featureLookupBlock.prototype.onExecute = function()
   {
-    //let output = "lookup(" + this.getInputData(0) + "," + this.getInputData(1) + "," + this.getInputData(2) + ")"
+    let var1 = this.getInputData(0)
+    let var2 = this.getInputData(1)
+    coreFunctions.lookUp(this, var1,var2,this.nbOutputValues.value, this.properties.ctsQuery)
 
+
+    //let output = "lookup(" + this.getInputData(0) + "," + this.getInputData(1) + "," + this.getInputData(2) + ")"
+/*
     let query = this.getInputData(0)
 
     if(query==undefined || query==null) {
@@ -1433,7 +1462,7 @@ function init(LiteGraph){
     if(foundDoc!=null) this.setOutputData( 0, foundDoc.xpath(this.valuePath.value))
     //this.setOutputData( 0, output );
 
-
+*/
   }
 
 //register in the system
@@ -2257,24 +2286,26 @@ function init(LiteGraph){
 
   }
 
-
-
   uuidString.title = "UUID";
   uuidString.desc = "Generate UUID with prefix";
 
-
-
-
+  uuidString.prototype.onDeadNodeRemoval = function()  {
+    // this node is not dead.
+    return false;
+  }
 
   uuidString.prototype.onExecute = function()
   {
-
-
     let prefix = this.prefix.value
-
     this.setOutputData(0, prefix + sem.uuidString() );
   }
 
+
+  uuidString.prototype.onCodeGeneration = function(tempVarPrefix,inputVariables,outputVariables,propertiesWidgets) {
+    let code = [];
+    code.push("const "+outputVariables.output0+" = '" + propertiesWidgets.widgets.prefix + "'+sem.uuidString()");
+    return code;
+  }
 
   LiteGraph.registerNodeType("string/uuid", uuidString );
 
@@ -2461,7 +2492,6 @@ function init(LiteGraph){
   }
 
   split.prototype.onCodeGeneration = function(tempVarPrefix,inputVariables,outputVariables,propertiesWidgets) {
-
     let code = [];
     code.push("const " + tempVarPrefix + "splitValues = coreFunctions.split("+inputVariables.input0+",'"+propertiesWidgets.widgets.splitChar+"');")
     code.push("const "+outputVariables.output0+" = " + tempVarPrefix + "splitValues[0]");
@@ -2469,8 +2499,6 @@ function init(LiteGraph){
     code.push("const "+outputVariables.output2+" = " + tempVarPrefix + "splitValues[2]");
     code.push("const "+outputVariables.output3+" = " + tempVarPrefix + "splitValues");
     return code;
-
-
   }
 
   LiteGraph.registerNodeType("string/Split", split );
@@ -2921,8 +2949,6 @@ function init(LiteGraph){
   xpathBlock.prototype.onExecute = function()
   {
     let input = this.getInputData(0);
-    // it seems that a source entry is outputing an array
-    input = input[0];
     let ns = {};
     const nstokens = this.namespaces.value.trim().split(",");
     if ( nstokens.length % 2 === 0 ) {
@@ -2933,7 +2959,7 @@ function init(LiteGraph){
     const xpath = this.xpath.value;
     xdmp.trace(BLOCK_RUNTIME_DEBUG_TRACE,Sequence.from(["Xpath: Input",input,"NS",ns]));
     //xdmp.log(Sequence.from(["Namespaces",ns,"Xpath",xpath]))
-    const output = input.xpath(xpath,ns);
+    const output = (input instanceof Array ? input[0] : input).xpath(xpath,ns);
     xdmp.trace(BLOCK_RUNTIME_DEBUG_TRACE,Sequence.from(["Xpath: Output",output]));
     this.setOutputData(0, output )
   }
@@ -2951,7 +2977,7 @@ function init(LiteGraph){
       }
     }
     let nsString = JSON.stringify(ns);
-    code.push("const "+outputVariables.output0+" = "+inputVariables.input0+"[0].xpath('"+propertiesWidgets.widgets.xpath+"',"+nsString+");");
+    code.push("const "+outputVariables.output0+" = ("+inputVariables.input0+" instanceof Array ? "+inputVariables.input0+"[0] : "+inputVariables.input0+").xpath('"+propertiesWidgets.widgets.xpath+"',"+nsString+");");
     return code;
   };
 

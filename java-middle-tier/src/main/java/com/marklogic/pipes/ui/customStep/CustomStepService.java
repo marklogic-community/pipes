@@ -127,7 +127,7 @@ public class CustomStepService {
   }
 
 
-  public void deployCustomStepToMl(String body, String customStepName) {
+  public void loadCustomStepToMl(String body, String customStepName) {
     logger.info(
       String.format("Now loading custom step "+ customStepName +" to your DHF modules database...")
     );

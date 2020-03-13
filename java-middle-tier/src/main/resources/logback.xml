@@ -1,7 +1,7 @@
 <configuration>
 
 <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter">
-    <level value="WARN" />
+    <level value="DEBUG" />
 </logger>
 
   <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
@@ -49,9 +49,9 @@
   </logger>
 
 
-<!--  <logger name="com.marklogic.client.ext.batch.DefaultBatchHandler" level="WARN" additivity="false">-->
-<!--    <appender-ref ref="STDOUT" />-->
-<!--  </logger>-->
+  <logger name="com.marklogic.client.ext.batch.DefaultBatchHandler" level="INFO" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger>
 <!--  -->
 <!--    <logger name="com.marklogic.mgmt.ManageClient" level="WARN" additivity="false">-->
 <!--    <appender-ref ref="STDOUT" />-->
@@ -69,6 +69,15 @@
   <logger name="com.marklogic.pipes.ui.Application" level="INFO" additivity="false">
     <appender-ref ref="STDOUT" />
   </logger>
+
+  <logger name="com.marklogic.pipes.ui.BackendModules.BackendModulesManager" level="INFO" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger>
+
+  <logger name="com.marklogic.client.ext.modulesloader.impl.DefaultModulesLoader" level="INFO" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger>
+
 
 
 <!--  <logger name="com.marklogic.client.impl.DatabaseClientImpl" level="WARN" additivity="false">-->

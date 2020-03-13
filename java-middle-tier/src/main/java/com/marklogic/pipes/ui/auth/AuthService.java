@@ -6,19 +6,21 @@ package com.marklogic.pipes.ui.auth;
 
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.DatabaseClientFactory;
+import com.marklogic.client.ext.SecurityContextType;
+import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager;
 import com.marklogic.client.extensions.ResourceServices;
-import com.marklogic.client.io.StringHandle;
-import com.marklogic.client.util.RequestParameters;
+import com.marklogic.client.io.SearchHandle;
+import com.marklogic.client.query.QueryManager;
+import com.marklogic.client.query.StringQueryDefinition;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;
 import com.marklogic.mgmt.admin.AdminManager;
 import com.marklogic.pipes.ui.config.ClientConfig;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 
 @Service
@@ -33,25 +35,10 @@ public class AuthService extends AbstractLoggingClass {
   private ManageClient manageClient;
   private AdminManager adminManager;
 
-  public ManageClient getManageClient() {
-    return manageClient;
-  }
 
-  public AdminManager getAdminManager() {
-    return adminManager;
-  }
 
-  public AppConfig getAppConfig() {
-    return appConfig;
-  }
-
-  private AppConfig appConfig;
-
-  public void init() {
-    manageClient=createManageClient();
-    adminManager= createAdminManager();
-    appConfig= createAppConfig();
-  }
+  private DatabaseClient databaseClient;
+  private DatabaseClient modulesDbClient;
 
   public String getUsername() {
     return username;
@@ -92,64 +79,46 @@ public class AuthService extends AbstractLoggingClass {
 
   public Boolean tryAuthorize(ClientConfig clientConfig, String username, String password) {
 
-    DatabaseClient client=clientConfig.client(username,password);
-
-    // call ListSavedBlock as a sanity check
-    ResourceServices service = clientConfig.getService(client);
+    DatabaseClient client=clientConfig.createClient(username,password,null);
 
     setAuthorized(true);
 
-    RequestParameters parameters = new RequestParameters();
-    parameters.add("action","ListSavedBlock");
+    QueryManager queryManager = client.newQueryManager();
+    StringQueryDefinition stringQueryDefinition= queryManager.newStringDefinition().withCriteria("");
 
-    boolean authorized=true;
     try {
-      service.get(parameters,new StringHandle());
+      queryManager.search(stringQueryDefinition, new SearchHandle());
     } catch (Exception e) {
       setAuthorized(false); //failed
       e.printStackTrace();
     }
 
+
+    ResourceServices service = clientConfig.getService(client);
     setService(service);
     setUsername(username);
     setPassword(password);
+    setDatabaseClient(client);
 
-    init();
+    DatabaseClient modulesDbClient= clientConfig.createModulesDbClient(username,password);
+    setModulesDbClient(modulesDbClient);
+
     return isAuthorized();
   }
 
-  public AppConfig createAppConfig() {
-    // AppConfig contains all configuration about the application being deployed
-    AppConfig appConfig = new AppConfig(new File(clientConfig.getMlDhfRoot()));
-    appConfig.setName("data-hub");
-    appConfig.setRestPort(clientConfig.getMlStagingPort());
-    appConfig.setHost(clientConfig.getMlHost());
-    appConfig.setAppServicesPort(clientConfig.getMlAppServicesPort());
-    appConfig.setModulesDatabaseName(clientConfig.getMlModulesDatabase());
-    appConfig.setRestAdminUsername(getUsername());
-    appConfig.setRestAdminPassword(getPassword());
-    appConfig.setAppServicesUsername(getUsername());
-    appConfig.setAppServicesPassword(getPassword());
-    return appConfig;
+  private void setModulesDbClient(DatabaseClient modulesDbClient) {
+    this.modulesDbClient = modulesDbClient;
   }
 
-  public AdminManager createAdminManager() {
-    // used for restarting ML; defaults to localhost/8001/admin/admin
-    return new AdminManager(new AdminConfig(
-      clientConfig.getMlHost(),
-      clientConfig.getMlAdminPort(),
-      getUsername(),
-      getPassword()));
+  public DatabaseClient getDatabaseClient() {
+    return databaseClient;
   }
 
-  public ManageClient createManageClient() {
-    // not sure about port 8002
-    // TO-DO: read port from gradle.properties (which ones?)
-    return new ManageClient(new ManageConfig(
-      clientConfig.getMlHost(),
-      clientConfig.getMlManagePort(),
-      getUsername(),
-      getPassword()));
+  public void setDatabaseClient(DatabaseClient databaseClient) {
+    this.databaseClient = databaseClient;
   }
 
+  public DatabaseClient getModulesDatabaseClient() {
+    return modulesDbClient;
+  }
 }
