@@ -244,6 +244,7 @@
 
 <script>
 import { openURL } from 'quasar'
+import { Dialog } from 'quasar'
 import modelselector from '../components/modelselector.vue'
 import resultViewer from '../components/resultViewer.vue'
 import entityselector from '../components/entityselector.vue'
@@ -301,17 +302,35 @@ export default {
 
     },
     logOut () {
-      this.$axios.post('/logout').then(response => {
-        this.loggedIn = false
-        this.$q.notify({
-          color: 'positive',
-          position: 'center',
-          message: "User logged out",
-          icon: 'info',
-          timeout: 800
+      this.$q.dialog({
+        title: 'Log out',
+        message: 'You will lose any unsaved work. \
+        Do you want to proceed?',
+        persistent: true,
+        cancel: true
+
+      }).onOk(() => {
+        // console.log('>>>> OK')
+        this.$axios.post('/logout').then(response => {
+          this.loggedIn = false
+          this.$q.notify({
+            color: 'positive',
+            position: 'center',
+            message: "User logged out",
+            icon: 'info',
+            timeout: 800
+          })
+          this.$router.push({ path: "/login" })
         })
-        this.$router.push({ path: "/login" })
+      }).onOk(() => {
+        // console.log('>>>> second OK catcher')
+      }).onCancel(() => {
+        // console.log('>>>> Cancel')
+      }).onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
       })
+
+
     }
 
   },
