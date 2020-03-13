@@ -61,7 +61,12 @@
       </template>
     </q-input>
 
-    <div>Fields</div>
+    <q-expansion-item
+          expand-separator
+          icon="fas fa-grip-lines"
+          label="Fields"
+    >
+
     <q-tree class="spacer-div"
       ref="selectionTree"
       :nodes="collectionModel"
@@ -69,6 +74,8 @@
       tick-strategy="strict"
       :ticked.sync="selectedFields"
     />
+
+    </q-expansion-item>
 
     <!-- Block options -->
         <q-expansion-item
@@ -104,7 +111,7 @@
          <q-item-section avatar>
               <div class="block">
                 <q-tooltip class="pipes-tooltip">
-                <!-- <vue-json-pretty :data="block"/> -->
+                 <vue-json-pretty :data="block"/>
                </q-tooltip>
                 <div class="block-title block">abc</div>
                 <div class="block-body block">
@@ -162,7 +169,6 @@
       return {
         blockButtonLabel: "Create Source Block",
         selectedCollection: "",
-        saveBlockToDB:false,
         selectedDatabase:null,
         selectedFields: [],
         selectedCollection: null,
@@ -180,7 +186,6 @@
 
         ],
         blockOptions: [BLOCK_OPTION_NODE_INPUT, BLOCK_OPTION_FIELDS_OUTPUT],
-        savedGraph: [],
         blockName: "",
         newCustomFieldName:"",
         customURI:"",
