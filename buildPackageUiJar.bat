@@ -1,7 +1,7 @@
 
 echo Packaging the front end...
 copy /Y node_modules_override\litegraph.js node_modules\litegraph.js\build\litegraph.js
-quasar build
+call quasar build
 
 echo Moving the front-end package to SpringBoot static resources folder...
 if exist java-middle-tier\src\main\resources\static rd /s /q java-middle-tier\src\main\resources\static
