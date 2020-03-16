@@ -2,7 +2,6 @@ plugins {
 	id 'org.springframework.boot' version '2.2.2.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.8.RELEASE'
 	id 'java'
-
 }
 
 group = 'com.marklogic.pipes'
@@ -41,3 +40,71 @@ test {
 	useJUnitPlatform()
 }
 
+task copyLiteGraphOverride(type: Copy) {
+  doFirst {
+    logger.warn('Copying "node_modules_override/litegraph.js"')
+  }
+  from "../node_modules_override/litegraph.js"
+  into "../node_modules/litegraph.js/build/"
+  doLast {
+    logger.warn('Done copying "node_modules_override/litegraph.js"')
+  }
+}
+
+task runQuasarBuild(type:Exec) {
+  dependsOn copyLiteGraphOverride
+  doFirst {
+    logger.warn('Running quasar build')
+  }
+  workingDir '..'
+
+  //may be windows specific
+  commandLine 'cmd', '/c', 'quasar build'
+  doLast {
+    logger.warn('Done running quasar build')
+  }
+}
+
+task copyQuasarBuild(type:Copy) {
+  dependsOn runQuasarBuild
+  
+  doFirst {
+    logger.warn('Copying "dist/spa"')
+  }
+  from "../dist/spa/" 
+  into "src/main/resources/static/"
+  outputs.upToDateWhen {
+    false
+  }
+  doLast {
+    logger.warn('Done copying "dist/spa"')
+  }
+}
+
+task copyDhf(type:Copy) {
+  doFirst {
+    logger.warn('Copying "dist_user/dhf"')
+  }
+  from "../dist_user/dhf/" 
+  into "src/main/resources/dhf/"
+  doLast {
+    logger.warn('Done copying "dist_user/dhf"')
+  }
+}
+
+bootJar.dependsOn copyQuasarBuild
+bootJar.dependsOn copyDhf
+bootJar.mustRunAfter copyQuasarBuild
+bootJar.mustRunAfter copyDhf
+
+task runLocal(type: JavaExec) {
+  dependsOn copyQuasarBuild
+  dependsOn copyDhf
+  mustRunAfter copyQuasarBuild
+  mustRunAfter copyDhf
+  
+  group = "Execution"
+  description = "Run the main class with JavaExecTask"
+  classpath = sourceSets.main.runtimeClasspath
+  main = "com.marklogic.pipes.ui.Application"
+}
