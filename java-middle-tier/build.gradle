@@ -1,3 +1,5 @@
+import org.gradle.internal.os.OperatingSystem;
+
 plugins {
 	id 'org.springframework.boot' version '2.2.2.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.8.RELEASE'
@@ -53,13 +55,19 @@ task copyLiteGraphOverride(type: Copy) {
 
 task runQuasarBuild(type:Exec) {
   dependsOn copyLiteGraphOverride
+  mustRunAfter copyLiteGraphOverride
   doFirst {
     logger.warn('Running quasar build')
   }
   workingDir '..'
 
-  //may be windows specific
-  commandLine 'cmd', '/c', 'quasar build'
+  def env = OperatingSystem.current()
+  if (env.isWindows()) {
+    commandLine 'cmd', '/c', 'quasar build'
+  } else {
+    commandLine 'quasar build'
+  }
+  
   doLast {
     logger.warn('Done running quasar build')
   }
@@ -67,6 +75,7 @@ task runQuasarBuild(type:Exec) {
 
 task copyQuasarBuild(type:Copy) {
   dependsOn runQuasarBuild
+  mustRunAfter runQuasarBuild
   
   doFirst {
     logger.warn('Copying "dist/spa"')
@@ -97,12 +106,27 @@ bootJar.dependsOn copyDhf
 bootJar.mustRunAfter copyQuasarBuild
 bootJar.mustRunAfter copyDhf
 
-task runLocal(type: JavaExec) {
-  dependsOn copyQuasarBuild
-  dependsOn copyDhf
-  mustRunAfter copyQuasarBuild
-  mustRunAfter copyDhf
+task runQuasarDev(type:Exec) {
+  dependsOn copyLiteGraphOverride
+  mustRunAfter copyLiteGraphOverride
+  doFirst {
+    logger.warn('Running quasar dev')
+  }
+  workingDir '..'
+
+  def env = OperatingSystem.current()
+  if (env.isWindows()) {
+    commandLine 'cmd', '/c', 'quasar dev;'
+  } else {
+    commandLine 'quasar dev'
+  }
   
+  doLast {
+    logger.warn('Done running quasar dev')
+  }
+}
+
+task runLocal(type: JavaExec) {
   group = "Execution"
   description = "Run the main class with JavaExecTask"
   classpath = sourceSets.main.runtimeClasspath
