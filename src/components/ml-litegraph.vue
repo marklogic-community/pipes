@@ -368,82 +368,272 @@
           <div class="text-h6">Preview Graph Execution</div>
         </q-card-section>
         <q-card-section class="row">
-          <div style="min-width: 250px; max-width: 300px">
+          <div style="min-width: 250px; max-width: 500px">
 
-            <q-select
-              :options="availableDB"
-              filled
-              label="Source Database"
-              v-model="selectedDB"
-              @input="dbChanged()"
-            >
+            <div style="width:532px">
+              <q-stepper
+                v-model="previewWizard"
+                vertical
+                flat
+                color="primary"
+                animated
+              >
+                <q-step
+                  :name="1"
+                  title="Select the source of the document for preview"
+                  icon="settings"
+                  :done="previewWizard > 1"
+                >
 
-              <template v-slot:prepend>
-                <q-icon
-                  name="fas fa-database"
-                  @click.stop
-                />
-              </template>
+                  <q-list>
+                    <!--
+        Rendering a <label> tag (notice tag="label")
+        so QRadios will respond to clicks on QItems to
+        change Toggle state.
+      -->
 
-            </q-select>
-            <q-select
-              :options="availableCollections"
-              filled
-              label="Source Collection"
-              v-model="collectionForPreview"
-            >
+                    <q-item
+                      tag="label"
+                      v-ripple
+                    >
+                      <q-item-section avatar>
+                        <q-radio
+                          v-model="previewSource"
+                          val="collection"
+                          color="teal"
+                        />
+                      </q-item-section>
+                      <q-item-section>
+                        <q-item-label>Documents Collection</q-item-label>
+                        <q-item-label caption>Select this option if you want to run the preview on document(s) from a DB collection</q-item-label>
+                      </q-item-section>
+                    </q-item>
 
-              <template v-slot:prepend>
-                <q-icon
-                  name="fas fa-tags"
-                  @click.stop
-                />
-              </template>
-            </q-select>
+                    <q-item
+                      tag="label"
+                      v-ripple
+                    >
+                      <q-item-section avatar>
+                        <q-radio
+                          v-model="previewSource"
+                          val="uri"
+                          color="orange"
+                        />
+                      </q-item-section>
+                      <q-item-section>
+                        <q-item-label>Document URI</q-item-label>
+                        <q-item-label caption>Select this option if you want to run the preview on a specific document whose URI you know</q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </q-list>
 
-            <q-select
-              v-if="saveToDB"
-              :options="availableDB"
-              filled
-              label="Save to Database"
-              v-model="selectedTargetDB"
-            >
+                  <q-stepper-navigation>
+                    <q-btn
+                      @click="previewWizard = 2"
+                      color="primary"
+                      label="Continue"
+                      :disable="isStep1ContinueDisabled"
+                    />
+                  </q-stepper-navigation>
+                </q-step>
 
-              <template v-slot:prepend>
-                <q-icon
-                  name="fas fa-database"
-                  @click.stop
-                />
-              </template>
+                <q-step
+                  :name="2"
+                  title="Select details"
+                  caption="Source DB and collection / URI"
+                  icon="settings"
+                  :done="previewWizard > 2"
+                >
 
-            </q-select>
-            <q-input
-              v-if="!randomDocPreview"
-              v-model="docUri"
-              label="Optional doc URI"
-            />
-          </div>
+                  <q-select
+                    :options="availableDB"
+                    filled
+                    label="Source Database*"
+                    v-model="selectedDB"
+                    @input="dbChanged()"
+                  >
+                    <q-tooltip content-style="font-size: 1em">
+                      Preview will be executed on documents from this database
+                    </q-tooltip>
+                    <template v-slot:prepend>
+                      <q-icon
+                        name="fas fa-database"
+                        @click.stop
+                      />
+                    </template>
+                  </q-select>
 
-          <q-toggle
-            label="Random doc"
-            v-model="randomDocPreview"
-          />
+                  <div
+                    id="collectionGroup"
+                    v-if="isCollectionSelected"
+                  >
 
-          <q-toggle
-            label="Save to DB"
-            v-model="saveToDB"
-          />
+                    <q-select
+                      :options="availableCollections"
+                      filled
+                      label="Source Collection*"
+                      v-model="collectionForPreview"
+                    >
 
-          <div class="q-pa-md q-gutter-sm">
+                      <template v-slot:prepend>
+                        <q-icon
+                          name="fas fa-tags"
+                          @click.stop
+                        />
+                      </template>
+                      <q-tooltip content-style="font-size: 1em">
+                        Preview will be executed on documents from this collection
+                      </q-tooltip>
+                    </q-select>
 
-            <q-btn
-              :loading="graphPreviewExecuting"
-              v-bind:disabled="graphPreviewExecuting"
-              @click="executeGraph()"
-              color="primary"
-              label="Execute Preview"
-              :disabled="shouldDisable()"
-            />
+                    <q-toggle
+                      label="Random document"
+                      v-model="randomDocPreview"
+                    >
+                      <q-tooltip content-style="font-size: 1em">
+                        When checked, a random document from collection will be picked. Otherwise, the first document in the collection will be used.
+                      </q-tooltip>
+                    </q-toggle>
+
+                  </div>
+
+                  <div
+                    id="uriGroup"
+                    v-if="isUriSelected"
+                  >
+                    <q-input
+                      v-model="docUri"
+                      label="Optional doc URI"
+                    />
+                  </div>
+
+                  <q-stepper-navigation>
+                    <q-btn
+                      @click="previewWizard = 3"
+                      color="primary"
+                      label="Continue"
+                      :disable="isStep2ContinueDisabled"
+                    />
+                    <q-btn
+                      flat
+                      @click="previewWizard = 1"
+                      color="primary"
+                      label="Back"
+                      class="q-ml-sm"
+                    />
+                  </q-stepper-navigation>
+                </q-step>
+
+                <q-step
+                  :name="3"
+                  title="Save result to a Database?"
+                  icon="settings"
+                >
+                  <q-toggle
+                    label="Save to DB"
+                    v-model="saveToDB"
+                  />
+
+                  <q-select
+                    v-if="saveToDB"
+                    :options="availableDB"
+                    filled
+                    label="Save to Database"
+                    v-model="selectedTargetDB"
+                  >
+
+                    <template v-slot:prepend>
+                      <q-icon
+                        name="fas fa-database"
+                        @click.stop
+                      />
+                    </template>
+
+                  </q-select>
+
+                  <q-stepper-navigation>
+                    <q-btn
+                      @click="previewWizard = 4"
+                      color="primary"
+                      label="Continue"
+                      :disable="isStep3ContinueDisabled"
+                    />
+                    <q-btn
+                      flat
+                      @click="previewWizard = 2"
+                      color="primary"
+                      label="Back"
+                      class="q-ml-sm"
+                    />
+                  </q-stepper-navigation>
+
+                </q-step>
+
+                <q-step
+                  :name="4"
+                  title="Summary"
+                  icon="list"
+                >
+
+                  <div>Source Database: <q-chip icon="storage"> {{summarySelectedDB}}</q-chip>
+                  </div>
+                  <div
+                    id="collectionGroupSummary"
+                    v-if="isCollectionSelected"
+                  >
+                    <div>Source Document Collection: <q-chip icon="collections">{{summaryCollectionForPreview}}</q-chip>
+                    </div>
+                    <div>Random Document:
+                      <q-toggle
+                        v-model="randomDocPreview"
+                        checked-icon="check"
+                        color="green"
+                        unchecked-icon="clear"
+                        disable
+                      />
+                    </div>
+                  </div>
+
+                  <div
+                    id="uriGroup"
+                    v-if="isUriSelected"
+                  >
+                    Source Document URI: <q-chip icon="menu_book">{{docUri}}</q-chip>
+                  </div>
+
+                  <div
+                    id="saveToDbGroup"
+                    v-if="saveToDB"
+                  >
+                    Save result to Database: <q-chip icon="storage"> {{summarySaveDB}}</q-chip>
+                  </div>
+
+                  <div class="q-pa-md q-gutter-sm">
+
+                  </div>
+
+                  <q-stepper-navigation>
+                    <q-btn
+                      :loading="graphPreviewExecuting"
+                      v-bind:disabled="graphPreviewExecuting"
+                      @click="executeGraph()"
+                      color="primary"
+                      label="Execute Preview"
+                    />
+
+                    <q-btn
+                      flat
+                      @click="previewWizard = 3"
+                      color="primary"
+                      label="Back"
+                      class="q-ml-sm"
+                    />
+
+                  </q-stepper-navigation>
+                </q-step>
+              </q-stepper>
+            </div>
+
           </div>
 
         </q-card-section>
@@ -641,6 +831,8 @@ export default {
   ],
   data () {
     return {
+      previewSource: null,
+      previewWizard: 1,
       currentCtsQuery: "",
       currentCases: "",
       selectedTargetDB: null,
@@ -751,8 +943,63 @@ export default {
   computed: {
     blockModels: function () {
       return this.$store.getters.models
+    },
+    isStep1ContinueDisabled: function () {
+      return (this.previewSource == null)
+    },
+    isStep2ContinueDisabled: function () {
+      let disabled = true;
+      if (this.previewSource == 'collection') {
+        if (this.selectedDB != null && this.selectedDB != '' && this.collectionForPreview != null && this.collectionForPreview != '') {
+          disabled = false;
+        }
+      }
+      else if (this.previewSource == 'uri') {
+        if (this.selectedDB != null && this.selectedDB != '' && this.docUri != null && this.docUri != '') {
+          disabled = false;
+        }
+      }
+
+      return disabled;
+    },
+    isStep3ContinueDisabled: function () {
+      return (this.saveToDB == true && this.selectedTargetDB == null)
+    },
+    isCollectionSelected: function () {
+      return (this.previewSource == "collection")
+    },
+    isUriSelected: function () {
+      return (this.previewSource == "uri")
+    },
+    summarySelectedDB: function () {
+      let val = "";
+      if (this.selectedDB != null) {
+        val = this.selectedDB.label;
+      }
+      return val;
+    },
+    summarySaveDB: function () {
+      let val = "";
+      if (this.selectedTargetDB != null) {
+        val = this.selectedTargetDB.label;
+      }
+      return val;
+    },
+    summaryCollectionForPreview: function () {
+      let val = "";
+      if (this.collectionForPreview != null) {
+        val = this.collectionForPreview.value;
+      }
+      return val;
+    }
+
+  },
+  watch: {
+    previewSource: function (val) {
+      this.previewWizard = 2;
     }
   },
+
   methods: {
     // criteria for disabling the "Execute Preview" button
     shouldDisable () {

@@ -80,8 +80,12 @@ module.exports = function (ctx) {
         'QSeparator',
         'QScrollArea',
         'QCheckbox',
-        'QForm'
-
+        'QForm',
+        'QStepper',
+        'QStep',
+        'QStepperNavigation',
+        'QRadio',
+        'QChip'
       ],
 
       directives: [
