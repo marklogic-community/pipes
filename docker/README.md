@@ -39,12 +39,10 @@ The following commands assume your Pipes image is named *pipes:v1*. If not, plea
 
 ##Connecting to MarkLogic running in a container
 
-Please note: Pipes expects to connect to a MarkLogic host with a uri that begins with "http". So, the MarkLogic container will need to have a hostname that starts with "http". For example, in *docker-compose*:
-
 ``services:
     marklogic.dhf.local:
       image: store/marklogicdb/marklogic-server:${mlVersion}
-      hostname: http://${stackName}.dhf.local``
+      hostname: ${stackName}.dhf.local``
 
 To start Pipes, substitute the arguments (\$DHF, \$host, \$username, \$password) with the relevant values, and run:
 
