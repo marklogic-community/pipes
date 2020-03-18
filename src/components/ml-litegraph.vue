@@ -1467,7 +1467,7 @@ export default {
 
       this.$axios.post('/v1/resources/vppBackendServices?rs:action=SaveGraph', graphDef)
         .then((response) => {
-          this.savePopUpOpened = false; // close dialog 
+          this.savePopUpOpened = false; // close dialog
           this.$q.notify({
             color: 'positive',
             position: 'top',
@@ -1589,6 +1589,9 @@ export default {
         this.$axios.post('/v1/resources/vppBackendServices?rs:action=ExecuteGraph' + dbOption, request)
           .then((response) => {
             this.jsonFromPreview = response.data
+
+            if(response.data.error)
+              self.notifyError("ExecuteGraph", {message : response.data.error}, self);
           })
           .catch((error) => {
             self.notifyError("ExecuteGraph", error, self);
@@ -1605,7 +1608,7 @@ export default {
 
     },
 
-    // Remove block from modelList, checking the graph first  
+    // Remove block from modelList, checking the graph first
     checkGraphBlockDelete (block) {
 
       if (block == null) return;
