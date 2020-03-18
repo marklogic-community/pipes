@@ -140,6 +140,12 @@ module.exports = function (ctx) {
           //   '^/api': ''
           // }
         },
+        '/customSteps': {
+          target: 'http://localhost:8081/',
+          // pathRewrite: {
+          //   '^/api': ''
+          // }
+        },
         '/logout': {
           target: 'http://localhost:8081/',
           // pathRewrite: {

@@ -384,14 +384,7 @@
                   icon="settings"
                   :done="previewWizard > 1"
                 >
-
                   <q-list>
-                    <!--
-        Rendering a <label> tag (notice tag="label")
-        so QRadios will respond to clicks on QItems to
-        change Toggle state.
-      -->
-
                     <q-item
                       tag="label"
                       v-ripple
@@ -417,7 +410,7 @@
                         <q-radio
                           v-model="previewSource"
                           val="uri"
-                          color="orange"
+                          color="teal"
                         />
                       </q-item-section>
                       <q-item-section>
@@ -425,6 +418,24 @@
                         <q-item-label caption>Select this option if you want to run the preview on a specific document whose URI you know</q-item-label>
                       </q-item-section>
                     </q-item>
+
+                    <q-item
+                      tag="label"
+                      v-ripple
+                    >
+                      <q-item-section avatar>
+                        <q-radio
+                          v-model="previewSource"
+                          val="dhfStep"
+                          color="teal"
+                        />
+                      </q-item-section>
+                      <q-item-section>
+                        <q-item-label>Custom DHF Step</q-item-label>
+                        <q-item-label caption>Select this option if you already have a custom DHF step definition for your Pipes graph</q-item-label>
+                      </q-item-section>
+                    </q-item>
+
                   </q-list>
 
                   <q-stepper-navigation>
@@ -440,28 +451,30 @@
                 <q-step
                   :name="2"
                   title="Select details"
-                  caption="Source DB and collection / URI"
+                  caption=""
                   icon="settings"
                   :done="previewWizard > 2"
                 >
 
-                  <q-select
-                    :options="availableDB"
-                    filled
-                    label="Source Database*"
-                    v-model="selectedDB"
-                    @input="dbChanged()"
-                  >
-                    <q-tooltip content-style="font-size: 1em">
-                      Preview will be executed on documents from this database
-                    </q-tooltip>
-                    <template v-slot:prepend>
-                      <q-icon
-                        name="fas fa-database"
-                        @click.stop
-                      />
-                    </template>
-                  </q-select>
+                  <div v-if="isCollectionSelected || isUriSelected">
+                    <q-select
+                      :options="availableDB"
+                      filled
+                      label="Source Database*"
+                      v-model="selectedDB"
+                      @input="dbChanged()"
+                    >
+                      <q-tooltip content-style="font-size: 1em">
+                        Preview will be executed on documents from this database
+                      </q-tooltip>
+                      <template v-slot:prepend>
+                        <q-icon
+                          name="fas fa-database"
+                          @click.stop
+                        />
+                      </template>
+                    </q-select>
+                  </div>
 
                   <div
                     id="collectionGroup"
@@ -505,6 +518,29 @@
                       v-model="docUri"
                       label="Optional doc URI"
                     />
+                  </div>
+
+                  <div
+                    id="dhfStepGroup"
+                    v-if="isDhfStepSelected"
+                  >
+                    <div>Select a DHF step from your project</div>
+                    <q-select
+                      v-if="this.previewSource==='dhfStep'"
+                      dense
+                      outlined
+                      v-model="selectedStep"
+                      :options="dhfStepSelectOptions"
+                      label="Select the DHF 5.x Step"
+                    />
+                    <q-toggle
+                      label="Random document"
+                      v-model="randomDocPreview"
+                    >
+                      <q-tooltip content-style="font-size: 1em">
+                        When checked, a random document from collection will be picked. Otherwise, the first document in the collection will be used.
+                      </q-tooltip>
+                    </q-toggle>
                   </div>
 
                   <q-stepper-navigation>
@@ -579,7 +615,7 @@
                   </div>
                   <div
                     id="collectionGroupSummary"
-                    v-if="isCollectionSelected"
+                    v-if="isCollectionSelected || isDhfStepSelected"
                   >
                     <div>Source Document Collection: <q-chip icon="collections">{{summaryCollectionForPreview}}</q-chip>
                     </div>
@@ -831,6 +867,8 @@ export default {
   ],
   data () {
     return {
+      dhfSteps: [],
+      selectedStep: null,
       previewSource: null,
       previewWizard: 1,
       currentCtsQuery: "",
@@ -938,7 +976,6 @@ export default {
       validationInfos: []
 
     }
-
   },
   computed: {
     blockModels: function () {
@@ -949,7 +986,7 @@ export default {
     },
     isStep2ContinueDisabled: function () {
       let disabled = true;
-      if (this.previewSource == 'collection') {
+      if (this.previewSource == 'collection' || this.previewSource == 'dhfStep') {
         if (this.selectedDB != null && this.selectedDB != '' && this.collectionForPreview != null && this.collectionForPreview != '') {
           disabled = false;
         }
@@ -959,7 +996,6 @@ export default {
           disabled = false;
         }
       }
-
       return disabled;
     },
     isStep3ContinueDisabled: function () {
@@ -970,6 +1006,9 @@ export default {
     },
     isUriSelected: function () {
       return (this.previewSource == "uri")
+    },
+    isDhfStepSelected: function () {
+      return (this.previewSource == "dhfStep")
     },
     summarySelectedDB: function () {
       let val = "";
@@ -996,7 +1035,21 @@ export default {
   },
   watch: {
     previewSource: function (val) {
-      this.previewWizard = 2;
+      if (val != null) {
+        this.previewWizard = 2;
+      }
+    },
+    selectedStep: function (val) {
+
+
+      let availableDbHash = this.availableDB.reduce(function (map, obj) {
+        map[obj.label] = obj.value;
+        return map;
+      }, {});
+
+      this.selectedDB = { "label": this.dhfSteps[val.label].database, "value": availableDbHash[this.dhfSteps[val.label].database] };
+      this.collectionForPreview = { "label": this.dhfSteps[val.label].collection, "value": this.dhfSteps[val.label].collection };
+
     }
   },
 
@@ -1605,6 +1658,23 @@ export default {
           timeout: 800
         })
     },
+    discoverDhfSteps () {
+      var self = this;
+
+      this.$axios.get('/customSteps').then((response) => {
+
+
+        this.dhfSteps = response.data.customSteps.reduce(function (map, obj) {
+          map[obj.name] = { "database": obj.database, "collection": obj.collection };
+          return map;
+        }, {});
+
+        this.dhfStepSelectOptions = response.data.customSteps.map(item => { return { "label": item.name, "value": item.name } })
+      })
+        .catch((error) => {
+          self.notifyError("databasesDetails", error, self);
+        })
+    },
     discoverDatabases () {
       var self = this;
       this.$axios.get('/v1/resources/vppBackendServices?rs:action=databasesDetails')
@@ -1777,6 +1847,7 @@ export default {
     this.$root.$on('blockRequested', this.createBlock);
 
     this.discoverDatabases()
+    this.discoverDhfSteps()
 
     this.graph = new LiteGraph.LGraph();
     this.graph_canvas = new LiteGraph.LGraphCanvas(this.$refs["mycanvas"], this.graph);
@@ -1790,7 +1861,6 @@ export default {
       var storedSettings = this.$q.localStorage.getItem(ADVANCED_SETTINGS_KEY)
       this.advancedSettings.confirmBrowserRefresh = storedSettings.confirmBrowserRefresh != null ? storedSettings.confirmBrowserRefresh : true
     }
-
   },
   beforeMount () {
     window.addEventListener("beforeunload", this.browserRefreshConfirm)
