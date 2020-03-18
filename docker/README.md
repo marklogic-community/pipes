@@ -1,6 +1,6 @@
-#Running Pipes in a Docker container
+# Running Pipes in a Docker container
 
-##Pulling the Pipes image from Docker Hub
+## Pulling the Pipes image from Docker Hub
 
 Assuming you already have a Docker Hub account, log in to Docker Hub using your credentials. Run
 
@@ -12,7 +12,7 @@ The pull the image:
 
 ``docker push dhfpipes/pipes:v1``
 
-##Building the Pipes image from the Dockerfile
+## Building the Pipes image from the Dockerfile
 
 First, create a directory to contain the Pipes jar. From the directory that contains the Dockerfile and entrypoint script (pipes-entrypoint.sh) run:
 
@@ -37,7 +37,7 @@ To run Pipes as a container, you will need to add the following arguments to you
 
 The following commands assume your Pipes image is named *pipes:v1*. If not, please change the final argument to ``docker run``.
 
-##Connecting to MarkLogic running in a container
+## Connecting to MarkLogic running in a container
 
 ``services:
     marklogic.dhf.local:
@@ -61,7 +61,7 @@ If you are connecting to a customer Docker network, you will also need to add th
 
 This command will run Pipes in a container, mapping port 8081 in the container to port 8081 on the local machine, and create a bind mount (at the location specified in $DHF) from within the container to your local machine.
 
-##Connecting to MarkLogic running on your local machine
+## Connecting to MarkLogic running on your local machine
 
 Choose how to access your local network from within a container, for example using `` host.docker.internal`` on a Mac, then run: 
 
