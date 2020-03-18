@@ -368,82 +368,307 @@
           <div class="text-h6">Preview Graph Execution</div>
         </q-card-section>
         <q-card-section class="row">
-          <div style="min-width: 250px; max-width: 300px">
+          <div style="min-width: 250px; max-width: 500px">
 
-            <q-select
-              :options="availableDB"
-              filled
-              label="Source Database"
-              v-model="selectedDB"
-              @input="dbChanged()"
-            >
+            <div style="width:532px">
+              <q-stepper
+                v-model="previewWizard"
+                vertical
+                flat
+                color="primary"
+                animated
+              >
+                <q-step
+                  :name="1"
+                  title="Select the source of the document for preview"
+                  icon="settings"
+                  :done="previewWizard > 1"
+                >
+                  <q-list>
+                    <q-item
+                      tag="label"
+                      v-ripple
+                    >
+                      <q-item-section avatar>
+                        <q-radio
+                          v-model="previewSource"
+                          val="collection"
+                          color="teal"
+                        />
+                      </q-item-section>
+                      <q-item-section>
+                        <q-item-label>Documents Collection</q-item-label>
+                        <q-item-label caption>Select this option if you want to run the preview on document(s) from a DB collection</q-item-label>
+                      </q-item-section>
+                    </q-item>
 
-              <template v-slot:prepend>
-                <q-icon
-                  name="fas fa-database"
-                  @click.stop
-                />
-              </template>
+                    <q-item
+                      tag="label"
+                      v-ripple
+                    >
+                      <q-item-section avatar>
+                        <q-radio
+                          v-model="previewSource"
+                          val="uri"
+                          color="teal"
+                        />
+                      </q-item-section>
+                      <q-item-section>
+                        <q-item-label>Document URI</q-item-label>
+                        <q-item-label caption>Select this option if you want to run the preview on a specific document whose URI you know</q-item-label>
+                      </q-item-section>
+                    </q-item>
 
-            </q-select>
-            <q-select
-              :options="availableCollections"
-              filled
-              label="Source Collection"
-              v-model="collectionForPreview"
-            >
+                    <q-item
+                      tag="label"
+                      v-ripple
+                    >
+                      <q-item-section avatar>
+                        <q-radio
+                          v-model="previewSource"
+                          val="dhfStep"
+                          color="teal"
+                        />
+                      </q-item-section>
+                      <q-item-section>
+                        <q-item-label>Custom DHF Step</q-item-label>
+                        <q-item-label caption>Select this option if you already have a custom DHF step definition for your Pipes graph</q-item-label>
+                      </q-item-section>
+                    </q-item>
 
-              <template v-slot:prepend>
-                <q-icon
-                  name="fas fa-tags"
-                  @click.stop
-                />
-              </template>
-            </q-select>
+                  </q-list>
 
-            <q-select
-              v-if="saveToDB"
-              :options="availableDB"
-              filled
-              label="Save to Database"
-              v-model="selectedTargetDB"
-            >
+                  <q-stepper-navigation>
+                    <q-btn
+                      @click="previewWizard = 2"
+                      color="primary"
+                      label="Continue"
+                      :disable="isStep1ContinueDisabled"
+                    />
+                  </q-stepper-navigation>
+                </q-step>
 
-              <template v-slot:prepend>
-                <q-icon
-                  name="fas fa-database"
-                  @click.stop
-                />
-              </template>
+                <q-step
+                  :name="2"
+                  title="Select details"
+                  caption=""
+                  icon="settings"
+                  :done="previewWizard > 2"
+                >
 
-            </q-select>
-            <q-input
-              v-if="!randomDocPreview"
-              v-model="docUri"
-              label="Optional doc URI"
-            />
-          </div>
+                  <div v-if="isCollectionSelected || isUriSelected">
+                    <q-select
+                      :options="availableDB"
+                      filled
+                      label="Source Database*"
+                      v-model="selectedDB"
+                      @input="dbChanged()"
+                    >
+                      <q-tooltip content-style="font-size: 1em">
+                        Preview will be executed on documents from this database
+                      </q-tooltip>
+                      <template v-slot:prepend>
+                        <q-icon
+                          name="fas fa-database"
+                          @click.stop
+                        />
+                      </template>
+                    </q-select>
+                  </div>
 
-          <q-toggle
-            label="Random doc"
-            v-model="randomDocPreview"
-          />
+                  <div
+                    id="collectionGroup"
+                    v-if="isCollectionSelected"
+                  >
 
-          <q-toggle
-            label="Save to DB"
-            v-model="saveToDB"
-          />
+                    <q-select
+                      :options="availableCollections"
+                      filled
+                      label="Source Collection*"
+                      v-model="collectionForPreview"
+                    >
 
-          <div class="q-pa-md q-gutter-sm">
+                      <template v-slot:prepend>
+                        <q-icon
+                          name="fas fa-tags"
+                          @click.stop
+                        />
+                      </template>
+                      <q-tooltip content-style="font-size: 1em">
+                        Preview will be executed on documents from this collection
+                      </q-tooltip>
+                    </q-select>
 
-            <q-btn
-              :loading="graphPreviewExecuting"
-              v-bind:disabled="graphPreviewExecuting"
-              @click="executeGraph()"
-              color="primary"
-              label="Execute Preview"
-              :disabled="shouldDisable()"
-            />
+                    <q-toggle
+                      label="Random document"
+                      v-model="randomDocPreview"
+                    >
+                      <q-tooltip content-style="font-size: 1em">
+                        When checked, a random document from collection will be picked. Otherwise, the first document in the collection will be used.
+                      </q-tooltip>
+                    </q-toggle>
+
+                  </div>
+
+                  <div
+                    id="uriGroup"
+                    v-if="isUriSelected"
+                  >
+                    <q-input
+                      v-model="docUri"
+                      label="Optional doc URI"
+                    />
+                  </div>
+
+                  <div
+                    id="dhfStepGroup"
+                    v-if="isDhfStepSelected"
+                  >
+                    <div>Select a DHF step from your project</div>
+                    <q-select
+                      v-if="this.previewSource==='dhfStep'"
+                      dense
+                      outlined
+                      v-model="selectedStep"
+                      :options="dhfStepSelectOptions"
+                      label="Select the DHF 5.x Step"
+                    />
+                    <q-toggle
+                      label="Random document"
+                      v-model="randomDocPreview"
+                    >
+                      <q-tooltip content-style="font-size: 1em">
+                        When checked, a random document from collection will be picked. Otherwise, the first document in the collection will be used.
+                      </q-tooltip>
+                    </q-toggle>
+                  </div>
+
+                  <q-stepper-navigation>
+                    <q-btn
+                      @click="previewWizard = 3"
+                      color="primary"
+                      label="Continue"
+                      :disable="isStep2ContinueDisabled"
+                    />
+                    <q-btn
+                      flat
+                      @click="previewWizard = 1"
+                      color="primary"
+                      label="Back"
+                      class="q-ml-sm"
+                    />
+                  </q-stepper-navigation>
+                </q-step>
+
+                <q-step
+                  :name="3"
+                  title="Save result to a Database?"
+                  icon="settings"
+                >
+                  <q-toggle
+                    label="Save to DB"
+                    v-model="saveToDB"
+                  />
+
+                  <q-select
+                    v-if="saveToDB"
+                    :options="availableDB"
+                    filled
+                    label="Save to Database"
+                    v-model="selectedTargetDB"
+                  >
+
+                    <template v-slot:prepend>
+                      <q-icon
+                        name="fas fa-database"
+                        @click.stop
+                      />
+                    </template>
+
+                  </q-select>
+
+                  <q-stepper-navigation>
+                    <q-btn
+                      @click="previewWizard = 4"
+                      color="primary"
+                      label="Continue"
+                      :disable="isStep3ContinueDisabled"
+                    />
+                    <q-btn
+                      flat
+                      @click="previewWizard = 2"
+                      color="primary"
+                      label="Back"
+                      class="q-ml-sm"
+                    />
+                  </q-stepper-navigation>
+
+                </q-step>
+
+                <q-step
+                  :name="4"
+                  title="Summary"
+                  icon="list"
+                >
+
+                  <div>Source Database: <q-chip icon="storage"> {{summarySelectedDB}}</q-chip>
+                  </div>
+                  <div
+                    id="collectionGroupSummary"
+                    v-if="isCollectionSelected || isDhfStepSelected"
+                  >
+                    <div>Source Document Collection: <q-chip icon="collections">{{summaryCollectionForPreview}}</q-chip>
+                    </div>
+                    <div>Random Document:
+                      <q-toggle
+                        v-model="randomDocPreview"
+                        checked-icon="check"
+                        color="green"
+                        unchecked-icon="clear"
+                      />
+                    </div>
+                  </div>
+
+                  <div
+                    id="uriGroup"
+                    v-if="isUriSelected"
+                  >
+                    Source Document URI: <q-chip icon="menu_book">{{docUri}}</q-chip>
+                  </div>
+
+                  <div
+                    id="saveToDbGroup"
+                    v-if="saveToDB"
+                  >
+                    Save result to Database: <q-chip icon="storage"> {{summarySaveDB}}</q-chip>
+                  </div>
+
+                  <div class="q-pa-md q-gutter-sm">
+
+                  </div>
+
+                  <q-stepper-navigation>
+                    <q-btn
+                      :loading="graphPreviewExecuting"
+                      v-bind:disabled="graphPreviewExecuting"
+                      @click="executeGraph()"
+                      color="primary"
+                      label="Execute Preview"
+                    />
+
+                    <q-btn
+                      flat
+                      @click="previewWizard = 3"
+                      color="primary"
+                      label="Back"
+                      class="q-ml-sm"
+                    />
+
+                  </q-stepper-navigation>
+                </q-step>
+              </q-stepper>
+            </div>
+
           </div>
 
         </q-card-section>
@@ -641,6 +866,10 @@ export default {
   ],
   data () {
     return {
+      dhfSteps: [],
+      selectedStep: null,
+      previewSource: null,
+      previewWizard: 1,
       currentCtsQuery: "",
       currentCases: "",
       selectedTargetDB: null,
@@ -746,13 +975,90 @@ export default {
       validationInfos: []
 
     }
-
   },
   computed: {
     blockModels: function () {
       return this.$store.getters.models
+    },
+    isStep1ContinueDisabled: function () {
+      return (this.previewSource == null)
+    },
+    isStep2ContinueDisabled: function () {
+      let disabled = true;
+      if (this.previewSource == 'collection' || this.previewSource == 'dhfStep') {
+        if (this.selectedDB != null && this.selectedDB != '' && this.collectionForPreview != null && this.collectionForPreview != '') {
+          disabled = false;
+        }
+      }
+      else if (this.previewSource == 'uri') {
+        if (this.selectedDB != null && this.selectedDB != '' && this.docUri != null && this.docUri != '') {
+          disabled = false;
+        }
+      }
+      return disabled;
+    },
+    isStep3ContinueDisabled: function () {
+      return (this.saveToDB == true && this.selectedTargetDB == null)
+    },
+    isCollectionSelected: function () {
+      return (this.previewSource == "collection")
+    },
+    isUriSelected: function () {
+      return (this.previewSource == "uri")
+    },
+    isDhfStepSelected: function () {
+      return (this.previewSource == "dhfStep")
+    },
+    summarySelectedDB: function () {
+      let val = "";
+      if (this.selectedDB != null) {
+        val = this.selectedDB.label;
+      }
+      return val;
+    },
+    summarySaveDB: function () {
+      let val = "";
+      if (this.selectedTargetDB != null) {
+        val = this.selectedTargetDB.label;
+      }
+      return val;
+    },
+    summaryCollectionForPreview: function () {
+      let val = "";
+      if (this.collectionForPreview != null) {
+        val = this.collectionForPreview.value;
+      }
+      return val;
+    }
+
+  },
+  watch: {
+    previewSource: function (val) {
+      if (val != null) {
+        if (this.previewSource == "uri") {
+          this.collectionForPreview = "";
+          this.randomDocPreview = false;
+        }
+        else if (this.previewSource == 'collection' || this.previewSource == 'dhfStep') {
+          this.docUri = null;
+        }
+        this.previewWizard = 2;
+      }
+    },
+    selectedStep: function (val) {
+
+
+      let availableDbHash = this.availableDB.reduce(function (map, obj) {
+        map[obj.label] = obj.value;
+        return map;
+      }, {});
+
+      this.selectedDB = { "label": this.dhfSteps[val.label].database, "value": availableDbHash[this.dhfSteps[val.label].database] };
+      this.collectionForPreview = { "label": this.dhfSteps[val.label].collection, "value": this.dhfSteps[val.label].collection };
+
     }
   },
+
   methods: {
     // criteria for disabling the "Execute Preview" button
     shouldDisable () {
@@ -1358,6 +1664,23 @@ export default {
           timeout: 800
         })
     },
+    discoverDhfSteps () {
+      var self = this;
+
+      this.$axios.get('/customSteps').then((response) => {
+
+
+        this.dhfSteps = response.data.customSteps.reduce(function (map, obj) {
+          map[obj.name] = { "database": obj.database, "collection": obj.collection };
+          return map;
+        }, {});
+
+        this.dhfStepSelectOptions = response.data.customSteps.map(item => { return { "label": item.name, "value": item.name } })
+      })
+        .catch((error) => {
+          self.notifyError("databasesDetails", error, self);
+        })
+    },
     discoverDatabases () {
       var self = this;
       this.$axios.get('/v1/resources/vppBackendServices?rs:action=databasesDetails')
@@ -1530,6 +1853,7 @@ export default {
     this.$root.$on('blockRequested', this.createBlock);
 
     this.discoverDatabases()
+    this.discoverDhfSteps()
 
     this.graph = new LiteGraph.LGraph();
     this.graph_canvas = new LiteGraph.LGraphCanvas(this.$refs["mycanvas"], this.graph);
@@ -1543,7 +1867,6 @@ export default {
       var storedSettings = this.$q.localStorage.getItem(ADVANCED_SETTINGS_KEY)
       this.advancedSettings.confirmBrowserRefresh = storedSettings.confirmBrowserRefresh != null ? storedSettings.confirmBrowserRefresh : true
     }
-
   },
   beforeMount () {
     window.addEventListener("beforeunload", this.browserRefreshConfirm)

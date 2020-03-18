@@ -80,8 +80,12 @@ module.exports = function (ctx) {
         'QSeparator',
         'QScrollArea',
         'QCheckbox',
-        'QForm'
-
+        'QForm',
+        'QStepper',
+        'QStep',
+        'QStepperNavigation',
+        'QRadio',
+        'QChip'
       ],
 
       directives: [
@@ -131,6 +135,12 @@ module.exports = function (ctx) {
           // }
         },
         '/login': {
+          target: 'http://localhost:8081/',
+          // pathRewrite: {
+          //   '^/api': ''
+          // }
+        },
+        '/customSteps': {
           target: 'http://localhost:8081/',
           // pathRewrite: {
           //   '^/api': ''

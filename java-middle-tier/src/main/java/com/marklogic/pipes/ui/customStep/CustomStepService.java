@@ -7,6 +7,7 @@ package com.marklogic.pipes.ui.customStep;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.marklogic.hub.StepDefinitionManager;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.impl.StepDefinitionManagerImpl;
@@ -64,7 +65,10 @@ public class CustomStepService {
 
           customStepResponse.addStep(new CustomStep(
             customStep.getName(),
-            clientConfig.getMlDhfRoot()+ customStepsRelativePath+customStep.getName()+"/"+customStep.getName()+stepDefinitionManager.STEP_DEFINITION_FILE_EXTENSION)
+            clientConfig.getMlDhfRoot()+ customStepsRelativePath+customStep.getName()+"/"+customStep.getName()+stepDefinitionManager.STEP_DEFINITION_FILE_EXTENSION,
+            ((TextNode)customStep.getOptions().get("sourceDatabase")).asText(),
+            ((TextNode)customStep.getOptions().get("sourceCollection")).asText()
+            )
           );
 
         }
