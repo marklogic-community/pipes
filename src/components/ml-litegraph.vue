@@ -625,7 +625,6 @@
                         checked-icon="check"
                         color="green"
                         unchecked-icon="clear"
-                        disable
                       />
                     </div>
                   </div>
@@ -1036,6 +1035,13 @@ export default {
   watch: {
     previewSource: function (val) {
       if (val != null) {
+        if (this.previewSource == "uri") {
+          this.collectionForPreview = "";
+          this.randomDocPreview = false;
+        }
+        else if (this.previewSource == 'collection' || this.previewSource == 'dhfStep') {
+          this.docUri = null;
+        }
         this.previewWizard = 2;
       }
     },
