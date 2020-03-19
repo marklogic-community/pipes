@@ -50,7 +50,7 @@ mlDhfRoot=C:/Users/user/dev/test-pipes
 ### Can I use another filename instead of ```application.properties```?
 Yes. Assuming you want to use a filename ```myEnvironment.properites```, add a parameter 
 
-```spring.config.name=--myEnvironment.properites``` 
+```--spring.config.location=myEnvironment.properites``` 
 
 when running the jar.
 
