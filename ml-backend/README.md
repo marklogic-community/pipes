@@ -3,6 +3,10 @@ myBintrayUser=
 
 myBintrayKey=
 
+# Version
+
+Specified in build.gradle, example: ```version = "1.0.1"```
+
 # Publish the mlBundle to bintray
 
 ```gradle publishToMavenLocal --info```
