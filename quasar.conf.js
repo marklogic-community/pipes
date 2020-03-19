@@ -80,6 +80,7 @@ module.exports = function (ctx) {
         'QSeparator',
         'QScrollArea',
         'QCheckbox',
+        'QSpace',
         'QForm',
         'QStepper',
         'QStep',
