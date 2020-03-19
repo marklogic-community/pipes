@@ -1,15 +1,14 @@
 import org.gradle.internal.os.OperatingSystem;
 
 plugins {
-	id 'org.springframework.boot' version '2.2.2.RELEASE'
-	id 'io.spring.dependency-management' version '1.0.8.RELEASE'
-	id 'java'
+  id 'org.springframework.boot' version '2.2.2.RELEASE'
+  id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+  id 'java'
 }
 
 group = 'com.marklogic.pipes'
 version = '1.0-beta.4'
 sourceCompatibility = '1.8'
-bootJar.archiveBaseName = 'marklogic-pipes'
 
 repositories { jcenter()}
 ext {
@@ -28,8 +27,6 @@ dependencies {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
   annotationProcessor group: 'org.springframework.boot', name: 'spring-boot-configuration-processor'
-
-
 }
 
 dependencyManagement {
@@ -65,7 +62,8 @@ task runQuasarBuild(type:Exec) {
   if (env.isWindows()) {
     commandLine 'cmd', '/c', 'quasar build'
   } else {
-    commandLine 'quasar build'
+    executable "quasar"
+    args "build"
   }
   
   doLast {
@@ -101,10 +99,13 @@ task copyDhf(type:Copy) {
   }
 }
 
-bootJar.dependsOn copyQuasarBuild
-bootJar.dependsOn copyDhf
-bootJar.mustRunAfter copyQuasarBuild
-bootJar.mustRunAfter copyDhf
+bootJar {
+  baseName = 'marklogic-pipes'
+  dependsOn copyQuasarBuild
+  dependsOn copyDhf
+  mustRunAfter copyQuasarBuild
+  mustRunAfter copyDhf
+}
 
 task runQuasarDev(type:Exec) {
   dependsOn copyLiteGraphOverride
@@ -118,7 +119,8 @@ task runQuasarDev(type:Exec) {
   if (env.isWindows()) {
     commandLine 'cmd', '/c', 'quasar dev;'
   } else {
-    commandLine 'quasar dev'
+    executable "quasar"
+    args "dev"
   }
   
   doLast {
