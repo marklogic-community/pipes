@@ -1793,6 +1793,7 @@ export default {
           return "this.addProperty('" + property.name + ((property.type) ? "'," + JSON.stringify(property.type) + ");" : "');")
         }).join("") : ""
         code += (config.widgets != null) ? config.widgets.map((widget) => {
+          if (widget.default =="#DATABASES#") widget.values = this.availableDB.map(item => item.label)
           return "this.addWidget('" + widget.type + "','" + widget.name + "','" + widget.default + "', function(v){" + (widget.callback ? widget.callback : "") + "}.bind(this), { values:" + JSON.stringify(widget.values) + "} );"
         }).join("") : "";
         if (config.width)
