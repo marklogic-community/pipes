@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'com.marklogic.pipes'
-version = '1.0-beta.4'
+version = '1.0.1'
 sourceCompatibility = '1.8'
 bootJar.archiveBaseName = 'marklogic-pipes'
 
