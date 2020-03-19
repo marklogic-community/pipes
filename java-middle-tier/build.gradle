@@ -1,14 +1,14 @@
-plugins {
-	id 'org.springframework.boot' version '2.2.2.RELEASE'
-	id 'io.spring.dependency-management' version '1.0.8.RELEASE'
-	id 'java'
+import org.gradle.internal.os.OperatingSystem;
 
+plugins {
+  id 'org.springframework.boot' version '2.2.2.RELEASE'
+  id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+  id 'java'
 }
 
 group = 'com.marklogic.pipes'
 version = '1.0.1'
 sourceCompatibility = '1.8'
-bootJar.archiveBaseName = 'marklogic-pipes'
 
 repositories { jcenter()}
 ext {
@@ -27,8 +27,6 @@ dependencies {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
   annotationProcessor group: 'org.springframework.boot', name: 'spring-boot-configuration-processor'
-
-
 }
 
 dependencyManagement {
@@ -41,3 +39,103 @@ test {
 	useJUnitPlatform()
 }
 
+task copyLiteGraphOverride(type: Copy) {
+  doFirst {
+    logger.warn('Copying "node_modules_override/litegraph.js"')
+  }
+  from "../node_modules_override/litegraph.js"
+  into "../node_modules/litegraph.js/build/"
+  doLast {
+    logger.warn('Done copying "node_modules_override/litegraph.js"')
+  }
+}
+
+task runQuasarBuild(type:Exec) {
+  dependsOn copyLiteGraphOverride
+  mustRunAfter copyLiteGraphOverride
+  doFirst {
+    logger.warn('Running quasar build')
+  }
+  workingDir '..'
+
+  def env = OperatingSystem.current()
+  if (env.isWindows()) {
+    commandLine 'cmd', '/c', 'quasar build'
+  } else {
+    executable "quasar"
+    args "build"
+  }
+  
+  doLast {
+    logger.warn('Done running quasar build')
+  }
+}
+
+task copyQuasarBuild(type:Copy) {
+  dependsOn runQuasarBuild
+  mustRunAfter runQuasarBuild
+  
+  doFirst {
+    logger.warn('Copying "dist/spa"')
+  }
+  from "../dist/spa/" 
+  into "src/main/resources/static/"
+  outputs.upToDateWhen {
+    false
+  }
+  doLast {
+    logger.warn('Done copying "dist/spa"')
+  }
+}
+
+task copyDhf(type:Copy) {
+  doFirst {
+    logger.warn('Copying "dist_user/dhf"')
+  }
+  
+  from "../ml-backend/src/" 
+  into "src/main/resources/dhf/src/"
+  doLast {
+    logger.warn('Done copying "dist_user/dhf"')
+  }
+}
+
+bootJar {
+  baseName = 'marklogic-pipes'
+  dependsOn copyQuasarBuild
+  dependsOn copyDhf
+  mustRunAfter copyQuasarBuild
+  mustRunAfter copyDhf
+}
+
+task runQuasarDev(type:Exec) {
+  dependsOn copyLiteGraphOverride
+  mustRunAfter copyLiteGraphOverride
+  doFirst {
+    logger.warn('Running quasar dev')
+  }
+  workingDir '..'
+
+  def env = OperatingSystem.current()
+  if (env.isWindows()) {
+    commandLine 'cmd', '/c', 'quasar dev;'
+  } else {
+    executable "quasar"
+    args "dev"
+  }
+  
+  doLast {
+    logger.warn('Done running quasar dev')
+  }
+}
+
+task runLocal(type: JavaExec) {
+  group = "Execution"
+  description = "Run the main class with JavaExecTask"
+  classpath = sourceSets.main.runtimeClasspath
+  main = "com.marklogic.pipes.ui.Application"
+}
+
+task buildPipes {
+  dependsOn bootJar
+}
