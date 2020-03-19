@@ -314,7 +314,7 @@ function InvokeExecuteGraph(input) {
       let doc = null
       if (execContext.collectionRandom) {
         let nbDocs = cts.estimate(cts.collectionQuery(execContext.collection))
-        doc = cts.doc(fn.head(fn.subsequence(cts.uris(null, null, cts.collectionQuery(execContext.collection)), xdmp.random(nbDocs - 1) + 1)))
+        if(nbDocs>0) doc = cts.doc(fn.head(fn.subsequence(cts.uris(null, null, cts.collectionQuery(execContext.collection)), xdmp.random(nbDocs - 1) + 1)))
 
       } else {
         if (execContext.previewUri == null || execContext.previewUri == "")
@@ -322,16 +322,29 @@ function InvokeExecuteGraph(input) {
         else
           doc = cts.doc(execContext.previewUri)
       }
-      let uri = fn.baseUri(doc)
 
-      console.log("input=", input)
-      console.log("execContext=", execContext)
-      console.log("execContext.collection=", execContext.collection)
-      console.log("execContext[\"collection\"]=", execContext["collection"])
-      console.log("input.collection=", input.collection)
-      console.log("uri=", uri);
+      if (doc != null) {
+        let uri = fn.baseUri(doc)
 
-      return gHelper.executeGraphFromJson(execContext.jsonGraph, uri, doc, {collections: xdmp.documentGetCollections(uri)})
+        console.log("input=", input)
+        console.log("execContext=", execContext)
+        console.log("execContext.collection=", execContext.collection)
+        console.log("execContext[\"collection\"]=", execContext["collection"])
+        console.log("input.collection=", input.collection)
+        console.log("uri=", uri);
+
+        return gHelper.executeGraphFromJson(execContext.jsonGraph, uri, doc, {collections: xdmp.documentGetCollections(uri)})
+
+      } else {
+
+        let result = {
+
+          error: "No source document, nothing to preview for the given context"
+
+        }
+        return result
+
+      }
 
     }
   }

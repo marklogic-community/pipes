@@ -35,7 +35,7 @@
             @click.stop="loadDHFDefaultGraph()"
           >
             <q-tooltip content-class="pipes-tooltip">
-              Reset graph to default DHF config
+              Start a new graph
             </q-tooltip>
 
           </q-btn>
@@ -135,7 +135,7 @@
             size="lg"
             @click.stop="logOut()"
           >
-           <q-tooltip content-class="pipes-tooltip">
+            <q-tooltip content-class="pipes-tooltip">
               Log out
             </q-tooltip>
           </q-btn>
@@ -290,11 +290,23 @@ export default {
       this.$root.$emit("exportGraphCall");
     },
     loadDHFDefaultGraph () {
-      this.$root.$emit("loadDHFDefaultGraphCall");
-      this.leftDrawerOpen = false
+      // TODO add an "are you sure...?" graph
+
+      this.$q.dialog({
+        title: 'New Graph',
+        message: 'You will lose any unsaved work. \
+        Do you want to proceed?',
+        persistent: true,
+        cancel: true
+
+      }).onOk(() => {
+        this.$root.$emit("loadDHFDefaultGraphCall");
+        this.leftDrawerOpen = false
+      })
+
     },
     setGraphMetadata (meta) {
-     // console.log("Graph metadata " + (typeof metadata) + ": " + meta)
+      // console.log("Graph metadata " + (typeof metadata) + ": " + meta)
       this.graphMetadata = meta
     },
     openHelp () {

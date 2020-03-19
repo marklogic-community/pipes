@@ -26,7 +26,7 @@ const Notifications = {
       errorPath = "1"
       errorDetail = this.extractErrorDetail(MLErrorResponse.response.data.message);
       errorSummary = this.summariseError(errorDetail)
-      
+
      // error = "Error " + this.resolveErrorAction(action) + ": " + errorSummary || errorDetail + " [1]"
     } else if (MLErrorResponse.response.data && MLErrorResponse.response.data.errorResponse) {
       errorPath = "2"
@@ -43,14 +43,14 @@ const Notifications = {
       errorSummary = this.summariseError(errorDetail)
     } else {
       errorPath = "4"
-      try { 
+      try {
           errorDetail = JSON.stringify(MLErrorResponse);
       } catch (c) {
           errorDetail = MLErrorResponse
       }
     }
 
-  console.log("FINISHED MAIN LOGIC") 
+  console.log("FINISHED MAIN LOGIC")
 
   outputError = "Error " + this.resolveErrorAction(action) + ": " +  errorSummary + "<p>" + errorDetail + " [" + errorPath + "]</p>"
   console.log("FINAL ERROR: " + outputError)
@@ -60,7 +60,8 @@ const Notifications = {
           position: 'top',
           message: outputError,
           icon: 'report_problem',
-          html: true
+          html: true,
+          timeout: 2500
         })
 
   },
@@ -85,7 +86,7 @@ const Notifications = {
         break;
       case 'SaveBlock':
             userAction = "saving block to database"
-            break;  
+            break;
       case 'LoadingEntities':
         userAction = "loading entities"
         break;
@@ -97,7 +98,7 @@ const Notifications = {
         break;
         case 'ExecuteGraph':
          userAction = "executing graph"
-         break; 
+         break;
       default:
           userAction = action
     }
@@ -111,6 +112,7 @@ const Notifications = {
     if (error === null || error === undefined) return ""
     if (typeof error === 'string') {
       if (error.includes("java.net.UnknownHostException")) errorMsg = "Unknown host"
+      if (error.includes("Nothing to preview")) errorMsg = "Wrong preview context"
       if (error.includes("Host is down") ) errorMsg = "MarkLogic host cannot be contacted"
       if (error.includes("Operation timed out") ) errorMsg = "Operation timed out"
       if (error.includes("arg1 is not of type Node") ) errorMsg = ""
@@ -135,8 +137,8 @@ const Notifications = {
         const startpos = errorStr.indexOf(': [{"errorResponse":')
         const endPos = errorStr.indexOf("}]")
           if (startpos > 0) {
-            obj = errorStr.substring(startpos+2,endPos+2)  
-            try { 
+            obj = errorStr.substring(startpos+2,endPos+2)
+            try {
               if ( obj != null) {
               obj = JSON.parse(obj)
               console.log("Error: " + JSON.stringify(obj) )
@@ -144,7 +146,7 @@ const Notifications = {
               }
             } catch(f) {
                msg = f
-            }      
+            }
           } else {
             msg = error
           }
@@ -154,7 +156,7 @@ const Notifications = {
 return msg
   },
 
- notifyPositive(self,text) { 
+ notifyPositive(self,text) {
   this.$q.notify({
     color: 'positive',
     position: 'top',
