@@ -31,7 +31,6 @@ ml-backend/gradle.properties
 ml-backend/.project
 ml-backend/.settings/
 
-
 build/
 nohup.out
 
@@ -45,6 +44,7 @@ java-middle-tier/.settings/
 java-middle-tier/src/test/resources/application.properties
 java-middle-tier/lib/
 ml-backend/.classpath
+java-middle-tier/application.properties
 
 #windows stuff
 gradle/
@@ -55,4 +55,3 @@ java-middle-tier/.gradle
 #gren stuff
 .grenrc.yml
 CHANGELOG.md
-
