@@ -135,3 +135,7 @@ task runLocal(type: JavaExec) {
   classpath = sourceSets.main.runtimeClasspath
   main = "com.marklogic.pipes.ui.Application"
 }
+
+task buildPipes {
+  dependsOn bootJar
+}
