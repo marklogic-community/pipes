@@ -314,7 +314,7 @@ function InvokeExecuteGraph(input) {
       let doc = null
       if (execContext.collectionRandom) {
         let nbDocs = cts.estimate(cts.collectionQuery(execContext.collection))
-        doc = cts.doc(fn.head(fn.subsequence(cts.uris(null, null, cts.collectionQuery(execContext.collection)), xdmp.random(nbDocs - 1) + 1)))
+        if(nbDocs>0) doc = cts.doc(fn.head(fn.subsequence(cts.uris(null, null, cts.collectionQuery(execContext.collection)), xdmp.random(nbDocs - 1) + 1)))
 
       } else {
         if (execContext.previewUri == null || execContext.previewUri == "")
