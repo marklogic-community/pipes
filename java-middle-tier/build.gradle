@@ -92,8 +92,9 @@ task copyDhf(type:Copy) {
   doFirst {
     logger.warn('Copying "dist_user/dhf"')
   }
-  from "../dist_user/dhf/" 
-  into "src/main/resources/dhf/"
+  
+  from "../ml-backend/src/" 
+  into "src/main/resources/dhf/src/"
   doLast {
     logger.warn('Done copying "dist_user/dhf"')
   }
