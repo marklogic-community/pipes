@@ -421,12 +421,8 @@ function getFieldsByCollection(collection, customURI) {
       docs.map(doc => doc.xpath(".//*").toArray().map(node => {
 
         let name = fn.name(node)
-        let originalPath = String(xdmp.path(node)) // DH test
-        let path = String(xdmp.path(node)).replace(/\/object-node\(\)/g, "").replace(/\[\d*\]/g, "").replace(/null-node\('([\s\w]*)'\)/g, "$1")
-        // DH March 20
-        let newPath = String(xdmp.path(node)).replace(/[A-z]+-node\('([\s\w]*)'\)/g, "node('$1')")
-        path = newPath
-        // DH end
+        let originalPath = String(xdmp.path(node))
+        let path = String(xdmp.path(node)).replace(/[A-z]+-node\('([\s\w]*)'\)/g, "node('$1')").replace(/text\('([\s\w]*)'\)/g, "node('$1')")
         
         let lastSlash = path.lastIndexOf("/")
         let nodeLastPath = path.substring(lastSlash)
@@ -436,19 +432,14 @@ function getFieldsByCollection(collection, customURI) {
         path = newParentPath + nodeLastPath
         if (nodeLastPath.includes("array-node")) path += "/*"
         if (newParentPath == "") newParentPath = "/"
-
-     // DH March 20
-     //   if (fields[path.replace("/*", "").replace(/array-node\('([\s\w]*)'\)/g, "$1")] == null) 
-     //     fields[path.replace("/*", "").replace(/array-node\('([\s\w]*)'\)/g, "$1")] = {
-     // DH   
-         if (fields[path.replace("/*", "").replace(/[A-z]+-node\('([\s\w]*)'\)/g, "node('$1')")] == null)
-         fields[path.replace("/*", "").replace(/[A-z]+-node\('([\s\w]*)'\)/g, "node('$1')")] = {
+  
+         if (fields[path.replace("/*", "").replace(/[A-z]+-node\('([\s\w]*)'\)/g, "node('$1')").replace(/text\('([\s\w]*)'\)/g, "node('$1')")] == null)
+         fields[path.replace("/*", "").replace(/[A-z]+-node\('([\s\w]*)'\)/g, "node('$1')").replace(/text\('([\s\w]*)'\)/g, "node('$1')")] = {
           label: name + " [id" + i++ + "]",
           field: node.xpath("name(.)"),
           value: node.xpath("name(.)"),
-          path: newPath,
-          sourcePath: originalPath,
-          retainOldPath: path,
+          path: path,
+          originalPath: originalPath,
           type: node.nodeType,
           children: [],
           parent: newParentPath
