@@ -250,6 +250,9 @@ function getCollectionsModels(ctx) {
 
 }
 
+function checkDocumentExists(uri) {
+      return cts.doc(uri);
+}
 
 function getCollectionDetails() {
   return {
@@ -418,7 +421,13 @@ function getFieldsByCollection(collection, customURI) {
       docs.map(doc => doc.xpath(".//*").toArray().map(node => {
 
         let name = fn.name(node)
+        let originalPath = String(xdmp.path(node)) // DH test
         let path = String(xdmp.path(node)).replace(/\/object-node\(\)/g, "").replace(/\[\d*\]/g, "").replace(/null-node\('([\s\w]*)'\)/g, "$1")
+        // DH March 20
+        let newPath = String(xdmp.path(node)).replace(/[A-z]+-node\('([\s\w]*)'\)/g, "node('$1')")
+        path = newPath
+        // DH end
+        
         let lastSlash = path.lastIndexOf("/")
         let nodeLastPath = path.substring(lastSlash)
         let parentPath = path.substring(0, lastSlash)
@@ -428,17 +437,22 @@ function getFieldsByCollection(collection, customURI) {
         if (nodeLastPath.includes("array-node")) path += "/*"
         if (newParentPath == "") newParentPath = "/"
 
-
-        if (fields[path.replace("/*", "").replace(/array-node\('([\s\w]*)'\)/g, "$1")] == null) fields[path.replace("/*", "").replace(/array-node\('([\s\w]*)'\)/g, "$1")] = {
+     // DH March 20
+     //   if (fields[path.replace("/*", "").replace(/array-node\('([\s\w]*)'\)/g, "$1")] == null) 
+     //     fields[path.replace("/*", "").replace(/array-node\('([\s\w]*)'\)/g, "$1")] = {
+     // DH   
+         if (fields[path.replace("/*", "").replace(/[A-z]+-node\('([\s\w]*)'\)/g, "node('$1')")] == null)
+         fields[path.replace("/*", "").replace(/[A-z]+-node\('([\s\w]*)'\)/g, "node('$1')")] = {
           label: name + " [id" + i++ + "]",
           field: node.xpath("name(.)"),
           value: node.xpath("name(.)"),
-          path: path,
+          path: newPath,
+          sourcePath: originalPath,
+          retainOldPath: path,
           type: node.nodeType,
           children: [],
           parent: newParentPath
         }
-
 
       }))
       //return fields
@@ -456,14 +470,9 @@ function getFieldsByCollection(collection, customURI) {
         fields[path].children = results.filter(item => {
           return (item.parent == path)
         })
-
-
       }
 
-
       return results.filter(item => item.parent == "/")
-
-
     }
 
   }
@@ -552,8 +561,15 @@ function saveGraph(input, params) {
 
     }, {"database": targetDb, "update": "true"}
   )
+}
 
-
+function verifyUri(params) {
+  console.log("verifyUri " + params)
+  if ( params.uri === null || params.uri.length < 1 ) return {'documentExists' : false}
+  var docExists = (checkDocumentExists(params.uri) !== null)
+  var response = {}
+  response.documentExists = docExists
+  return response
 }
 
 function get(context, params) {
@@ -589,6 +605,9 @@ function get(context, params) {
     case "ListSavedGraph":
       return listSavedGraph(params)
       break;
+    case "verifyDocumentUri":
+      return verifyUri(params)
+      break;  
     default:
   }
 
