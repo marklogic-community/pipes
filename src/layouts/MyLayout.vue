@@ -24,6 +24,10 @@
           <div slot="subtitle">Draw your ideas</div>
         </q-toolbar-title>
 
+		<q-toolbar-title align="left">
+			{{ this.currentGraphTitle }}
+		</q-toolbar-title>
+
         <q-btn-group v-if="loggedIn">
 
           <q-btn
@@ -251,15 +255,21 @@ import { Dialog } from 'quasar'
 import modelselector from '../components/modelselector.vue'
 import resultViewer from '../components/resultViewer.vue'
 import entityselector from '../components/entityselector.vue'
+import { LiteGraph } from 'litegraph.js';
 
 export default {
   name: 'MyLayout',
+  components: {
+	LiteGraph
+  },
   data () {
     return {
       loggedIn: false,
       leftDrawerOpen: false,
-      rightDrawerOpen: this.$q.platform.is.desktop,
+	  rightDrawerOpen: this.$q.platform.is.desktop,
       tab: "metadata",
+	  currentGraphTitle: "My graph",
+	  graphStack: ["TOP"], // list of graphs to track title going in/out of subgraphs
       graphMetadata: {
         title: "My graph",
         version: "00.01",
@@ -270,7 +280,22 @@ export default {
     }
   },
   methods: {
-    openURL,
+    enteredSubGraph(graphName) {
+		this.graphStack.push(graphName)
+		this.currentGraphTitle = "Subgraph: " + graphName
+	},
+	exitedSubGraph() {
+		var graphName = this.graphStack.pop();
+		if ( this.graphStack.length == 1 )  {
+			this.currentGraphTitle = this.graphMetadata.title
+		} else {
+			this.currentGraphTitle = "Subgraph: " + this.graphStack[this.graphStack.length-1]
+		}
+	},
+	resetGraphTitle(graphName) {
+		this.graphStack = ["TOP"]
+		this.currentGraphTitle = this.graphMetadata.title
+	},
     executeGraph () {
       this.$root.$emit("executeGraphCall");
     },
@@ -369,10 +394,15 @@ export default {
     this.$root.$on("logIn", this.logIn);
     this.$root.$on("logOut", this.logOut);
   },
-  computed: {
-    currentDateTime () {
-      return new Date()
-    }
+  mounted: function() {
+	  this.$root.$on('enteredSubGraph', this.enteredSubGraph);
+	  this.$root.$on('exitedSubGraph', this.exitedSubGraph);
+	  this.$root.$on('resetGraphTitle', this.resetGraphTitle);
+  },
+  beforeDestroy: function() {
+	  this.$root.$off('enteredSubGraph', this.enteredSubGraph);
+	  this.$root.$off('exitedSubGraph', this.exitedSubGraph);
+	  this.$root.$off('resetGraphTitle', this.resetGraphTitle);
   }
 }
 </script>

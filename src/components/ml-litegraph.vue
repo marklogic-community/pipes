@@ -1047,7 +1047,6 @@ export default {
     },
     selectedStep: function (val) {
 
-
       let availableDbHash = this.availableDB.reduce(function (map, obj) {
         map[obj.label] = obj.value;
         return map;
@@ -1055,6 +1054,8 @@ export default {
 
       this.selectedDB = { "label": this.dhfSteps[val.label].database, "value": availableDbHash[this.dhfSteps[val.label].database] };
       this.collectionForPreview = { "label": this.dhfSteps[val.label].collection, "value": this.dhfSteps[val.label].collection };
+
+
 
     }
   },
@@ -1173,7 +1174,8 @@ export default {
       if (graph.metadata && graph.metadata.description != null) this.graphMetadata.description = graph.description; else this.graphMetadata.description = ""
       this.$root.$emit("initGraphMetadata", this.graphMetadata)
 
-      this.notifyPositive(self, "Loaded graph " + this.graphMetadata.title)
+	  this.notifyPositive(self, "Loaded graph " + this.graphMetadata.title)
+	  this.$root.$emit("resetGraphTitle") // reset the titlebar to top graph (remove all subgraph history)
       this.showUploadGraph = false
     }
     ,
@@ -1184,9 +1186,7 @@ export default {
       this.$axios.get('/v1/resources/vppBackendServices?rs:action=GetSavedGraph&rs:uri=' + encodeURI(uri))
         .then((response) => {
           let graph = response.data;
-		  console.log("calling loadGraphFromJson")
           this.loadGraphFromJson(graph)
-		  console.log("calling this.notifyPositive")
           this.notifyPositive(self, "Loaded graph '" + graphName + "'")
           this.loadPopUpOpened = false
         })
@@ -1283,7 +1283,7 @@ export default {
             [BLOCK_FIELDS]: [],
             [BLOCK_OPTIONS]: [BLOCK_OPTION_FIELDS_OUTPUT, BLOCK_OPTION_NODE_INPUT]
           }
-          console.log("Adding block [1] : " + JSON.stringify(block))
+          //console.log("Adding block [1] : " + JSON.stringify(block))
           blocks[map.source] = block
         }
 
@@ -1296,7 +1296,7 @@ export default {
             [BLOCK_FIELDS]: [],
             [BLOCK_OPTIONS]: [BLOCK_OPTION_FIELDS_INPUT, BLOCK_OPTION_NODE_OUTPUT]
           }
-          console.log("Adding block [2] : " + JSON.stringify(block))
+          //console.log("Adding block [2] : " + JSON.stringify(block))
           blocks[map.target] = block
         }
 
@@ -1307,7 +1307,7 @@ export default {
             [BLOCK_FIELD]: map.sourceField,
             [BLOCK_PATH]: "//text('" + map.sourceField + "')"
           }
-          console.log("Adding block [3] : " + JSON.stringify(block))
+          //console.log("Adding block [3] : " + JSON.stringify(block))
           blocks[map.source].fields.push(block)
         }
 
@@ -1318,7 +1318,7 @@ export default {
             [BLOCK_FIELD]: map.targetField,
             [BLOCK_PATH]: "//text('" + map.targetField + "')"
           }
-          console.log("Adding block [4] : " + JSON.stringify(block))
+          //console.log("Adding block [4] : " + JSON.stringify(block))
           blocks[map.target].fields.push(block)
         }
       }
@@ -1679,8 +1679,6 @@ export default {
           return map;
         }, {});
 
-        console.log("Got info: " + JSON.stringify(this.dhfSteps))
-
         this.dhfStepSelectOptions = response.data.customSteps.map(item => { return { "label": item.name, "value": item.name } })
       })
         .catch((error) => {
@@ -1769,7 +1767,7 @@ export default {
           console.log("Copied to clip board!")
         })
         .catch(() => {
-          console.log("Faild to copy to clip board!")
+          console.log("Failed to copy to clip board!")
         })
     },
     setCurrrentDatabase (db) {
@@ -1778,7 +1776,7 @@ export default {
       this.availableDB = db.availableDatabases;
       this.discoverCollections()
 
-    },
+	},
     registerBlocksByConf (configs, LiteGraph) {
 
       let allBlockCode = ""
@@ -1874,13 +1872,20 @@ export default {
     this.$root.$on("loadDHFDefaultGraphCall", this.resetDhfDefaultGraph);
     this.$root.$on("listGraphBlocks", this.listGraphBlocks);
     this.$root.$on("checkGraphBlockDelete", this.checkGraphBlockDelete);
-    this.$root.$on('blockRequested', this.createBlock);
+	this.$root.$on('blockRequested', this.createBlock);
 
     this.discoverDatabases()
     this.discoverDhfSteps()
 
     this.graph = new LiteGraph.LGraph();
-    this.graph_canvas = new LiteGraph.LGraphCanvas(this.$refs["mycanvas"], this.graph);
+	this.graph_canvas = new LiteGraph.LGraphCanvas(this.$refs["mycanvas"], this.graph);
+
+	// catch just in case problems. shouldn't stop tool working
+	try {
+		LiteGraph.registerPipesListener(this) // register any component so LiteGraph can emit events
+	} catch (e) {
+		console.log("Error calling registerPipesListener: " +  e)
+	}
 
     this.$store.commit('clearBlocks')
 
@@ -1900,10 +1905,9 @@ export default {
     )
   },
   beforeDestroy () {
-    // de-register events otherwise multiple occur
+    // de-register events otherwise multiple events get fired
     this.$root.$off('blockRequested', this.createBlock);
     this.$root.$off("loadGraphJsonCall", this.loadGraphFromJson);
-
 
     this.$root.$off("csvLoadingRequested", this.createGraphFromMapping)
     this.$root.$off("databaseChanged", this.setCurrrentDatabase);
@@ -1919,7 +1923,7 @@ export default {
     this.$root.$off("nodeSelected", this.selectNode);
     this.$root.$off("loadDHFDefaultGraphCall", this.resetDhfDefaultGraph);
     this.$root.$off("listGraphBlocks", this.listGraphBlocks);
-    this.$root.$off("checkGraphBlockDelete", this.checkGraphBlockDelete);
+	this.$root.$off("checkGraphBlockDelete", this.checkGraphBlockDelete);
   }
 
 }
