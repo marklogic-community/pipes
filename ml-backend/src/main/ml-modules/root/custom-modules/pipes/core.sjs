@@ -1922,6 +1922,40 @@ function init(LiteGraph){
 
 
 //node constructor class
+  function normalizeSpaceBlock() {
+    this.addInput("value","xs:string");
+    this.addOutput("nsValue","xs:string");
+
+  }
+
+//name to show
+  normalizeSpaceBlock.title = "NormalizeSpace";
+
+//function to call when the node is executed
+  normalizeSpaceBlock.prototype.onExecute = function()
+  {
+
+    let input = this.getInputData(0);
+    if ( input ) {
+      if ( input instanceof Array ) {
+        let arr = [];
+        for ( const v of arr ) {
+          if ( v ) {
+            arr.push(fn.normalizeSpace(v.toString()))
+          }
+        }
+        this.setOutputData(0, arr);
+      } else {
+        this.setOutputData(0, fn.normalizeSpace(input));
+      }
+    } else {
+      this.setOutputData(0,"")
+    }
+  }
+
+//register in the system
+  LiteGraph.registerNodeType("string/NormalizeSpace", normalizeSpaceBlock );
+
   function lowercaseBlock()
   {
 

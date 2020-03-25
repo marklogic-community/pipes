@@ -435,6 +435,29 @@
 
   },
   {
+    "functionName": "NormalizeSpace",
+    "blockName": "NormalizeSpace",
+    "library": "string",
+    "inputs": [
+      {
+        "name": "value",
+        "type": "xs:string"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "nsValue",
+        "type": "xs:string"
+      }
+    ],
+    "function": {
+      "ref": null,
+      "code": null
+    }
+
+
+  },
+  {
     "functionName": "fn_lowerCase",
     "blockName": "LowerCase",
     "library": "string",
