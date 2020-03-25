@@ -1179,11 +1179,14 @@ export default {
     ,
     getSavedGraph (uri, graphName) {
       //if(uri!=null)
+	  console.log("Get saved graph")
       var self = this; // keep reference for notifications called from catch block
       this.$axios.get('/v1/resources/vppBackendServices?rs:action=GetSavedGraph&rs:uri=' + encodeURI(uri))
         .then((response) => {
           let graph = response.data;
+		  console.log("calling loadGraphFromJson")
           this.loadGraphFromJson(graph)
+		  console.log("calling this.notifyPositive")
           this.notifyPositive(self, "Loaded graph '" + graphName + "'")
           this.loadPopUpOpened = false
         })
@@ -1645,7 +1648,7 @@ export default {
         event.preventDefault()
         event.returnValue = ""
       }
-    },
+	},
     selectNode (block) {
       console.log(block)
       let message = null
@@ -1669,14 +1672,14 @@ export default {
     },
     discoverDhfSteps () {
       var self = this;
-
       this.$axios.get('/customSteps').then((response) => {
-
 
         this.dhfSteps = response.data.customSteps.reduce(function (map, obj) {
           map[obj.name] = { "database": obj.database, "collection": obj.collection };
           return map;
         }, {});
+
+        console.log("Got info: " + JSON.stringify(this.dhfSteps))
 
         this.dhfStepSelectOptions = response.data.customSteps.map(item => { return { "label": item.name, "value": item.name } })
       })
@@ -1778,55 +1781,72 @@ export default {
     },
     registerBlocksByConf (configs, LiteGraph) {
 
+      let allBlockCode = ""
 
-      let code = ""
       for (let config of configs) {
 
-        code += "function " + config.functionName + "(){"
-        code += config.inputs.map((input) => {
+		var blockCode = ''
+
+        blockCode += "function " + config.functionName + "(){"
+        blockCode += config.inputs.map((input) => {
           return "this.addInput('" + input.name + ((input.type == "ee") ? "','" + input.type + "');" : "');")
         }).join("")
-        code += config.outputs.map((output) => {
+        blockCode += config.outputs.map((output) => {
           return "this.addOutput('" + output.name + ((output.type == "ee") ? "','" + output.type + "');" : "');")
         }).join("")
-        code += (config.properties != null) ? config.properties.map((property) => {
+        blockCode += (config.properties != null) ? config.properties.map((property) => {
           return "this.addProperty('" + property.name + ((property.type) ? "'," + JSON.stringify(property.type) + ");" : "');")
         }).join("") : ""
-        code += (config.widgets != null) ? config.widgets.map((widget) => {
+        blockCode += (config.widgets != null) ? config.widgets.map((widget) => {
           if (widget.default =="#DATABASES#") widget.values = this.availableDB.map(item => item.label)
           return "this.addWidget('" + widget.type + "','" + widget.name + "','" + widget.default + "', function(v){" + (widget.callback ? widget.callback : "") + "}.bind(this), { values:" + JSON.stringify(widget.values) + "} );"
         }).join("") : "";
+
         if (config.width)
-          code += "    this.size = [" + config.width + "," + config.height + "];\n"
-        code += "    this.serialize_widgets = true;"
+        blockCode += "    this.size = [" + config.width + "," + config.height + "];\n"
+        blockCode += "    this.serialize_widgets = true;"
 
-        //code += (config.properties)?"config.properties = " +  config.properties +";":"";
-        code += "};"
+        //blockCode += (config.properties)?"config.properties = " +  config.properties +";":"";
+        blockCode += "};"
 
-        code += config.functionName + ".title = '" + config.blockName + "';";
-        code += config.functionName + ".prototype.notify = function(node){this.$root.$emit(\"nodeSelected\",node)}.bind(this);";
-        code += config.functionName + ".prototype.onSelected = function(){this.notify(this) };"
-        code += config.functionName + ".prototype.onDblClick = function(e,pos,object){this.$root.$emit(\"nodeDblClicked\",object) }.bind(this);"
-        code += config.functionName + ".prototype.onExecute = function(){  ";
+        blockCode += config.functionName + ".title = '" + config.blockName + "';";
+
+		// Add event to onDrawForeground for block when defined
+		// !== undefined is required
+		if ( config.events && config.events != null && config.events != undefined ) {
+			if ( config.events.onDrawForeground !== null && config.events.onDrawForeground != undefined && config.events.onDrawForeground != '' ) {
+				blockCode += config.functionName + ".prototype.onDrawForeground = function(ctx){" + config.events.onDrawForeground + "};"
+			}
+			if ( config.events.onConfigure !== null && config.events.onConfigure != undefined && config.events.onConfigure != '' ) {
+				blockCode += config.functionName + ".prototype.onConfigure = function(node){" + config.events.onConfigure + "};"
+			}
+		}
+
+		blockCode += config.functionName + ".prototype.notify = function(node){this.$root.$emit(\"nodeSelected\",node)}.bind(this);";
+        blockCode += config.functionName + ".prototype.onSelected = function(){this.notify(this) };"
+        blockCode += config.functionName + ".prototype.onDblClick = function(e,pos,object){this.$root.$emit(\"nodeDblClicked\",object) }.bind(this);"
+        blockCode += config.functionName + ".prototype.onExecute = function(){  ";
 
         if (config.function != null && config.function.ref != null) {
           let i = 0;
-          code += "this.setOutputData( 0, " + config.function.ref + "(" + config.inputs.map((input) => {
+          blockCode += "this.setOutputData( 0, " + config.function.ref + "(" + config.inputs.map((input) => {
             return "this.getInputData(" + i++ + ")"
           }).join(",") + "));"
         } else {
-          code += config.function.code;
+          blockCode += config.function.code;
 
         }
-        code += "};"
+        blockCode += "};"
         //register in the syst em
-        code += "LiteGraph.registerNodeType('" + config.library + "/" + config.blockName + "', " + config.functionName + " );"
+        blockCode += "LiteGraph.registerNodeType('" + config.library + "/" + config.blockName + "', " + config.functionName + " );"
+
+		// DEBUGGING
+		// console.log(config.blockName + ": " + JSON.stringify(blockCode))
+
+		allBlockCode += blockCode
       }
-
       //xdmp.log(code)
-      eval(code)
-
-
+      eval(allBlockCode)
     }
   },
   created () {

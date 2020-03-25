@@ -283,7 +283,10 @@
   {
     "functionName": "Lookup",
     "blockName": "Lookup",
-    "library": "feature",
+	"library": "feature",
+	"events": {
+		"onConfigure": "console.debug('Lookup block onConfigure event: '+ JSON.stringify(node) + ' widgets.length=' + this.widgets.length + ' inputs:' + this.inputs.length + ' outputs:' + this.outputs.length + ', v:' + this.widgets[0].value);let v = this.widgets[0].value;if (this.widgets.length == (parseInt(v) + 2)) return;console.log('Restoring Lookup block fields..');let nb = this.outputs.length;for(let i=0;i<nb;i++) {this.removeOutput(0);}; this.widgets=this.widgets.slice(0,2);for (let x=0;x < v ;x++) {this.addOutput('value' + x,null);this.addWidget(\"text\", \"value\" + x + \"Path\" , this.widgets_values[x+2], function (v) {})};return;"
+			},
     "inputs": [
       {
         "name": "var1",
@@ -310,8 +313,8 @@
         "name": "nbOutputValues",
         "default": "1",
         "values": "1",
-        "callback": "let nb = this.outputs.length;for(let i=0;i<nb;i++) {this.removeOutput(0);}; this.widgets=this.widgets.slice(0,2) ;for(let i=0;i<parseInt(v);i++) {this.addOutput('value' + i,null);this.addWidget(\"text\", \"value\" + i + \"Path\" , '', function (v) {})};"
-      },
+		"callback": "let nb = this.outputs.length;for(let i=0;i<nb;i++) {this.removeOutput(0);}; this.widgets=this.widgets.slice(0,2) ;for(let i=0;i<parseInt(v);i++) {this.addOutput('value' + i,null);this.addWidget(\"text\", \"value\" + i + \"Path\" , '', function (v) {})};"
+	},
       {
         "type": "combo",
         "name": "database",
