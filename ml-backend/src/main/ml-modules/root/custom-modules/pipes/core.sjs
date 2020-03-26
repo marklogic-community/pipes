@@ -1529,7 +1529,7 @@ function init(LiteGraph){
     this.addOutput("mappedValue");
     this.mapping = this.addProperty("mapping" );
     this.castOutput = this.addWidget("combo","castOutput", "string", function(v){},  { values:["string","bool","date","int","float"]} );
-    this.wildcarded = this.addWidget("toggle","wildcarded", true, function(v){}, {} );
+    this.wildcarded = this.addWidget("toggle","wildcarded", false, function(v){}, {} );
   }
 
 //name to show
@@ -1621,6 +1621,37 @@ function init(LiteGraph){
   LiteGraph.registerNodeType("string/Map values", mapValueBlock );
 
 
+  function EvalJavaScriptBlock()
+  {
+    this.addInput("var0");
+    this.addInput("var1");
+    this.addInput("var2");
+    this.addInput("var3");
+    this.addInput("var4");
+    this.addOutput("output");
+    this.addProperty("code" );
+  }
+
+//name to show
+  EvalJavaScriptBlock.title = "EvalJavaScript";
+
+  EvalJavaScriptBlock.prototype.onExecute = function()
+  {
+    let var1 = this.getInputData(0);
+    let var2 = this.getInputData(1);
+    let var3 = this.getInputData(2);
+    let var4 = this.getInputData(3);
+    let var5 = this.getInputData(4);
+    let code = this.properties.code;
+    let template = "`"+ code +"`";
+    let result = eval(template);
+    xdmp.log("EXECUTING "+result);
+    let output = eval(result);
+    this.setOutputData( 0,output);
+  }
+
+//register in the system
+  LiteGraph.registerNodeType("feature/EvalJavaScript", EvalJavaScriptBlock );
 
 
   /*  function cts_search(query,options,qualityWeight,forestIds)

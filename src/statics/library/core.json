@@ -348,6 +348,52 @@
     }
   },
   {
+    "functionName": "EvalJavaScript",
+    "blockName": "EvalJavaScript",
+    "library": "feature",
+    "inputs": [
+      {
+        "name": "var1",
+        "type": null
+      },
+      {
+        "name": "var2",
+        "type": null
+      }
+    ,
+      {
+        "name": "var3",
+        "type": null
+      },
+      {
+        "name": "var4",
+        "type": null
+      },
+      {
+        "name": "var5",
+        "type": null
+      }
+    ],
+    "properties": [
+      {
+        "name": "code",
+        "type": "if ( Number(var1) > 100 ) 'BIG'; else 'SMALL';"
+      }
+    ],
+    "widgets": [],
+
+    "outputs": [
+      {
+        "name": "output",
+        "type": null
+      }
+    ],
+    "function": {
+      "ref": null,
+      "code": ""
+    }
+  },
+  {
     "functionName": "Lookup",
     "blockName": "Lookup",
 	"library": "feature",
