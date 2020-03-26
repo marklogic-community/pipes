@@ -1685,7 +1685,7 @@ export default {
           self.notifyError("databasesDetails", error, self);
         })
     },
-    discoverDatabases () {
+    discoverDatabases (showError) {
       var self = this;
       this.$axios.get('/v1/resources/vppBackendServices?rs:action=databasesDetails')
         .then((response) => {
@@ -1693,26 +1693,21 @@ export default {
 
           this.$axios.get('/statics/library/core.json')
             .then((response) => {
-              //console.log(response.data)
               this.registerBlocksByConf(response.data, LiteGraph)
-
             })
 
           this.$axios.get('/statics/library/custom/user.json')
             .then((response) => {
-
               this.registerBlocksByConf(response.data, LiteGraph)
-
             })
-          console.log("emit init")
+
           this.$root.$emit("initGraphMetadata", this.graphMetadata)
 
           this.discoverCollections()
-
-
         })
         .catch((error) => {
-          self.notifyError("databasesDetails", error, self);
+          if (showError) self.notifyError("databasesDetails", error, self)
+          else console.log("discoverDatabases triggered error but suppressed: " + error)
         })
     },
     listGraphBlocks () {
@@ -1875,8 +1870,7 @@ export default {
     this.$root.$on("checkGraphBlockDelete", this.checkGraphBlockDelete);
 	this.$root.$on('blockRequested', this.createBlock);
 
-	console.log("ml-litergraph calling discoverdatabases")
-    this.discoverDatabases()
+    this.discoverDatabases(false)
     this.discoverDhfSteps()
 
     this.graph = new LiteGraph.LGraph();
