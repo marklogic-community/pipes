@@ -7,17 +7,16 @@ echo Moving the front-end package to SpringBoot static resources folder...
 if exist java-middle-tier\src\main\resources\static rd /s /q java-middle-tier\src\main\resources\static
 mkdir java-middle-tier\src\main\resources\static
 
-xcopy /s /e /y dist\spa\* java-middle-tier\src\main\resources\static\.
+xcopy /s /e /y dist\spa java-middle-tier\src\main\resources\static\.
 
 echo Moving the back-end modules to SpringBoot dhf resources folder...
-if exist java-middle-tier\src\main\resources\dhf rd /s /q java-middle-tier\src\main\resources\dhf
-mkdir java-middle-tier\src\main\resources\dhf
+if exist java-middle-tier\src\main\resources\dhf\src rd /s /q java-middle-tier\src\main\resources\dhf\src
+mkdir java-middle-tier\src\main\resources\dhf\src
 
-xcopy /s /e /y dist_user\dhf\* java-middle-tier\src\main\resources\dhf\.
+xcopy /s /e /y ml-backend\src java-middle-tier\src\main\resources\dhf\src
 
-
-echo Deleting existing builds in java-middle-tier/build/libs...
-del /F java-middle-tier\build\libs\*
+echo Deleting existing builds in java-middle-tier\build\libs...
+del /F /Q java-middle-tier\build\libs
 
 echo Building the jar...
-java-middle-tier\gradlew bootJar -p java-middle-tier --warn
+java-middle-tier\gradlew.bat bootJar -p java-middle-tier --warn
