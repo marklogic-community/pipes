@@ -281,6 +281,73 @@
     }
   },
   {
+    "functionName": "LookupCollectionPropertyValue",
+    "blockName": "LookupCollectionPropertyValue",
+    "library": "feature",
+    "events": {
+      "onConfigure": "console.debug('Lookup block onConfigure event: '+ JSON.stringify(node) + ' widgets.length=' + this.widgets.length + ' inputs:' + this.inputs.length + ' outputs:' + this.outputs.length + ', v:' + this.widgets[0].value);let v = this.widgets[0].value;if (this.widgets.length == (parseInt(v) + 2)) return; this.widgets=this.widgets.slice(0,5);for (let x=0;x < v ;x++) {this.addWidget(\"text\", \"value\" + x + \"Path\" , this.widgets_values[x+5], function (v) {})};return;"
+    },
+    "inputs": [
+      {
+        "name": "var1",
+        "type": null
+      }
+    ],
+    "properties": [
+    ],
+
+    "widgets": [
+      {
+        "type": "text",
+        "name": "nbOutputValues",
+        "default": "1",
+        "values": "1",
+        "callback": "let nb = this.outputs.length;for(let i=0;i<nb;i++) {this.removeOutput(0);}; this.widgets=this.widgets.slice(0,5) ;for(let i=0;i<parseInt(v);i++) {this.addOutput('value' + i,null);this.addWidget(\"text\", \"value\" + i + \"Path\" , '', function (v) {})};"
+      },
+      {
+        "type": "combo",
+        "name": "database",
+        "default": "#DATABASES#",
+        "values": []
+      },
+      {
+        "type": "text",
+        "name": "collection",
+        "default": "",
+        "values": []
+      },
+      {
+        "type": "text",
+        "name": "property",
+        "default": "",
+        "values": []
+      },
+      {
+        "type": "combo",
+        "name": "dataType",
+        "default": "string",
+        "values": ["string","number","bool"]
+
+      },
+      {
+        "type": "text",
+        "name": "value0Path",
+        "default": "/path/to/value/string()",
+        "values": []
+      }],
+
+    "outputs": [
+      {
+        "name": "value0",
+        "type": null
+      }
+    ],
+    "function": {
+      "ref": null,
+      "code": ""
+    }
+  },
+  {
     "functionName": "Lookup",
     "blockName": "Lookup",
 	"library": "feature",
@@ -299,14 +366,11 @@
 
     ],
     "properties": [
-
       {
         "name": "ctsQuery",
         "type": "cts.collectionQuery(\"${var1}\")"
       }
-
     ],
-
     "widgets": [
       {
         "type": "text",
@@ -429,6 +493,29 @@
     ],
     "function": {
       "ref": "fn.upperCase",
+      "code": null
+    }
+
+
+  },
+  {
+    "functionName": "NormalizeSpace",
+    "blockName": "NormalizeSpace",
+    "library": "string",
+    "inputs": [
+      {
+        "name": "value",
+        "type": "xs:string"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "nsValue",
+        "type": "xs:string"
+      }
+    ],
+    "function": {
+      "ref": null,
       "code": null
     }
 

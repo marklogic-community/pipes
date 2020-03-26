@@ -1402,15 +1402,9 @@ function init(LiteGraph){
     return code;
   }
 
-
-
     LiteGraph.registerNodeType("string/constant", StringConstant);
 
-
-
-
-  function featureLookupBlock()
-  {
+  function featureLookupBlock() {
     this.addInput("var1");
     this.addInput("var2");
     this.nbOutputValues = this.addWidget("text","nbOutputValues", "string", function(v){},  { } );
@@ -1420,12 +1414,21 @@ function init(LiteGraph){
     this.value2Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
     this.value3Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
     this.value4Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
+    this.value5Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
+    this.value6Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
+    this.value7Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
+    this.value8Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
+    this.value9Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
     this.addOutput("val0");
     this.addOutput("val1");
     this.addOutput("val2");
     this.addOutput("val3");
     this.addOutput("val4");
-
+    this.addOutput("val5");
+    this.addOutput("val6");
+    this.addOutput("val7");
+    this.addOutput("val8");
+    this.addOutput("val9");
   }
 
 //name to show
@@ -1433,40 +1436,58 @@ function init(LiteGraph){
 
 //function to call when the node is executed
 
-  featureLookupBlock.prototype.onExecute = function()
-  {
-    let var1 = this.getInputData(0)
-    let var2 = this.getInputData(1)
+  featureLookupBlock.prototype.onExecute = function()  {
+    let var1 = this.getInputData(0);
+    let var2 = this.getInputData(1);
     coreFunctions.lookUp(this, var1,var2,this.nbOutputValues.value, this.properties.ctsQuery)
-
-
-    //let output = "lookup(" + this.getInputData(0) + "," + this.getInputData(1) + "," + this.getInputData(2) + ")"
-/*
-    let query = this.getInputData(0)
-
-    if(query==undefined || query==null) {
-
-      let var1 = this.getInputData(1)
-      let var2 = this.getInputData(2)
-
-      let template =""
-      if(this.properties.ctsQuery!=null)
-        template = "`"+ this.properties.ctsQuery +"`"
-      else
-        template = "`"+ this.query.value +"`"
-      let result = eval(template)
-      query = eval(result)
-    }
-
-    let foundDoc = fn.head(cts.search(query))
-    if(foundDoc!=null) this.setOutputData( 0, foundDoc.xpath(this.valuePath.value))
-    //this.setOutputData( 0, output );
-
-*/
   }
 
 //register in the system
   LiteGraph.registerNodeType("feature/Lookup", featureLookupBlock );
+
+  function featureLookupCollectionPropertyValueBlock()
+  {
+    this.addInput("var1");
+    this.nbOutputValues = this.addWidget("text","nbOutputValues", "string", function(v){},  { } );
+    this.database = this.addWidget("text","database", "string", function(v){},  { } );
+    this.collection = this.addWidget("text","collection", "string", function(v){},  { } );
+    this.property = this.addWidget("text","property", "string", function(v){},  { } );
+    this.dataType = this.addWidget("text","dataType", "string", function(v){},  { } );
+    this.value0Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
+    this.value1Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
+    this.value2Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
+    this.value3Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
+    this.value4Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
+    this.value5Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
+    this.value6Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
+    this.value7Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
+    this.value8Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
+    this.value9Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
+    this.addOutput("val0");
+    this.addOutput("val1");
+    this.addOutput("val2");
+    this.addOutput("val3");
+    this.addOutput("val4");
+    this.addOutput("val5");
+    this.addOutput("val6");
+    this.addOutput("val7");
+    this.addOutput("val8");
+    this.addOutput("val9");
+  }
+
+//name to show
+  featureLookupCollectionPropertyValueBlock.title = "LookupCollectionPropertyValue";
+
+//function to call when the node is executed
+
+  featureLookupCollectionPropertyValueBlock.prototype.onExecute = function()
+  {
+    let var1 = this.getInputData(0);
+    coreFunctions.lookUpCollectionPropertyValue(this, var1, this.nbOutputValues.value);
+  }
+
+//register in the system
+  LiteGraph.registerNodeType("feature/LookupCollectionPropertyValue", featureLookupCollectionPropertyValueBlock );
 
   function featureQueryBuilderBlock()
   {
@@ -1922,6 +1943,40 @@ function init(LiteGraph){
 
 
 //node constructor class
+  function normalizeSpaceBlock() {
+    this.addInput("value","xs:string");
+    this.addOutput("nsValue","xs:string");
+
+  }
+
+//name to show
+  normalizeSpaceBlock.title = "NormalizeSpace";
+
+//function to call when the node is executed
+  normalizeSpaceBlock.prototype.onExecute = function()
+  {
+
+    let input = this.getInputData(0);
+    if ( input ) {
+      if ( input instanceof Array ) {
+        let arr = [];
+        for ( const v of arr ) {
+          if ( v ) {
+            arr.push(fn.normalizeSpace(v.toString()))
+          }
+        }
+        this.setOutputData(0, arr);
+      } else {
+        this.setOutputData(0, fn.normalizeSpace(input));
+      }
+    } else {
+      this.setOutputData(0,"")
+    }
+  }
+
+//register in the system
+  LiteGraph.registerNodeType("string/NormalizeSpace", normalizeSpaceBlock );
+
   function lowercaseBlock()
   {
 
