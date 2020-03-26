@@ -57,7 +57,7 @@
             style="max-width: 600px;min-width:500px"
           >
             <q-input
-              v-model="currentCases"
+              v-model="currentCases.testCases"
               filled
               type="textarea"
             />
@@ -870,12 +870,12 @@ export default {
       selectedStep: null,
       previewSource: null,
       previewWizard: 1,
-      currentCtsQuery: "",
-      currentCases: "",
+      currentCtsQuery: "",			//query edit popup
+      currentCases: "",				//selectCase edit popup
       selectedTargetDB: null,
-      editQuery: false,
-      editJson: false,
-      editCases: false,
+      editQuery: false,				// show ctsQuery block edit popup
+      editJson: false,				//
+      editCases: false,				// swho selectCase cases property popup
       saveToDB: false,
       confirmDeleteGraph: false,
       confirmResetGraph: false,
@@ -1735,28 +1735,27 @@ export default {
     },
     DblClickNode (block) {
 
-      if (block.node_over && block.node_over.properties && block.node_over.properties.mapping) {
+	  if ( block.node_over && block.node_over.properties ) {
 
-        if (block.node_over.properties != null) this.currentProperties = block.node_over.properties.mapping
+	// string/Mapvalues block
+      if (block.node_over.properties.mapping) {
+		if (block.node_over.properties.mapping != null) this.currentProperties = block.node_over.properties.mapping
         this.editJson = true
-
-
-        //console.log(this.$refs)
-
       }
 
-      if (block.node_over && block.node_over.properties && block.node_over.properties.ctsQuery) {
-
-        if (block.node_over.properties != null) this.currentCtsQuery = block.node_over.properties
-        this.editQuery = true
+	// Lookup block
+      if (block.node_over.properties.ctsQuery) {
+		if (block.node_over.properties != null) this.currentCtsQuery = block.node_over.properties
+		this.editQuery = true
       }
 
-      if (block.node_over && block.node_over.properties && block.node_over.properties.testCases) {
+		// selectCase block
+      if (block.node_over.properties.testCases) {
+		if (block.node_over.properties.testCases != null) this.currentCases = block.node_over.properties
+		this.editCases = true
+	  }
 
-        if (block.node_over.properties != null) this.currentCases = block.node_over.properties.testCases
-        this.editCases = true
-      }
-
+	  }
 
     },
     copyResultToClipboard (result) {
@@ -1839,7 +1838,9 @@ export default {
         blockCode += "LiteGraph.registerNodeType('" + config.library + "/" + config.blockName + "', " + config.functionName + " );"
 
 		// DEBUGGING
-		// console.log(config.blockName + ": " + JSON.stringify(blockCode))
+		// console.log("==CONFIGURING BLOCK: " + config.blockName)
+		// console.log(JSON.stringify(config))
+		// console.log(JSON.stringify(blockCode))
 
 		allBlockCode += blockCode
       }
@@ -1874,6 +1875,7 @@ export default {
     this.$root.$on("checkGraphBlockDelete", this.checkGraphBlockDelete);
 	this.$root.$on('blockRequested', this.createBlock);
 
+	console.log("ml-litergraph calling discoverdatabases")
     this.discoverDatabases()
     this.discoverDhfSteps()
 
