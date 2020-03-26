@@ -1529,7 +1529,7 @@ function init(LiteGraph){
     this.addOutput("mappedValue");
     this.mapping = this.addProperty("mapping" );
     this.castOutput = this.addWidget("combo","castOutput", "string", function(v){},  { values:["string","bool","date","int","float"]} );
-
+    this.wildcarded = this.addWidget("toggle","wildcarded", true, function(v){}, {} );
   }
 
 //name to show
@@ -1571,18 +1571,41 @@ function init(LiteGraph){
 
   mapValueBlock.prototype.onExecute = function()
   {
-
     let val = this.getInputData(0);
-    if(val==undefined) val ="#NULL#"
-    if(val==null) val ="#NULL#"
-    if(val=="") val ="#EMPTY#"
-    let mappedValue = this.properties['mapping'].filter(item => {return item.source==val});
-
-    let output= val
-    if(mappedValue!=null && mappedValue.length>0) output=mappedValue[0].target
-    if (this.castOutput.value=='bool'){
-      if(output=="true") output=true;
-      if(output=="false") output=false;
+    if( val === undefined ) {
+      val = "#NULL#";
+    }
+    if( val === null ) {
+      val ="#NULL#";
+    }
+    if( val=== "" ) {
+      val = "#EMPTY#";
+    }
+    let mappedValue = null;
+    if ( this.wildcarded.value ) {
+      mappedValue = [];
+      for ( const map of this.properties['mapping'] ) {
+        const wildcard = map.source;
+        const re = new RegExp(`^${wildcard.replace(/\*/g,'.*').replace(/\?/g,'.')}$`,'');
+        if ( re.test(val) ) {
+          mappedValue.push(map);
+        }
+      }
+    } else {
+      mappedValue = this.properties['mapping'].filter(item => {
+        return item.source === val;
+      });
+    }
+    let output= val;
+    if( mappedValue != null && mappedValue.length > 0 ) {
+      output = mappedValue[0].target;
+    }
+    if (this.castOutput.value === 'bool'){
+      if( output === "true" ) {
+        output = true;
+      } else if( output === "false" ) {
+        output = false;
+      }
     }
 
     if(output=="#NULL#") output = null
@@ -1749,14 +1772,13 @@ function init(LiteGraph){
 
   function formatDateTimeAuto(srcDate)
   {
-
     let result =  moment(srcDate).format();
     if(result=="Invalid date")
       return null;
     else
       return result
   }
-  LiteGraph.wrapFunctionAsNode('feature/formatDateTimeAuto',formatDateTimeAuto,
+  LiteGraph.wrapFunctionAsNode('date/FormatDateTimeAuto',formatDateTimeAuto,
     ['xs:string'],'xs:string')
 
   function formatDateAuto(srcDate)
@@ -1976,6 +1998,27 @@ function init(LiteGraph){
 
 //register in the system
   LiteGraph.registerNodeType("string/NormalizeSpace", normalizeSpaceBlock );
+
+  function RegExReplaceBlock()  {
+    this.addInput("input","xs:string");
+    this.addOutput("output","xs:string");
+    this.regEx = this.addWidget("text","regex", "", function(v){}, {} );
+    this.replace = this.addWidget("text","replace", "", function(v){}, {} );
+    this.global = this.addWidget("toggle","global", true, function(v){}, {} );
+    this.caseInsensitive = this.addWidget("toggle","caseInsensitive", true, function(v){}, {} );
+  }
+
+  RegExReplaceBlock.title = "RegExReplace";
+  RegExReplaceBlock.prototype.onExecute = function()  {
+    const global = this.global.value;
+    const caseInsensitive = this.caseInsensitive.value;
+    const regEx = this.regEx.value;
+    const replace = this.replace.value;
+    coreFunctions.regExpReplace(this,regEx,replace,global,caseInsensitive);
+  }
+
+//register in the system
+  LiteGraph.registerNodeType("string/RegExReplace", RegExReplaceBlock );
 
   function lowercaseBlock()
   {
@@ -2612,7 +2655,6 @@ function init(LiteGraph){
   selectCase.title = "selectCase";
   selectCase.prototype.onExecute = function()
   {
-
     let value2test = String(this.getInputData(0));
     let map2Output = {}
     fn.tokenize(this.properties.testCases,"\n").toArray().map(item => {

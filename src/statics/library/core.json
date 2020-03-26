@@ -521,6 +521,51 @@
 
   },
   {
+    "functionName": "RegExReplace",
+    "blockName": "RegExReplace",
+    "library": "string",
+    "inputs": [
+      {
+        "name": "input",
+        "type": "xs:string"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "output",
+        "type": "xs:string"
+      }
+    ],
+    "widgets": [
+      {
+        "type": "text",
+        "name": "regEx",
+        "default": "",
+        "values": []
+      }, {
+        "type": "text",
+        "name": "replace",
+        "default": "",
+        "values": []
+      },{
+        "type": "toggle",
+        "name": "global",
+        "default": true,
+        "values": []
+      },{
+        "type": "toggle",
+        "name": "caseInsensitive",
+        "default": true,
+        "values": []
+      }
+    ],
+    "function": {
+      "ref": null,
+      "code": null
+    }
+  }
+,
+  {
     "functionName": "fn_lowerCase",
     "blockName": "LowerCase",
     "library": "string",
@@ -715,9 +760,14 @@
         "name": "castOutput",
         "default": "string",
         "values": ["string","bool"]
+      },
+      {
+        "type": "toggle",
+        "name": "wildcarded",
+        "default": false,
+        "values": []
 
       }
-
     ],
     "outputs": [
       {

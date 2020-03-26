@@ -3,7 +3,8 @@ module.exports = {
   getCurrentDate,
   lookUpCollectionPropertyValue,
   split,
-  lookUp
+  lookUp,
+  regExpReplace
 };
 
 
@@ -79,9 +80,36 @@ function lookUpCollectionPropertyValue(block,var1,nbOutputValues){
   if( foundDoc!= null) {
     for (let i = 0; i < parseInt(nbOutputValues); i++) {
       if (block["value" + i + "Path"] != null && block["value" + i + "Path"].value != "") {
-        const r = foundDoc.xpath(block["value" + i + "Path"].value); 
+        const r = foundDoc.xpath(block["value" + i + "Path"].value);
         block.setOutputData(i, r)
       }
+    }
+  }
+}
+
+function regExpReplace(block,regEx,replace,global,caseInsensitive)  {
+  let options = "";
+  if ( global ) {
+    options += "g"
+  }
+  if ( caseInsensitive ) {
+    options += "i"
+  }
+  replace = !replace?  "" : replace;
+  const regExObj = new RegExp(regEx,options);
+  const input = block.getInputData(0);
+  if ( input ) {
+    if ( input instanceof Array ) {
+     let arr = [];
+     for ( const i of input ) {
+       if (!i ) {
+         continue;
+       }
+       arr.push(i.toString().replace(regExObj,replace))
+     }
+      block.setOutputData(0,arr);
+    } else {
+      block.setOutputData(0,input.toString().replace(regExObj,replace));
     }
   }
 }
