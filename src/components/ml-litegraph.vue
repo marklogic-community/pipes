@@ -43,6 +43,39 @@
     </q-dialog>
 
     <q-dialog
+          persistent
+          v-model="editSJSCode"
+        >
+          <q-card>
+            <q-card-section>
+              <div class="text-h6">Edit JavaScript</div>
+            </q-card-section>
+
+            <q-card-section>
+              <div
+                class="q-pa-md"
+                style="max-width: 600px;min-width:500px"
+              >
+                <q-input
+                  v-model="currentSJSCode.sjsCode"
+                  filled
+                  type="textarea"
+                />
+              </div>
+            </q-card-section>
+
+            <q-card-actions align="right">
+              <q-btn
+                color="primary"
+                flat
+                label="OK"
+                v-close-popup
+              />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
+
+    <q-dialog
       persistent
       v-model="editCases"
     >
@@ -871,9 +904,11 @@ export default {
       previewSource: null,
       previewWizard: 1,
       currentCtsQuery: "",			//query edit popup
+      currentSJSCode : "",
       currentCases: "",				//selectCase edit popup
       selectedTargetDB: null,
       editQuery: false,				// show ctsQuery block edit popup
+      editSJSCode : false,
       editJson: false,				//
       editCases: false,				// swho selectCase cases property popup
       saveToDB: false,
@@ -1742,6 +1777,10 @@ export default {
       if (block.node_over.properties.ctsQuery) {
 		if (block.node_over.properties != null) this.currentCtsQuery = block.node_over.properties
 		this.editQuery = true
+      }
+    if (block.node_over.properties.sjsCode) {
+		    if (block.node_over.properties != null) this.currentSJSCode = block.node_over.properties
+		      this.editSJSCode = true
       }
 
 		// selectCase block

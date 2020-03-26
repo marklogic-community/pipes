@@ -1629,7 +1629,7 @@ function init(LiteGraph){
     this.addInput("var3");
     this.addInput("var4");
     this.addOutput("output");
-    this.addProperty("code" );
+    this.addProperty("sjsCode" );
   }
 
 //name to show
@@ -1642,7 +1642,7 @@ function init(LiteGraph){
     let var3 = this.getInputData(2);
     let var4 = this.getInputData(3);
     let var5 = this.getInputData(4);
-    let code = this.properties.code;
+    let code = this.properties.sjsCode;
     let template = "`"+ code +"`";
     let result = eval(template);
     xdmp.log("EXECUTING "+result);

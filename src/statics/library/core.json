@@ -376,7 +376,7 @@
     ],
     "properties": [
       {
-        "name": "code",
+        "name": "sjsCode",
         "type": "if ( Number(var1) > 100 ) 'BIG'; else 'SMALL';"
       }
     ],
