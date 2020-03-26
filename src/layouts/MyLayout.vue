@@ -197,6 +197,7 @@
                 v-model="graphMetadata.title"
                 filled
                 label="Graph Name"
+				@blur="updateTitle()"
               />
               <q-input
                 filled
@@ -280,6 +281,12 @@ export default {
     }
   },
   methods: {
+    updateTitle() {
+	// update title if edited and user in main graph / not subgraph
+	 if ( this.graphStack.length == 1 ) { 
+		this.currentGraphTitle = this.graphMetadata.title
+	 }  
+	},
     enteredSubGraph(graphName) {
 		this.graphStack.push(graphName)
 		this.currentGraphTitle = "Subgraph: " + graphName
