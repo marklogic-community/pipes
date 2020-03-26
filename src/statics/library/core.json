@@ -1488,6 +1488,10 @@
       {
         "name": "input2",
         "type": null
+      },
+      {
+        "name": "default",
+        "type": null
       }
 
     ],

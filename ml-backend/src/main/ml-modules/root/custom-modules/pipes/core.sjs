@@ -2684,22 +2684,28 @@ function init(LiteGraph){
   }
 
   selectCase.title = "selectCase";
-  selectCase.prototype.onExecute = function()
-  {
+  selectCase.prototype.onExecute = function()  {
     let value2test = String(this.getInputData(0));
-    let map2Output = {}
+    let map2Output = {};
     fn.tokenize(this.properties.testCases,"\n").toArray().map(item => {
-
       item = fn.tokenize(item,";").toArray()
       map2Output[item[0]]=parseInt(item[1])
-
-
     })
-    let o = map2Output[value2test]
-
-    this.setOutputData(0, (o!=null)?this.getInputData(o + 1):value2test )
-
+    let o = map2Output[value2test];
+    let r = null;
+    if ( o != null ) {
+      r = this.getInputData(o + 1);
+    } else {
+      const defaultValue = this.getInputData(4);
+      if ( defaultValue == null ) {
+        r = value2test;
+      } else {
+        r = defaultValue;
+      }
+    }
+    this.setOutputData(0, r );
   }
+
   LiteGraph.registerNodeType("feature/selectCase", selectCase );
 
 
