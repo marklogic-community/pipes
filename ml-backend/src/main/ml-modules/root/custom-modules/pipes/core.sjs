@@ -1800,6 +1800,12 @@ function init(LiteGraph){
 
   LiteGraph.registerNodeType("date/Current Date", currentDate );
 
+  function EpochToDateTime(epoch)
+  {
+    return (new Date(Number(epoch))).toISOString()
+  }
+  LiteGraph.wrapFunctionAsNode('date/EpochToDateTime',EpochToDateTime,
+    ['xs:string'],'xs:string');
 
   function formatDateTimeAuto(srcDate)
   {

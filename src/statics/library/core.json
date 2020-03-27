@@ -498,6 +498,28 @@
     }
   },
   {
+    "functionName": "EpochToDateTime",
+    "blockName": "EpochToDateTime",
+    "library": "date",
+    "description" : "Convert a Epoch number to a dateTime string",
+    "inputs": [
+      {
+        "name": "epoch",
+        "type": "xs:string"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "IsoDateTime",
+        "type": "xs:string"
+      }
+    ],
+    "function": {
+      "ref": null,
+      "code": null
+    }
+  },
+  {
     "functionName": "FormatDateTimeAuto",
     "blockName": "FormatDateTimeAuto",
     "library": "date",
