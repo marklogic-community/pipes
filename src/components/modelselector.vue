@@ -89,7 +89,7 @@
       <!-- Help -->
       <div class="row">
         <div class="col-11" align="left" style="font-size: 1.1em">
-          Choose where Pipes will find data fields to define in your block:
+          Choose where Pipes will look for fields to build the block:
         </div>
         <div class="col-1" align="right" style="padding: 0px; margin: 0px;">
                 <q-icon color="primary" style="font-size: 1.5em" name="far fa-question-circle">
@@ -106,9 +106,9 @@
           v-model="blockSourceOption"
           @input="sourceOptionChanged"
           :options="[
-            { label: 'Use collection defined in an existing DHF custom step', value: 'custom_step' },
-            { label: 'Choose a database and collection to sample', value: 'db_collection' },
-			{ label: 'Do not sample fields from a collection. You can still add custom fields', value: 'none' },
+            { label: 'Use the settings from a DHF custom step', value: 'custom_step' },
+            { label: 'Inspect the documents in a collection', value: 'db_collection' },
+			{ label: 'Do not use fields from existing data. You can still add custom fields', value: 'none' },
           ]"
     > </q-option-group>
 
@@ -164,7 +164,7 @@
 		<q-tooltip content-class="pipes-tooltip">No fields available yet for next step</q-tooltip>
 	</q-icon>
 
-	<q-checkbox color="blue" v-model="showCustomURIPanel">Add fields from specific documents</q-checkbox>
+	<q-checkbox color="blue" v-model="showCustomURIPanel">Add fields from specific document(s) in the database</q-checkbox>
 
 	<div v-if="showCustomURIPanel">
 		 <q-input bottom-slots v-model="customURI" label="Document URI (can enter multiple, space separated)" @keydown.enter.prevent="addURIToList">
@@ -217,7 +217,7 @@
      <!-- Help -->
         <div class="row">
         <div class="col-11" align="left" style="font-size: 1.1em">
-          Choose the fields to be used in the block:&nbsp; <b>{{ selectedFields.length }}</b>&nbsp;fields selected.
+          Choose 1 or more fields for the block:&nbsp; <b>{{ selectedFields.length }}</b>&nbsp;fields selected.
         </div>
         <div class="col-1" align="right" style="padding: 0px; margin: 0px;">
                 <q-icon color="primary" style="font-size: 1.5em" name="far fa-question-circle">
@@ -586,7 +586,8 @@
 	dataSourceNextOk: function() {
 		return (this.blockSourceOption == "db_collection" && this.selectedCollection !== null) ||
     (this.showCustomURIPanel == true && this.customURIList.length > 0) ||
-    (this.blockSourceOption == "custom_step" && this.selectedStep !== null && this.selectedCollection != null)
+    (this.blockSourceOption == "custom_step" && this.selectedStep !== null && this.selectedCollection != null) ||
+    this.blockSourceOption == "none"
 	},
       showBlockHelp: function() {
         return (this.userRequestingBlockOptionHelp && this.showBlockOptionTooltip)
@@ -603,12 +604,15 @@
         return this.createBlockStep > 1 ? "Block Name - " + this.blockName : "Enter Block Name"
       },
       stepTitleDataSource: function() {
-        var label = "Data Source for Fields"
+        var label = "Define Data Source for Fields"
         if ( this.createBlockStep > 2 ) {
           if (this.blockSourceOption == 'custom_step')
-          label = 'Data Source for Fields'
-          if (this.blockSourceOption == 'db_collection')
-          label =  'Data Source for Fields - Collection ' + (this.selectedCollection != null ? this.selectedCollection.label : '')
+          label = 'Define Data Source for Fields - DHF Step ' + this.selectedStep.label + " " + (this.selectedCollection != null ? this.selectedCollection.label : '')
+          if (this.blockSourceOption == 'db_collection') {
+          label =  'Define Data Source for Fields - Collection ' + (this.selectedCollection != null ? this.selectedCollection.label : '')
+
+          }
+
       }
         return label
       },
@@ -772,10 +776,12 @@
       },
       createBlockReady: function() {
 
+        var BLOCK_NAME_SET = (this.cleanBlockName() != '')
+
         var INPUT_CHECK = (
            (  this.blockOptions.includes(BLOCK_OPTION_FIELDS_INPUT) && this.selectedFields.length >= 1) ||
               this.blockOptions.includes(BLOCK_OPTION_NODE_INPUT) ||
-            this.blockOptions.includes(BLOCK_OPTIONS_DOC_BY_URI)
+             this.blockOptions.includes(BLOCK_OPTIONS_DOC_BY_URI)
         )
 
        var OUTPUT_CHECK = (
@@ -783,7 +789,7 @@
               this.blockOptions.includes(BLOCK_OPTION_NODE_OUTPUT)
           )
 
-      return INPUT_CHECK && OUTPUT_CHECK
+      return BLOCK_NAME_SET && INPUT_CHECK && OUTPUT_CHECK
 
       },
       sourceBlocks: function () {
