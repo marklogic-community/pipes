@@ -623,8 +623,7 @@
         return (this.createBlockStep > 3 ) ? "Document URIs - " + (this.customURIList.length == 0 ? "None" : this.customURIList.length) + " selected" : "Document URIs"
       },
       stepTitleFields: function() {
-        const BASIC_TITLE = "Fields"
-        var title = ''
+        var title = 'Fields'
         if (this.createBlockStep > 3 ) {
          title = (this.selectedFields.length > 0 ? this.selectedFields.length : "No") + " fields selected"
         }
