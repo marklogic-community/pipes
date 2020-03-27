@@ -3,8 +3,17 @@
 
   <div class="column gutter-sm">
 
-    <div class="row">
-         <div class="col-9">
+      <div class="row">
+
+        <div class="col-12" align="right" style="padding: 0px; margin: 0px;">
+                <q-icon color="primary" style="font-size: 1.5em" name="far fa-question-circle">
+                <q-tooltip content-class="pipes-tooltip tooltip-square">
+                A source block lets you filter out, combine, or create data fields to be used in other parts of a graph
+                </q-tooltip>
+                </q-icon>
+        </div>
+      </div>
+
 
   <q-card-actions align="left">
     <q-btn @click="resetBlockFormFields();createBlockStep = 1"
@@ -14,26 +23,15 @@
     </q-btn>
   </q-card-actions>
 
-    </div>
-
-    <div class="col-3">
-      <q-icon style="font-size: 2em" name="far fa-question-circle">
-        <q-tooltip content-class="pipes-tooltip">
-          A source block filters out or combines fields to then be used in other parts of a graph
-        </q-tooltip>
-      </q-icon>
-    </div>
-
-    </div>
-
-    <q-form @submit="notifyBlockRequested">
+    <q-form @submit="notifyBlockRequested" dense>
 
     <q-stepper
       v-model="createBlockStep"
       vertical
+      header-nav
       color="primary"
       animated
-	  flat
+	    flat
       @transition="stepTransition"
     >
 
@@ -42,10 +40,23 @@
         :name="1"
         :title="stepTitleBlockName"
         icon="chat_bubble_outline"
-        :done="createBlockStep > 1 && blockname != ''"
-        @click.capture="createBlockStep = 1"
-        class="cursor-pointer"
+        :done="createBlockStep > 1 && blockName !== null && blockName != ''"
+        :error="createBlockStep > 1 && (blockName === null || blockName == '')"
+        error-icon="error_outline"
+        error-color="red"
       >
+
+      <div class="row">
+<!-- Help -->
+        <div class="col-12" align="right" style="padding: 0px; margin: 0px;">
+                <q-icon color="primary" style="font-size: 1.5em" name="far fa-question-circle">
+                <q-tooltip content-class="pipes-tooltip tooltip-square">
+                The block name will appear in the title of your block. Use something that will be easy to recognise later
+                </q-tooltip>
+                </q-icon>
+        </div>
+      </div>
+
        <q-input style="font-size: 1.5em"
        ref="blockName"
        bottom-slots
@@ -63,7 +74,7 @@
 	  maxlength="80"/>
 
         <q-stepper-navigation>
-          <q-btn :disabled="cleanBlockName() == ''" @click="createBlockStep = 2" color="green" label="Next: data source"></q-btn>
+          <q-btn :disabled="cleanBlockName() == ''" @click="createBlockStep = 2" color="green" label="Next"></q-btn>
         </q-stepper-navigation>
       </q-step>
 
@@ -72,15 +83,28 @@
         :name="2"
         :title="stepTitleDataSource"
         icon="create_new_folder"
-        :done="createBlockStep > 2"
+        :done="createBlockStep > 2 && dataSourceNextOk"
+        :error="createBlockStep > 2 && ! dataSourceNextOk"
       >
-      Pipes can sample the documents in a database Collection to build a list of data fields to choose for your block.
-      How do you want to do this:
+      <!-- Help -->
+      <div class="row">
+        <div class="col-11" align="left" style="font-size: 1.1em">
+          Choose how Pipes will find fields to define in your block:
+        </div>
+        <div class="col-1" align="right" style="padding: 0px; margin: 0px;">
+                <q-icon color="primary" style="font-size: 1.5em" name="far fa-question-circle">
+                <q-tooltip content-class="pipes-tooltip tooltip-square">
+                Source blocks need some fields to be useful. Pipes can sample the documents in a database Collection or use the fields from specific documents in order to build a list of data fields to choose for your block.
+                </q-tooltip>
+                </q-icon>
+        </div>
+        </div>
 
           <q-option-group
           color="blue"
           type="radio"
           v-model="blockSourceOption"
+          @input="sourceOptionChanged"
           :options="[
             { label: 'Use collection defined in an existing DHF custom step', value: 'custom_step' },
             { label: 'Choose a database and collection to sample', value: 'db_collection' },
@@ -175,72 +199,33 @@
 	</div>
 
     <q-stepper-navigation>
-     <q-btn :disabled="! dataSourceNextOk" @click="createBlockStep = 4" color="green" label="Next"  class="q-ml-sm"></q-btn>
-     <q-btn @click="createBlockStep = 2" color="primary" label="Back" class="q-ml-sm"></q-btn>
+     <q-btn @click="createBlockStep = 1" color="primary" label="Back" class="q-ml-sm"></q-btn>
+         <q-btn :disabled="! dataSourceNextOk" @click="createBlockStep = 3" color="green" label="Next"  class="q-ml-sm"></q-btn>
     </q-stepper-navigation>
 
       </q-step>
 
-<!---- STEP 3 CUSTOM URI ----->
-<!--
+ <!-------- STEP 3 Select Fields ------>
       <q-step
         :name="3"
-        :title="stepTitleCustomURIs"
-        caption="Optional"
-        icon="assignment"
-        :done="createBlockStep > 3"
-      >
-      Instead of, or in addition to, the sampled fields from the Collection you can also add fields from specific documents.<br>
-      Enter one or more document URIs and add here, or just click 'Next'
-
-    <q-input bottom-slots v-model="customURI" label="Document URI (can enter multiple, space separated)" @keydown.enter.prevent="addURIToList">
-      <template v-slot:append>
-        <q-btn round dense flat icon="play_arrow" @click="addURIToList">
-            <q-tooltip>Add</q-tooltip>
-         </q-btn>
-      </template>
-    </q-input>
-
-    <q-list dense bordered class="rounded-borders">
-      <q-item v-for="item in customURIList" :key="item.uri">
-
-        <q-item-section avatar>
-          <q-icon class="text-green" v-if="item.exists" name="far fa-check-circle"/>
-          <q-icon class="text-orange" v-if="! item.exists" name="fas fa-exclamation-circle">
-              <q-tooltip v-if="!item.exists">No document with this URI in database</q-tooltip>
-          </q-icon>
-        </q-item-section>
-        <q-item-section>
-          {{ item.uri }}
-        </q-item-section>
-        <q-item-section side>
-           <q-btn round dense icon="remove" @click="removeURIFromList(item.uri)">
-              <q-tooltip>Remove from list</q-tooltip>
-           </q-btn>
-        </q-item-section>
-      </q-item>
-    </q-list>
-
-    <q-stepper-navigation>
-       <q-btn @click="createBlockStep = 4" color="green" label="Next" class="q-ml-sm"></q-btn>
-       <q-btn @click="createBlockStep = 2" color="primary" label="Back" class="q-ml-sm"></q-btn>
- </q-stepper-navigation>
-
-    </q-step>
--->
-
- <!--- STEP 4 Select Fields -->
-      <q-step
-        :name="4"
         :title="stepTitleFields"
         icon="assignment"
-        :done="createBlockStep > 4"
-        @click.capture="createBlockStep = 4"
+        :done="createBlockStep > 3"
+        @click.capture="createBlockStep = 3"
       >
-
-      <q-card-actions align="left" style="font-size: 1.1em">
-        Choose the fields to be used in the block:&nbsp; <b>{{ selectedFields.length }}</b>&nbsp;fields selected.
-      </q-card-actions>
+     <!-- Help -->
+        <div class="row">
+        <div class="col-11" align="left" style="font-size: 1.1em">
+          Choose the fields to be used in the block:&nbsp; <b>{{ selectedFields.length }}</b>&nbsp;fields selected.
+        </div>
+        <div class="col-1" align="right" style="padding: 0px; margin: 0px;">
+                <q-icon color="primary" style="font-size: 1.5em" name="far fa-question-circle">
+                <q-tooltip content-class="pipes-tooltip tooltip-square">
+                Choose from the fields sampled from the database, or create your own custom fields. Custom fields let you add a new data field with any name you like.
+                </q-tooltip>
+                </q-icon>
+        </div>
+        </div>
 
   <div class="row">
 
@@ -264,6 +249,7 @@
 	  		</q-btn>
 			</div>
 		</div>
+    <!--
 	<div class="row">
 			<div class="col-2">
 			<q-btn dense flat style="padding: 0px; margin: 0px;">
@@ -273,9 +259,10 @@
 			</q-btn>
 			</div>
 		</div>
+    -->
     </div>
 
-    <div class="col-11" align="left" style="padding: 0px; margin: 0px;">
+    <div class="col-11" align="left">
 
     <q-tree class="spacer-div"
       ref="selectionTree"
@@ -284,7 +271,7 @@
       tick-strategy="strict"
       :ticked.sync="selectedFields"
 	  control-color="blue"
-	  style="font-size: 1.1em; padding-left: 0px;"
+	  style="font-size: 1.0em; padding-left: 0px;"
     >
 
     </q-tree>
@@ -307,28 +294,42 @@
          A block must have one or more fields
    </q-tooltip>
 <q-stepper-navigation>
+      <q-btn @click="createBlockStep = 2" color="primary" label="Back" class="q-ml-sm"></q-btn>
+
        <q-btn :disabled="this.selectedFields.length < 1"
-       @click="tickedNodes = $refs['selectionTree'].getTickedNodes(); createBlockStep = 5"
+       @click="tickedNodes = $refs['selectionTree'].getTickedNodes(); createBlockStep = 4"
        color="green"
-       label="Next Step"
+       label="Next"
        class="q-ml-sm">
        </q-btn>
-        <q-btn @click="createBlockStep = 2" color="primary" label="Back" class="q-ml-sm"></q-btn>
- </q-stepper-navigation>
+  </q-stepper-navigation>
  </div>
     </q-step>
 
-<!---- STEP 5 BLOCK Input/Output Options -->
-  <q-step :name="5"
+<!---- STEP 4 BLOCK Input/Output Options -->
+  <q-step :name="4"
   title="Block Input/Output options"
   icon="compare_arrows"
-  @click.capture="createBlockStep = 5"
   >
+       <!-- Help -->
+       <div class="row">
+        <div class="col-11" align="left" style="font-size: 1.1em">
+
+        </div>
+        <div class="col-1" align="right" style="padding: 0px; margin: 0px;">
+                <q-icon color="primary" style="font-size: 1.5em" name="far fa-question-circle">
+                <q-tooltip content-class="pipes-tooltip tooltip-square">
+                Choose which inputs and outs your block with have. If you're not sure then just use the default
+                </q-tooltip>
+                </q-icon>
+        </div>
+        </div>
+
 
   <div class="row">
      <div class="col-3"></div>
-     <!-- hidden tooltip for option descriptions -->
      <div class="col-9">
+        <!-- hidden tooltip for option descriptions -->
         <q-tooltip
            v-model="showBlockHelp"
            anchor="top right"
@@ -337,9 +338,8 @@
         </q-tooltip>
       </div>
   </div>
-
   <div class="row">
-    <div class="col-5">
+    <div class="col-5" align="left">
       <q-btn flat style="font-size: 0.7em" @click="resetBlockOptions">
        <q-icon name="fas fa-redo">
          <q-tooltip content-class="pipes-tooltip">
@@ -374,7 +374,7 @@
     <div class="col-7">
 
       <!-- Block preview -->
-      Block Preview:
+      <div class="row"><div class="col-12">Block Preview</div></div>
       <div class="preview-block shadow-5 vertical-bottom">
       <div class="preview-block-title">
       ●&nbsp;&nbsp;{{this.blockName}}
@@ -407,12 +407,11 @@
     </div>
 
    <q-stepper-navigation>
-          <q-btn :disabled="! this.createBlockReady" color="primary" type="submit" :label="buttonLabel" class="q-ml-sm"></q-btn>
-          <q-tooltip v-model="explainBlockNotReady" :disabled="this.createBlockReady" content-class="pipes-tooltip">
+            <q-tooltip v-model="explainBlockNotReady" :disabled="this.createBlockReady" content-class="pipes-tooltip">
               A source block needs at least one input and output
           </q-tooltip>
-
-          <q-btn @click="createBlockStep = 4" color="secondary" label="Back" class="q-ml-sm"></q-btn>
+          <q-btn @click="createBlockStep = 3" color="primary" label="Back" class="q-ml-sm"></q-btn>
+          <q-btn :disabled="! this.createBlockReady" color="red" type="submit" :label="buttonLabel" class="q-ml-sm"></q-btn>
     </q-stepper-navigation>
 
       </q-step>
@@ -547,7 +546,7 @@
         selectedStep: null,
         selectedDatabase:null,
 		selectedFields: [],
-		selectedCollection: "",
+		selectedCollection: null,
         availableCollections: [],
         blockFieldsWarning : false,
         availableDatabases: [],
@@ -568,24 +567,25 @@
     },
   watch: {
       selectedStep: function (val) {
-
-     let availableDbHash = this.availableDatabases.reduce(function (map, obj) {
+      let availableDbHash = this.availableDatabases.reduce(function (map, obj) {
         map[obj.label] = obj.value;
         return map;
       }, {});
-
     this.selectedDatabase = { "label": this.dhfSteps[val.label].database, "value": availableDbHash[this.dhfSteps[val.label].database] };
-	this.selectedCollection = { "label": this.dhfSteps[val.label].collection, "value": this.dhfSteps[val.label].collection };
-
-	console.log("Custom step " + val + " database = " + JSON.stringify(this.selectedDatabase) + " colleciton = " + JSON.stringify(this.selectedCollection))
-
-    }
+	  this.selectedCollection = { "label": this.dhfSteps[val.label].collection, "value": this.dhfSteps[val.label].collection };
+	  console.log("Custom step " + val + " set database = " + JSON.stringify(this.selectedDatabase) + ", collection = " + JSON.stringify(this.selectedCollection))
+    },
+  selectedCollection:  function (val) {
+        console.log("watch discovering new collection: " + JSON.stringify(val))
+        this.collectionChanged()
+  }
   },
-    computed: {
-
+  computed: {
+// can user proceed from select data source step?
 	dataSourceNextOk: function() {
 		return (this.blockSourceOption == "db_collection" && this.selectedCollection !== null) ||
-		(this.showCustomURIPanel == true && this.customURIList.length > 0)
+    (this.showCustomURIPanel == true && this.customURIList.length > 0) ||
+    (this.blockSourceOption == "custom_step" && this.selectedStep !== null && this.selectedCollection != null)
 	},
       showBlockHelp: function() {
         return (this.userRequestingBlockOptionHelp && this.showBlockOptionTooltip)
@@ -602,12 +602,12 @@
         return this.createBlockStep > 1 ? "Block Name - " + this.blockName : "Enter Block Name"
       },
       stepTitleDataSource: function() {
-        var label = "Data Source"
+        var label = "Data Source for Fields"
         if ( this.createBlockStep > 2 ) {
           if (this.blockSourceOption == 'custom_step')
-          label = 'Data Source'
+          label = 'Data Source for Fields'
           if (this.blockSourceOption == 'db_collection')
-          label =  'Data Source - Collection ' + (this.selectedCollection != null ? this.selectedCollection.label : '')
+          label =  'Data Source for Fields - Collection ' + (this.selectedCollection != null ? this.selectedCollection.label : '')
       }
         return label
       },
@@ -698,6 +698,11 @@
       },
       // data for the output side of block demo in step 5
       stepBlockFieldsOutput: function() {
+
+        function clipFieldSize(field) {
+          return (field.length < 13) ? field : ".." + field.substring(0,12)
+        }
+
           const MAX = 6 // max 6 input/output lines in the preview block
           var chosenFields = []
           var outputFields = [] // final fields to output
@@ -729,6 +734,7 @@
                 if ( typeof simpleLabel === 'string') {
                   if ( simpleLabel.indexOf("[") > -1 )
                   simpleLabel = simpleLabel.split("[")[0]
+                  simpleLabel = clipFieldSize(simpleLabel)
                 }
 
           if ( this.userRequestingBlockOptionHelp && this.newSelectedOption == BLOCK_OPTION_FIELDS_OUTPUT  ) {
@@ -808,7 +814,7 @@
       },
       stepTransition(newVal,oldVal) {
        // console.log("Step transition " + oldVal + " " + newVal)
-        if (newVal == "4") {
+        if (newVal == "3") {
           this.$refs.selectionTree.setExpanded("Document Fields",true)
         }
       },
@@ -816,6 +822,20 @@
         this.blockOptions = [BLOCK_OPTION_NODE_INPUT, BLOCK_OPTION_FIELDS_OUTPUT]
         this.showBlockOptionTooltip = false
         this.userRequestingBlockOptionHelp = false
+      },
+      // When user changes data source options
+      sourceOptionChanged(currentOptions) {
+
+       if (currentOptions.includes('custom_step') ) {
+           this.selectedDatabase = null
+           this.selectedCollection = null
+       } else if (currentOptions.includes('db_collection')) {
+          this.selectedStep = null
+       } else if (currentOptions.includes('none')) {
+          this.selectedDatabase = null
+          this.selectedCollection = null
+         }
+
       },
       // When user clicks on block options
       blockOptionChanged(currentOptions) {
@@ -835,9 +855,6 @@
            second = [...this.previousBlockOptions]
         }
         var difference = first.filter(x => second.indexOf(x) === -1);
-
-        console.log(difference + " was changed on block options")
-        console.log("currentOptions was :" + currentOptions)
 
         if ( difference === null || difference.length == 0 ) {
             this.showBlockOptionTooltip = false
@@ -948,6 +965,7 @@
          this.customURIList = this.customURIList.filter(i => i.uri!== uri);
       },
       collectionChanged() {
+
         this.selectedFields = [];
         this.discoverModel(this.selectedCollection,this.userDocumentURIs)
       },
@@ -962,8 +980,8 @@
         this.selectedCollection = null
         this.tickedNodes = null
         this.selectedFields = []
-		this.collectionModel = FIELD_TREE_DEFAULT
-		this.collectionModelPopulated = false
+		    this.collectionModel = FIELD_TREE_DEFAULT
+		    this.collectionModelPopulated = false
         this.resetBlockOptions()
         this.createBlockStep = 0
         this.formMode = 'create'
@@ -1209,7 +1227,7 @@
 
       discoverModel(collection,custURIs) {
 
-		this.collectionModelPopulated = false
+		    this.collectionModelPopulated = false
 
         let dbOption =""
         if (this.selectedDatabase!=null && this.selectedDatabase!="") {
@@ -1229,9 +1247,6 @@
             this.collectionModel[0].children = response.data
             if ( response.data !== null && response.data.length > 0  ) {
 				this.collectionModelPopulated = true
-                //console.log("discovered " + response.data.length + " fields")
-				//var x JSON.parse(response.data))
-
             } else {
 				console.log("Warning: No fields returned")
 			}
@@ -1387,6 +1402,10 @@ ul.userfield-right li {
 .pipes-tooltip {
   background-color: #7397d1;
   font-size: 1.0em;
+}
+
+.tooltip-square {
+  max-width: 200px
 }
 
 .block-options-tooltip {
