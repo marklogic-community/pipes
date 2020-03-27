@@ -18,7 +18,7 @@
   <q-card-actions align="left">
     <q-btn @click="resetBlockFormFields();createBlockStep = 1"
     align="left"
-    label="New Block"
+    label="Start New Block"
     color="primary">
     </q-btn>
   </q-card-actions>
@@ -222,7 +222,7 @@
         <div class="col-1" align="right" style="padding: 0px; margin: 0px;">
                 <q-icon color="primary" style="font-size: 1.5em" name="far fa-question-circle">
                 <q-tooltip content-class="pipes-tooltip tooltip-square">
-                Choose from the fields sampled from the database, or create your own custom fields. Custom fields let you add a new data field with any name you like.
+                Choose from the document fields sampled from the database, or create your own custom fields. Custom fields let you add a new data field with any name you like.
                 </q-tooltip>
                 </q-icon>
         </div>
@@ -447,16 +447,14 @@
          </q-item-section>
 
          <q-item-section top side>
-            <div class="text-grey-8 q-gutter-xs">
-
-            <q-btn @click.capture.stop="restoreBlockToForm(block)" flat outline size="sm" style="color: #419e5a" icon="fas fa-arrow-up">
+            <q-btn :disabled="! block.metadata || ! block.metadata.blockCreatedFrom || block.metadata.blockCreatedFrom === null" @click.capture.stop="restoreBlockToForm(block)" flat outline size="sm" style="color: #419e5a" icon="fas fa-arrow-up">
               <q-tooltip self="top middle" content-class="pipes-tooltip">Restore block settings to form above</q-tooltip>
             </q-btn>
+        </q-item-section>
+        <q-item-section top side>
             <q-btn @click.capture.stop="deleteBlock(block,true)" flat outline size="sm" style="color: #b81220" icon="fas fa-trash-alt">
               <q-tooltip self="top middle" content-class="pipes-tooltip">Delete</q-tooltip>
             </q-btn>
-
-            </div>
          </q-item-section>
 
       </q-item>
@@ -539,7 +537,7 @@
         //
         formMode: 'create', // 'create' or 'edit'
         stepBlockUI: [],
-        createBlockStep: 0,
+        createBlockStep: 1,
         blockSourceOption: 'custom_step',
         dhfSteps: [],
         dhfStepSelectOptions: null,
@@ -604,15 +602,20 @@
         return this.createBlockStep > 1 ? "Block Name - " + this.blockName : "Enter Block Name"
       },
       stepTitleDataSource: function() {
-        var label = "Define Data Source for Fields"
+        var label = 'Data Source for Fields'
         if ( this.createBlockStep > 2 ) {
-          if (this.blockSourceOption == 'custom_step')
-          label = 'Define Data Source for Fields - DHF Step ' + this.selectedStep.label + " " + (this.selectedCollection != null ? this.selectedCollection.label : '')
-          if (this.blockSourceOption == 'db_collection') {
-          label =  'Define Data Source for Fields - Collection ' + (this.selectedCollection != null ? this.selectedCollection.label : '')
-
+          switch(this.blockSourceOption) {
+          case 'custom_step':
+          label = 'Sampling fields fields from DHF custom step ' + (this.selectedStep !== null ? this.selectedStep.label : "")
+          break;
+          case 'db_collection':
+          label =  'Sampling fields from Collection ' + (this.selectedCollection !== null ? this.selectedCollection.label : '')
+          break;
+          case 'none':
+          label =  'No fields from database required'
+          default:
+          break;
           }
-
       }
         return label
       },
@@ -621,7 +624,11 @@
       },
       stepTitleFields: function() {
         const BASIC_TITLE = "Fields"
-        return (this.createBlockStep > 4 ) ? BASIC_TITLE + " - " + this.selectedFields.length + " fields" : BASIC_TITLE
+        var title = ''
+        if (this.createBlockStep > 3 ) {
+         title = (this.selectedFields.length > 0 ? this.selectedFields.length : "No") + " fields selected"
+        }
+        return title
       },
       // data for the input side of block demo in step 5
       stepBlockFieldsInput: function() {
@@ -913,8 +920,9 @@
        this.selectedStep = step
        //
 	  },
-	  // Auto set database and collection dropdowns
-      setDatabaseCollectionsDropdowns(dbName, collectionName) {
+    // Auto set database and collection dropdowns
+    // if block included then restore fields
+      setDatabaseCollectionsDropdowns(dbName, collectionName, reloadBlock) {
         console.log( "setDatabaseDropdown: " + dbName + "," + collectionName )
         if ( dbName === null || dbName == '') return;
         for (var x = 0; x < this.availableDatabases.length; x++) {
@@ -928,7 +936,7 @@
               for (var x = 0; x < self.availableCollections.length; x++) {
                   if ( self.availableCollections[x].label == collectionName ) {
                   self.selectedCollection = self.availableCollections[x]
-                  self.discoverModel( this.selectedCollection,"")
+                  self.discoverModel( this.selectedCollection,"", reloadBlock)
                   return
                   }
 			  }
@@ -974,7 +982,7 @@
       collectionChanged() {
 
         this.selectedFields = [];
-        this.discoverModel(this.selectedCollection,this.userDocumentURIs)
+        this.discoverModel(this.selectedCollection,this.userDocumentURIs,null)
       },
       // Reset block form to default values
        resetBlockFormFields() {
@@ -1151,10 +1159,10 @@
                   dhfStep = block.metadata.sourceDHFStep
                   this.setDHFStep(dhfStep)
                   this.blockOptions = block.options;
+                  this.blockSourceOption = 'custom_step'
                   this.restoreFields(block, false) // restore fields from block
               break;
               case 'db_collection':
-
                 var blockSourceDatabase, blockSourceCollection
                 if (block.metadata.sourceDatabase && block.metadata.sourceDatabase != '')
                   blockSourceDatabase = block.metadata.sourceDatabase
@@ -1164,16 +1172,20 @@
                   (blockSourceCollection === null || blockSourceCollection == '') ) {
                   this.blockFieldsWarning = true
                 } else {
-                  this.setDatabaseCollectionsDropdowns(blockSourceDatabase,blockSourceCollection)
+                  this.setDatabaseCollectionsDropdowns(blockSourceDatabase,blockSourceCollection,block)
                 }
                 this.blockOptions = block.options;
-                this.restoreFields(block, false) // restore fields from block
+                this.blockSourceOption = 'db_collection'
               break;
               default:
+                this.blockSourceOption = 'none'
               break;
-
           }
 
+          } else {
+            console.log("No metadata found")
+            // if trying to restore an old block etc then default to none
+            this.blockSourceOption = 'none'
           }
 
         }
@@ -1188,6 +1200,8 @@
       },
       // Restore collection and custom fields after block reload
       restoreFields(reloadedBlock, expandTree) {
+
+        console.log("Restoring the fields..")
 
           if ( reloadedBlock.fields.length > 0) {
           for (var i = 0; i < reloadedBlock.fields.length; i++) {
@@ -1232,7 +1246,9 @@
      },
 	 // Discover fields and populate the tree view
 
-      discoverModel(collection,custURIs) {
+      discoverModel(collection,custURIs, reloadBlock) {
+
+        var self = this
 
 		    this.collectionModelPopulated = false
 
@@ -1252,6 +1268,7 @@
         this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionModel' + dbOption)
           .then((response) => {
             this.collectionModel[0].children = response.data
+            if ( reloadBlock != null) self.restoreFields(reloadBlock, false)
             if ( response.data !== null && response.data.length > 0  ) {
 				this.collectionModelPopulated = true
             } else {
