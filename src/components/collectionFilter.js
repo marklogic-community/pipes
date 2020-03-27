@@ -3,12 +3,12 @@ const CollectionFilter = {
   data() {},
   methods: {
 
-// Parse out DHF and MarkLogic reserved collections, plus Pipes data collections 
+// Parse out DHF and MarkLogic reserved collections, plus Pipes data collections
 filterCollections: function(collections) {
 
   function compare(a, b) {
-    if (a.label > b.label) return 1;
-    if (b.label > a.label) return -1;
+    if (a.label.toLowerCase() > b.label.toLowerCase()) return 1;
+    if (b.label.toLowerCase() > a.label.toLowerCase()) return -1;
   return 0;
   }
         var filtered = []
