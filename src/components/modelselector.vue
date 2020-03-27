@@ -43,7 +43,6 @@
         :done="createBlockStep > 1 && blockName !== null && blockName != ''"
         :error="createBlockStep > 1 && (blockName === null || blockName == '')"
         error-icon="error_outline"
-        error-color="red"
       >
 
       <div class="row">
@@ -85,11 +84,12 @@
         icon="create_new_folder"
         :done="createBlockStep > 2 && dataSourceNextOk"
         :error="createBlockStep > 2 && ! dataSourceNextOk"
+        error-icon="error_outline"
       >
       <!-- Help -->
       <div class="row">
         <div class="col-11" align="left" style="font-size: 1.1em">
-          Choose how Pipes will find fields to define in your block:
+          Choose where Pipes will find data fields to define in your block:
         </div>
         <div class="col-1" align="right" style="padding: 0px; margin: 0px;">
                 <q-icon color="primary" style="font-size: 1.5em" name="far fa-question-circle">
@@ -211,7 +211,8 @@
         :title="stepTitleFields"
         icon="assignment"
         :done="createBlockStep > 3"
-        @click.capture="createBlockStep = 3"
+        error-icon="error_outline"
+        :error="createBlockStep > 3 && selectedFields.length == 0"
       >
      <!-- Help -->
         <div class="row">
@@ -1172,7 +1173,7 @@
         }
 
             this.formMode = 'edit'
-            this.createBlockStep = 4 // open the edit fields step
+            this.createBlockStep = 3 // open the edit fields step
 
       },
       // remove block Model list
