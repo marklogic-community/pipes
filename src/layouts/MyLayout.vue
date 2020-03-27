@@ -76,7 +76,7 @@
             @click.stop="saveGraph()"
           >
             <q-tooltip content-class="pipes-tooltip">
-              Save current graph to the staging DB
+              Save graph
             </q-tooltip>
           </q-btn>
           <q-btn
@@ -88,7 +88,7 @@
             @click.stop="loadGraph()"
           >
             <q-tooltip content-class="pipes-tooltip">
-              Load graph from the staging DB
+              Load graph
             </q-tooltip>
           </q-btn>
           <q-btn
@@ -283,9 +283,9 @@ export default {
   methods: {
     updateTitle() {
 	// update title if edited and user in main graph / not subgraph
-	 if ( this.graphStack.length == 1 ) { 
+	 if ( this.graphStack.length == 1 ) {
 		this.currentGraphTitle = this.graphMetadata.title
-	 }  
+	 }
 	},
     enteredSubGraph(graphName) {
 		this.graphStack.push(graphName)
