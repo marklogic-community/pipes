@@ -62,6 +62,23 @@
 
   },
   {
+    "functionName": "NullConst",
+    "blockName": "NullConst",
+    "library": "basic",
+    "inputs": [
+    ],
+    "outputs": [
+      {
+        "name": "value",
+        "type": null
+      }
+    ],
+    "function": {
+      "ref": null,
+      "code": null
+    }
+  },
+  {
     "functionName": "fn_collection",
     "blockName": "collection",
     "library": "fn",
@@ -81,8 +98,6 @@
       "ref": "fn.collection",
       "code": null
     }
-
-
   },
   {
     "functionName": "fn_baseUri",

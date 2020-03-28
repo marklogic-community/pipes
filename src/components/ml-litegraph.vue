@@ -1467,16 +1467,20 @@ export default {
           self.notifyError("Deleting Graph", error, self);
         })
     },
+
+    createGraphDef() {
+      const jsonGraph = this.graph.serialize()
+      return {
+            pipesFileVersion : 1,
+            models: this.blockModels,
+            executionGraph: jsonGraph,
+            name: this.graphName,
+            metadata: this.graphMetadata
+          }
+    },
+
     downloadGraph () {
-
-      let jsonGraph = this.graph.serialize()
-      let graphDef = {
-        models: this.blockModels,
-        executionGraph: jsonGraph,
-        name: this.graphName,
-        metadata: this.graphMetadata
-      }
-
+      const graphDef = this.createGraphDef();
       var blob = new Blob([JSON.stringify(graphDef)], {
         type: "text/plain;charset=utf-8",
         endings: "transparent"
@@ -1487,21 +1491,16 @@ export default {
       saveAs(blob, name + ".json");
 
     },
-    exportDHFModule () {
+    exportDHFModule
+     () {
       this.showCodeGenConfig = true
     },
     saveCurrentGraph () {
 
       var self = this; // keep reference for notifications called from catch block
-      let jsonGraph = this.graph.serialize()
       var graphName = this.graphMetadata.title.replace(/[&#]/g, "_"); // & # causes error at download time
       const blocks = this.blockModels
-      let graphDef = {
-        models: blocks,
-        executionGraph: jsonGraph,
-        name: graphName,
-        metadata: this.graphMetadata
-      }
+      const graphDef = this.createGraphDef();
 
       this.$axios.post('/v1/resources/vppBackendServices?rs:action=SaveGraph', graphDef)
         .then((response) => {
@@ -1591,7 +1590,9 @@ export default {
 
       this.validationInfos = []
       this.jsonFromPreview = {};
-      const graphDetail = this.graph.serialize()
+
+      const graphDef  = this.createGraphDef()
+      const graphDetail = graphDef.executionGraph;
 
       this.validationInfos = this.checkConfiguration(graphDetail, this.validationConfigs)
 
@@ -1611,14 +1612,8 @@ export default {
           else
             dbOption += "?rs:toDatabase=" + this.selectedTargetDB.value + "&rs:save=true"
         }
-
-        let jsonGraph = this.graph.serialize()
         let request = {
-          jsonGraph: {
-            models: this.blockModels,
-            executionGraph: jsonGraph
-
-          },
+          jsonGraph: graphDef,
           collection: this.collectionForPreview.value,
           collectionRandom: this.randomDocPreview,
           previewUri: this.docUri

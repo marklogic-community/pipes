@@ -38,7 +38,6 @@ function lookUp(block,var1,var2,nbOutputValues,ctsQuery){
      return cts.search(query,["unfiltered", "score-zero"],0);
   }, {database: xdmp.database(block.database.value)}));
   if(foundDoc != null) {
-    xdmp.log("HERE: "+nbOutputValues);
     for (let i = 0; i < parseInt(nbOutputValues); i++) {
       if (block["value" + i + "Path"] != null && block["value" + i + "Path"].value != "") {
         const r = foundDoc.xpath(block["value" + i + "Path"].value)

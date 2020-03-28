@@ -2691,7 +2691,16 @@ function init(LiteGraph){
 
   selectCase.title = "selectCase";
   selectCase.prototype.onExecute = function()  {
-    let value2test = String(this.getInputData(0));
+    let value2test = this.getInputData(0);
+    if( value2test === undefined ) {
+      value2test = "#NULL#";
+    }else if( value2test === null ) {
+      value2test ="#NULL#";
+    }else if( value2test=== "" ) {
+      value2test = "#EMPTY#";
+    } else {
+      value2test = String(value2test)
+    }
     let map2Output = {};
     fn.tokenize(this.properties.testCases,"\n").toArray().map(item => {
       item = fn.tokenize(item,";").toArray()
@@ -3123,7 +3132,22 @@ function init(LiteGraph){
 
   LiteGraph.registerNodeType("transform/xpath", xpathBlock );
 
-}
+
+  function NullConstantBlock()  {
+    this.addOutput("value");
+    this.string = this.addWidget("text","string", "Your string", function(v){}, {} );
+  }
+
+  NullConstantBlock.title = "NullConst";
+  NullConstantBlock.desc = "Null Constant value";
+
+  NullConstantBlock.prototype.onExecute = function()  {
+    this.setOutputData(0,null);
+  }
+
+  LiteGraph.registerNodeType("basic/NullConst", NullConstantBlock);
+
+} 
 
 
 
