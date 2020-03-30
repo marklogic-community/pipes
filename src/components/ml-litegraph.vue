@@ -1235,6 +1235,7 @@ export default {
       this.$axios.get('/v1/resources/vppBackendServices?rs:action=ListSavedGraph')
         .then((response) => {
           this.savedGraph = response.data;
+          console.log("this.savedGraph = " + JSON.stringify(this.savedGraph))
 
         })
         .catch((error) => {
@@ -1474,7 +1475,7 @@ export default {
             pipesFileVersion : 1,
             models: this.blockModels,
             executionGraph: jsonGraph,
-            name: this.graphName,
+            name: this.graphMetadata.title,
             metadata: this.graphMetadata
           }
     },
