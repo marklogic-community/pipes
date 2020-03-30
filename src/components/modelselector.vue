@@ -95,24 +95,13 @@
         </div>
         </div>
 
-          <q-option-group
-          color="blue"
-          type="radio"
-          v-model="blockSourceOption"
-          @input="sourceOptionChanged"
-          :options="[
-            { label: 'Use the settings from a DHF custom step', value: 'custom_step' },
-            { label: 'Sample the documents in a database collection', value: 'db_collection' },
-			{ label: 'Do not use fields from existing data. You can still add custom fields', value: 'none' },
-          ]"
-    > </q-option-group>
+        <q-radio @input="sourceOptionChanged" color="blue" v-model="blockSourceOption" val="custom_step" label="Use the settings from a DHF custom step"></q-radio>
+        <div v-if="blockSourceOption == 'custom_step'">
+          <q-select dense outlined v-model="selectedStep" :options="dhfStepSelectOptions" label="Select custom step" />
+        </div>
+        <q-radio @input="sourceOptionChanged" color="blue" v-model="blockSourceOption" val="db_collection" label="Sample the documents in a database collection"></q-radio>
 
-<div v-if="blockSourceOption == 'custom_step'">
-  <q-select dense outlined v-model="selectedStep" :options="dhfStepSelectOptions" label="Select custom step" />
-
-</div>
-
-<div v-if="blockSourceOption == 'db_collection'">
+        <div v-if="blockSourceOption == 'db_collection'">
     <q-select
       name="databaseSelector"
       v-model="selectedDatabase"
@@ -149,6 +138,8 @@
     </q-select>
 
     </div>
+
+  <q-radio @input="sourceOptionChanged" color="blue" v-model="blockSourceOption" val="none" label="Do not use fields from existing data. You can still add custom fields"></q-radio>
 
   <div class="row">
     <div class="col-11" align="left">
@@ -547,6 +538,7 @@
     },
   watch: {
       selectedStep: function (val) {
+      if ( val !== null && val != '') {
       let availableDbHash = this.availableDatabases.reduce(function (map, obj) {
         map[obj.label] = obj.value;
         return map;
@@ -554,10 +546,13 @@
     this.selectedDatabase = { "label": this.dhfSteps[val.label].database, "value": availableDbHash[this.dhfSteps[val.label].database] };
 	  this.selectedCollection = { "label": this.dhfSteps[val.label].collection, "value": this.dhfSteps[val.label].collection };
 	  console.log("Custom step " + val + " set database = " + JSON.stringify(this.selectedDatabase) + ", collection = " + JSON.stringify(this.selectedCollection))
-    },
+    } else this.resetFieldSelectionTree()
+      },
   selectedCollection:  function (val) {
-        console.log("watch discovering new collection: " + JSON.stringify(val))
+       if ( val !== null && val != '') {
+         console.log("Watch discovering new collection: " + JSON.stringify(val))
         this.collectionChanged()
+       } else this.resetFieldSelectionTree()
   }
   },
   computed: {
@@ -825,9 +820,12 @@
            this.selectedCollection = null
        } else if (currentOptions.includes('db_collection')) {
           this.selectedStep = null
+          this.selectedDatabase = null
+          this.selectedCollection = null
        } else if (currentOptions.includes('none')) {
           this.selectedDatabase = null
           this.selectedCollection = null
+          this.resetFieldSelectionTree()
          }
 
       },
@@ -974,11 +972,14 @@
         this.discoverDhfSteps()
         this.tickedNodes = null
         this.selectedFields = []
-		    this.collectionModel = FIELD_TREE_DEFAULT
-		    this.collectionModelPopulated = false
+		    this.resetFieldSelectionTree()
         this.resetBlockOptions()
         this.createBlockStep = 1
         this.formMode = 'create'
+      },
+      resetFieldSelectionTree() {
+        this.collectionModel = FIELD_TREE_DEFAULT
+		    this.collectionModelPopulated = false
       },
       resetCustomFieldValidation() {
         this.newCustomFieldName= this.cleanCustomFieldName()
@@ -1316,13 +1317,13 @@
 
 .block-title {
   height: 8px;
-  background: rgb(236,75,43);
+  background: rgb(226,92,51);
   color:white;
   font-size:0.2em;
 }
 
 .block-body {
-  background: rgb(176,165,143);
+  background: rgb(182,174,158);
   height: 20px;
   border-top-right-radius: 0px;
   border-top-left-radius: 0px;
@@ -1340,7 +1341,7 @@
 
 .preview-block-title {
   height: 24px;
-  background: rgb(236,75,43);
+  background: rgb(226,92,51);
   color:white;
   font-size:1.0em;
   border-top-right-radius: 9px;
@@ -1350,7 +1351,7 @@
 }
 
 .preview-block-body {
-  background: rgb(176,165,143);
+  background: rgb(182,174,158);
   height: 120px;
   border-top-right-radius: 0px;
   border-top-left-radius: 0px;
