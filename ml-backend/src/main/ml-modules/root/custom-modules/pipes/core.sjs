@@ -1408,34 +1408,22 @@ function init(LiteGraph){
     this.addInput("var1");
     this.addInput("var2");
     this.nbOutputValues = this.addWidget("text","nbOutputValues", "string", function(v){},  { } );
+    console.log("this.nbOutputValues = " + this.nbOutputValues.value)
     this.database = this.addWidget("text","database", "string", function(v){},  { } );
-    this.value0Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
-    this.value1Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
-    this.value2Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
-    this.value3Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
-    this.value4Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
-    this.value5Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
-    this.value6Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
-    this.value7Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
-    this.value8Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
-    this.value9Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
-    this.addOutput("val0");
-    this.addOutput("val1");
-    this.addOutput("val2");
-    this.addOutput("val3");
-    this.addOutput("val4");
-    this.addOutput("val5");
-    this.addOutput("val6");
-    this.addOutput("val7");
-    this.addOutput("val8");
-    this.addOutput("val9");
+// add outputs
+    const OUTPUTS = 20;
+    for (var vp = 0; vp < OUTPUTS; vp++ ) {
+      var varName = 'value' + vp + 'Path'
+      this[varName] = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
+      this.addOutput("val" + vp);
+    }
+
   }
 
 //name to show
   featureLookupBlock.title = "Lookup";
 
 //function to call when the node is executed
-
   featureLookupBlock.prototype.onExecute = function()  {
     let var1 = this.getInputData(0);
     let var2 = this.getInputData(1);
@@ -1453,26 +1441,14 @@ function init(LiteGraph){
     this.collection = this.addWidget("text","collection", "string", function(v){},  { } );
     this.property = this.addWidget("text","property", "string", function(v){},  { } );
     this.dataType = this.addWidget("text","dataType", "string", function(v){},  { } );
-    this.value0Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
-    this.value1Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
-    this.value2Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
-    this.value3Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
-    this.value4Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
-    this.value5Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
-    this.value6Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
-    this.value7Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
-    this.value8Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
-    this.value9Path = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
-    this.addOutput("val0");
-    this.addOutput("val1");
-    this.addOutput("val2");
-    this.addOutput("val3");
-    this.addOutput("val4");
-    this.addOutput("val5");
-    this.addOutput("val6");
-    this.addOutput("val7");
-    this.addOutput("val8");
-    this.addOutput("val9");
+// addoutputs
+    const OUTPUTS = 20;
+    for (var vp = 0; vp < OUTPUTS; vp++ ) {
+      var varName = 'value' + vp + 'Path'
+      this[varName] = this.addWidget("text","nbOutputValues", "", function(v){},  { } );
+      this.addOutput("val" + vp);
+    }
+
   }
 
 //name to show
@@ -3147,7 +3123,7 @@ function init(LiteGraph){
 
   LiteGraph.registerNodeType("basic/NullConst", NullConstantBlock);
 
-} 
+}
 
 
 
