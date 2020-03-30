@@ -6,7 +6,7 @@
       <div class="row">
         <div class="col-10">
               <q-btn @click="resetBlockFormFields();createBlockStep = 1"
-            align="left" label="Start New Source Block" color="primary"/>
+            align="left" label="Start New Block" color="primary"/>
         </div>
 
         <div class="col-2" align="right" style="padding: 0px; margin: 0px;">
@@ -543,17 +543,24 @@
         map[obj.label] = obj.value;
         return map;
       }, {});
-    this.selectedDatabase = { "label": this.dhfSteps[val.label].database, "value": availableDbHash[this.dhfSteps[val.label].database] };
-	  this.selectedCollection = { "label": this.dhfSteps[val.label].collection, "value": this.dhfSteps[val.label].collection };
-	  console.log("Custom step " + val + " set database = " + JSON.stringify(this.selectedDatabase) + ", collection = " + JSON.stringify(this.selectedCollection))
-    } else this.resetFieldSelectionTree()
-      },
+      this.selectedDatabase = { "label": this.dhfSteps[val.label].database, "value": availableDbHash[this.dhfSteps[val.label].database] };
+	    this.selectedCollection = { "label": this.dhfSteps[val.label].collection, "value": this.dhfSteps[val.label].collection };
+      this.collectionChanged() // populate field tree, includes any custom URIs
+   } else {
+      this.selectedDatabase = null
+      this.selectedCollection = null
+      this.collectionChanged() // populate field tree, includes any custom URIs
+    }
+      }
+  },
   selectedCollection:  function (val) {
        if ( val !== null && val != '') {
-         console.log("Watch discovering new collection: " + JSON.stringify(val))
         this.collectionChanged()
-       } else this.resetFieldSelectionTree()
-  }
+       } else {
+        this.selectedDatabase = null
+        this.selectedCollection = null
+        this.collectionChanged()
+    }
   },
   computed: {
 // can user proceed from select data source step?
@@ -575,7 +582,11 @@
           return URIs
       },
       stepTitleBlockName: function() {
-        return this.createBlockStep > 1 ? "Block Name - " + this.blockName : "Enter Block Name"
+        var title = "Block Name"
+        if (this.createBlockStep > 1) {
+        title =  (this.blockName !== null && this.blockName != '') ? this.blockName : "Block Name"
+      }
+        return title
       },
       stepTitleDataSource: function() {
         var label = 'Data Source for Fields'
@@ -813,19 +824,19 @@
         this.userRequestingBlockOptionHelp = false
       },
       // When user changes data source options
-      sourceOptionChanged(currentOptions) {
-
-       if (currentOptions.includes('custom_step') ) {
-           this.selectedDatabase = null
-           this.selectedCollection = null
-       } else if (currentOptions.includes('db_collection')) {
+      sourceOptionChanged(currentOption) {
+       if (currentOption == 'custom_step' ) {
+           this.selectedStep = null
+       } else if (currentOption == 'db_collection' ) {
           this.selectedStep = null
           this.selectedDatabase = null
           this.selectedCollection = null
-       } else if (currentOptions.includes('none')) {
+          this.collectionChanged()
+       } else if (currentOption == 'none' ) {
+          this.selectedStep = null
           this.selectedDatabase = null
           this.selectedCollection = null
-          this.resetFieldSelectionTree()
+          this.collectionChanged()
          }
 
       },
@@ -856,7 +867,7 @@
         switch( difference[0] ) {
           case BLOCK_OPTION_NODE_OUTPUT:
           this.newSelectedOption = BLOCK_OPTION_NODE_OUTPUT
-          this.blockOptionDescription = "The block will generate a Document node which includes the block fields, plus have a Prov output for provenance information??"
+          this.blockOptionDescription = "The block will generate a Document node with the block fields, plus a 'Prov' output for provenance information"
           break;
           case BLOCK_OPTION_FIELDS_OUTPUT:
           this.newSelectedOption = BLOCK_OPTION_FIELDS_OUTPUT
@@ -901,7 +912,6 @@
     // Auto set database and collection dropdowns
     // if block included then restore fields
       setDatabaseCollectionsDropdowns(dbName, collectionName, reloadBlock) {
-        console.log( "setDatabaseDropdown: " + dbName + "," + collectionName )
         if ( dbName === null || dbName == '') return;
         for (var x = 0; x < this.availableDatabases.length; x++) {
           if ( this.availableDatabases[x].label == dbName ) {
