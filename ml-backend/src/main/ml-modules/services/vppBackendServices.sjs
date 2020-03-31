@@ -422,31 +422,57 @@ function getFieldsByCollection(collection, customURI) {
 
         let name = fn.name(node)
         let originalPath = String(xdmp.path(node))
-        let path = String(xdmp.path(node)).replace(/[A-z]+-node\('([\s\w]*)'\)/g, "node('$1')").replace(/text\('([\s\w]*)'\)/g, "node('$1')")
 
-        let lastSlash = path.lastIndexOf("/")
-        let nodeLastPath = path.substring(lastSlash)
-        let parentPath = path.substring(0, lastSlash)
-        let newParentPath = parentPath.replace(/array-node\('([\s\w]*)'\)/g, "$1")
-        //if(nodeLastPath.includes("object-node()")) nodeLastPath = nodeLastPath.replace(/\/object-node\(\)/,"")
-        path = newParentPath + nodeLastPath
-        if (nodeLastPath.includes("array-node")) path += "/*"
+        //let path = originalPath.replace(/[A-z]+-node\('([\s]*)'\)/g, "$1").replace(/text\('([\s]+)'\)/g, "$1").replace(/text\('([\s\w]+)'\)/g, "node('$1')").replace(/[A-z]+-node\('([\s]*)'\)/g, "node('$1')")
+        pathTokens = originalPath.replace(/(\/object-node\(\))/g,"").replace(/(\[\d+\])/g,"").split("/")
+
+        pathTokens = pathTokens.map((item,index)=>{
+          if(item=="") return null
+          if(item.includes("array-node") && item.includes(" "))
+            if(index==pathTokens.length-1)
+              return item + "/*"
+            else return item + "/"
+
+          if(item.includes(" ") || item.includes("@"))
+            return item.replace(/[A-z]+-node\('([\s\w@]*)'\)/g, "node('$1')").replace(/text\('([\s\w@]+)'\)/g, "node('$1')")
+          else
+            return item.replace(/[A-z]+-node\('([\s\w@]*)'\)/g, "$1").replace(/text\('([\s\w@]+)'\)/g, "$1")
+        })
+
+
+
+
+        let lastSlash = originalPath.replace(/(\/object-node\(\))/g,"").lastIndexOf("/")
+        let nodeLastPath = originalPath.substring(lastSlash + 1)
+        //if(nodeLastPath.includes("array-node") && path[path.length-1].includes(" "))
+        //path[path.length-1]=nodeLastPath
+
+        path = pathTokens.join("/")
+        let parentPath =path.replace(/(\/object-node\(\))/g,"").replace(/\/\*/g,"")
+        parentPath = parentPath.substring(0, parentPath.lastIndexOf("/"))
+        path = path.replace(/(\/object-node\(\))/g,"")
+        let newParentPath = parentPath//.replace(/array-node\('([\s\w]*)'\)/g, "$1")
+
+        pathTokens = path.split("/")
+        let pathKey = pathTokens.splice(0,pathTokens.length-1).join("/")
+
+        newParentPath=newParentPath.replace("/*", "").replace(/\/\//,"/").replace(/\/$/,"")
         if (newParentPath == "") newParentPath = "/"
 
-         if (fields[path.replace("/*", "").replace(/[A-z]+-node\('([\s\w]*)'\)/g, "node('$1')").replace(/text\('([\s\w]*)'\)/g, "node('$1')")] == null)
-         fields[path.replace("/*", "").replace(/[A-z]+-node\('([\s\w]*)'\)/g, "node('$1')").replace(/text\('([\s\w]*)'\)/g, "node('$1')")] = {
-          label: name + " [id" + i++ + "]",
-          field: node.xpath("name(.)"),
-          value: node.xpath("name(.)"),
-          path: path,
-          originalPath: originalPath,
-          type: node.nodeType,
-          children: [],
-          parent: newParentPath
-        }
+        if (fields[path.replace("/*", "").replace(/\/\//,"/")] == null)
+          fields[path.replace("/*", "").replace(/\/\//,"/")] = {
+            label: name + " [id" + i++ + "]",
+            field: node.xpath("name(.)"),
+            value: node.xpath("name(.)"),
+            path: path,
+            originalPath: originalPath,
+            type: node.nodeType,
+            children: [],
+            parent: newParentPath
+          }
 
       }))
-      //return fields
+      // return fields
       let results = []
       Object.keys(fields).map(item => {
         results.push(fields[item])
