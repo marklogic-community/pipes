@@ -190,10 +190,21 @@ function init(LiteGraph){
     let attachments  = (this.getInputData(3)!=undefined)?this.getInputData(3):{};
 
 
-    if(instance.toObject && this.format.value=="json") {
-      instance = instance.toObject()
+
+    if(this.format.value=="json") {
+      if(instance) {
+        if (instance.toObject) instance = instance.toObject()
+        instance["$attachments"] = attachments
+      }
+
+  else{
+      instance={}
       instance["$attachments"] = attachments
+
     }
+
+    }
+
 
     let result = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, this.format.value)
 
