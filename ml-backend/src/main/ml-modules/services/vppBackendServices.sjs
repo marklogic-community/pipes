@@ -423,7 +423,7 @@ function getFieldsByCollection(collection, customURI) {
         let name = fn.name(node)
         let originalPath = String(xdmp.path(node))
         let path = String(xdmp.path(node)).replace(/[A-z]+-node\('([\s\w]*)'\)/g, "node('$1')").replace(/text\('([\s\w]*)'\)/g, "node('$1')")
-        
+
         let lastSlash = path.lastIndexOf("/")
         let nodeLastPath = path.substring(lastSlash)
         let parentPath = path.substring(0, lastSlash)
@@ -432,7 +432,7 @@ function getFieldsByCollection(collection, customURI) {
         path = newParentPath + nodeLastPath
         if (nodeLastPath.includes("array-node")) path += "/*"
         if (newParentPath == "") newParentPath = "/"
-  
+
          if (fields[path.replace("/*", "").replace(/[A-z]+-node\('([\s\w]*)'\)/g, "node('$1')").replace(/text\('([\s\w]*)'\)/g, "node('$1')")] == null)
          fields[path.replace("/*", "").replace(/[A-z]+-node\('([\s\w]*)'\)/g, "node('$1')").replace(/text\('([\s\w]*)'\)/g, "node('$1')")] = {
           label: name + " [id" + i++ + "]",
@@ -547,7 +547,7 @@ function saveGraph(input, params) {
   let targetDb = (params.toDatabase != null) ? params.toDatabase : xdmp.database()
   xdmp.invokeFunction(() => {
 
-      xdmp.documentInsert("/marklogic-pipes/savedGraph/" + graph.name + ".json", graph, null
+      xdmp.documentInsert("/marklogic-pipes/savedGraph/" + graph.name + ".json", graph, xdmp.defaultPermissions()
         , graphsCollection)
 
     }, {"database": targetDb, "update": "true"}
@@ -598,7 +598,7 @@ function get(context, params) {
       break;
     case "verifyDocumentUri":
       return verifyUri(params)
-      break;  
+      break;
     default:
   }
 
