@@ -1927,6 +1927,7 @@ export default {
       var storedSettings = this.$q.localStorage.getItem(ADVANCED_SETTINGS_KEY)
       this.advancedSettings.confirmBrowserRefresh = storedSettings.confirmBrowserRefresh != null ? storedSettings.confirmBrowserRefresh : true
     }
+    this.resetDhfDefaultGraph()
   },
   beforeMount () {
     window.addEventListener("beforeunload", this.browserRefreshConfirm)
