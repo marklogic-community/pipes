@@ -1836,6 +1836,7 @@ export default {
         //blockCode += (config.properties)?"config.properties = " +  config.properties +";":"";
         blockCode += "};"
 
+        if(config.title_color) blockCode += config.functionName + ".title_color = \""+config.title_color+"\";"
         blockCode += config.functionName + ".title = '" + config.blockName + "';";
 
 		// Add event to onDrawForeground for block when defined
