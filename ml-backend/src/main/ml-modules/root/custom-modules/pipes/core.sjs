@@ -1733,7 +1733,7 @@ function init(LiteGraph){
   }
 
 
-  currentDate.values = ["currentDate","currentDateTime","currentTime"];
+  currentDate.values = ["currentDate","currentDateNoTz","currentDateTime","currentTime"];
 
   currentDate.title = "Current date(time)";
   currentDate.desc = "Outputs current date(time)";
@@ -1755,6 +1755,7 @@ function init(LiteGraph){
 
     switch(this.properties.currentDate){
       case "currentDate": this.setOutputData(0, fn.currentDate() ); break;
+      case "currentDateNoTz": this.setOutputData(0, fn.adjustDateToTimezone(fn.currentDate(), null)); break;
       case "currentDateTime": this.setOutputData(0, fn.currentDateTime() ); break;
       case "currentTime": this.setOutputData(0, fn.currentTime() ); break;
 
