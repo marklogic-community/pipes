@@ -1,5 +1,6 @@
 package com.marklogic.pipes.ui;
 
+import com.marklogic.pipes.ui.config.ClientConfig;
 import com.marklogic.pipes.ui.customStep.CustomStepController;
 import com.marklogic.pipes.ui.customStep.CustomStepService;
 import org.junit.jupiter.api.AfterEach;

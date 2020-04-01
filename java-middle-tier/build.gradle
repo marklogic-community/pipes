@@ -26,6 +26,7 @@ dependencies {
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
+  testCompile group: 'org.springframework.security', name: 'spring-security-test', version: '5.3.0.RELEASE'
   annotationProcessor group: 'org.springframework.boot', name: 'spring-boot-configuration-processor'
 }
 
@@ -65,7 +66,7 @@ task runQuasarBuild(type:Exec) {
     executable "quasar"
     args "build"
   }
-  
+
   doLast {
     logger.warn('Done running quasar build')
   }
@@ -74,11 +75,11 @@ task runQuasarBuild(type:Exec) {
 task copyQuasarBuild(type:Copy) {
   dependsOn runQuasarBuild
   mustRunAfter runQuasarBuild
-  
+
   doFirst {
     logger.warn('Copying "dist/spa"')
   }
-  from "../dist/spa/" 
+  from "../dist/spa/"
   into "src/main/resources/static/"
   outputs.upToDateWhen {
     false
@@ -92,8 +93,8 @@ task copyDhf(type:Copy) {
   doFirst {
     logger.warn('Copying "dist_user/dhf"')
   }
-  
-  from "../ml-backend/src/" 
+
+  from "../ml-backend/src/"
   into "src/main/resources/dhf/src/"
   doLast {
     logger.warn('Done copying "dist_user/dhf"')
@@ -123,7 +124,7 @@ task runQuasarDev(type:Exec) {
     executable "quasar"
     args "dev"
   }
-  
+
   doLast {
     logger.warn('Done running quasar dev')
   }
