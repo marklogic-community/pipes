@@ -97,4 +97,4 @@ Opening another terminal, change directory to the location that contains your Do
 
 ``docker-compose  -f pipes.yml up``
 
-You should now have MarkLogic and Pipes running container and available via the bound ports. For example, at [localhost:8000]() and [localhost:9081]().
+You should now have MarkLogic and Pipes running in containers and available via the bound ports. For example, at [localhost:8000]() and [localhost:9081]().
