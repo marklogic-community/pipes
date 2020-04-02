@@ -17,7 +17,7 @@ Before following the instructions below, please make sure:
 * You've installed the Docker runtime (for example, you're running Docker Desktop on a Mac)
 
 * You have the MarkLogic image from [DockerHub](https://hub.docker.com/_/marklogic) on your local machine. 
-* You have MarkLogic's Data Hub Framework (DHF) project files on your local machine.
+* You have a Data Hub Framework (DHF) project on your local machine.
   * In this project, you need to have added *mlBundle* to your DHF ``build.gradle`` file (see the [main Pipes documentation](https://github.com/marklogic-community/pipes) for more information)
   
 ## Getting the image
