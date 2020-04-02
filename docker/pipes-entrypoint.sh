@@ -6,17 +6,17 @@ cat >application.properties <<EOF
 server.port=$SERVERPORT
 
 # MarkLogic DHF settings
-mlHost=$MLHOST
-mlStagingPort=$MLSTAGINGPORT
-mlAppServicesPort=$MLAPPSERVICESPORT
-mlAdminPort=$MLADMINPORT
-mlManagePort=$MLMANAGEPORT
-mlUsername=$MLUSERNAME 
-mlPassword=$MLPASSWORD
+mlHost=$STACK_NAME.dhf.local
+mlStagingPort=$STAGING_PORT
+mlAppServicesPort=$APPSERVICES_PORT
+mlAdminPort=$ADMIN_PORT
+mlManagePort=$MANAGE_PORT
 mlModulesDatabase=data-hub-MODULES
+mlUsername=$MARKLOGIC_ADMIN_USERNAME
+mlPassword=$MARKLOGIC_ADMIN_PASSWORD
 
 # this is the root of your DHF project to deploy backend modules to
-mlDhfRoot=DHF
+mlDhfRoot=/DHF
 EOF
 
 

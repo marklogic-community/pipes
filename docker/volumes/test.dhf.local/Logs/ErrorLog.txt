@@ -1,0 +1,728 @@
+2020-04-02 15:11:20.116 Notice: Starting MarkLogic Server 10.0-3 x86_64 in /opt/MarkLogic with data in /var/opt/MarkLogic
+2020-04-02 15:11:20.117 Info: MarkLogic Converters not installed
+2020-04-02 15:11:20.132 Info: Host test.dhf.local with 12GB memory running Linux 4.19.76-linuxkit (CentOS Linux release 7.7.1908 (Core)) on Docker
+2020-04-02 15:11:20.280 Info: Invalid selection of CNTK default device, using automatic instead.
+2020-04-02 15:11:20.280 Info:+Successfully set CNTK default device to automatic(CPU).
+2020-04-02 15:11:40.519 Info: License key languages: en
+2020-04-02 15:11:40.604 Info: Using icu tokenization: ta ro tr da fi hu
+2020-04-02 15:11:40.604 Info: Using bitext stemming: en en-uc
+2020-04-02 15:11:40.604 Info: Using snowball stemming: ta ro tr da fi hu
+2020-04-02 15:11:41.336 Info: Loaded schemas, rule sets, and templates
+2020-04-02 15:11:41.376 Notice: Keystore {kms-type=internal, status=normal, dataEncryption=default-off, configEncryption=off, logsEncryption=off}
+2020-04-02 15:11:41.405 Info: Native plugin cache manifest initialized
+2020-04-02 15:11:41.436 Info: Forest Schemas state changed from unmounted to mounted
+2020-04-02 15:11:41.436 Info: Forest Security state changed from unmounted to mounted
+2020-04-02 15:11:41.437 Notice: Mounted forest Security locally on /var/opt/MarkLogic/Forests/Security read write
+2020-04-02 15:11:41.438 Notice: Mounted forest Schemas locally on /var/opt/MarkLogic/Forests/Schemas read write
+2020-04-02 15:11:41.439 Info: Forest Modules state changed from unmounted to mounted
+2020-04-02 15:11:41.440 Notice: Mounted forest Modules locally on /var/opt/MarkLogic/Forests/Modules read write
+2020-04-02 15:11:41.446 Info: Forest Documents state changed from unmounted to mounted
+2020-04-02 15:11:41.448 Notice: Mounted forest Documents locally on /var/opt/MarkLogic/Forests/Documents read write
+2020-04-02 15:11:41.451 Info: Forest Security state changed from mounted to recovering
+2020-04-02 15:11:41.451 Warning: Metering database is not configured - Temporarily disabling usage metering
+2020-04-02 15:11:41.452 Info: Forest Schemas state changed from mounted to recovering
+2020-04-02 15:11:41.454 Info: Forest Modules state changed from mounted to recovering
+2020-04-02 15:11:41.457 Info: Forest Documents state changed from mounted to recovering
+2020-04-02 15:11:41.466 Info: Forest Security forgetting previous master 0 because configured master changed
+2020-04-02 15:11:41.467 Info: Forest Schemas forgetting previous master 0 because configured master changed
+2020-04-02 15:11:41.469 Info: Forest Modules forgetting previous master 0 because configured master changed
+2020-04-02 15:11:41.472 Info: Forest Documents forgetting previous master 0 because configured master changed
+2020-04-02 15:11:41.473 Info: Forest Security state changed from recovering to open
+2020-04-02 15:11:41.476 Info: Forest Schemas state changed from recovering to open
+2020-04-02 15:11:41.478 Info: Forest Modules state changed from recovering to open
+2020-04-02 15:11:41.480 Info: Forest Documents state changed from recovering to open
+2020-04-02 15:11:41.517 Info: Forest App-Services state changed from unmounted to mounted
+2020-04-02 15:11:41.517 Info: Forest Triggers state changed from unmounted to mounted
+2020-04-02 15:11:41.517 Info: Forest Extensions state changed from unmounted to mounted
+2020-04-02 15:11:41.517 Info: Forest Meters state changed from unmounted to mounted
+2020-04-02 15:11:41.518 Notice: Mounted forest App-Services locally on /var/opt/MarkLogic/Forests/App-Services read write
+2020-04-02 15:11:41.519 Notice: Mounted forest Triggers locally on /var/opt/MarkLogic/Forests/Triggers read write
+2020-04-02 15:11:41.520 Notice: Mounted forest Extensions locally on /var/opt/MarkLogic/Forests/Extensions read write
+2020-04-02 15:11:41.521 Notice: Mounted forest Meters locally on /var/opt/MarkLogic/Forests/Meters read write
+2020-04-02 15:11:41.534 Info: Forest Triggers state changed from mounted to recovering
+2020-04-02 15:11:41.534 Info: Forest App-Services state changed from mounted to recovering
+2020-04-02 15:11:41.534 Info: Forest Meters state changed from mounted to recovering
+2020-04-02 15:11:41.534 Info: Forest Extensions state changed from mounted to recovering
+2020-04-02 15:11:41.547 Info: Forest Triggers forgetting previous master 0 because configured master changed
+2020-04-02 15:11:41.548 Info: Forest App-Services forgetting previous master 0 because configured master changed
+2020-04-02 15:11:41.549 Info: Forest Meters forgetting previous master 0 because configured master changed
+2020-04-02 15:11:41.549 Info: Forest Extensions forgetting previous master 0 because configured master changed
+2020-04-02 15:11:41.556 Info: Forest Triggers state changed from recovering to open
+2020-04-02 15:11:41.557 Info: Forest App-Services state changed from recovering to open
+2020-04-02 15:11:41.558 Info: Forest Meters state changed from recovering to open
+2020-04-02 15:11:41.560 Info: Forest Extensions state changed from recovering to open
+2020-04-02 15:11:41.585 Info: Forest Fab state changed from unmounted to mounted
+2020-04-02 15:11:41.586 Notice: Mounted forest Fab locally on /var/opt/MarkLogic/Forests/Fab read write
+2020-04-02 15:11:41.593 Info: Forest Last-Login state changed from unmounted to mounted
+2020-04-02 15:11:41.594 Notice: Mounted forest Last-Login locally on /var/opt/MarkLogic/Forests/Last-Login read write
+2020-04-02 15:11:41.603 Info: Forest Fab state changed from mounted to recovering
+2020-04-02 15:11:41.604 Info: Forest Last-Login state changed from mounted to recovering
+2020-04-02 15:11:41.620 Info: Forest Fab forgetting previous master 0 because configured master changed
+2020-04-02 15:11:41.620 Info: Forest Last-Login forgetting previous master 0 because configured master changed
+2020-04-02 15:11:41.627 Info: Forest Fab state changed from recovering to open
+2020-04-02 15:11:41.627 Info: Forest Last-Login state changed from recovering to open
+2020-04-02 15:11:41.999 Info: Linux Huge Pages: detected 0, recommend 1920 to 2460
+2020-04-02 15:11:42.000 Info: Database Schemas is online with 1 forest
+2020-04-02 15:11:42.001 Info: Database Triggers is online with 1 forest
+2020-04-02 15:11:42.002 Info: Database Meters is online with 1 forest
+2020-04-02 15:11:42.004 Info: Database Modules is online with 1 forest
+2020-04-02 15:11:42.005 Info: Database Documents is online with 1 forest
+2020-04-02 15:11:42.007 Info: Database Security is online with 1 forest
+2020-04-02 15:11:45.084 Info: Keystore: generated KEKID=6d727257-ed08-43d6-9197-cf07754826f0
+2020-04-02 15:11:45.385 Info: Keystore: generated KEKID=14781a06-2fc1-4bc1-9c95-d6b620ea3c97
+2020-04-02 15:11:45.638 Info: Keystore: generated KEKID=ea3d0834-2c41-49b6-a784-518f01f4f321
+2020-04-02 15:11:45.691 Notice: Keystore {kms-type=internal, status=normal, dataEncryption=default-off, configEncryption=off, logsEncryption=off}
+2020-04-02 15:11:47.621 Info: Forest App-Services state changed from open to start closing because shutting down
+2020-04-02 15:11:47.621 Info: Forest App-Services state changed from start closing to middle closing because shutting down
+2020-04-02 15:11:47.621 Info: Forest App-Services state changed from middle closing to finish closing because shutting down
+2020-04-02 15:11:47.631 Info: Forest App-Services state changed from finish closing to mounted because finished closing
+2020-04-02 15:11:47.632 Info: Forest App-Services state changed from mounted to unmounted
+2020-04-02 15:11:47.632 Notice: Unmounted forest App-Services
+2020-04-02 15:11:47.633 Info: Forest Triggers state changed from open to start closing because shutting down
+2020-04-02 15:11:47.633 Info: Forest Triggers state changed from start closing to middle closing because shutting down
+2020-04-02 15:11:47.633 Info: Forest Triggers state changed from middle closing to finish closing because shutting down
+2020-04-02 15:11:47.641 Info: Forest Triggers state changed from finish closing to mounted because finished closing
+2020-04-02 15:11:47.642 Info: Forest Triggers state changed from mounted to unmounted
+2020-04-02 15:11:47.642 Notice: Unmounted forest Triggers
+2020-04-02 15:11:47.643 Info: Forest Modules state changed from open to start closing because shutting down
+2020-04-02 15:11:47.643 Info: Database Modules is offline
+2020-04-02 15:11:47.644 Info: Forest Modules state changed from start closing to middle closing because shutting down
+2020-04-02 15:11:47.644 Info: Forest Modules state changed from middle closing to finish closing because shutting down
+2020-04-02 15:11:47.652 Info: Forest Modules state changed from finish closing to mounted because finished closing
+2020-04-02 15:11:47.653 Info: Forest Modules state changed from mounted to unmounted
+2020-04-02 15:11:47.653 Notice: Unmounted forest Modules
+2020-04-02 15:11:47.654 Info: Forest Extensions state changed from open to start closing because shutting down
+2020-04-02 15:11:47.654 Info: Forest Extensions state changed from start closing to middle closing because shutting down
+2020-04-02 15:11:47.654 Info: Forest Extensions state changed from middle closing to finish closing because shutting down
+2020-04-02 15:11:47.662 Info: Forest Extensions state changed from finish closing to mounted because finished closing
+2020-04-02 15:11:47.663 Info: Forest Extensions state changed from mounted to unmounted
+2020-04-02 15:11:47.663 Notice: Unmounted forest Extensions
+2020-04-02 15:11:47.663 Info: Forest Meters state changed from open to start closing because shutting down
+2020-04-02 15:11:47.663 Info: Forest Meters state changed from start closing to middle closing because shutting down
+2020-04-02 15:11:47.663 Info: Forest Meters state changed from middle closing to finish closing because shutting down
+2020-04-02 15:11:47.672 Info: Forest Meters state changed from finish closing to mounted because finished closing
+2020-04-02 15:11:47.672 Info: Forest Meters state changed from mounted to unmounted
+2020-04-02 15:11:47.672 Notice: Unmounted forest Meters
+2020-04-02 15:11:47.673 Info: Forest Fab state changed from open to start closing because shutting down
+2020-04-02 15:11:47.673 Info: Forest Fab state changed from start closing to middle closing because shutting down
+2020-04-02 15:11:47.673 Info: Forest Fab state changed from middle closing to finish closing because shutting down
+2020-04-02 15:11:47.681 Info: Forest Fab state changed from finish closing to mounted because finished closing
+2020-04-02 15:11:47.682 Info: Forest Fab state changed from mounted to unmounted
+2020-04-02 15:11:47.682 Notice: Unmounted forest Fab
+2020-04-02 15:11:47.683 Info: Forest Documents state changed from open to start closing because shutting down
+2020-04-02 15:11:47.683 Info: Database Documents is offline
+2020-04-02 15:11:47.684 Info: Forest Documents state changed from start closing to middle closing because shutting down
+2020-04-02 15:11:47.684 Info: Forest Documents state changed from middle closing to finish closing because shutting down
+2020-04-02 15:11:47.692 Info: Forest Documents state changed from finish closing to mounted because finished closing
+2020-04-02 15:11:47.692 Info: Forest Documents state changed from mounted to unmounted
+2020-04-02 15:11:47.692 Notice: Unmounted forest Documents
+2020-04-02 15:11:47.693 Info: Forest Security state changed from open to start closing because shutting down
+2020-04-02 15:11:47.693 Info: Database Security is offline
+2020-04-02 15:11:47.694 Info: Forest Security state changed from start closing to middle closing because shutting down
+2020-04-02 15:11:47.694 Info: Forest Security state changed from middle closing to finish closing because shutting down
+2020-04-02 15:11:47.702 Info: Forest Security state changed from finish closing to mounted because finished closing
+2020-04-02 15:11:47.703 Info: Forest Security state changed from mounted to unmounted
+2020-04-02 15:11:47.703 Notice: Unmounted forest Security
+2020-04-02 15:11:47.703 Info: Forest Last-Login state changed from open to start closing because shutting down
+2020-04-02 15:11:47.703 Info: Forest Last-Login state changed from start closing to middle closing because shutting down
+2020-04-02 15:11:47.703 Info: Forest Last-Login state changed from middle closing to finish closing because shutting down
+2020-04-02 15:11:47.711 Info: Forest Last-Login state changed from finish closing to mounted because finished closing
+2020-04-02 15:11:47.712 Info: Forest Last-Login state changed from mounted to unmounted
+2020-04-02 15:11:47.712 Notice: Unmounted forest Last-Login
+2020-04-02 15:11:47.713 Info: Forest Schemas state changed from open to start closing because shutting down
+2020-04-02 15:11:47.713 Info: Database Meters is offline
+2020-04-02 15:11:47.715 Info: Forest Schemas state changed from start closing to middle closing because shutting down
+2020-04-02 15:11:47.715 Info: Forest Schemas state changed from middle closing to finish closing because shutting down
+2020-04-02 15:11:47.724 Info: Forest Schemas state changed from finish closing to mounted because finished closing
+2020-04-02 15:11:47.725 Info: Forest Schemas state changed from mounted to unmounted
+2020-04-02 15:11:47.725 Notice: Unmounted forest Schemas
+2020-04-02 15:11:47.725 Notice: Restarting to reload server configuration
+2020-04-02 15:11:47.934 Notice: Starting MarkLogic Server 10.0-3 x86_64 in /opt/MarkLogic with data in /var/opt/MarkLogic
+2020-04-02 15:11:47.935 Info: MarkLogic Converters not installed
+2020-04-02 15:11:47.951 Info: Host test.dhf.local with 12GB memory running Linux 4.19.76-linuxkit (CentOS Linux release 7.7.1908 (Core)) on Docker
+2020-04-02 15:11:48.165 Info: Successfully set CNTK default device to automatic(CPU).
+2020-04-02 15:11:48.551 Info: License key languages: en
+2020-04-02 15:11:48.644 Info: Using icu tokenization: ta ro tr da fi hu
+2020-04-02 15:11:48.644 Info: Using bitext stemming: en en-uc
+2020-04-02 15:11:48.644 Info: Using snowball stemming: ta ro tr da fi hu
+2020-04-02 15:11:49.403 Info: Loaded schemas, rule sets, and templates
+2020-04-02 15:11:49.451 Notice: Keystore {kms-type=internal, status=normal, dataEncryption=default-off, configEncryption=off, logsEncryption=off}
+2020-04-02 15:11:49.484 Info: Native plugin cache manifest initialized
+2020-04-02 15:11:49.509 Info: Forest Triggers state changed from unmounted to mounted
+2020-04-02 15:11:49.509 Info: Forest Last-Login state changed from unmounted to mounted
+2020-04-02 15:11:49.509 Info: Forest Security state changed from unmounted to mounted
+2020-04-02 15:11:49.509 Notice: Mounted forest Triggers locally on /var/opt/MarkLogic/Forests/Triggers read write
+2020-04-02 15:11:49.509 Info: Forest Schemas state changed from unmounted to mounted
+2020-04-02 15:11:49.510 Notice: Mounted forest Schemas locally on /var/opt/MarkLogic/Forests/Schemas read write
+2020-04-02 15:11:49.510 Notice: Mounted forest Security locally on /var/opt/MarkLogic/Forests/Security read write
+2020-04-02 15:11:49.511 Notice: Mounted forest Last-Login locally on /var/opt/MarkLogic/Forests/Last-Login read write
+2020-04-02 15:11:49.517 Info: Forest Triggers state changed from mounted to recovering
+2020-04-02 15:11:49.518 Info: Forest Schemas state changed from mounted to recovering
+2020-04-02 15:11:49.519 Info: Forest Security state changed from mounted to recovering
+2020-04-02 15:11:49.520 Info: Forest Last-Login state changed from mounted to recovering
+2020-04-02 15:11:49.541 Info: Forest Schemas forgetting previous master 7951942373932883208 because configured master changed
+2020-04-02 15:11:49.541 Info: Forest Triggers forgetting previous master 7745017229959811370 because configured master changed
+2020-04-02 15:11:49.543 Info: Forest Security forgetting previous master 4478674424130588575 because configured master changed
+2020-04-02 15:11:49.544 Info: Forest Last-Login forgetting previous master 10992697806611415165 because configured master changed
+2020-04-02 15:11:49.550 Info: Forest Triggers state changed from recovering to open
+2020-04-02 15:11:49.551 Info: Forest Schemas state changed from recovering to open
+2020-04-02 15:11:49.554 Info: Forest Security state changed from recovering to open
+2020-04-02 15:11:49.557 Info: Forest Last-Login state changed from recovering to open
+2020-04-02 15:11:49.573 Info: Forest App-Services state changed from unmounted to mounted
+2020-04-02 15:11:49.573 Info: Forest Meters state changed from unmounted to mounted
+2020-04-02 15:11:49.574 Notice: Mounted forest App-Services locally on /var/opt/MarkLogic/Forests/App-Services read write
+2020-04-02 15:11:49.574 Notice: Mounted forest Meters locally on /var/opt/MarkLogic/Forests/Meters read write
+2020-04-02 15:11:49.575 Info: Forest Modules state changed from unmounted to mounted
+2020-04-02 15:11:49.575 Info: Forest Extensions state changed from unmounted to mounted
+2020-04-02 15:11:49.576 Notice: Mounted forest Extensions locally on /var/opt/MarkLogic/Forests/Extensions read write
+2020-04-02 15:11:49.577 Notice: Mounted forest Modules locally on /var/opt/MarkLogic/Forests/Modules read write
+2020-04-02 15:11:49.585 Info: Forest App-Services state changed from mounted to recovering
+2020-04-02 15:11:49.586 Info: Forest Extensions state changed from mounted to recovering
+2020-04-02 15:11:49.586 Info: Forest Modules state changed from mounted to recovering
+2020-04-02 15:11:49.586 Info: Forest Meters state changed from mounted to recovering
+2020-04-02 15:11:49.619 Info: Forest App-Services forgetting previous master 2432134505300194009 because configured master changed
+2020-04-02 15:11:49.619 Info: Forest Modules forgetting previous master 9172636408926132910 because configured master changed
+2020-04-02 15:11:49.621 Info: Forest Extensions forgetting previous master 266211026405168634 because configured master changed
+2020-04-02 15:11:49.621 Info: Forest Meters forgetting previous master 4598857244427824216 because configured master changed
+2020-04-02 15:11:49.627 Info: Forest App-Services state changed from recovering to open
+2020-04-02 15:11:49.629 Info: Forest Modules state changed from recovering to open
+2020-04-02 15:11:49.630 Info: Forest Extensions state changed from recovering to open
+2020-04-02 15:11:49.631 Info: Forest Meters state changed from recovering to open
+2020-04-02 15:11:49.640 Info: Forest Documents state changed from unmounted to mounted
+2020-04-02 15:11:49.640 Notice: Mounted forest Documents locally on /var/opt/MarkLogic/Forests/Documents read write
+2020-04-02 15:11:49.640 Info: Forest Fab state changed from unmounted to mounted
+2020-04-02 15:11:49.640 Notice: Mounted forest Fab locally on /var/opt/MarkLogic/Forests/Fab read write
+2020-04-02 15:11:49.649 Info: Forest Documents state changed from mounted to recovering
+2020-04-02 15:11:49.651 Info: Forest Fab state changed from mounted to recovering
+2020-04-02 15:11:49.668 Info: Forest Documents forgetting previous master 15729048302644847240 because configured master changed
+2020-04-02 15:11:49.669 Info: Forest Fab forgetting previous master 788678192953752106 because configured master changed
+2020-04-02 15:11:49.677 Info: Forest Documents state changed from recovering to open
+2020-04-02 15:11:49.678 Info: Forest Fab state changed from recovering to open
+2020-04-02 15:11:50.146 Info: Linux Huge Pages: detected 0, recommend 1920 to 2460
+2020-04-02 15:11:50.146 Info: Database Fab is online with 1 forest
+2020-04-02 15:11:50.147 Info: Database Schemas is online with 1 forest
+2020-04-02 15:11:50.149 Info: Database Security is online with 1 forest
+2020-04-02 15:11:50.150 Info: Database Modules is online with 1 forest
+2020-04-02 15:11:50.152 Info: Database Extensions is online with 1 forest
+2020-04-02 15:11:50.155 Info: Database Meters is online with 1 forest
+2020-04-02 15:11:50.156 Info: Database App-Services is online with 1 forest
+2020-04-02 15:11:50.157 Info: Database Last-Login is online with 1 forest
+2020-04-02 15:11:50.159 Info: Database Triggers is online with 1 forest
+2020-04-02 15:11:50.160 Info: Database Documents is online with 1 forest
+2020-04-02 15:12:06.131 Info: Saving /var/opt/MarkLogic/Forests/Security/00000000
+2020-04-02 15:12:06.304 Info: Saved 1 MB at 6 MB/sec to /var/opt/MarkLogic/Forests/Security/00000000
+2020-04-02 15:12:07.153 Notice: Starting HSM token with label MarkLogic and slotId 2024244029
+2020-04-02 15:12:07.153 Notice: Starting PKCS#11 Wallet with token label MarkLogic and slotId 2024244029
+2020-04-02 15:12:07.154 Notice: Keystore passphrase changed
+2020-04-02 15:12:07.191 Notice: Starting HSM token with label MarkLogic and slotId 2024244029
+2020-04-02 15:12:07.192 Notice: Starting PKCS#11 Wallet with token label MarkLogic and slotId 2024244029
+2020-04-02 15:12:10.442 Info: Forest Security state changed from open to start closing because shutting down
+2020-04-02 15:12:10.442 Info: Database Security is offline
+2020-04-02 15:12:10.443 Info: Forest Security state changed from start closing to middle closing because shutting down
+2020-04-02 15:12:10.443 Info: Forest Security state changed from middle closing to finish closing because shutting down
+2020-04-02 15:12:10.443 Info: Saving /var/opt/MarkLogic/Forests/Security/00000001
+2020-04-02 15:12:10.600 Info: Saved 1 MB at 6 MB/sec to /var/opt/MarkLogic/Forests/Security/00000001
+2020-04-02 15:12:10.629 Info: Forest Security state changed from finish closing to mounted because finished closing
+2020-04-02 15:12:10.630 Info: Forest Security state changed from mounted to unmounted
+2020-04-02 15:12:10.630 Notice: Unmounted forest Security
+2020-04-02 15:12:10.631 Info: Forest Last-Login state changed from open to start closing because shutting down
+2020-04-02 15:12:10.631 Info: Database Last-Login is offline
+2020-04-02 15:12:10.632 Info: Forest Last-Login state changed from start closing to middle closing because shutting down
+2020-04-02 15:12:10.632 Info: Forest Last-Login state changed from middle closing to finish closing because shutting down
+2020-04-02 15:12:10.638 Info: Forest Last-Login state changed from finish closing to mounted because finished closing
+2020-04-02 15:12:10.639 Info: Forest Last-Login state changed from mounted to unmounted
+2020-04-02 15:12:10.639 Notice: Unmounted forest Last-Login
+2020-04-02 15:12:10.640 Info: Forest Schemas state changed from open to start closing because shutting down
+2020-04-02 15:12:10.641 Info: Database Schemas is offline
+2020-04-02 15:12:10.642 Info: Forest Schemas state changed from start closing to middle closing because shutting down
+2020-04-02 15:12:10.642 Info: Forest Schemas state changed from middle closing to finish closing because shutting down
+2020-04-02 15:12:10.647 Info: Forest Schemas state changed from finish closing to mounted because finished closing
+2020-04-02 15:12:10.648 Info: Forest Schemas state changed from mounted to unmounted
+2020-04-02 15:12:10.648 Notice: Unmounted forest Schemas
+2020-04-02 15:12:10.649 Info: Forest Modules state changed from open to start closing because shutting down
+2020-04-02 15:12:10.649 Info: Database Modules is offline
+2020-04-02 15:12:10.650 Info: Forest Modules state changed from start closing to middle closing because shutting down
+2020-04-02 15:12:10.650 Info: Forest Modules state changed from middle closing to finish closing because shutting down
+2020-04-02 15:12:10.655 Info: Forest Modules state changed from finish closing to mounted because finished closing
+2020-04-02 15:12:10.656 Info: Forest Modules state changed from mounted to unmounted
+2020-04-02 15:12:10.657 Notice: Unmounted forest Modules
+2020-04-02 15:12:10.657 Info: Forest Triggers state changed from open to start closing because shutting down
+2020-04-02 15:12:10.657 Info: Database Triggers is offline
+2020-04-02 15:12:10.658 Info: Forest Triggers state changed from start closing to middle closing because shutting down
+2020-04-02 15:12:10.658 Info: Forest Triggers state changed from middle closing to finish closing because shutting down
+2020-04-02 15:12:10.663 Info: Forest Triggers state changed from finish closing to mounted because finished closing
+2020-04-02 15:12:10.664 Info: Forest Triggers state changed from mounted to unmounted
+2020-04-02 15:12:10.664 Notice: Unmounted forest Triggers
+2020-04-02 15:12:10.665 Info: Forest App-Services state changed from open to start closing because shutting down
+2020-04-02 15:12:10.665 Info: Database App-Services is offline
+2020-04-02 15:12:10.666 Info: Forest App-Services state changed from start closing to middle closing because shutting down
+2020-04-02 15:12:10.666 Info: Forest App-Services state changed from middle closing to finish closing because shutting down
+2020-04-02 15:12:10.671 Info: Forest App-Services state changed from finish closing to mounted because finished closing
+2020-04-02 15:12:10.672 Info: Forest App-Services state changed from mounted to unmounted
+2020-04-02 15:12:10.672 Notice: Unmounted forest App-Services
+2020-04-02 15:12:10.673 Info: Forest Extensions state changed from open to start closing because shutting down
+2020-04-02 15:12:10.673 Info: Database Extensions is offline
+2020-04-02 15:12:10.674 Info: Forest Extensions state changed from start closing to middle closing because shutting down
+2020-04-02 15:12:10.674 Info: Forest Extensions state changed from middle closing to finish closing because shutting down
+2020-04-02 15:12:10.679 Info: Forest Extensions state changed from finish closing to mounted because finished closing
+2020-04-02 15:12:10.680 Info: Forest Extensions state changed from mounted to unmounted
+2020-04-02 15:12:10.680 Notice: Unmounted forest Extensions
+2020-04-02 15:12:10.681 Info: Forest Documents state changed from open to start closing because shutting down
+2020-04-02 15:12:10.681 Info: Database Documents is offline
+2020-04-02 15:12:10.682 Info: Forest Documents state changed from start closing to middle closing because shutting down
+2020-04-02 15:12:10.682 Info: Forest Documents state changed from middle closing to finish closing because shutting down
+2020-04-02 15:12:10.687 Info: Forest Documents state changed from finish closing to mounted because finished closing
+2020-04-02 15:12:10.688 Info: Forest Documents state changed from mounted to unmounted
+2020-04-02 15:12:10.688 Notice: Unmounted forest Documents
+2020-04-02 15:12:10.689 Info: Forest Fab state changed from open to start closing because shutting down
+2020-04-02 15:12:10.689 Info: Database Fab is offline
+2020-04-02 15:12:10.690 Info: Forest Fab state changed from start closing to middle closing because shutting down
+2020-04-02 15:12:10.690 Info: Forest Fab state changed from middle closing to finish closing because shutting down
+2020-04-02 15:12:10.695 Info: Forest Fab state changed from finish closing to mounted because finished closing
+2020-04-02 15:12:10.696 Info: Forest Fab state changed from mounted to unmounted
+2020-04-02 15:12:10.696 Notice: Unmounted forest Fab
+2020-04-02 15:12:10.696 Info: Forest Meters state changed from open to start closing because shutting down
+2020-04-02 15:12:10.696 Info: Database Meters is offline
+2020-04-02 15:12:10.698 Info: Forest Meters state changed from start closing to middle closing because shutting down
+2020-04-02 15:12:10.698 Info: Forest Meters state changed from middle closing to finish closing because shutting down
+2020-04-02 15:12:10.703 Info: Forest Meters state changed from finish closing to mounted because finished closing
+2020-04-02 15:12:10.704 Info: Forest Meters state changed from mounted to unmounted
+2020-04-02 15:12:10.704 Notice: Unmounted forest Meters
+2020-04-02 15:12:10.704 Notice: Restarting to reload server config
+2020-04-02 15:12:11.181 Notice: Starting MarkLogic Server 10.0-3 x86_64 in /opt/MarkLogic with data in /var/opt/MarkLogic
+2020-04-02 15:12:11.182 Info: MarkLogic Converters not installed
+2020-04-02 15:12:11.195 Info: Host test.dhf.local with 12GB memory running Linux 4.19.76-linuxkit (CentOS Linux release 7.7.1908 (Core)) on Docker
+2020-04-02 15:12:11.341 Info: Successfully set CNTK default device to automatic(CPU).
+2020-04-02 15:12:11.734 Info: License key languages: en
+2020-04-02 15:12:11.814 Info: Using icu tokenization: ta ro tr da fi hu
+2020-04-02 15:12:11.814 Info: Using bitext stemming: en en-uc
+2020-04-02 15:12:11.814 Info: Using snowball stemming: ta ro tr da fi hu
+2020-04-02 15:12:12.685 Info: Loaded schemas, rule sets, and templates
+2020-04-02 15:12:12.734 Notice: Keystore {kms-type=internal, status=normal, dataEncryption=default-off, configEncryption=off, logsEncryption=off}
+2020-04-02 15:12:12.769 Info: Native plugin cache manifest initialized
+2020-04-02 15:12:12.792 Info: Forest Triggers state changed from unmounted to mounted
+2020-04-02 15:12:12.792 Info: Forest Schemas state changed from unmounted to mounted
+2020-04-02 15:12:12.792 Info: Forest Security state changed from unmounted to mounted
+2020-04-02 15:12:12.792 Notice: Mounted forest Triggers locally on /var/opt/MarkLogic/Forests/Triggers read write
+2020-04-02 15:12:12.792 Notice: Mounted forest Security locally on /var/opt/MarkLogic/Forests/Security read write
+2020-04-02 15:12:12.793 Info: Forest Last-Login state changed from unmounted to mounted
+2020-04-02 15:12:12.793 Notice: Mounted forest Schemas locally on /var/opt/MarkLogic/Forests/Schemas read write
+2020-04-02 15:12:12.794 Notice: Mounted forest Last-Login locally on /var/opt/MarkLogic/Forests/Last-Login read write
+2020-04-02 15:12:12.800 Info: Forest Triggers state changed from mounted to recovering
+2020-04-02 15:12:12.802 Info: Forest Schemas state changed from mounted to recovering
+2020-04-02 15:12:12.803 Info: Forest Last-Login state changed from mounted to recovering
+2020-04-02 15:12:12.815 Info: Forest Triggers state changed from recovering to open
+2020-04-02 15:12:12.816 Info: Forest Schemas state changed from recovering to open
+2020-04-02 15:12:12.818 Info: Forest Last-Login state changed from recovering to open
+2020-04-02 15:12:12.854 Info: Forest Meters state changed from unmounted to mounted
+2020-04-02 15:12:12.854 Notice: Mounted forest Meters locally on /var/opt/MarkLogic/Forests/Meters read write
+2020-04-02 15:12:12.855 Info: Forest App-Services state changed from unmounted to mounted
+2020-04-02 15:12:12.855 Notice: Mounted forest App-Services locally on /var/opt/MarkLogic/Forests/App-Services read write
+2020-04-02 15:12:12.856 Info: Forest Extensions state changed from unmounted to mounted
+2020-04-02 15:12:12.856 Info: Forest Modules state changed from unmounted to mounted
+2020-04-02 15:12:12.856 Notice: Mounted forest Extensions locally on /var/opt/MarkLogic/Forests/Extensions read write
+2020-04-02 15:12:12.857 Notice: Mounted forest Modules locally on /var/opt/MarkLogic/Forests/Modules read write
+2020-04-02 15:12:12.864 Info: Forest Meters state changed from mounted to recovering
+2020-04-02 15:12:12.867 Info: Forest App-Services state changed from mounted to recovering
+2020-04-02 15:12:12.868 Info: Forest Modules state changed from mounted to recovering
+2020-04-02 15:12:12.868 Info: Forest Extensions state changed from mounted to recovering
+2020-04-02 15:12:12.880 Info: Forest Meters state changed from recovering to open
+2020-04-02 15:12:12.886 Info: Forest Extensions state changed from recovering to open
+2020-04-02 15:12:12.887 Info: Forest App-Services state changed from recovering to open
+2020-04-02 15:12:12.887 Info: Forest Modules state changed from recovering to open
+2020-04-02 15:12:12.920 Info: Forest Documents state changed from unmounted to mounted
+2020-04-02 15:12:12.920 Notice: Mounted forest Documents locally on /var/opt/MarkLogic/Forests/Documents read write
+2020-04-02 15:12:12.920 Info: Forest Fab state changed from unmounted to mounted
+2020-04-02 15:12:12.920 Notice: Mounted forest Fab locally on /var/opt/MarkLogic/Forests/Fab read write
+2020-04-02 15:12:12.928 Info: Forest Documents state changed from mounted to recovering
+2020-04-02 15:12:12.929 Info: Forest Fab state changed from mounted to recovering
+2020-04-02 15:12:12.945 Info: Forest Documents state changed from recovering to open
+2020-04-02 15:12:12.950 Info: Forest Fab state changed from recovering to open
+2020-04-02 15:12:12.960 Info: Forest Security state changed from mounted to recovering
+2020-04-02 15:12:13.038 Info: Forest Security state changed from recovering to open
+2020-04-02 15:12:13.169 Info: Linux Huge Pages: detected 0, recommend 1920 to 2460
+2020-04-02 15:12:13.169 Info: Database Fab is online with 1 forest
+2020-04-02 15:12:13.171 Info: Database Schemas is online with 1 forest
+2020-04-02 15:12:13.172 Info: Database Security is online with 1 forest
+2020-04-02 15:12:13.174 Info: Database Modules is online with 1 forest
+2020-04-02 15:12:13.175 Info: Database Extensions is online with 1 forest
+2020-04-02 15:12:13.178 Info: Database Meters is online with 1 forest
+2020-04-02 15:12:13.189 Info: Database App-Services is online with 1 forest
+2020-04-02 15:12:13.191 Info: Database Last-Login is online with 1 forest
+2020-04-02 15:12:13.193 Info: Database Triggers is online with 1 forest
+2020-04-02 15:12:13.200 Info: Database Documents is online with 1 forest
+2020-04-02 15:12:13.601 Info: Merging 2 MB from /var/opt/MarkLogic/Forests/Security/00000000 and /var/opt/MarkLogic/Forests/Security/00000001 to /var/opt/MarkLogic/Forests/Security/00000002, timestamp=7
+2020-04-02 15:12:15.199 Info: Merged 1 MB in 2 sec at 1 MB/sec to /var/opt/MarkLogic/Forests/Security/00000002
+2020-04-02 15:12:18.251 Info: Deleted 1 MB at 15 MB/sec /var/opt/MarkLogic/Forests/Security/00000000
+2020-04-02 15:12:18.285 Info: Deleted 1 MB at 33 MB/sec /var/opt/MarkLogic/Forests/Security/00000001
+2020-04-02 15:13:22.220 Info: Database data-hub-MODULES is online with 0 forests
+2020-04-02 15:13:24.116 Info: Database data-hub-final-TRIGGERS is online with 0 forests
+2020-04-02 15:13:27.076 Info: Database data-hub-final-SCHEMAS is online with 0 forests
+2020-04-02 15:13:30.038 Info: Database data-hub-FINAL is online with 0 forests
+2020-04-02 15:13:32.127 Info: Database data-hub-staging-TRIGGERS is online with 0 forests
+2020-04-02 15:13:35.143 Info: Database data-hub-staging-SCHEMAS is online with 0 forests
+2020-04-02 15:13:37.101 Info: Database data-hub-STAGING is online with 0 forests
+2020-04-02 15:13:40.214 Info: Database data-hub-JOBS is online with 0 forests
+2020-04-02 15:13:42.713 Info: Forest data-hub-MODULES-1 state changed from unmounted to mounted
+2020-04-02 15:13:42.714 Notice: Mounted forest data-hub-MODULES-1 locally on /var/opt/MarkLogic/Forests/data-hub-MODULES-1 read write
+2020-04-02 15:13:42.721 Info: Forest data-hub-MODULES-1 state changed from mounted to recovering
+2020-04-02 15:13:42.730 Info: Forest data-hub-MODULES-1 forgetting previous master 0 because configured master changed
+2020-04-02 15:13:42.734 Info: Forest data-hub-MODULES-1 state changed from recovering to open
+2020-04-02 15:13:43.090 Info: Forest data-hub-MODULES-1 state changed from open to start closing because database changed
+2020-04-02 15:13:43.090 Info: Database data-hub-MODULES is offline
+2020-04-02 15:13:43.091 Info: Forest data-hub-MODULES-1 state changed from start closing to middle closing because database changed
+2020-04-02 15:13:43.091 Info: Forest data-hub-MODULES-1 state changed from middle closing to finish closing because database changed
+2020-04-02 15:13:43.099 Info: Forest data-hub-MODULES-1 state changed from finish closing to mounted because finished closing
+2020-04-02 15:13:43.099 Info: Forest data-hub-MODULES-1 state changed from mounted to unmounted
+2020-04-02 15:13:43.099 Notice: Unmounted forest data-hub-MODULES-1
+2020-04-02 15:13:43.679 Info: Forest data-hub-MODULES-1 state changed from unmounted to mounted
+2020-04-02 15:13:43.679 Notice: Mounted forest data-hub-MODULES-1 locally on /var/opt/MarkLogic/Forests/data-hub-MODULES-1 read write
+2020-04-02 15:13:43.681 Info: Forest data-hub-final-TRIGGERS-1 state changed from unmounted to mounted
+2020-04-02 15:13:43.681 Notice: Mounted forest data-hub-final-TRIGGERS-1 locally on /var/opt/MarkLogic/Forests/data-hub-final-TRIGGERS-1 read write
+2020-04-02 15:13:43.688 Info: Forest data-hub-MODULES-1 state changed from mounted to recovering
+2020-04-02 15:13:43.692 Info: Forest data-hub-final-TRIGGERS-1 state changed from mounted to recovering
+2020-04-02 15:13:43.701 Info: Forest data-hub-final-TRIGGERS-1 forgetting previous master 0 because configured master changed
+2020-04-02 15:13:43.702 Info: Forest data-hub-MODULES-1 state changed from recovering to open
+2020-04-02 15:13:43.707 Info: Forest data-hub-final-TRIGGERS-1 state changed from recovering to open
+2020-04-02 15:13:43.846 Info: Forest data-hub-final-TRIGGERS-1 state changed from open to start closing because database changed
+2020-04-02 15:13:43.846 Info: Database data-hub-final-TRIGGERS is offline
+2020-04-02 15:13:43.847 Info: Forest data-hub-final-TRIGGERS-1 state changed from start closing to middle closing because database changed
+2020-04-02 15:13:43.847 Info: Forest data-hub-final-TRIGGERS-1 state changed from middle closing to finish closing because database changed
+2020-04-02 15:13:43.854 Info: Forest data-hub-final-TRIGGERS-1 state changed from finish closing to mounted because finished closing
+2020-04-02 15:13:43.854 Info: Database data-hub-FINAL is offline
+2020-04-02 15:13:43.865 Info: Forest data-hub-final-TRIGGERS-1 state changed from mounted to unmounted
+2020-04-02 15:13:43.865 Notice: Unmounted forest data-hub-final-TRIGGERS-1
+2020-04-02 15:13:44.205 Info: Database data-hub-MODULES is online with 1 forest
+2020-04-02 15:13:44.625 Info: Forest data-hub-final-SCHEMAS-1 state changed from unmounted to mounted
+2020-04-02 15:13:44.626 Notice: Mounted forest data-hub-final-SCHEMAS-1 locally on /var/opt/MarkLogic/Forests/data-hub-final-SCHEMAS-1 read write
+2020-04-02 15:13:44.637 Info: Forest data-hub-final-SCHEMAS-1 state changed from mounted to recovering
+2020-04-02 15:13:44.646 Info: Forest data-hub-final-SCHEMAS-1 forgetting previous master 0 because configured master changed
+2020-04-02 15:13:44.651 Info: Forest data-hub-final-SCHEMAS-1 state changed from recovering to open
+2020-04-02 15:13:44.728 Info: Forest data-hub-final-SCHEMAS-1 state changed from open to start closing because database changed
+2020-04-02 15:13:44.729 Info: Database data-hub-final-SCHEMAS is offline
+2020-04-02 15:13:44.730 Info: Forest data-hub-final-SCHEMAS-1 state changed from start closing to middle closing because database changed
+2020-04-02 15:13:44.730 Info: Forest data-hub-final-SCHEMAS-1 state changed from middle closing to finish closing because database changed
+2020-04-02 15:13:44.739 Info: Forest data-hub-final-SCHEMAS-1 state changed from finish closing to mounted because finished closing
+2020-04-02 15:13:44.753 Info: Forest data-hub-final-SCHEMAS-1 state changed from mounted to unmounted
+2020-04-02 15:13:44.753 Notice: Unmounted forest data-hub-final-SCHEMAS-1
+2020-04-02 15:13:45.659 Info: Forest data-hub-final-TRIGGERS-1 state changed from unmounted to mounted
+2020-04-02 15:13:45.659 Notice: Mounted forest data-hub-final-TRIGGERS-1 locally on /var/opt/MarkLogic/Forests/data-hub-final-TRIGGERS-1 read write
+2020-04-02 15:13:45.660 Info: Forest data-hub-FINAL-1 state changed from unmounted to mounted
+2020-04-02 15:13:45.661 Notice: Mounted forest data-hub-FINAL-1 locally on /var/opt/MarkLogic/Forests/data-hub-FINAL-1 read write
+2020-04-02 15:13:45.663 Info: Forest data-hub-FINAL-2 state changed from unmounted to mounted
+2020-04-02 15:13:45.663 Notice: Mounted forest data-hub-FINAL-2 locally on /var/opt/MarkLogic/Forests/data-hub-FINAL-2 read write
+2020-04-02 15:13:45.669 Info: Forest data-hub-final-TRIGGERS-1 state changed from mounted to recovering
+2020-04-02 15:13:45.671 Info: Forest data-hub-FINAL-1 state changed from mounted to recovering
+2020-04-02 15:13:45.673 Info: Forest data-hub-FINAL-2 state changed from mounted to recovering
+2020-04-02 15:13:45.681 Info: Forest data-hub-FINAL-1 forgetting previous master 0 because configured master changed
+2020-04-02 15:13:45.685 Info: Forest data-hub-FINAL-2 forgetting previous master 0 because configured master changed
+2020-04-02 15:13:45.690 Info: Forest data-hub-final-TRIGGERS-1 state changed from recovering to open
+2020-04-02 15:13:45.690 Info: Forest data-hub-FINAL-1 state changed from recovering to open
+2020-04-02 15:13:45.693 Info: Forest data-hub-FINAL-2 state changed from recovering to open
+2020-04-02 15:13:46.007 Info: Database data-hub-final-TRIGGERS is online with 1 forest
+2020-04-02 15:13:46.296 Info: Forest data-hub-FINAL-2 state changed from open to start closing because database changed
+2020-04-02 15:13:46.296 Info: Forest data-hub-FINAL-2 state changed from start closing to middle closing because database changed
+2020-04-02 15:13:46.296 Info: Forest data-hub-FINAL-2 state changed from middle closing to finish closing because database changed
+2020-04-02 15:13:46.303 Info: Forest data-hub-FINAL-2 state changed from finish closing to mounted because finished closing
+2020-04-02 15:13:46.304 Info: Forest data-hub-FINAL-2 state changed from mounted to unmounted
+2020-04-02 15:13:46.304 Notice: Unmounted forest data-hub-FINAL-2
+2020-04-02 15:13:46.681 Info: Forest data-hub-FINAL-2 state changed from unmounted to mounted
+2020-04-02 15:13:46.681 Info: Forest data-hub-final-SCHEMAS-1 state changed from unmounted to mounted
+2020-04-02 15:13:46.681 Notice: Mounted forest data-hub-FINAL-2 locally on /var/opt/MarkLogic/Forests/data-hub-FINAL-2 read write
+2020-04-02 15:13:46.682 Info: Forest data-hub-FINAL-3 state changed from unmounted to mounted
+2020-04-02 15:13:46.682 Notice: Mounted forest data-hub-final-SCHEMAS-1 locally on /var/opt/MarkLogic/Forests/data-hub-final-SCHEMAS-1 read write
+2020-04-02 15:13:46.683 Notice: Mounted forest data-hub-FINAL-3 locally on /var/opt/MarkLogic/Forests/data-hub-FINAL-3 read write
+2020-04-02 15:13:46.692 Info: Forest data-hub-final-SCHEMAS-1 state changed from mounted to recovering
+2020-04-02 15:13:46.692 Info: Forest data-hub-FINAL-2 state changed from mounted to recovering
+2020-04-02 15:13:46.692 Info: Forest data-hub-FINAL-3 state changed from mounted to recovering
+2020-04-02 15:13:46.704 Info: Forest data-hub-FINAL-3 forgetting previous master 0 because configured master changed
+2020-04-02 15:13:46.710 Info: Forest data-hub-FINAL-3 state changed from recovering to open
+2020-04-02 15:13:46.710 Info: Forest data-hub-final-SCHEMAS-1 state changed from recovering to open
+2020-04-02 15:13:46.712 Info: Forest data-hub-FINAL-2 state changed from recovering to open
+2020-04-02 15:13:46.992 Info: Forest data-hub-FINAL-3 state changed from open to start closing because database changed
+2020-04-02 15:13:46.992 Info: Forest data-hub-FINAL-3 state changed from start closing to middle closing because database changed
+2020-04-02 15:13:46.992 Info: Forest data-hub-FINAL-3 state changed from middle closing to finish closing because database changed
+2020-04-02 15:13:47.001 Info: Forest data-hub-FINAL-3 state changed from finish closing to mounted because finished closing
+2020-04-02 15:13:47.002 Info: Forest data-hub-FINAL-3 state changed from mounted to unmounted
+2020-04-02 15:13:47.002 Notice: Unmounted forest data-hub-FINAL-3
+2020-04-02 15:13:47.104 Info: Database data-hub-final-SCHEMAS is online with 1 forest
+2020-04-02 15:13:47.672 Info: Database data-hub-STAGING is offline
+2020-04-02 15:13:47.674 Info: Database data-hub-JOBS is offline
+2020-04-02 15:13:47.675 Info: Database data-hub-staging-TRIGGERS is offline
+2020-04-02 15:13:47.707 Info: Forest data-hub-staging-TRIGGERS-1 state changed from unmounted to mounted
+2020-04-02 15:13:47.707 Info: Forest data-hub-FINAL-3 state changed from unmounted to mounted
+2020-04-02 15:13:47.707 Notice: Mounted forest data-hub-FINAL-3 locally on /var/opt/MarkLogic/Forests/data-hub-FINAL-3 read write
+2020-04-02 15:13:47.708 Notice: Mounted forest data-hub-staging-TRIGGERS-1 locally on /var/opt/MarkLogic/Forests/data-hub-staging-TRIGGERS-1 read write
+2020-04-02 15:13:47.715 Info: Forest data-hub-FINAL-3 state changed from mounted to recovering
+2020-04-02 15:13:47.716 Info: Forest data-hub-staging-TRIGGERS-1 state changed from mounted to recovering
+2020-04-02 15:13:47.725 Info: Forest data-hub-staging-TRIGGERS-1 forgetting previous master 0 because configured master changed
+2020-04-02 15:13:47.736 Info: Forest data-hub-staging-TRIGGERS-1 state changed from recovering to open
+2020-04-02 15:13:47.740 Info: Forest data-hub-FINAL-3 state changed from recovering to open
+2020-04-02 15:13:48.248 Info: Database data-hub-staging-TRIGGERS is online with 1 forest
+2020-04-02 15:13:48.250 Info: Database data-hub-FINAL is online with 3 forests
+2020-04-02 15:13:48.252 Info: Database data-hub-JOBS is online with 0 forests
+2020-04-02 15:13:48.254 Info: Database data-hub-STAGING is online with 0 forests
+2020-04-02 15:13:48.538 Info: Database data-hub-staging-SCHEMAS is offline
+2020-04-02 15:13:48.539 Info: Database data-hub-STAGING is offline
+2020-04-02 15:13:48.541 Info: Database data-hub-JOBS is offline
+2020-04-02 15:13:48.705 Info: Forest data-hub-staging-SCHEMAS-1 state changed from unmounted to mounted
+2020-04-02 15:13:48.705 Info: Forest data-hub-STAGING-1 state changed from unmounted to mounted
+2020-04-02 15:13:48.706 Notice: Mounted forest data-hub-staging-SCHEMAS-1 locally on /var/opt/MarkLogic/Forests/data-hub-staging-SCHEMAS-1 read write
+2020-04-02 15:13:48.706 Notice: Mounted forest data-hub-STAGING-1 locally on /var/opt/MarkLogic/Forests/data-hub-STAGING-1 read write
+2020-04-02 15:13:48.715 Info: Forest data-hub-staging-SCHEMAS-1 state changed from mounted to recovering
+2020-04-02 15:13:48.715 Info: Forest data-hub-STAGING-1 state changed from mounted to recovering
+2020-04-02 15:13:48.726 Info: Forest data-hub-STAGING-1 forgetting previous master 0 because configured master changed
+2020-04-02 15:13:48.727 Info: Forest data-hub-staging-SCHEMAS-1 forgetting previous master 0 because configured master changed
+2020-04-02 15:13:48.734 Info: Forest data-hub-STAGING-1 state changed from recovering to open
+2020-04-02 15:13:48.734 Info: Forest data-hub-staging-SCHEMAS-1 state changed from recovering to open
+2020-04-02 15:13:49.092 Info: Database data-hub-JOBS is online with 0 forests
+2020-04-02 15:13:49.093 Info: Database data-hub-STAGING is online with 0 forests
+2020-04-02 15:13:49.095 Info: Database data-hub-staging-SCHEMAS is online with 1 forest
+2020-04-02 15:13:49.265 Info: Forest data-hub-STAGING-1 state changed from open to start closing because database changed
+2020-04-02 15:13:49.265 Info: Database data-hub-STAGING is offline
+2020-04-02 15:13:49.267 Info: Forest data-hub-STAGING-1 state changed from start closing to middle closing because database changed
+2020-04-02 15:13:49.267 Info: Forest data-hub-STAGING-1 state changed from middle closing to finish closing because database changed
+2020-04-02 15:13:49.274 Info: Forest data-hub-STAGING-1 state changed from finish closing to mounted because finished closing
+2020-04-02 15:13:49.275 Info: Forest data-hub-STAGING-1 state changed from mounted to unmounted
+2020-04-02 15:13:49.275 Notice: Unmounted forest data-hub-STAGING-1
+2020-04-02 15:13:49.632 Info: Forest data-hub-STAGING-1 state changed from unmounted to mounted
+2020-04-02 15:13:49.632 Notice: Mounted forest data-hub-STAGING-1 locally on /var/opt/MarkLogic/Forests/data-hub-STAGING-1 read write
+2020-04-02 15:13:49.636 Info: Forest data-hub-STAGING-2 state changed from unmounted to mounted
+2020-04-02 15:13:49.636 Notice: Mounted forest data-hub-STAGING-2 locally on /var/opt/MarkLogic/Forests/data-hub-STAGING-2 read write
+2020-04-02 15:13:49.641 Info: Forest data-hub-STAGING-1 state changed from mounted to recovering
+2020-04-02 15:13:49.645 Info: Forest data-hub-STAGING-2 state changed from mounted to recovering
+2020-04-02 15:13:49.654 Info: Forest data-hub-STAGING-2 forgetting previous master 0 because configured master changed
+2020-04-02 15:13:49.655 Info: Forest data-hub-STAGING-1 state changed from recovering to open
+2020-04-02 15:13:49.660 Info: Forest data-hub-STAGING-2 state changed from recovering to open
+2020-04-02 15:13:50.029 Info: Forest data-hub-STAGING-2 state changed from open to start closing because database changed
+2020-04-02 15:13:50.029 Info: Forest data-hub-STAGING-2 state changed from start closing to middle closing because database changed
+2020-04-02 15:13:50.029 Info: Forest data-hub-STAGING-2 state changed from middle closing to finish closing because database changed
+2020-04-02 15:13:50.036 Info: Forest data-hub-STAGING-2 state changed from finish closing to mounted because finished closing
+2020-04-02 15:13:50.037 Info: Forest data-hub-STAGING-2 state changed from mounted to unmounted
+2020-04-02 15:13:50.037 Notice: Unmounted forest data-hub-STAGING-2
+2020-04-02 15:13:50.660 Info: Forest data-hub-STAGING-2 state changed from unmounted to mounted
+2020-04-02 15:13:50.660 Notice: Mounted forest data-hub-STAGING-2 locally on /var/opt/MarkLogic/Forests/data-hub-STAGING-2 read write
+2020-04-02 15:13:50.661 Info: Forest data-hub-STAGING-3 state changed from unmounted to mounted
+2020-04-02 15:13:50.662 Notice: Mounted forest data-hub-STAGING-3 locally on /var/opt/MarkLogic/Forests/data-hub-STAGING-3 read write
+2020-04-02 15:13:50.669 Info: Forest data-hub-STAGING-2 state changed from mounted to recovering
+2020-04-02 15:13:50.671 Info: Forest data-hub-STAGING-3 state changed from mounted to recovering
+2020-04-02 15:13:50.682 Info: Forest data-hub-STAGING-3 forgetting previous master 0 because configured master changed
+2020-04-02 15:13:50.687 Info: Forest data-hub-STAGING-2 state changed from recovering to open
+2020-04-02 15:13:50.688 Info: Forest data-hub-STAGING-3 state changed from recovering to open
+2020-04-02 15:13:50.693 Info: Saving /var/opt/MarkLogic/Forests/Security/00000003
+2020-04-02 15:13:50.833 Info: Forest data-hub-STAGING-3 state changed from open to start closing because database changed
+2020-04-02 15:13:50.833 Info: Forest data-hub-STAGING-3 state changed from start closing to middle closing because database changed
+2020-04-02 15:13:50.833 Info: Forest data-hub-STAGING-3 state changed from middle closing to finish closing because database changed
+2020-04-02 15:13:50.842 Info: Saved 1 MB at 7 MB/sec to /var/opt/MarkLogic/Forests/Security/00000003
+2020-04-02 15:13:50.845 Info: Forest data-hub-STAGING-3 state changed from finish closing to mounted because finished closing
+2020-04-02 15:13:50.846 Info: Forest data-hub-STAGING-3 state changed from mounted to unmounted
+2020-04-02 15:13:50.846 Notice: Unmounted forest data-hub-STAGING-3
+2020-04-02 15:13:50.925 Info: Merging 2 MB from /var/opt/MarkLogic/Forests/Security/00000002 and /var/opt/MarkLogic/Forests/Security/00000003 to /var/opt/MarkLogic/Forests/Security/00000004, timestamp=15858398300506050
+2020-04-02 15:13:51.236 Info: Merged 2 MB at 6 MB/sec to /var/opt/MarkLogic/Forests/Security/00000004
+2020-04-02 15:13:51.711 Info: Forest data-hub-STAGING-3 state changed from unmounted to mounted
+2020-04-02 15:13:51.711 Notice: Mounted forest data-hub-STAGING-3 locally on /var/opt/MarkLogic/Forests/data-hub-STAGING-3 read write
+2020-04-02 15:13:51.716 Info: Forest data-hub-JOBS-1 state changed from unmounted to mounted
+2020-04-02 15:13:51.717 Notice: Mounted forest data-hub-JOBS-1 locally on /var/opt/MarkLogic/Forests/data-hub-JOBS-1 read write
+2020-04-02 15:13:51.721 Info: Forest data-hub-STAGING-3 state changed from mounted to recovering
+2020-04-02 15:13:51.725 Info: Forest data-hub-JOBS-1 state changed from mounted to recovering
+2020-04-02 15:13:51.736 Info: Forest data-hub-JOBS-1 forgetting previous master 0 because configured master changed
+2020-04-02 15:13:51.740 Info: Forest data-hub-STAGING-3 state changed from recovering to open
+2020-04-02 15:13:51.741 Info: Forest data-hub-JOBS-1 state changed from recovering to open
+2020-04-02 15:13:51.799 Info: Forest data-hub-JOBS-1 state changed from open to start closing because database changed
+2020-04-02 15:13:51.799 Info: Database data-hub-JOBS is offline
+2020-04-02 15:13:51.800 Info: Forest data-hub-JOBS-1 state changed from start closing to middle closing because database changed
+2020-04-02 15:13:51.800 Info: Forest data-hub-JOBS-1 state changed from middle closing to finish closing because database changed
+2020-04-02 15:13:51.809 Info: Forest data-hub-JOBS-1 state changed from finish closing to mounted because finished closing
+2020-04-02 15:13:51.811 Info: Forest data-hub-JOBS-1 state changed from mounted to unmounted
+2020-04-02 15:13:51.811 Notice: Unmounted forest data-hub-JOBS-1
+2020-04-02 15:13:52.036 Info: Database data-hub-STAGING is online with 3 forests
+2020-04-02 15:13:52.689 Info: Forest data-hub-JOBS-1 state changed from unmounted to mounted
+2020-04-02 15:13:52.689 Info: Forest data-hub-JOBS-2 state changed from unmounted to mounted
+2020-04-02 15:13:52.689 Notice: Mounted forest data-hub-JOBS-1 locally on /var/opt/MarkLogic/Forests/data-hub-JOBS-1 read write
+2020-04-02 15:13:52.690 Notice: Mounted forest data-hub-JOBS-2 locally on /var/opt/MarkLogic/Forests/data-hub-JOBS-2 read write
+2020-04-02 15:13:52.698 Info: Forest data-hub-JOBS-2 state changed from mounted to recovering
+2020-04-02 15:13:52.699 Info: Forest data-hub-JOBS-1 state changed from mounted to recovering
+2020-04-02 15:13:52.706 Info: Forest data-hub-JOBS-2 forgetting previous master 0 because configured master changed
+2020-04-02 15:13:52.712 Info: Forest data-hub-JOBS-2 state changed from recovering to open
+2020-04-02 15:13:52.713 Info: Forest data-hub-JOBS-1 state changed from recovering to open
+2020-04-02 15:13:53.210 Info: Database data-hub-JOBS is online with 2 forests
+2020-04-02 15:13:53.259 Info: Database data-hub-JOBS is offline
+2020-04-02 15:13:53.669 Info: Forest data-hub-JOBS-3 state changed from unmounted to mounted
+2020-04-02 15:13:53.670 Notice: Mounted forest data-hub-JOBS-3 locally on /var/opt/MarkLogic/Forests/data-hub-JOBS-3 read write
+2020-04-02 15:13:53.670 Info: Forest data-hub-JOBS-4 state changed from unmounted to mounted
+2020-04-02 15:13:53.671 Notice: Mounted forest data-hub-JOBS-4 locally on /var/opt/MarkLogic/Forests/data-hub-JOBS-4 read write
+2020-04-02 15:13:53.678 Info: Forest data-hub-JOBS-3 state changed from mounted to recovering
+2020-04-02 15:13:53.678 Info: Forest data-hub-JOBS-4 state changed from mounted to recovering
+2020-04-02 15:13:53.687 Info: Forest data-hub-JOBS-3 forgetting previous master 0 because configured master changed
+2020-04-02 15:13:53.687 Info: Forest data-hub-JOBS-4 forgetting previous master 0 because configured master changed
+2020-04-02 15:13:53.693 Info: Forest data-hub-JOBS-4 state changed from recovering to open
+2020-04-02 15:13:53.693 Info: Forest data-hub-JOBS-3 state changed from recovering to open
+2020-04-02 15:13:53.981 Info: Forest data-hub-JOBS-4 state changed from open to start closing because database changed
+2020-04-02 15:13:53.981 Info: Forest data-hub-JOBS-4 state changed from start closing to middle closing because database changed
+2020-04-02 15:13:53.981 Info: Forest data-hub-JOBS-4 state changed from middle closing to finish closing because database changed
+2020-04-02 15:13:53.989 Info: Forest data-hub-JOBS-4 state changed from finish closing to mounted because finished closing
+2020-04-02 15:13:53.990 Info: Forest data-hub-JOBS-4 state changed from mounted to unmounted
+2020-04-02 15:13:53.990 Notice: Unmounted forest data-hub-JOBS-4
+2020-04-02 15:13:54.625 Info: Deleted 1 MB at 16 MB/sec /var/opt/MarkLogic/Forests/Security/00000002
+2020-04-02 15:13:54.649 Info: Deleted 1 MB at 48 MB/sec /var/opt/MarkLogic/Forests/Security/00000003
+2020-04-02 15:13:54.651 Info: Forest data-hub-JOBS-4 state changed from unmounted to mounted
+2020-04-02 15:13:54.651 Notice: Mounted forest data-hub-JOBS-4 locally on /var/opt/MarkLogic/Forests/data-hub-JOBS-4 read write
+2020-04-02 15:13:54.663 Info: Forest data-hub-JOBS-4 state changed from mounted to recovering
+2020-04-02 15:13:54.675 Info: Forest data-hub-JOBS-4 state changed from recovering to open
+2020-04-02 15:13:55.135 Info: Database data-hub-JOBS is online with 4 forests
+2020-04-02 15:15:08.688 Info: Saving /var/opt/MarkLogic/Forests/Security/00000005
+2020-04-02 15:15:09.021 Info: Saved 1 MB at 3 MB/sec to /var/opt/MarkLogic/Forests/Security/00000005
+2020-04-02 15:15:09.029 Info: Merging 3 MB from /var/opt/MarkLogic/Forests/Security/00000004 and /var/opt/MarkLogic/Forests/Security/00000005 to /var/opt/MarkLogic/Forests/Security/00000006, timestamp=15858398825183020
+2020-04-02 15:15:09.331 Info: Merged 2 MB at 7 MB/sec to /var/opt/MarkLogic/Forests/Security/00000006
+2020-04-02 15:15:12.207 Info: Deleted 2 MB at 67 MB/sec /var/opt/MarkLogic/Forests/Security/00000004
+2020-04-02 15:15:12.230 Info: Deleted 1 MB at 49 MB/sec /var/opt/MarkLogic/Forests/Security/00000005
+2020-04-02 15:16:09.751 Info: Saving /var/opt/MarkLogic/Forests/data-hub-MODULES-1/00000000
+2020-04-02 15:16:10.409 Info: Saved 17 MB in 1 sec at 26 MB/sec to /var/opt/MarkLogic/Forests/data-hub-MODULES-1/00000000
+2020-04-02 15:16:10.600 Info: Saving /var/opt/MarkLogic/Forests/data-hub-staging-TRIGGERS-1/00000000
+2020-04-02 15:16:10.608 Info: Saving /var/opt/MarkLogic/Forests/data-hub-final-TRIGGERS-1/00000000
+2020-04-02 15:16:10.616 Info: Saving /var/opt/MarkLogic/Forests/App-Services/00000000
+2020-04-02 15:16:10.870 Info: Saved 8 MB at 32 MB/sec to /var/opt/MarkLogic/Forests/App-Services/00000000
+2020-04-02 15:16:11.029 Info: Saved 8 MB at 19 MB/sec to /var/opt/MarkLogic/Forests/data-hub-final-TRIGGERS-1/00000000
+2020-04-02 15:16:11.129 Info: Saved 8 MB in 1 sec at 15 MB/sec to /var/opt/MarkLogic/Forests/data-hub-staging-TRIGGERS-1/00000000
+2020-04-02 15:16:11.568 Info: Saving /var/opt/MarkLogic/Forests/data-hub-STAGING-2/00000000
+2020-04-02 15:16:11.888 Info: Saved 8 MB at 25 MB/sec to /var/opt/MarkLogic/Forests/data-hub-STAGING-2/00000000
+2020-04-02 15:16:12.593 Info: Saving /var/opt/MarkLogic/Forests/data-hub-STAGING-1/00000000
+2020-04-02 15:16:12.618 Info: Saving /var/opt/MarkLogic/Forests/data-hub-FINAL-1/00000000
+2020-04-02 15:16:12.621 Info: Saving /var/opt/MarkLogic/Forests/data-hub-FINAL-3/00000000
+2020-04-02 15:16:12.628 Info: Saving /var/opt/MarkLogic/Forests/data-hub-FINAL-2/00000000
+2020-04-02 15:16:12.635 Info: Saving /var/opt/MarkLogic/Forests/data-hub-STAGING-3/00000000
+2020-04-02 15:16:13.122 Info: Saved 8 MB at 16 MB/sec to /var/opt/MarkLogic/Forests/data-hub-STAGING-3/00000000
+2020-04-02 15:16:13.140 Info: Saved 8 MB in 1 sec at 16 MB/sec to /var/opt/MarkLogic/Forests/data-hub-FINAL-2/00000000
+2020-04-02 15:16:13.148 Info: Saved 8 MB in 1 sec at 15 MB/sec to /var/opt/MarkLogic/Forests/data-hub-FINAL-3/00000000
+2020-04-02 15:16:13.164 Info: Saved 8 MB in 1 sec at 15 MB/sec to /var/opt/MarkLogic/Forests/data-hub-FINAL-1/00000000
+2020-04-02 15:16:13.169 Info: Saved 8 MB in 1 sec at 14 MB/sec to /var/opt/MarkLogic/Forests/data-hub-STAGING-1/00000000
+2020-04-02 15:17:00.275 Info: Memory 26% phys=11983 size=3540(29%) rss=3188(26%) anon=2981(24%) file=76(0%) forest=952(7%) cache=3840(32%) registry=1(0%)
+2020-04-02 15:20:00.243 Info: Memory 12% phys=11983 size=1968(16%) rss=1533(12%) anon=1409(11%) file=76(0%) forest=952(7%) cache=3840(32%) registry=1(0%)
+2020-04-02 15:22:00.273 Info: Memory 8% phys=11983 size=1505(12%) rss=1070(8%) anon=946(7%) file=76(0%) forest=952(7%) cache=3840(32%) registry=1(0%)
+2020-04-02 15:24:01.686 Info: Merging 1 MB from /var/opt/MarkLogic/Forests/Security/00000006 to /var/opt/MarkLogic/Forests/Security/00000007, timestamp=15858404402390060
+2020-04-02 15:24:01.693 Info: Merging 2 MB from /var/opt/MarkLogic/Forests/App-Services/00000000 to /var/opt/MarkLogic/Forests/App-Services/00000001, timestamp=15858404402390060
+2020-04-02 15:24:02.474 Info: Merged 1 MB in 1 sec at 1 MB/sec to /var/opt/MarkLogic/Forests/App-Services/00000001
+2020-04-02 15:24:02.690 Info: Merged 1 MB in 1 sec at 1 MB/sec to /var/opt/MarkLogic/Forests/Security/00000007
+2020-04-02 15:24:05.133 Info: Deleted 8 MB at 154 MB/sec /var/opt/MarkLogic/Forests/App-Services/00000000
+2020-04-02 15:24:05.403 Info: Deleted 2 MB at 8 MB/sec /var/opt/MarkLogic/Forests/Security/00000006
+2020-04-02 15:25:01.635 Info: Merging 1 MB from /var/opt/MarkLogic/Forests/App-Services/00000001 to /var/opt/MarkLogic/Forests/App-Services/00000002, timestamp=15858405003393700
+2020-04-02 15:25:02.219 Info: Merged 1 MB in 1 sec at 2 MB/sec to /var/opt/MarkLogic/Forests/App-Services/00000002
+2020-04-02 15:25:05.042 Info: Deleted 1 MB at 32 MB/sec /var/opt/MarkLogic/Forests/App-Services/00000001
+2020-04-02 15:26:00.101 Info: Memory 4% phys=11983 size=1025(8%) rss=594(4%) anon=473(3%) file=69(0%) forest=942(7%) cache=3840(32%) registry=1(0%)
+2020-04-02 15:31:00.190 Info: Memory 17% phys=11983 size=2597(21%) rss=2151(17%) anon=2030(16%) file=84(0%) forest=1681(14%) cache=3840(32%) registry=1(0%)
+2020-04-02 15:31:28.633 Info: Saving /var/opt/MarkLogic/Forests/Security/00000008
+2020-04-02 15:31:29.470 Info: Saved 1 MB in 1 sec at 1 MB/sec to /var/opt/MarkLogic/Forests/Security/00000008
+2020-04-02 15:31:29.558 Info: Merging 2 MB from /var/opt/MarkLogic/Forests/Security/00000007 and /var/opt/MarkLogic/Forests/Security/00000008 to /var/opt/MarkLogic/Forests/Security/00000009, timestamp=15858408840772560
+2020-04-02 15:31:30.224 Info: Merged 1 MB in 1 sec at 2 MB/sec to /var/opt/MarkLogic/Forests/Security/00000009
+2020-04-02 15:31:34.179 Info: Deleted 1 MB at 9 MB/sec /var/opt/MarkLogic/Forests/Security/00000007
+2020-04-02 15:31:34.208 Info: Deleted 1 MB at 42 MB/sec /var/opt/MarkLogic/Forests/Security/00000008
+2020-04-02 15:32:00.176 Info: Memory 36% phys=11983 size=4847(40%) rss=4402(36%) anon=4280(35%) file=84(0%) forest=1688(14%) cache=3840(32%) registry=1(0%)
+2020-04-02 15:33:00.303 Info: Memory 39% phys=11983 size=5189(43%) rss=4683(39%) anon=4562(38%) file=144(1%) forest=4736(39%) cache=3840(32%) registry=1(0%)
+2020-04-02 15:33:30.592 Info: Saving /var/opt/MarkLogic/Forests/data-hub-MODULES-1/00000001
+2020-04-02 15:33:30.598 Info: Saving /var/opt/MarkLogic/Forests/data-hub-final-TRIGGERS-1/00000001
+2020-04-02 15:33:31.578 Info: Saving /var/opt/MarkLogic/Forests/data-hub-staging-TRIGGERS-1/00000001
+2020-04-02 15:33:31.594 Info: Saving /var/opt/MarkLogic/Forests/App-Services/00000003
+2020-04-02 15:33:32.070 Info: Saved 8 MB in 1 sec at 5 MB/sec to /var/opt/MarkLogic/Forests/data-hub-final-TRIGGERS-1/00000001
+2020-04-02 15:33:32.082 Info: Merging 16 MB from /var/opt/MarkLogic/Forests/data-hub-final-TRIGGERS-1/00000000 and /var/opt/MarkLogic/Forests/data-hub-final-TRIGGERS-1/00000001 to /var/opt/MarkLogic/Forests/data-hub-final-TRIGGERS-1/00000002, timestamp=15858409804948180
+2020-04-02 15:33:32.339 Info: Saved 19 MB in 2 sec at 11 MB/sec to /var/opt/MarkLogic/Forests/data-hub-MODULES-1/00000001
+2020-04-02 15:33:32.412 Info: Merging 36 MB from /var/opt/MarkLogic/Forests/data-hub-MODULES-1/00000001 and /var/opt/MarkLogic/Forests/data-hub-MODULES-1/00000000 to /var/opt/MarkLogic/Forests/data-hub-MODULES-1/00000002, timestamp=15858409804948180
+2020-04-02 15:33:32.552 Info: Saving /var/opt/MarkLogic/Forests/data-hub-STAGING-2/00000001
+2020-04-02 15:33:33.329 Info: Merged 1 MB in 1 sec at 1 MB/sec to /var/opt/MarkLogic/Forests/data-hub-final-TRIGGERS-1/00000002
+2020-04-02 15:33:33.506 Info: Saved 8 MB in 2 sec at 4 MB/sec to /var/opt/MarkLogic/Forests/data-hub-staging-TRIGGERS-1/00000001
+2020-04-02 15:33:33.521 Info: Merging 16 MB from /var/opt/MarkLogic/Forests/data-hub-staging-TRIGGERS-1/00000000 and /var/opt/MarkLogic/Forests/data-hub-staging-TRIGGERS-1/00000001 to /var/opt/MarkLogic/Forests/data-hub-staging-TRIGGERS-1/00000002, timestamp=15858409804948180
+2020-04-02 15:33:33.552 Info: Saved 8 MB in 2 sec at 4 MB/sec to /var/opt/MarkLogic/Forests/App-Services/00000003
+2020-04-02 15:33:33.578 Info: Merging 9 MB from /var/opt/MarkLogic/Forests/App-Services/00000003 and /var/opt/MarkLogic/Forests/App-Services/00000002 to /var/opt/MarkLogic/Forests/App-Services/00000004, timestamp=15858409804948180
+2020-04-02 15:33:33.595 Info: Saving /var/opt/MarkLogic/Forests/data-hub-STAGING-1/00000001
+2020-04-02 15:33:33.614 Info: Saving /var/opt/MarkLogic/Forests/data-hub-FINAL-1/00000001
+2020-04-02 15:33:33.618 Info: Saving /var/opt/MarkLogic/Forests/data-hub-FINAL-3/00000001
+2020-04-02 15:33:33.622 Info: Saving /var/opt/MarkLogic/Forests/data-hub-FINAL-2/00000001
+2020-04-02 15:33:33.627 Info: Saving /var/opt/MarkLogic/Forests/data-hub-STAGING-3/00000001
+2020-04-02 15:33:33.895 Info: Merged 16 MB in 1 sec at 11 MB/sec to /var/opt/MarkLogic/Forests/data-hub-MODULES-1/00000002
+2020-04-02 15:33:34.501 Info: Merged 1 MB in 1 sec at 1 MB/sec to /var/opt/MarkLogic/Forests/App-Services/00000004
+2020-04-02 15:33:35.033 Info: Merged 1 MB in 2 sec at 1 MB/sec to /var/opt/MarkLogic/Forests/data-hub-staging-TRIGGERS-1/00000002
+2020-04-02 15:33:35.418 Info: Saved 8 MB in 3 sec at 3 MB/sec to /var/opt/MarkLogic/Forests/data-hub-STAGING-2/00000001
+2020-04-02 15:33:35.423 Info: Saved 8 MB in 2 sec at 4 MB/sec to /var/opt/MarkLogic/Forests/data-hub-FINAL-3/00000001
+2020-04-02 15:33:35.444 Info: Merging 16 MB from /var/opt/MarkLogic/Forests/data-hub-FINAL-3/00000000 and /var/opt/MarkLogic/Forests/data-hub-FINAL-3/00000001 to /var/opt/MarkLogic/Forests/data-hub-FINAL-3/00000002, timestamp=15858409804948180
+2020-04-02 15:33:35.444 Info: Merging 16 MB from /var/opt/MarkLogic/Forests/data-hub-STAGING-2/00000000 and /var/opt/MarkLogic/Forests/data-hub-STAGING-2/00000001 to /var/opt/MarkLogic/Forests/data-hub-STAGING-2/00000002, timestamp=15858409804948180
+2020-04-02 15:33:35.447 Info: Saved 8 MB in 2 sec at 4 MB/sec to /var/opt/MarkLogic/Forests/data-hub-STAGING-3/00000001
+2020-04-02 15:33:35.465 Info: Merging 16 MB from /var/opt/MarkLogic/Forests/data-hub-STAGING-3/00000000 and /var/opt/MarkLogic/Forests/data-hub-STAGING-3/00000001 to /var/opt/MarkLogic/Forests/data-hub-STAGING-3/00000002, timestamp=15858409804948180
+2020-04-02 15:33:35.555 Info: Saved 8 MB in 2 sec at 4 MB/sec to /var/opt/MarkLogic/Forests/data-hub-FINAL-2/00000001
+2020-04-02 15:33:35.565 Info: Saved 8 MB in 2 sec at 4 MB/sec to /var/opt/MarkLogic/Forests/data-hub-FINAL-1/00000001
+2020-04-02 15:33:35.616 Info: Saved 8 MB in 2 sec at 4 MB/sec to /var/opt/MarkLogic/Forests/data-hub-STAGING-1/00000001
+2020-04-02 15:33:35.830 Info: Merging 16 MB from /var/opt/MarkLogic/Forests/data-hub-FINAL-1/00000000 and /var/opt/MarkLogic/Forests/data-hub-FINAL-1/00000001 to /var/opt/MarkLogic/Forests/data-hub-FINAL-1/00000002, timestamp=15858409804948180
+2020-04-02 15:33:35.830 Info: Merging 16 MB from /var/opt/MarkLogic/Forests/data-hub-FINAL-2/00000000 and /var/opt/MarkLogic/Forests/data-hub-FINAL-2/00000001 to /var/opt/MarkLogic/Forests/data-hub-FINAL-2/00000002, timestamp=15858409804948180
+2020-04-02 15:33:35.831 Info: Merging 16 MB from /var/opt/MarkLogic/Forests/data-hub-STAGING-1/00000000 and /var/opt/MarkLogic/Forests/data-hub-STAGING-1/00000001 to /var/opt/MarkLogic/Forests/data-hub-STAGING-1/00000002, timestamp=15858409804948180
+2020-04-02 15:33:36.236 Info: Merged 1 MB in 1 sec at 1 MB/sec to /var/opt/MarkLogic/Forests/data-hub-FINAL-3/00000002
+2020-04-02 15:33:36.271 Info: Merged 1 MB in 1 sec at 1 MB/sec to /var/opt/MarkLogic/Forests/data-hub-STAGING-3/00000002
+2020-04-02 15:33:36.545 Info: Merged 1 MB in 1 sec at 1 MB/sec to /var/opt/MarkLogic/Forests/data-hub-STAGING-1/00000002
+2020-04-02 15:33:36.586 Info: Merged 1 MB in 1 sec at 1 MB/sec to /var/opt/MarkLogic/Forests/data-hub-FINAL-1/00000002
+2020-04-02 15:33:36.629 Info: Deleted 8 MB in 1 sec at 13 MB/sec /var/opt/MarkLogic/Forests/data-hub-final-TRIGGERS-1/00000000
+2020-04-02 15:33:36.692 Info: Deleted 8 MB at 141 MB/sec /var/opt/MarkLogic/Forests/data-hub-final-TRIGGERS-1/00000001
+2020-04-02 15:33:36.739 Info: Deleted 17 MB at 409 MB/sec /var/opt/MarkLogic/Forests/data-hub-MODULES-1/00000000
+2020-04-02 15:33:36.855 Info: Deleted 19 MB at 168 MB/sec /var/opt/MarkLogic/Forests/data-hub-MODULES-1/00000001
+2020-04-02 15:33:36.889 Info: Deleted 8 MB at 273 MB/sec /var/opt/MarkLogic/Forests/App-Services/00000003
+2020-04-02 15:33:36.913 Info: Deleted 1 MB at 51 MB/sec /var/opt/MarkLogic/Forests/App-Services/00000002
+2020-04-02 15:33:36.925 Info: Merged 1 MB in 1 sec at 1 MB/sec to /var/opt/MarkLogic/Forests/data-hub-STAGING-2/00000002
+2020-04-02 15:33:36.940 Info: Deleted 8 MB at 342 MB/sec /var/opt/MarkLogic/Forests/data-hub-staging-TRIGGERS-1/00000000
+2020-04-02 15:33:36.973 Info: Deleted 8 MB at 290 MB/sec /var/opt/MarkLogic/Forests/data-hub-staging-TRIGGERS-1/00000001
+2020-04-02 15:33:37.016 Info: Deleted 8 MB at 263 MB/sec /var/opt/MarkLogic/Forests/data-hub-STAGING-3/00000000
+2020-04-02 15:33:37.027 Info: Merged 1 MB in 1 sec at 1 MB/sec to /var/opt/MarkLogic/Forests/data-hub-FINAL-2/00000002
+2020-04-02 15:33:37.098 Info: Deleted 8 MB at 101 MB/sec /var/opt/MarkLogic/Forests/data-hub-FINAL-3/00000000
+2020-04-02 15:33:37.326 Info: Deleted 8 MB at 36 MB/sec /var/opt/MarkLogic/Forests/data-hub-FINAL-3/00000001
+2020-04-02 15:33:37.354 Info: Deleted 8 MB at 333 MB/sec /var/opt/MarkLogic/Forests/data-hub-STAGING-3/00000001
+2020-04-02 15:33:37.380 Info: Deleted 8 MB at 359 MB/sec /var/opt/MarkLogic/Forests/data-hub-STAGING-1/00000000
+2020-04-02 15:33:37.406 Info: Deleted 8 MB at 347 MB/sec /var/opt/MarkLogic/Forests/data-hub-FINAL-1/00000000
+2020-04-02 15:33:37.432 Info: Deleted 8 MB at 351 MB/sec /var/opt/MarkLogic/Forests/data-hub-STAGING-1/00000001
+2020-04-02 15:33:37.511 Info: Deleted 8 MB at 106 MB/sec /var/opt/MarkLogic/Forests/data-hub-FINAL-1/00000001
+2020-04-02 15:33:37.536 Info: Deleted 8 MB at 369 MB/sec /var/opt/MarkLogic/Forests/data-hub-STAGING-2/00000000
+2020-04-02 15:33:37.564 Info: Deleted 8 MB at 330 MB/sec /var/opt/MarkLogic/Forests/data-hub-STAGING-2/00000001
+2020-04-02 15:33:37.602 Info: Deleted 8 MB at 236 MB/sec /var/opt/MarkLogic/Forests/data-hub-FINAL-2/00000000
+2020-04-02 15:33:37.631 Info: Deleted 8 MB at 343 MB/sec /var/opt/MarkLogic/Forests/data-hub-FINAL-2/00000001
+2020-04-02 15:34:00.261 Info: Memory 36% phys=11983 size=4754(39%) rss=4364(36%) anon=4269(35%) file=1(0%) forest=852(7%) cache=3840(32%) registry=1(0%)
+2020-04-02 15:36:00.930 Info: Memory 28% phys=11983 size=3833(31%) rss=3444(28%) anon=3348(27%) file=1(0%) forest=852(7%) cache=3840(32%) registry=1(0%)
+2020-04-02 15:37:00.111 Info: Memory 23% phys=11983 size=3173(26%) rss=2783(23%) anon=2688(22%) file=1(0%) forest=852(7%) cache=3840(32%) registry=1(0%)
+2020-04-02 15:38:00.110 Info: Memory 11% phys=11983 size=1753(14%) rss=1364(11%) anon=1268(10%) file=1(0%) forest=852(7%) cache=3840(32%) registry=1(0%)
+2020-04-02 15:41:01.734 Info: Merging 10 MB from /var/opt/MarkLogic/Forests/data-hub-MODULES-1/00000002 to /var/opt/MarkLogic/Forests/data-hub-MODULES-1/00000003, timestamp=15858414601795430
+2020-04-02 15:41:01.739 Info: Merging 1 MB from /var/opt/MarkLogic/Forests/Security/00000009 to /var/opt/MarkLogic/Forests/Security/0000000a, timestamp=15858414601795430
+2020-04-02 15:41:01.749 Info: Merging 1 MB from /var/opt/MarkLogic/Forests/App-Services/00000004 to /var/opt/MarkLogic/Forests/App-Services/00000005, timestamp=15858414601795430
+2020-04-02 15:41:03.613 Info: Merged 12 MB in 2 sec at 6 MB/sec to /var/opt/MarkLogic/Forests/data-hub-MODULES-1/00000003
+2020-04-02 15:41:03.891 Info: Merged 1 MB in 2 sec at 0 MB/sec to /var/opt/MarkLogic/Forests/App-Services/00000005
+2020-04-02 15:41:03.951 Info: Merged 1 MB in 2 sec at 0 MB/sec to /var/opt/MarkLogic/Forests/Security/0000000a
+2020-04-02 15:41:06.277 Info: Deleted 16 MB at 222 MB/sec /var/opt/MarkLogic/Forests/data-hub-MODULES-1/00000002
+2020-04-02 15:41:06.402 Info: Deleted 1 MB at 8 MB/sec /var/opt/MarkLogic/Forests/App-Services/00000004
+2020-04-02 15:41:06.490 Info: Deleted 1 MB at 12 MB/sec /var/opt/MarkLogic/Forests/Security/00000009
+2020-04-02 15:42:00.241 Info: Memory 8% phys=11983 size=1402(11%) rss=1013(8%) anon=917(7%) file=1(0%) forest=852(7%) cache=3840(32%) registry=1(0%)
+2020-04-02 15:42:01.572 Info: Merging 8 MB from /var/opt/MarkLogic/Forests/data-hub-MODULES-1/00000003 to /var/opt/MarkLogic/Forests/data-hub-MODULES-1/00000004, timestamp=15858415203319070
+2020-04-02 15:42:01.585 Info: Merging 1 MB from /var/opt/MarkLogic/Forests/App-Services/00000005 to /var/opt/MarkLogic/Forests/App-Services/00000006, timestamp=15858415203319070
+2020-04-02 15:42:03.084 Info: Merged 1 MB in 1 sec at 1 MB/sec to /var/opt/MarkLogic/Forests/App-Services/00000006
+2020-04-02 15:42:03.658 Info: Merged 11 MB in 2 sec at 5 MB/sec to /var/opt/MarkLogic/Forests/data-hub-MODULES-1/00000004
+2020-04-02 15:42:05.086 Info: Deleted 1 MB at 17 MB/sec /var/opt/MarkLogic/Forests/App-Services/00000005
+2020-04-02 15:42:05.257 Info: Deleted 12 MB at 72 MB/sec /var/opt/MarkLogic/Forests/data-hub-MODULES-1/00000003
+2020-04-02 15:43:00.209 Info: Memory 5% phys=11983 size=1047(8%) rss=657(5%) anon=562(4%) file=1(0%) forest=852(7%) cache=3840(32%) registry=1(0%)
+2020-04-02 15:44:01.577 Info: Merging 1 MB from /var/opt/MarkLogic/Forests/data-hub-staging-TRIGGERS-1/00000002 to /var/opt/MarkLogic/Forests/data-hub-staging-TRIGGERS-1/00000003, timestamp=15858416402095860
+2020-04-02 15:44:01.578 Info: Merging 1 MB from /var/opt/MarkLogic/Forests/data-hub-STAGING-1/00000002 to /var/opt/MarkLogic/Forests/data-hub-STAGING-1/00000003, timestamp=15858416402095860
+2020-04-02 15:44:01.588 Info: Merging 1 MB from /var/opt/MarkLogic/Forests/data-hub-final-TRIGGERS-1/00000002 to /var/opt/MarkLogic/Forests/data-hub-final-TRIGGERS-1/00000003, timestamp=15858416402095860
+2020-04-02 15:44:01.592 Info: Merging 1 MB from /var/opt/MarkLogic/Forests/App-Services/00000006 to /var/opt/MarkLogic/Forests/App-Services/00000007, timestamp=15858416402095860
+2020-04-02 15:44:01.598 Info: Merging 1 MB from /var/opt/MarkLogic/Forests/data-hub-FINAL-1/00000002 to /var/opt/MarkLogic/Forests/data-hub-FINAL-1/00000003, timestamp=15858416402095860
+2020-04-02 15:44:01.600 Info: Merging 1 MB from /var/opt/MarkLogic/Forests/data-hub-STAGING-2/00000002 to /var/opt/MarkLogic/Forests/data-hub-STAGING-2/00000003, timestamp=15858416402095860
+2020-04-02 15:44:01.601 Info: Merging 1 MB from /var/opt/MarkLogic/Forests/data-hub-FINAL-3/00000002 to /var/opt/MarkLogic/Forests/data-hub-FINAL-3/00000003, timestamp=15858416402095860
+2020-04-02 15:44:01.606 Info: Merging 1 MB from /var/opt/MarkLogic/Forests/data-hub-FINAL-2/00000002 to /var/opt/MarkLogic/Forests/data-hub-FINAL-2/00000003, timestamp=15858416402095860
+2020-04-02 15:44:01.638 Info: Merging 1 MB from /var/opt/MarkLogic/Forests/data-hub-STAGING-3/00000002 to /var/opt/MarkLogic/Forests/data-hub-STAGING-3/00000003, timestamp=15858416402095860
+2020-04-02 15:44:02.659 Info: Merged 1 MB in 1 sec at 1 MB/sec to /var/opt/MarkLogic/Forests/data-hub-final-TRIGGERS-1/00000003
+2020-04-02 15:44:02.691 Info: Merged 1 MB in 1 sec at 1 MB/sec to /var/opt/MarkLogic/Forests/data-hub-STAGING-3/00000003
+2020-04-02 15:44:02.698 Info: Merged 1 MB in 1 sec at 1 MB/sec to /var/opt/MarkLogic/Forests/data-hub-STAGING-1/00000003
+2020-04-02 15:44:02.728 Info: Merged 1 MB in 1 sec at 1 MB/sec to /var/opt/MarkLogic/Forests/data-hub-FINAL-1/00000003
+2020-04-02 15:44:02.767 Info: Merged 1 MB in 1 sec at 1 MB/sec to /var/opt/MarkLogic/Forests/data-hub-staging-TRIGGERS-1/00000003
+2020-04-02 15:44:02.842 Info: Merged 1 MB in 1 sec at 1 MB/sec to /var/opt/MarkLogic/Forests/data-hub-FINAL-3/00000003
+2020-04-02 15:44:02.892 Info: Merged 1 MB in 1 sec at 1 MB/sec to /var/opt/MarkLogic/Forests/data-hub-FINAL-2/00000003
+2020-04-02 15:44:02.986 Info: Merged 1 MB in 1 sec at 1 MB/sec to /var/opt/MarkLogic/Forests/data-hub-STAGING-2/00000003
+2020-04-02 15:44:03.018 Info: Merged 1 MB in 1 sec at 1 MB/sec to /var/opt/MarkLogic/Forests/App-Services/00000007
+2020-04-02 15:44:05.169 Info: Deleted 1 MB at 48 MB/sec /var/opt/MarkLogic/Forests/data-hub-final-TRIGGERS-1/00000002
+2020-04-02 15:44:05.191 Info: Deleted 1 MB at 52 MB/sec /var/opt/MarkLogic/Forests/data-hub-STAGING-3/00000002
+2020-04-02 15:44:05.215 Info: Deleted 1 MB at 51 MB/sec /var/opt/MarkLogic/Forests/data-hub-STAGING-1/00000002
+2020-04-02 15:44:05.242 Info: Deleted 1 MB at 41 MB/sec /var/opt/MarkLogic/Forests/data-hub-FINAL-1/00000002
+2020-04-02 15:44:05.274 Info: Deleted 1 MB at 35 MB/sec /var/opt/MarkLogic/Forests/data-hub-staging-TRIGGERS-1/00000002
+2020-04-02 15:44:05.297 Info: Deleted 1 MB at 55 MB/sec /var/opt/MarkLogic/Forests/data-hub-FINAL-3/00000002
+2020-04-02 15:44:05.326 Info: Deleted 1 MB at 40 MB/sec /var/opt/MarkLogic/Forests/data-hub-FINAL-2/00000002
+2020-04-02 15:44:05.354 Info: Deleted 1 MB at 45 MB/sec /var/opt/MarkLogic/Forests/data-hub-STAGING-2/00000002
+2020-04-02 15:44:05.372 Info: Deleted 1 MB at 65 MB/sec /var/opt/MarkLogic/Forests/App-Services/00000006

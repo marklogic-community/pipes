@@ -1,0 +1,8 @@
+172.18.0.1 - - [02/Apr/2020:15:14:31 +0000] "PUT /v1/config/query/traces HTTP/1.1" 401 104 - "okhttp/3.10.0"
+172.18.0.1 - admin [02/Apr/2020:15:14:33 +0000] "PUT /v1/config/query/traces HTTP/1.1" 201 0 - "okhttp/3.10.0"
+172.18.0.1 - - [02/Apr/2020:15:14:33 +0000] "PUT /v1/config/query/jobs HTTP/1.1" 401 104 - "okhttp/3.10.0"
+172.18.0.1 - admin [02/Apr/2020:15:14:33 +0000] "PUT /v1/config/query/jobs HTTP/1.1" 201 0 - "okhttp/3.10.0"
+172.18.0.1 - - [02/Apr/2020:15:31:50 +0000] "PUT /v1/config/query/traces HTTP/1.1" 401 104 - "okhttp/3.10.0"
+172.18.0.1 - admin [02/Apr/2020:15:31:52 +0000] "PUT /v1/config/query/traces HTTP/1.1" 204 0 - "okhttp/3.10.0"
+172.18.0.1 - - [02/Apr/2020:15:31:52 +0000] "PUT /v1/config/query/jobs HTTP/1.1" 401 104 - "okhttp/3.10.0"
+172.18.0.1 - admin [02/Apr/2020:15:31:52 +0000] "PUT /v1/config/query/jobs HTTP/1.1" 204 0 - "okhttp/3.10.0"

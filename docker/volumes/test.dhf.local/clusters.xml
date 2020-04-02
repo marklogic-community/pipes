@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<clusters xsi:schemaLocation="http://marklogic.com/xdmp/clusters clusters.xsd" xml:lang="zxx" timestamp="15858403058182490" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://marklogic.com/xdmp/clusters">
+  <security-version>100003</security-version>
+  <effective-version>10000300</effective-version>
+  <cluster-id>8063291367392181905</cluster-id>
+  <cluster-name>test.dhf.local-cluster</cluster-name>
+  <ssl-fips-enabled>true</ssl-fips-enabled>
+  <xdqp-ssl-certificate>-----BEGIN CERTIFICATE-----
+MIICyzCCAbOgAwIBAgIIeduI6ODSytgwDQYJKoZIhvcNAQELBQAwHjEcMBoGA1UE
+AwwTODA2MzI5MTM2NzM5MjE4MTkwNTAeFw0yMDA0MDIxNTExNDJaFw0zMDAzMzEx
+NTExNDJaMB4xHDAaBgNVBAMMEzgwNjMyOTEzNjczOTIxODE5MDUwggEiMA0GCSqG
+SIb3DQEBAQUAA4IBDwAwggEKAoIBAQCrYTJHvRC2bYXoBihXs9xYSX7rLlT2k3rS
++TlWaHOLAPDoeg20iMznw5TSzoFsBOUj7fkx4853F9atIZbdLXPgTWThzUNuHGXk
+ZuafS11XZbJ4ky4IQvhTTGchQeCqs4mfRgukHrbAFWqEuR3KC2uVGvoCrxM6LxRt
+HhchJD2SWRQEkP8AOQ7Bw85yPrYZdYw1i52sk4P4B+B0Wp+GOS+zxO6SVfqLOzzz
+Sx4RloYpWBQJr39gwsxxCWr1oxV3ZxDmPTQlaV7xodbLGBjDgbIeJJVV4mjhILF/
+vFw9vHlHq7so0Au3dAnIexjLhw7tjzVUnNKoKyr1pK2rmAPmUkLpAgMBAAGjDTAL
+MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAJZIbZw62VRL/w9vmw6PZz5S
+NU+597gthGLUcpmjHWF3qwnvIVJ+EK+LRpYlxsHW+V98Bm1mT3DFMC+Uwdt2+aUI
+jv4Z+h8g3wZRAjSo0JK7TVHjpc7Qgsn6rMN/S+SHlnzRB7hq27lJzsvn/AcfsVCK
+qzb1ETL7ErJQ9KQsHhAk2BjHjo/wUa1PdPxdJofFYlWJEr2NlisQAXP/YToXOESw
+aMSpozo7zPOIMCn4c37J6iXtYn+CMkwQa5zTcT/PlHqo7nbj4gAwxGfPg+mqfM9R
+lDqD0lCwOLgSQZebW61Nejl2iy/ZR8T4hM2+iMCopvOX2UgQgD9ieoF5hfUmgUU=
+-----END CERTIFICATE-----
+</xdqp-ssl-certificate>
+  <xdqp-ssl-private-key>-----BEGIN PRIVATE KEY-----
+MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCrYTJHvRC2bYXo
+BihXs9xYSX7rLlT2k3rS+TlWaHOLAPDoeg20iMznw5TSzoFsBOUj7fkx4853F9at
+IZbdLXPgTWThzUNuHGXkZuafS11XZbJ4ky4IQvhTTGchQeCqs4mfRgukHrbAFWqE
+uR3KC2uVGvoCrxM6LxRtHhchJD2SWRQEkP8AOQ7Bw85yPrYZdYw1i52sk4P4B+B0
+Wp+GOS+zxO6SVfqLOzzzSx4RloYpWBQJr39gwsxxCWr1oxV3ZxDmPTQlaV7xodbL
+GBjDgbIeJJVV4mjhILF/vFw9vHlHq7so0Au3dAnIexjLhw7tjzVUnNKoKyr1pK2r
+mAPmUkLpAgMBAAECggEAB2WEAoWd7YmvkFKHtjVMisDtSeAviY7W67kW6OxMJFEv
+lJED+2k2EsClsS15d3yEmTbhnO4ckJZGTSWYecZG7ITamEZAJUXzfdaVGIXrquR4
+Pez4PSIKzqmK/+v0ctmZ1HZ09SngME0cUksdBoXUqFRIOwpsVYQHqSf1zpfeUm0U
+s91SeR7I9MH5coVJLGX0llGUYhONj5EJlEYjmIUID6JDamA2cUHrbhNgQQNaK5KD
+jrUYR95XE2UAXN94uHttkZdTtwMTkMngkx44Ft3LeWe8nnbBlH6X78vR3CVAE/O8
+r8aOZqCM/BeT9rIAJ5twMIXm1RcrtJ+k++Pn514X2wKBgQDTQWSBhTQKD1UgLOEb
+62a5T/meWB7BeJxkOwFcYoF4mVx1vG3ptgqkSqNuYGRw+FcLlojMTMm2u9qFT1cc
+hQiqzNe2AT0coc+p5o5TnMecxDQqWsTGDUYCFQg/gsJfNYLDUM9KFW2unQWjnj5d
+qO1J/bzZsZ7g7ioJbtmoMFeHVwKBgQDPra0SDbVpBUC6zoImUFk436wXKhq84B45
+Wy29ciF3PDp9ZMK/eCkoYoeGv2VLGGolQaE/XiH/yKKh9iOkmR10iIyE2nk6fsEU
+9Dbv6IN6BcsgbhJF/VYNje7WXTONxCjR3/IUBfMFzvRjo5SNGcTUCYcyqYamoweN
+Pso7vK1fvwKBgF9MVIaJDFytZf1JwZLSslhOV5Cyt80XF5WveIGwfi9lH2yNQBf5
+4vsSIH+eRDEiFkJH+hYPXb9tJrqUe/uFl89U8MpN7L+JzyAZvYLCatmxOMcSg0nE
+mxw9WKct2XkRrpdlUN1epUfr1atlq0Sc+84xBIw/sChPx+7RbqaMiC+pAoGBAJcB
+nNeEukTLuf5bDA2Z3NZa5QHO7rQpbjCcWMzogOb3Fzx4GJcqYxrnUc4ruxZ4gS3n
+47x00Nnw5DhKBi632tASPcKYLQ/YfMKktJGLCpaeQc2p24WiqICglGqwSD0rxdad
+NKNUlBnEGrWcivZyJ0laSEERPURLRMFyR5BaJ+J3AoGAKOjLMRCYqSD+ykcy9Rcy
+BpwTBxkJFW2kgUsd3bfCX4lSNmSHHVe+xK0+k99Hq1rTkKd+ZtoapbNv9cBe812m
+46h5iWhyx4gbjTKJdX6ltR82CnXCmy1S0nMJi7uyrqbb6cZxVl6FeAE6gNXV+O4Q
+KSlJSXqqlgvSEckIAUosOjI=
+-----END PRIVATE KEY-----
+</xdqp-ssl-private-key>
+  <bootstrap-hosts>
+    <bootstrap-host>1123079323463643311</bootstrap-host>
+  </bootstrap-hosts>
+  <foreign-clusters/>
+  <language-baseline>ml9</language-baseline>
+  <opsdirector-log-level>disabled</opsdirector-log-level>
+  <opsdirector-metering>disabled</opsdirector-metering>
+  <opsdirector-config>disabled</opsdirector-config>
+  <opsdirector-session-endpoint/>
+  <fedramp>false</fedramp>
+</clusters>
