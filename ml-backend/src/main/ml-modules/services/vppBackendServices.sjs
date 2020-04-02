@@ -400,10 +400,10 @@ function getFieldsByCollection(collection, customURI) {
       let i = 0
       let fields = {}
       let docs = []
-      let nbDocs = fn.count(fn.collection(collection))
-      if (collection != null && collection != "") {
+      let collectionDocs = fn.count(fn.collection(collection))
+      if (collection != null && collection != "" && collectionDocs > 0) {
         for (let j = 0; j < 10; j++) {
-          docs.push(fn.head(fn.subsequence(fn.collection(collection), xdmp.random(nbDocs))))
+          docs.push(fn.head(fn.subsequence(fn.collection(collection), xdmp.random(collectionDocs))))
           //let doc = fn.head(fn.collection(collection))
         }
       }
@@ -418,6 +418,7 @@ function getFieldsByCollection(collection, customURI) {
           }
         }
       }
+
       docs.map(doc => doc.xpath(".//*").toArray().map(node => {
 
         let name = fn.name(node)
@@ -438,9 +439,6 @@ function getFieldsByCollection(collection, customURI) {
           else
             return item.replace(/[A-z]+-node\('([\s\w@]*)'\)/g, "$1").replace(/text\('([\s\w@]+)'\)/g, "$1")
         })
-
-
-
 
         let lastSlash = originalPath.replace(/(\/object-node\(\))/g,"").lastIndexOf("/")
         let nodeLastPath = originalPath.substring(lastSlash + 1)
