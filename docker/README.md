@@ -4,8 +4,7 @@
 
 First, you need to have the Pipes image. You can either pull the image from DockerHub or build your own using the Dockerfile from this repo (see below).
 
-### Pulling the Pipes image from Docker Hub
-
+## Pulling the Pipes image from Docker Hub
 Assuming you already have a Docker Hub account, log in to Docker Hub using your credentials. Run
 
 ``docker login``
