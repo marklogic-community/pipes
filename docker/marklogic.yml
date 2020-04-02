@@ -1,0 +1,21 @@
+version: '3.7'
+
+networks:
+  marklogicDHF:
+
+services:
+    marklogic.dhf.local:
+      image: store/marklogicdb/marklogic-server:${mlVersion}
+      hostname: ${stackName}.dhf.local
+      container_name: ${stackName}.dhf.local
+      environment:
+        - MARKLOGIC_INIT=true
+        - MARKLOGIC_ADMIN_USERNAME=${mlAdmin}
+        - MARKLOGIC_ADMIN_PASSWORD=${mlPassword}
+        - TZ=Europe/Prague
+      ports:
+        - ${markLogicPortMapping}:${mlPortRange}
+      volumes:
+        - ./volumes/${stackName}.dhf.local/:/var/opt/MarkLogic/:delegated
+      networks:
+        - marklogicDHF
