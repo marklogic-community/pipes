@@ -43,37 +43,37 @@
     </q-dialog>
 
     <q-dialog
-          persistent
-          v-model="editSJSCode"
-        >
-          <q-card>
-            <q-card-section>
-              <div class="text-h6">Edit JavaScript</div>
-            </q-card-section>
+      persistent
+      v-model="editSJSCode"
+    >
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Edit JavaScript</div>
+        </q-card-section>
 
-            <q-card-section>
-              <div
-                class="q-pa-md"
-                style="max-width: 600px;min-width:500px"
-              >
-                <q-input
-                  v-model="currentSJSCode.sjsCode"
-                  filled
-                  type="textarea"
-                />
-              </div>
-            </q-card-section>
+        <q-card-section>
+          <div
+            class="q-pa-md"
+            style="max-width: 600px;min-width:500px"
+          >
+            <q-input
+              v-model="currentSJSCode.sjsCode"
+              filled
+              type="textarea"
+            />
+          </div>
+        </q-card-section>
 
-            <q-card-actions align="right">
-              <q-btn
-                color="primary"
-                flat
-                label="OK"
-                v-close-popup
-              />
-            </q-card-actions>
-          </q-card>
-        </q-dialog>
+        <q-card-actions align="right">
+          <q-btn
+            color="primary"
+            flat
+            label="OK"
+            v-close-popup
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
 
     <q-dialog
       persistent
@@ -904,11 +904,11 @@ export default {
       previewSource: null,
       previewWizard: 1,
       currentCtsQuery: "",			//query edit popup
-      currentSJSCode : "",
+      currentSJSCode: "",
       currentCases: "",				//selectCase edit popup
       selectedTargetDB: null,
       editQuery: false,				// show ctsQuery block edit popup
-      editSJSCode : false,
+      editSJSCode: false,
       editJson: false,				//
       editCases: false,				// swho selectCase cases property popup
       saveToDB: false,
@@ -1091,7 +1091,6 @@ export default {
       this.collectionForPreview = { "label": this.dhfSteps[val.label].collection, "value": this.dhfSteps[val.label].collection };
 
 
-
     }
   },
 
@@ -1209,14 +1208,14 @@ export default {
       if (graph.metadata && graph.metadata.description != null) this.graphMetadata.description = graph.description; else this.graphMetadata.description = ""
       this.$root.$emit("initGraphMetadata", this.graphMetadata)
 
-	  this.notifyPositive(self, "Loaded graph " + this.graphMetadata.title)
-	  this.$root.$emit("resetGraphTitle") // reset the titlebar to top graph (remove all subgraph history)
+      this.notifyPositive(self, "Loaded graph " + this.graphMetadata.title)
+      this.$root.$emit("resetGraphTitle") // reset the titlebar to top graph (remove all subgraph history)
       this.showUploadGraph = false
     }
     ,
     getSavedGraph (uri, graphName) {
       //if(uri!=null)
-	  console.log("Get saved graph")
+      console.log("Get saved graph")
       var self = this; // keep reference for notifications called from catch block
       this.$axios.get('/v1/resources/vppBackendServices?rs:action=GetSavedGraph&rs:uri=' + encodeURI(uri))
         .then((response) => {
@@ -1243,11 +1242,16 @@ export default {
         })
     },
     dbChanged () {
+      console.log("dbChanged")
       this.collectionForPreview = ""
       this.availableCollections = []
+
+      console.log("will discover collections")
       this.discoverCollections()
     },
+
     discoverCollections () {
+      console.log("discovering collections")
 
       var self = this; // keep reference for notifications called from catch block
       let dbOption = ""
@@ -1257,12 +1261,14 @@ export default {
         this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionDetails' + dbOption)
           .then((response) => {
             this.availableCollections = self.filterCollections(response.data)
+            console.log("this.availableCollections=", this.availableCollections);
           })
           .catch((error) => {
             self.notifyError("collectionDetails", error, self);
           })
       }
     },
+
     csvJSON (csv) {
 
       var lines = csv.split("\n");
@@ -1469,15 +1475,15 @@ export default {
         })
     },
 
-    createGraphDef() {
+    createGraphDef () {
       const jsonGraph = this.graph.serialize()
       return {
-            pipesFileVersion : 1,
-            models: this.blockModels,
-            executionGraph: jsonGraph,
-            name: this.graphMetadata.title,
-            metadata: this.graphMetadata
-          }
+        pipesFileVersion: 1,
+        models: this.blockModels,
+        executionGraph: jsonGraph,
+        name: this.graphMetadata.title,
+        metadata: this.graphMetadata
+      }
     },
 
     downloadGraph () {
@@ -1493,7 +1499,7 @@ export default {
 
     },
     exportDHFModule
-     () {
+      () {
       this.showCodeGenConfig = true
     },
     saveCurrentGraph () {
@@ -1592,7 +1598,7 @@ export default {
       this.validationInfos = []
       this.jsonFromPreview = {};
 
-      const graphDef  = this.createGraphDef()
+      const graphDef = this.createGraphDef()
       const graphDetail = graphDef.executionGraph;
 
       this.validationInfos = this.checkConfiguration(graphDetail, this.validationConfigs)
@@ -1624,8 +1630,8 @@ export default {
           .then((response) => {
             this.jsonFromPreview = response.data
 
-            if(response.data.error)
-              self.notifyError("ExecuteGraph", {message : response.data.error}, self);
+            if (response.data.error)
+              self.notifyError("ExecuteGraph", { message: response.data.error }, self);
           })
           .catch((error) => {
             self.notifyError("ExecuteGraph", error, self);
@@ -1679,7 +1685,7 @@ export default {
         event.preventDefault()
         event.returnValue = ""
       }
-	},
+    },
     selectNode (block) {
       console.log(block)
       let message = null
@@ -1753,6 +1759,7 @@ export default {
 
       this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionDetails' + dbOption)
         .then((response) => {
+          console.log("response.data=", response.data)
           this.availableCollections = self.filterCollections(response.data)
         })
         .catch((error) => {
@@ -1761,31 +1768,31 @@ export default {
     },
     DblClickNode (block) {
 
-	  if ( block.node_over && block.node_over.properties ) {
+      if (block.node_over && block.node_over.properties) {
 
-	// string/Mapvalues block
-      if (block.node_over.properties.mapping) {
-		if (block.node_over.properties.mapping != null) this.currentProperties = block.node_over.properties.mapping
-        this.editJson = true
+        // string/Mapvalues block
+        if (block.node_over.properties.mapping) {
+          if (block.node_over.properties.mapping != null) this.currentProperties = block.node_over.properties.mapping
+          this.editJson = true
+        }
+
+        // Lookup block
+        if (block.node_over.properties.ctsQuery) {
+          if (block.node_over.properties != null) this.currentCtsQuery = block.node_over.properties
+          this.editQuery = true
+        }
+        if (block.node_over.properties.sjsCode) {
+          if (block.node_over.properties != null) this.currentSJSCode = block.node_over.properties
+          this.editSJSCode = true
+        }
+
+        // selectCase block
+        if (block.node_over.properties.testCases) {
+          if (block.node_over.properties.testCases != null) this.currentCases = block.node_over.properties
+          this.editCases = true
+        }
+
       }
-
-	// Lookup block
-      if (block.node_over.properties.ctsQuery) {
-		if (block.node_over.properties != null) this.currentCtsQuery = block.node_over.properties
-		this.editQuery = true
-      }
-    if (block.node_over.properties.sjsCode) {
-		    if (block.node_over.properties != null) this.currentSJSCode = block.node_over.properties
-		      this.editSJSCode = true
-      }
-
-		// selectCase block
-      if (block.node_over.properties.testCases) {
-		if (block.node_over.properties.testCases != null) this.currentCases = block.node_over.properties
-		this.editCases = true
-	  }
-
-	  }
 
     },
     copyResultToClipboard (result) {
@@ -1805,14 +1812,14 @@ export default {
       this.availableDB = db.availableDatabases;
       this.discoverCollections()
 
-	},
+    },
     registerBlocksByConf (configs, LiteGraph) {
 
       let allBlockCode = ""
 
       for (let config of configs) {
 
-		var blockCode = ''
+        var blockCode = ''
 
         blockCode += "function " + config.functionName + "(){"
         blockCode += config.inputs.map((input) => {
@@ -1825,12 +1832,12 @@ export default {
           return "this.addProperty('" + property.name + ((property.type) ? "'," + JSON.stringify(property.type) + ");" : "');")
         }).join("") : ""
         blockCode += (config.widgets != null) ? config.widgets.map((widget) => {
-          if (widget.default =="#DATABASES#") widget.values = this.availableDB.map(item => item.label)
+          if (widget.default == "#DATABASES#") widget.values = this.availableDB.map(item => item.label)
           return "this.addWidget('" + widget.type + "','" + widget.name + "','" + widget.default + "', function(v){" + (widget.callback ? widget.callback : "") + "}.bind(this), { values:" + JSON.stringify(widget.values) + "} );"
         }).join("") : "";
 
         if (config.width)
-        blockCode += "    this.size = [" + config.width + "," + config.height + "];\n"
+          blockCode += "    this.size = [" + config.width + "," + config.height + "];\n"
         blockCode += "    this.serialize_widgets = true;"
 
         //blockCode += (config.properties)?"config.properties = " +  config.properties +";":"";
@@ -1838,18 +1845,18 @@ export default {
 
         blockCode += config.functionName + ".title = '" + config.blockName + "';";
 
-		// Add event to onDrawForeground for block when defined
-		// !== undefined is required
-		if ( config.events && config.events != null && config.events != undefined ) {
-			if ( config.events.onDrawForeground !== null && config.events.onDrawForeground != undefined && config.events.onDrawForeground != '' ) {
-				blockCode += config.functionName + ".prototype.onDrawForeground = function(ctx){" + config.events.onDrawForeground + "};"
-			}
-			if ( config.events.onConfigure !== null && config.events.onConfigure != undefined && config.events.onConfigure != '' ) {
-				blockCode += config.functionName + ".prototype.onConfigure = function(node){" + config.events.onConfigure + "};"
-			}
-		}
+        // Add event to onDrawForeground for block when defined
+        // !== undefined is required
+        if (config.events && config.events != null && config.events != undefined) {
+          if (config.events.onDrawForeground !== null && config.events.onDrawForeground != undefined && config.events.onDrawForeground != '') {
+            blockCode += config.functionName + ".prototype.onDrawForeground = function(ctx){" + config.events.onDrawForeground + "};"
+          }
+          if (config.events.onConfigure !== null && config.events.onConfigure != undefined && config.events.onConfigure != '') {
+            blockCode += config.functionName + ".prototype.onConfigure = function(node){" + config.events.onConfigure + "};"
+          }
+        }
 
-		blockCode += config.functionName + ".prototype.notify = function(node){this.$root.$emit(\"nodeSelected\",node)}.bind(this);";
+        blockCode += config.functionName + ".prototype.notify = function(node){this.$root.$emit(\"nodeSelected\",node)}.bind(this);";
         blockCode += config.functionName + ".prototype.onSelected = function(){this.notify(this) };"
         blockCode += config.functionName + ".prototype.onDblClick = function(e,pos,object){this.$root.$emit(\"nodeDblClicked\",object) }.bind(this);"
         blockCode += config.functionName + ".prototype.onExecute = function(){  ";
@@ -1867,12 +1874,12 @@ export default {
         //register in the syst em
         blockCode += "LiteGraph.registerNodeType('" + config.library + "/" + config.blockName + "', " + config.functionName + " );"
 
-		// DEBUGGING
-		// console.log("==CONFIGURING BLOCK: " + config.blockName)
-		// console.log(JSON.stringify(config))
-		// console.log(JSON.stringify(blockCode))
+        // DEBUGGING
+        // console.log("==CONFIGURING BLOCK: " + config.blockName)
+        // console.log(JSON.stringify(config))
+        // console.log(JSON.stringify(blockCode))
 
-		allBlockCode += blockCode
+        allBlockCode += blockCode
       }
       //xdmp.log(code)
       eval(allBlockCode)
@@ -1903,20 +1910,20 @@ export default {
     this.$root.$on("loadDHFDefaultGraphCall", this.resetDhfDefaultGraph);
     this.$root.$on("listGraphBlocks", this.listGraphBlocks);
     this.$root.$on("checkGraphBlockDelete", this.checkGraphBlockDelete);
-	this.$root.$on('blockRequested', this.createBlock);
+    this.$root.$on('blockRequested', this.createBlock);
 
     this.discoverDatabases(false)
     this.discoverDhfSteps()
 
     this.graph = new LiteGraph.LGraph();
-	this.graph_canvas = new LiteGraph.LGraphCanvas(this.$refs["mycanvas"], this.graph);
+    this.graph_canvas = new LiteGraph.LGraphCanvas(this.$refs["mycanvas"], this.graph);
 
-	// catch just in case problems. shouldn't stop tool working
-	try {
-		LiteGraph.registerPipesListener(this) // register any component so LiteGraph can emit events
-	} catch (e) {
-		console.log("Error calling registerPipesListener: " +  e)
-	}
+    // catch just in case problems. shouldn't stop tool working
+    try {
+      LiteGraph.registerPipesListener(this) // register any component so LiteGraph can emit events
+    } catch (e) {
+      console.log("Error calling registerPipesListener: " + e)
+    }
 
     this.$store.commit('clearBlocks')
 
@@ -1955,7 +1962,7 @@ export default {
     this.$root.$off("nodeSelected", this.selectNode);
     this.$root.$off("loadDHFDefaultGraphCall", this.resetDhfDefaultGraph);
     this.$root.$off("listGraphBlocks", this.listGraphBlocks);
-	this.$root.$off("checkGraphBlockDelete", this.checkGraphBlockDelete);
+    this.$root.$off("checkGraphBlockDelete", this.checkGraphBlockDelete);
   }
 
 }

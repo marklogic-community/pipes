@@ -6,7 +6,6 @@ package com.marklogic.pipes.ui;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.DocumentMetadataHandle;
@@ -19,9 +18,10 @@ import com.marklogic.pipes.ui.auth.AuthService;
 import com.marklogic.pipes.ui.config.ClientConfig;
 import com.marklogic.pipes.ui.config.PipesResourceManager;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,22 +33,28 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.stream.Stream;
 
-import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalToCompressingWhiteSpace;
 import static org.springframework.test.util.AssertionErrors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 class MarkLogicControllerTest {
 
 
-  public static final String TEST_CUSTOMER_1_JSON = "/test/customer1.json";
-  public static final String CUSTOMER_SOURCE_COLLECTION = "customer-ingest";
-  public static final String CUSTOMER_1_JSON = "customer1.json";
+  public static final String TEST_INPUT_JSON = "/test/input.json";
+  public static final String CUSTOMER_SOURCE_COLLECTION = "ingest-unit-test";
+
+//  public static final String CUSTOMER_1_JSON = "customer1.json";
+//  public static final String ExecuteMinimalGraphTestGraph= "GraphTests/ExecuteMinimalGraphTest/Minimal/graph.json";
+//  public static final String ExecuteMinimalGraphTestResponse= "GraphTests/ExecuteMinimalGraphTest/Minimal/expectedResponse.json";
+//  public static final String ExecuteMinimalGraphTest= "GraphTests/ExecuteMinimalGraphTest/";
+
   public static final String TEST_SAVE_GRAPH_JSON = "/marklogic-pipes/savedGraph/test-save-graph.json";
   public static final String GRAPH_JSON = "test-save-graph.json";
   public static final String SAVED_GRAPH_COLLECTION = "marklogic-pipes/type/savedGraph";
@@ -68,7 +74,7 @@ class MarkLogicControllerTest {
   @Autowired
   AuthService authService;
 
-  void addCustomerSourceDocument() throws Exception {
+  void addCustomerSourceDocument(String s) throws Exception {
     DatabaseClient client = getDatabaseClient();
 
     JSONDocumentManager jsonDocumentManager = client.newJSONDocumentManager();
@@ -76,8 +82,7 @@ class MarkLogicControllerTest {
     // will create a customer document
 
     // get the doc from resources
-    final InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(CUSTOMER_1_JSON);
-    InputStreamHandle handle = new InputStreamHandle(is);
+    InputStreamHandle handle = getInputStreamHandle(s);
 
     //Get the set of collections the document belongs to and put in array.
     DocumentMetadataHandle metadataHandle = new DocumentMetadataHandle();
@@ -86,10 +91,15 @@ class MarkLogicControllerTest {
     collections.add(CUSTOMER_SOURCE_COLLECTION);
 
     // write
-    jsonDocumentManager.write(TEST_CUSTOMER_1_JSON, metadataHandle, handle);
+    jsonDocumentManager.write(TEST_INPUT_JSON, metadataHandle, handle);
 
     // release client
     client.release();
+  }
+
+  private static InputStreamHandle getInputStreamHandle(String path) {
+    final InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
+    return new InputStreamHandle(is);
   }
 
   private DatabaseClient getDatabaseClient() {
@@ -104,7 +114,7 @@ class MarkLogicControllerTest {
     DatabaseClient client = getDatabaseClient();
     JSONDocumentManager jsonDocumentManager = client.newJSONDocumentManager();
 
-    jsonDocumentManager.delete(TEST_CUSTOMER_1_JSON);
+    jsonDocumentManager.delete(TEST_INPUT_JSON);
   }
 
   void deleteGraph() throws Exception {
@@ -125,8 +135,7 @@ class MarkLogicControllerTest {
     // will create a customer document
 
     // get the doc from resources
-    final InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(GRAPH_JSON);
-    InputStreamHandle handle = new InputStreamHandle(is);
+    InputStreamHandle handle = getInputStreamHandle(GRAPH_JSON);
 
     //Get the set of collections the document belongs to and put in array.
     DocumentMetadataHandle metadataHandle = new DocumentMetadataHandle();
@@ -175,27 +184,61 @@ class MarkLogicControllerTest {
    *
    * @throws Exception
    */
-  @Test
-  void ExecuteMinimalGraphTest() throws Exception {
+//  @Test
+//  void ExecuteMinimalGraphTest() throws Exception {
+//    try {
+//
+//      addCustomerSourceDocument("GraphTests/" + argument + "/input.json");
+//
+//      InputStreamHandle graphHndle = getInputStreamHandle(ExecuteMinimalGraphTest+"graph.json");
+//
+//      InputStreamHandle expectedResponseHandle = getInputStreamHandle(ExecuteMinimalGraphTest+"expectedResponse.json");
+//
+//      InputStreamHandle requestHandle=getInputStreamHandle(ExecuteMinimalGraphTest+"request.txt");
+//      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(requestHandle.toString()).content(graphHndle.toString())
+//        .session(session);
+//
+//      this.mockMvc.perform(builder)
+//        .andExpect(status().isOk())
+//        .andExpect(content().string(equalToCompressingWhiteSpace(expectedResponseHandle.toString())));
+//    } finally {
+//      removeCustomerSource();
+//    }
+//
+//  }
+
+  @ParameterizedTest
+  @MethodSource("getDirectoryNames")
+  void genericGraphTests(String argument) throws Exception {
     try {
 
-      addCustomerSourceDocument();
-      String payload = "{\"jsonGraph\":{\"models\":[],\"executionGraph\":{\"last_node_id\":2,\"last_link_id\":1,\"nodes\":[{\"id\":2,\"type\":\"dhf/output\",\"pos\":[1308,434],\"size\":[180,160],\"flags\":{},\"order\":1,\"mode\":0,\"inputs\":[{\"name\":\"output\",\"type\":0,\"link\":1}],\"properties\":{}},{\"id\":1,\"type\":\"dhf/input\",\"pos\":[248,489],\"size\":[180,60],\"flags\":{},\"order\":0,\"mode\":0,\"outputs\":[{\"name\":\"input\",\"type\":\"\",\"links\":[1]},{\"name\":\"uri\",\"type\":\"\",\"links\":null},{\"name\":\"collections\",\"type\":\"\",\"links\":null}],\"properties\":{}}],\"links\":[[1,1,0,2,0,0]],\"groups\":[],\"config\":{},\"version\":0.4}},\"collection\":\"customer-ingest\",\"collectionRandom\":false,\"previewUri\":\"" + TEST_CUSTOMER_1_JSON + "\"}";
-      String request = "/v1/resources/vppBackendServices?rs:action=ExecuteGraph&rs:database=17058662230699828412";
-      String expectedResponse = "{\"envelope\":{\"headers\":{\"sources\":[{\"name\":\"Customer360\"}], \"createdOn\":\"2020-01-21T16:04:45.849756Z\", \"createdBy\":\"admin\", \"createdUsingFile\":\"/Users/smitrovi/MarkLogic/dev/vpp-java-test/data/customer/dump1.csv\"}, \"triples\":[], \"instance\":{\"id\":\"652\", \"first_name\":\"Connie\", \"last_name\":\"Harnor\", \"email\":\"charnori3@ibm.com\", \"gender\":\"Male\", \"ip_address\":\"3.115.93.14\", \"dob\":\"14/05/2001\", \"street\":\"49 Killdeer Lane\", \"city\":\"Zhangjiapan\", \"zipcode\":\"\", \"country\":\"China\"}, \"attachments\":null}}";
+      addCustomerSourceDocument("GraphTests/"+argument+"/input.json");
+      
+      InputStreamHandle graphHndle = getInputStreamHandle("GraphTests/"+argument+"/graph.json");
 
+      InputStreamHandle expectedResponseHandle = getInputStreamHandle("GraphTests/"+argument+"/expectedResponse.json");
 
-      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(request).content(payload)
+      InputStreamHandle requestHandle=getInputStreamHandle("GraphTests/"+argument+"/request.txt");
+
+      // TO-DO: remove the need for database ID
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(requestHandle.toString()).content(graphHndle.toString())
         .session(session);
 
       this.mockMvc.perform(builder)
         .andExpect(status().isOk())
-        .andExpect(content().string(containsString(expectedResponse)));
+        .andExpect(content().string(equalToCompressingWhiteSpace(expectedResponseHandle.toString())));
     } finally {
       removeCustomerSource();
     }
-
   }
+
+  private static Stream<String> getDirectoryNames() {
+    InputStreamHandle ism= getInputStreamHandle("GraphTests");
+
+    String dirs[]=ism.toString().split("\n");
+    return Arrays.stream(dirs);
+  }
+
 
   /**
    * Tests saving of a graph
@@ -308,8 +351,7 @@ class MarkLogicControllerTest {
     String request = "/v1/resources/vppBackendServices?rs:action=SaveBlock";
 
     // get the payload from resources
-    final InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(CREATE_SOURCE_BLOCK_PAYLOAD_JSON);
-    InputStreamHandle handle = new InputStreamHandle(is);
+    InputStreamHandle handle = getInputStreamHandle(CREATE_SOURCE_BLOCK_PAYLOAD_JSON);
 
     String payload = handle.toString();
 
