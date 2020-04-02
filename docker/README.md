@@ -6,7 +6,7 @@ This guide assumes you have a working knowledge of:
 
 * Running containers with [Docker](https://docs.docker.com/engine/docker-overview/), including port-binding and volumes
 
-* [MarkLogic](https://docs.marklogic.com/guide/getting-started/intro), including using the [Query Console](https://docs.marklogic.com/guide/qconsole/walkthru) to find documents
+* [MarkLogic](https://docs.marklogic.com/guide/getting-started/intro)
 
 * The [MarkLogic Data Hub Framework](https://docs.marklogic.com/datahub/), including using [Gradle](http://docs.marklogic.com/datahub/projects/create-project-using-gradle.html) to initiate and deploy a project
 
@@ -18,18 +18,17 @@ Before following the instructions below, please make sure:
 
 * You have the MarkLogic image from [DockerHub](https://hub.docker.com/_/marklogic) on your local machine. 
 * You have MarkLogic's Data Hub Framework (DHF) project files on your local machine.
-  * In this project, you need to have added mlBundle to your DHF ``build.gradle`` file (see the [main Pipes documentation](https://github.com/marklogic-community/pipes))
-  * You also need to have initiated your DHF project (you've run ``./gradlew hubInit``).
-
+  * In this project, you need to have added *mlBundle* to your DHF ``build.gradle`` file (see the [main Pipes documentation](https://github.com/marklogic-community/pipes) for more information)
+  
 ## Getting the image
 
-The Pipes image is hosted on DockerHub. Assuming you already have a DockerHub account, first make sure you are logged-in. Run
+The Pipes image is hosted on DockerHub. Assuming you already have a DockerHub account, first make sure you are logged-in. 
 
 ``docker login``
 
-and enter your credentials (if necessary).
+Then, enter your credentials (if necessary).
 
-Then, pull the image:
+Next, pull the image:
 
 ``docker pull dhfpipes/pipes:v1``
 
@@ -59,6 +58,8 @@ replacing the values in brackets:
 * username (your MarkLogic username)
 * password (your MarkLogic password)
 * network (the Docker network your MarkLogic container is running in)
+
+Please remember that for your Pipes container to connect to an existing MarkLogic instance with DHF, it will need to have had the Pipes modules installed. To add Pipes to your DHF, include *mlBundle* in your ``build.gradle``. (See the [main Pipes documentation](https://github.com/marklogic-community/pipes) for more information.)
 
 ### Creating a new MarkLogic container and connecting Pipes to it
 
