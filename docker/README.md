@@ -10,7 +10,7 @@ and enter your credentials if necessary.
 
 The pull the image:
 
-``docker push dhfpipes/pipes:v1``
+``docker pull dhfpipes/pipes:v1``
 
 ## Building the Pipes image from the Dockerfile
 
