@@ -92,7 +92,7 @@ Choose how to access your local network from within a container, for example usi
    --rm  \
    pipes:v1``
 
-### Building the Pipes image from the Dockerfile
+## Building the Pipes image from the Dockerfile
 
 First, create a directory to contain the Pipes jar. From the directory that contains the Dockerfile and entrypoint script (pipes-entrypoint.sh) run:
 
