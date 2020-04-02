@@ -872,6 +872,9 @@
       {
         "name": "value",
         "type": "xs:string"
+      },{
+        "name": "default",
+        "type": "xs:string"
       }
     ],
     "properties": [

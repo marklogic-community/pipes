@@ -1583,7 +1583,7 @@ function init(LiteGraph){
         return item.source === val;
       });
     }
-    let output= val;
+    let output= this.getInputData(1);
     if( mappedValue != null && mappedValue.length > 0 ) {
       output = mappedValue[0].target;
     }
