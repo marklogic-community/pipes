@@ -108,6 +108,103 @@
       </q-card>
     </q-dialog>
 
+  <q-dialog
+      persistent
+      v-model="editJsonRange"
+    >
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Edit data mapping</div>
+        </q-card-section>
+
+        <q-card-section>
+          <q-table
+            :columns="columnsRange"
+            :data="currentPropertiesRange"
+            binary-state-sort
+            row-key="name"
+            title="Mappings"
+          >
+            <template v-slot:body="props">
+              <q-tr :props="props">
+                <q-td
+                  :props="props"
+                  key="from"
+                >
+                  {{ props.row.from }}
+                  <q-popup-edit
+                    buttons
+                    title="Update mapping"
+                    v-model="props.row.from"
+                  >
+                    <q-input
+                      autofocus
+                      dense
+                      type="string"
+                      v-model="props.row.from"
+                    />
+                  </q-popup-edit>
+                </q-td>
+                <q-td
+                                  :props="props"
+                                  key="to"
+                                >
+                                  {{ props.row.to }}
+                                  <q-popup-edit
+                                    buttons
+                                    title="Update mapping"
+                                    v-model="props.row.to"
+                                  >
+                                    <q-input
+                                      autofocus
+                                      dense
+                                      type="string"
+                                      v-model="props.row.to"
+                                    />
+                                  </q-popup-edit>
+                                </q-td>
+                <q-td
+                  :props="props"
+                  key="target"
+                >
+                  {{ props.row.target }}
+                  <q-popup-edit
+                    buttons
+                    title="Update mapping"
+                    v-model="props.row.target"
+                  >
+                    <q-input
+                      autofocus
+                      dense
+                      type="string"
+                      v-model="props.row.target"
+                    />
+                  </q-popup-edit>
+                </q-td>
+
+              </q-tr>
+            </template>
+          </q-table>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn
+            @click="addMappingRange()"
+            color="primary"
+            flat
+            label="Add mapping"
+          />
+          <q-btn
+            color="primary"
+            flat
+            label="OK"
+            v-close-popup
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
+
     <q-dialog
       persistent
       v-model="editJson"
@@ -909,7 +1006,8 @@ export default {
       selectedTargetDB: null,
       editQuery: false,				// show ctsQuery block edit popup
       editSJSCode : false,
-      editJson: false,				//
+      editJson: false,
+      editJsonRange: false,//
       editCases: false,				// swho selectCase cases property popup
       saveToDB: false,
       confirmDeleteGraph: false,
@@ -936,6 +1034,11 @@ export default {
         { name: 'source', align: 'left', label: 'Source', field: 'source', sortable: true },
         { name: 'target', label: 'Target', field: 'target', sortable: true, align: 'left' },
       ],
+      columnsRange: [
+              { name: 'from', align: 'left', label: 'From (inc)', field: 'from', sortable: true },
+               { name: 'to', label: 'To (inc)', field: 'to', sortable: true, align: 'left' },
+              { name: 'target', label: 'Target', field: 'target', sortable: true, align: 'left' },
+            ],
       opened: true,
       isExported: false,
       graph: null,                // LiteGraphObject
@@ -952,6 +1055,7 @@ export default {
       graphName: "",
       savedGraph: [],
       currentProperties: [],
+       currentPropertiesRange: [],
       jsoneditor: null,
       availableCollections: [],
       selectedDB: null,
@@ -1162,6 +1266,9 @@ export default {
     addMapping () {
       this.currentProperties.push({ source: "val", target: "newVal" })
     },
+    addMappingRange () {
+          this.currentPropertiesRange.push({ from: "0", to: "0", target: "0" })
+        },
 
     getDatabaseEntities () {
       var self = this;
@@ -1688,6 +1795,8 @@ export default {
 
       if (block.properties.mapping)
         message = 'Double click block to edit the mapping rules'
+     if (block.properties.mappingRange)
+        message = 'Double click block to edit the mapping rules'
 
       if (block.properties.ctsQuery)
         message = 'Double click block to edit the lookup query'
@@ -1763,7 +1872,12 @@ export default {
 
 	  if ( block.node_over && block.node_over.properties ) {
 
-	// string/Mapvalues block
+
+if (block.node_over.properties.mappingRange) {
+		if (block.node_over.properties.mappingRange != null) this.currentPropertiesRange = block.node_over.properties.mappingRange
+        this.editJsonRange = true
+      }
+
       if (block.node_over.properties.mapping) {
 		if (block.node_over.properties.mapping != null) this.currentProperties = block.node_over.properties.mapping
         this.editJson = true

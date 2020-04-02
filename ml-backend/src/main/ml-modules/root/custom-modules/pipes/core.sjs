@@ -1608,6 +1608,53 @@ function init(LiteGraph){
   LiteGraph.registerNodeType("string/Map values", mapValueBlock );
 
 
+  function mapRangeValueBlock()
+  {
+    this.addInput("value");
+    this.addInput("default");
+    this.addOutput("mappedValue");
+    this.mappingRange = this.addProperty("mappingRange" );
+    this.castOutput = this.addWidget("combo","castOutput", "string", function(v){},  { values:["string","bool","date","int","float"]} );
+  }
+
+//name to show
+  mapRangeValueBlock.title = "mapRangeValues";
+
+
+  mapRangeValueBlock.prototype.onExecute = function()
+  {
+    let val = Number(this.getInputData(0));
+    let mappedValue = this.properties['mappingRange'].filter(item => {
+        return val >= Number(item.from) && val <= Number(item.to)
+      });
+    let output= this.getInputData(1);
+    if (!output) {
+      output = 0;
+    }
+    if( mappedValue != null && mappedValue.length > 0 ) {
+      output = mappedValue[0].target;
+      if ( output === "#INPUT#") {
+        output = val;
+      }
+    }
+    if (this.castOutput.value === 'bool'){
+      if( output === "true" ) {
+        output = true;
+      } else if( output === "false" ) {
+        output = false;
+      }
+    } else if (this.castOutput.value === 'string') {
+        output = output.toString()
+    } else if (this.castOutput.value === 'number') {
+      output = Number(output.toString())
+    }
+
+    this.setOutputData( 0,output);
+  }
+
+//register in the system
+  LiteGraph.registerNodeType("feature/mapRangeValues", mapRangeValueBlock );
+
   function EvalJavaScriptBlock()
   {
     this.addInput("var0");
