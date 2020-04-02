@@ -1,5 +1,10 @@
 # Running Pipes in a Docker container
 
+## Prerequisites 
+
+Same as here: [Pipes prerequisites](https://github.com/marklogic-community/pipes#prerequisites)
+
+
 ## Pulling the Pipes image from Docker Hub
 
 Assuming you already have a Docker Hub account, log in to Docker Hub using your credentials. Run
@@ -30,7 +35,7 @@ Finally, build the image:
 
 To run Pipes as a container, you will need to add the following arguments to your Docker ``run`` command:
 
-* DHF (the location of the DHF project files on your system)
+* DHF (the location of the DHF project files on your local system)
 * MLHOST (the uri of the MarkLogic instance Pipes will connect to, but not including "http" if it's present)
 * MLUSERNAME
 * MLPASSWORD

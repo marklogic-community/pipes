@@ -5,7 +5,15 @@ A visual programming tool for [MarkLogic](https://docs.marklogic.com/guide/getti
 
 Pipes for MarkLogic DataHub is a community tool. As such, it is not supported by MarkLogic Corporation and is only updated and corrected based on a best-effort approach. Any contribution or feedback is welcomed to make the tool better.
 
-Pipes is designed to run on MarkLogic 10.0-2 (with DHF 5.1.0 installed). 
+## Prerequisites
+
+Pipes is designed to run on MarkLogic 10.0-2 and higher.
+
+It assumes that:
+
+- A DHF project (5.1.0 and higher) is present on the local file-system
+- That DHF project is installed to your MarkLogic server
+ 
 
 ## Great! How do I run it?
 To use Pipes you will need to have an instance of MarkLogic with the [Data Hub](https://docs.marklogic.com/datahub/index.html) installed.
