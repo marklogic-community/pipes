@@ -67,15 +67,20 @@ DHFfiles=/location/of/your/DHF/project
 
 ##### Start MarkLogic
 
-Then, start a new instance of  MarkLogic in a container:
+Then, from the directory that contains your docker-compose file, start a new instance of  MarkLogic in a container:
 
 ``docker-compose up marklogic.dhf.local``
 
 After a few minutes MarkLogic will have been installed and initiated.
 
+##### Install the DHF to MarkLogic
+Now, still in your local machine, but in your pipes project, run:
+
+``./gradew mlDeploy``
+
 ##### Start Pipes
 
-Finally, start Pipes:
+Finally, back in the directory that contains your docker-compose file, start Pipes:
 
 ``docker-compose  -f pipes.yml up``
 
