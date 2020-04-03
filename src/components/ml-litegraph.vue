@@ -9,104 +9,58 @@
       width='1800'
     ></canvas>
 
-    <q-dialog
-      persistent
-      v-model="editQuery"
-    >
+<!-- Reusable edit dialog -->
+ <q-dialog persistent v-model="showDynamicEdit">
       <q-card>
         <q-card-section>
-          <div class="text-h6">Edit Query</div>
+          <div class="text-h6 absolute-center">{{ editPopupTitle }}</div>
         </q-card-section>
 
         <q-card-section>
-          <div
-            class="q-pa-md"
-            style="max-width: 600px;min-width:500px"
-          >
-            <q-input
-              v-model="currentCtsQuery.ctsQuery"
-              filled
-              type="textarea"
-            />
+          <div class="q-pa-md" style="min-width: 500px">
+            <q-input v-model="EditForm.editProp" filled type="textarea" />
           </div>
-        </q-card-section>
+          </q-card-section>
 
-        <q-card-actions align="right">
-          <q-btn
-            color="primary"
-            flat
-            label="OK"
-            v-close-popup
-          />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+    <!--    <q-card-section> -->
+          <div class="row" align="middle">
+            <div class="col-6">
+             <q-btn
+              color="secondary"
+              label="Cancel"
+              @click="cancelBlockPropertyEdit()"
+              v-close-popup/>
 
-    <q-dialog
-          persistent
-          v-model="editSJSCode"
-        >
-          <q-card>
-            <q-card-section>
-              <div class="text-h6">Edit JavaScript</div>
-            </q-card-section>
-
-            <q-card-section>
-              <div
-                class="q-pa-md"
-                style="max-width: 600px;min-width:500px"
-              >
-                <q-input
-                  v-model="currentSJSCode.sjsCode"
-                  filled
-                  type="textarea"
-                />
               </div>
-            </q-card-section>
 
-            <q-card-actions align="right">
+            <div class="col-6">
               <q-btn
-                color="primary"
-                flat
-                label="OK"
-                v-close-popup
-              />
-            </q-card-actions>
-          </q-card>
-        </q-dialog>
-
-    <q-dialog
-      persistent
-      v-model="editCases"
-    >
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Edit Cases</div>
-        </q-card-section>
-
-        <q-card-section>
-          <div
-            class="q-pa-md"
-            style="max-width: 600px;min-width:500px"
-          >
-            <q-input
-              v-model="currentCases.testCases"
-              filled
-              type="textarea"
-            />
+              ref="blockPropertySaveBtn"
+              color="primary"
+              label="Save"
+              @preSave=""
+              @click="saveBlockPropertyEdit()"/>
+            </div>
           </div>
-        </q-card-section>
+          <q-space></q-space>
 
-        <q-card-actions align="right">
-          <q-btn
-            color="primary"
-            flat
-            label="OK"
-            v-close-popup
-          />
-        </q-card-actions>
+	    <q-icon v-if="EditForm.contentValid == true && EditForm.neverValidated == false" color="green" name="fas fa-check-circle">
+		    <q-tooltip content-class="pipes-tooltip">Some fields have been sampled and are ready in next step</q-tooltip>
+	    </q-icon>
+	    <q-icon v-if="EditForm.contentValid == false && EditForm.neverValidated == false" color="red" name="fas fa-check-circle">
+		    <q-tooltip content-class="pipes-tooltip">Some fields have been sampled and are ready in next step</q-tooltip>
+	    </q-icon>
+	    <q-icon v-if="EditForm.contentValid == false && EditForm.neverValidated == true" color="grey" name="fas fa-check-circle">
+		    <q-tooltip content-class="pipes-tooltip">No document fields sampled yet based on current selection</q-tooltip>
+	    </q-icon>
+
+      {{ this.EditForm.validationMessage}}
+
+     <!--   </q-card-section> -->
       </q-card>
     </q-dialog>
+
+    <!-- end of reusable dialog -->
 
     <q-dialog
       persistent
@@ -908,10 +862,21 @@ export default {
       currentCases: "",				//selectCase edit popup
       selectedTargetDB: null,
       editQuery: false,				// show ctsQuery block edit popup
-      editSJSCode : false,
       editJson: false,				//
       editCases: false,				// swho selectCase cases property popup
       saveToDB: false,
+      showDynamicEdit: false,
+      EditForm: {
+        blockRef: null,
+        title : "",
+        refProp: null,
+        propName: "",
+        editProp: null,
+        oldValue: "",
+        neverValidated: true,
+        contentValid: false,
+        validationMessage: ''
+      },
       confirmDeleteGraph: false,
       confirmResetGraph: false,
       warnBlockOnGraph: false,
@@ -1012,6 +977,9 @@ export default {
     }
   },
   computed: {
+    editPopupTitle: function() {
+      return ( this.EditForm.title !== null) ? this.EditForm.title : ""
+    },
     blockModels: function () {
       return this.$store.getters.models
     },
@@ -1081,7 +1049,6 @@ export default {
       }
     },
     selectedStep: function (val) {
-
       let availableDbHash = this.availableDB.reduce(function (map, obj) {
         map[obj.label] = obj.value;
         return map;
@@ -1089,39 +1056,60 @@ export default {
 
       this.selectedDB = { "label": this.dhfSteps[val.label].database, "value": availableDbHash[this.dhfSteps[val.label].database] };
       this.collectionForPreview = { "label": this.dhfSteps[val.label].collection, "value": this.dhfSteps[val.label].collection };
-
-
-
     }
   },
-
   methods: {
     // criteria for disabling the "Execute Preview" button
     shouldDisable () {
       let disable = false;
-
       // if the source DB not selected
       if (this.selectedDB === '' || this.selectedDB === null) {
         disable = true;
       }
-
       // if the source collection not selected or docUri not used
       if ((this.collectionForPreview === '' || this.collectionForPreview === null) && (this.docUri === '' || this.docUri === null)) {
         disable = true;
       }
-
       // if tryin to save to DB but the target DB not selected
       if (this.saveToDB === true) {
         if (this.selectedTargetDB === '' || this.selectedTargetDB === null) {
           disable = true;
         }
       }
-
       return disable;
+    },
+    saveBlockPropertyEdit() {
+      if ( this.EditForm.blockRef.beforePropSave ) {
+        var validation = {}
+        if (! this.EditForm.blockRef.beforePropSave(this.EditForm.editProp, validation) ) {
+         // console.log("Edit save stopped by block beforePropSave logic: " + validation.message)
+          this.EditForm.contentValid = false
+          this.EditForm.neverValidated = false
+          this.EditForm.validationMessage = validation.message
+          return
+        }
+      } else {
+        console.log("No block validation provided. Saving content")
+      }
+      this.EditForm.refProp[this.EditForm.propName] = this.EditForm.editProp
+      this.resetEditDialog()
+    },
+    cancelBlockPropertyEdit() {
+      this.EditForm.refProp[this.EditForm.propName] = this.EditForm.oldValue
+      this.resetEditDialog()
+    },
+    // close edit dialog and reset everything
+    resetEditDialog() {
+      this.showDynamicEdit = false
+      this.EditForm.refProp = null
+      this.EditForm.editProp = null
+      this.EditForm.title = ''
+      this.EditForm.neverValidated = true
+      this.EditForm.blockRed = false
+      this.EditForm.validationMessage = ''
     },
 
     createBlock (blockDef) {
-
       var blockInList = false;
       const BLOCK_KEY = blockDef.source + "/" + blockDef.collection
       blockInList = this.isblockInModelList(this.blockModels, BLOCK_KEY)
@@ -1175,7 +1163,7 @@ export default {
         })
     },
 
-    loadGraphFromJson (graph) {
+    loadGraphFromJson (graph, notifyLoaded) {
 
       this.checkEntityBlocks(graph)
       this.graphStatistics(graph.executionGraph)
@@ -1209,20 +1197,27 @@ export default {
       if (graph.metadata && graph.metadata.description != null) this.graphMetadata.description = graph.description; else this.graphMetadata.description = ""
       this.$root.$emit("initGraphMetadata", this.graphMetadata)
 
-	  this.notifyPositive(self, "Loaded graph " + this.graphMetadata.title)
+	  if ( notifyLoaded ) this.notifyPositive(self, "Loaded graph " + this.graphMetadata.title)
 	  this.$root.$emit("resetGraphTitle") // reset the titlebar to top graph (remove all subgraph history)
       this.showUploadGraph = false
     }
     ,
     getSavedGraph (uri, graphName) {
       //if(uri!=null)
-	  console.log("Get saved graph")
+	  console.log("Reloading saved graph " + graphName)
       var self = this; // keep reference for notifications called from catch block
       this.$axios.get('/v1/resources/vppBackendServices?rs:action=GetSavedGraph&rs:uri=' + encodeURI(uri))
         .then((response) => {
           let graph = response.data;
-          this.loadGraphFromJson(graph)
-          this.notifyPositive(self, "Loaded graph '" + graphName + "'")
+          console.log("restoring the graph")
+          this.loadGraphFromJson(graph, true)
+          //self.notifyPositive(this, "Loaded graph '" + graphName + "'")
+           this.$q.notify({
+    color: 'positive',
+    position: 'top',
+    message: "Loaded graph '" + graphName + "'",
+    icon: 'code'
+  })
           this.loadPopUpOpened = false
         })
         .catch((error) => {
@@ -1525,7 +1520,7 @@ export default {
         .then((response) => {
           let defaultGraph = response.data
           defaultGraph.models = this.blockModels
-          this.loadGraphFromJson(defaultGraph)
+          this.loadGraphFromJson(defaultGraph, false)
         })
     }
     ,
@@ -1681,25 +1676,17 @@ export default {
       }
 	},
     selectNode (block) {
-      console.log(block)
-      let message = null
-      if (block.properties.testCases)
-        message = 'Double click block to edit the test cases'
 
-      if (block.properties.mapping)
-        message = 'Double click block to edit the mapping rules'
-
-      if (block.properties.ctsQuery)
-        message = 'Double click block to edit the lookup query'
-
-      if (message != null)
+      let message = this.isNotEmpty(block.properties) && this.isNotEmpty(block.properties.hoverText) ? block.properties.hoverText : ""
+      if ( this.isNotEmpty(message) ) {
         this.$q.notify({
           color: 'secondary',
           position: 'center',
           message: message,
           icon: 'info',
-          timeout: 800
+          timeout: 500
         })
+      }
     },
     discoverDhfSteps () {
       var self = this;
@@ -1759,34 +1746,34 @@ export default {
           self.notifyError("collectionDetails", error, self);
         })
     },
-    DblClickNode (block) {
+    // Double click on nodes
+    nodeDoubleClick(block) {
 
-	  if ( block.node_over && block.node_over.properties ) {
+	    if ( block.node_over && block.node_over.properties ) {
 
-	// string/Mapvalues block
+	    // string/Mapvalues block
       if (block.node_over.properties.mapping) {
-		if (block.node_over.properties.mapping != null) this.currentProperties = block.node_over.properties.mapping
+		    this.currentProperties = block.node_over.properties.mapping
         this.editJson = true
+      } else {
+
+		// selectCase, Lookup, EvalJavaScript, & generic edit window hook
+        if ( this.isNotEmpty(block.node_over.properties.pipesDblClickProp) ) {
+          this.EditForm.blockRef = block.node_over
+          this.EditForm.propName = block.node_over.properties.editProp
+          this.EditForm.refProp =  block.node_over.properties
+          this.EditForm.editProp = block.node_over.properties[this.EditForm.propName]
+          this.EditForm.oldValue = this.EditForm.editProp // copy of original value so can revert on cancel
+          this.EditForm.title = this.isNotEmpty(block.node_over.properties.editWindowTitle) ? block.node_over.properties.editWindowTitle : "Edit"
+          console.log("Editing property " + this.EditForm.propName + ": current val = " + this.EditForm.editProp)
+          this.showDynamicEdit = true
       }
 
-	// Lookup block
-      if (block.node_over.properties.ctsQuery) {
-		if (block.node_over.properties != null) this.currentCtsQuery = block.node_over.properties
-		this.editQuery = true
       }
-    if (block.node_over.properties.sjsCode) {
-		    if (block.node_over.properties != null) this.currentSJSCode = block.node_over.properties
-		      this.editSJSCode = true
       }
-
-		// selectCase block
-      if (block.node_over.properties.testCases) {
-		if (block.node_over.properties.testCases != null) this.currentCases = block.node_over.properties
-		this.editCases = true
-	  }
-
-	  }
-
+    },
+    isNotEmpty(prop) {
+      return (prop !== null && prop != '')
     },
     copyResultToClipboard (result) {
       var document;
@@ -1839,7 +1826,7 @@ export default {
         if(config.title_color) blockCode += config.functionName + ".title_color = \""+config.title_color+"\";"
         blockCode += config.functionName + ".title = '" + config.blockName + "';";
 
-		// Add event to onDrawForeground for block when defined
+		// Add event to onConfigure for block when defined
 		// !== undefined is required
 		if ( config.events && config.events != null && config.events != undefined ) {
 			if ( config.events.onDrawForeground !== null && config.events.onDrawForeground != undefined && config.events.onDrawForeground != '' ) {
@@ -1848,9 +1835,13 @@ export default {
 			if ( config.events.onConfigure !== null && config.events.onConfigure != undefined && config.events.onConfigure != '' ) {
 				blockCode += config.functionName + ".prototype.onConfigure = function(node){" + config.events.onConfigure + "};"
 			}
-		}
+    }
+    	// beforePropSave event for validating block property editing
+    if ( config.events && config.events.beforePropSave && config.events.beforePropSave != undefined ) {
+				blockCode += config.functionName + ".prototype.beforePropSave = function(v,validation){" + config.events.beforePropSave + "};"
+      }
 
-		blockCode += config.functionName + ".prototype.notify = function(node){this.$root.$emit(\"nodeSelected\",node)}.bind(this);";
+		    blockCode += config.functionName + ".prototype.notify = function(node){this.$root.$emit(\"nodeSelected\",node)}.bind(this);";
         blockCode += config.functionName + ".prototype.onSelected = function(){this.notify(this) };"
         blockCode += config.functionName + ".prototype.onDblClick = function(e,pos,object){this.$root.$emit(\"nodeDblClicked\",object) }.bind(this);"
         blockCode += config.functionName + ".prototype.onExecute = function(){  ";
@@ -1884,6 +1875,7 @@ export default {
   },
 
   mounted: function () {
+
     console.log("mounted")
 
     this.$root.$on("csvLoadingRequested", this.createGraphFromMapping)
@@ -1899,18 +1891,18 @@ export default {
     this.$root.$on("loadGraphCall", this.loadGraph);
     this.$root.$on("loadGraphJsonCall", this.loadGraphFromJson);
     this.$root.$on("exportGraphCall", this.exportDHFModule);
-    this.$root.$on("nodeDblClicked", this.DblClickNode);
+    this.$root.$on("nodeDblClicked", this.nodeDoubleClick);
     this.$root.$on("nodeSelected", this.selectNode);
     this.$root.$on("loadDHFDefaultGraphCall", this.resetDhfDefaultGraph);
     this.$root.$on("listGraphBlocks", this.listGraphBlocks);
     this.$root.$on("checkGraphBlockDelete", this.checkGraphBlockDelete);
-	this.$root.$on('blockRequested', this.createBlock);
+	  this.$root.$on('blockRequested', this.createBlock);
 
     this.discoverDatabases(false)
     this.discoverDhfSteps()
 
     this.graph = new LiteGraph.LGraph();
-	this.graph_canvas = new LiteGraph.LGraphCanvas(this.$refs["mycanvas"], this.graph);
+	  this.graph_canvas = new LiteGraph.LGraphCanvas(this.$refs["mycanvas"], this.graph);
 
 	// catch just in case problems. shouldn't stop tool working
 	try {
@@ -1956,7 +1948,7 @@ export default {
     this.$root.$off("nodeSelected", this.selectNode);
     this.$root.$off("loadDHFDefaultGraphCall", this.resetDhfDefaultGraph);
     this.$root.$off("listGraphBlocks", this.listGraphBlocks);
-	this.$root.$off("checkGraphBlockDelete", this.checkGraphBlockDelete);
+	  this.$root.$off("checkGraphBlockDelete", this.checkGraphBlockDelete);
   }
 
 }
