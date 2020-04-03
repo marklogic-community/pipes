@@ -1,6 +1,6 @@
 # Running Pipes in a Docker container
 
-Pipes can be run from a [Docker](https://docs.docker.com/engine/docker-overview/) image and connect to [MarkLogic](https://docs.marklogic.com/guide/getting-started/intro) running in another container, on your local machine, or on a remote server. The Pipes image is a lightweight Java container, built on [openjdk:8-jdk-alpine](https://hub.docker.com/_/openjdk).
+The Pipes image is a lightweight Java container, built on [openjdk:8-jdk-alpine](https://hub.docker.com/_/openjdk).
 
 For more information about the Pipes project and the technologies referred to in this guide, please see:
 
@@ -23,7 +23,7 @@ Before following the instructions below, please make sure:
   
 ## Getting the image
 
-The Pipes image is hosted on DockerHub. Assuming you already have a DockerHub account, first make sure you are logged-in. 
+The Pipes image is hosted on DockerHub. Assuming you already have a DockerHub account, first make sure you are logged in. 
 
 ``docker login``
 
@@ -36,24 +36,6 @@ Next, pull the image:
 If you would like to build the image yourself, please follow the instructions in [building-pipes-image.md](../building-pipes-image.md).
 
 ## Running Pipes
-
-### Connecting to an existing MarkLogic container 
-
-#### 1) Set the Docker Compose environment values
-
-Create an ``.env`` file. This file contains the values your Pipes container will use. You can use the ``example.env`` file for reference. You can use most of the default values from ``example.env``, but will need to change:
-
-* mlHostName (the name of your MarkLogic container)
-* mlAdmin (your MarkLogic username)
-* mlPassword (your MarkLogic password)
-* mlVersion (the version of the MarkLogic image that's on your machine)
-* DHFfiles (the directory that contains your DHF project)
-
-Please remember that for your Pipes container to connect to an existing MarkLogic instance with DHF, it will need to have had the Pipes modules installed. To add Pipes to your DHF, include *mlBundle* in your ``build.gradle``. (See the [main Pipes documentation](https://github.com/marklogic-community/pipes) for more information.)
-
-#### 2) Run pipes
-
-``docker-compose  -f pipes.yml up``
 
 ### Creating a new MarkLogic container and connecting Pipes to it
 
