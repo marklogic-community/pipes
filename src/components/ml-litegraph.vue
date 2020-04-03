@@ -1677,7 +1677,9 @@ export default {
 	},
     selectNode (block) {
 
-      let message = this.isNotEmpty(block.properties) && this.isNotEmpty(block.properties.hoverText) ? block.properties.hoverText : ""
+      if ( this.isNotEmpty(block.properties) && block.properties.hoverText) {
+
+      let message = this.isNotEmpty(block.properties) && block.properties.hoverText ? block.properties.hoverText : ""
       if ( this.isNotEmpty(message) ) {
         this.$q.notify({
           color: 'secondary',
@@ -1687,6 +1689,7 @@ export default {
           timeout: 500
         })
       }
+    }
     },
     discoverDhfSteps () {
       var self = this;
@@ -1758,14 +1761,14 @@ export default {
       } else {
 
 		// selectCase, Lookup, EvalJavaScript, & generic edit window hook
-        if ( this.isNotEmpty(block.node_over.properties.pipesDblClickProp) ) {
+        if ( this.isNotEmpty(block.node_over.properties.pipesDblClickProp) && block.node_over.properties.editProp  ) {
           this.EditForm.blockRef = block.node_over
           this.EditForm.propName = block.node_over.properties.editProp
           this.EditForm.refProp =  block.node_over.properties
           this.EditForm.editProp = block.node_over.properties[this.EditForm.propName]
           this.EditForm.oldValue = this.EditForm.editProp // copy of original value so can revert on cancel
           this.EditForm.title = this.isNotEmpty(block.node_over.properties.editWindowTitle) ? block.node_over.properties.editWindowTitle : "Edit"
-          console.log("Editing property " + this.EditForm.propName + ": current val = " + this.EditForm.editProp)
+       //   console.log("Editing property " + this.EditForm.propName + ": current val = " + this.EditForm.editProp)
           this.showDynamicEdit = true
       }
 
