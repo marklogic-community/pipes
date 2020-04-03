@@ -6,7 +6,7 @@ cat >application.properties <<EOF
 server.port=$SERVERPORT
 
 # MarkLogic DHF settings
-mlHost=$STACK_NAME.dhf.local
+mlHost=$ML_HOST_NAME
 mlStagingPort=$STAGING_PORT
 mlAppServicesPort=$APPSERVICES_PORT
 mlAdminPort=$ADMIN_PORT

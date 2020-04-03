@@ -7,6 +7,7 @@ services:
     pipes:
       image: pipes:v1
       environment:
+        - ML_HOST_NAME=${mlHostName}
         - SERVER_PORT=${pipesPort}
         - MARKLOGIC_ADMIN_USERNAME=${mlAdmin}
         - MARKLOGIC_ADMIN_PASSWORD=${mlPassword}

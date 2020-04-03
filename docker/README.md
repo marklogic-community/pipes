@@ -33,32 +33,27 @@ Next, pull the image:
 
 ``docker pull dhfpipes/pipes:v1``
 
+If you would like to build the image yourself, please follow the instructions in [building-pipes-image.md](../building-pipes-image.md).
+
 ## Running Pipes
 
 ### Connecting to an existing MarkLogic container 
 
-If you already have a MarkLogic container running on your machine, please run
+#### 1) Set the Docker Compose environment values
 
-```
-docker run -it --name pipes 
-   --mount type=bind,source={DHF},target=/DHF 
-   -e "MLHOST={host}"  
-   -e "MLUSERNAME={username}" 
-   -e "MLPASSWORD={password}" 
-   -p 8081:8081 
-   --network="{network}"
-   --rm 
-```
+Create an ``.env`` file. This file contains the values your Pipes container will use. You can use the ``example.env`` file for reference. You can use most of the default values from ``example.env``, but will need to change:
 
-replacing the values in brackets:
-
-* DHF (the location of the DHF project files on your local machine)
-* host (the hostname of the MarkLogic instance Pipes will connect to)
-* username (your MarkLogic username)
-* password (your MarkLogic password)
-* network (the Docker network your MarkLogic container is running in)
+* mlHostName (the name of your MarkLogic container)
+* mlAdmin (your MarkLogic username)
+* mlPassword (your MarkLogic password)
+* mlVersion (the version of the MarkLogic image that's on your machine)
+* DHFfiles (the directory that contains your DHF project)
 
 Please remember that for your Pipes container to connect to an existing MarkLogic instance with DHF, it will need to have had the Pipes modules installed. To add Pipes to your DHF, include *mlBundle* in your ``build.gradle``. (See the [main Pipes documentation](https://github.com/marklogic-community/pipes) for more information.)
+
+#### 2) Run pipes
+
+``docker-compose  -f pipes.yml up``
 
 ### Creating a new MarkLogic container and connecting Pipes to it
 
