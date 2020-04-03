@@ -57,6 +57,7 @@ java-middle-tier/.gradle
 CHANGELOG.md
 
 #Docker stuff
+docker/.env
 docker/jar/
 docker/data/
 docker/volumes/

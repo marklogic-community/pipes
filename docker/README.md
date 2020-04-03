@@ -1,24 +1,25 @@
 # Running Pipes in a Docker container
 
-## Prerequisites
+Pipes can be run from a [Docker](https://docs.docker.com/engine/docker-overview/) image and connect to [MarkLogic](https://docs.marklogic.com/guide/getting-started/intro) running in another container, on your local machine, or on a remote server. The Pipes image is a lightweight Java container, built on [openjdk:8-jdk-alpine](https://hub.docker.com/_/openjdk).
 
-This guide assumes you have a working knowledge of:
+For more information about the Pipes project and the technologies referred to in this guide, please see:
 
-* Running containers with [Docker](https://docs.docker.com/engine/docker-overview/), including port-binding and volumes
+* [Pipes](https://github.com/marklogic-community/pipes)
 
-* [MarkLogic](https://docs.marklogic.com/guide/getting-started/intro)
+* [MarkLogic Data Hub Framework (DHF)](https://docs.marklogic.com/datahub/)
+* [Gradle](https://gradle.org/)
 
-* The [MarkLogic Data Hub Framework](https://docs.marklogic.com/datahub/), including using [Gradle](http://docs.marklogic.com/datahub/projects/create-project-using-gradle.html) to initiate and deploy a project
+* [Create a DHF project using Gradle](http://docs.marklogic.com/datahub/projects/create-project-using-gradle.html) 
+* [Docker networking](https://docs.docker.com/config/containers/container-networking/)
 
 ### Set-up
 
 Before following the instructions below, please make sure:
 
-* You've installed the Docker runtime (for example, you're running Docker Desktop on a Mac)
-
 * You have the MarkLogic image from [DockerHub](https://hub.docker.com/_/marklogic) on your local machine. 
+
 * You have a Data Hub Framework (DHF) project on your local machine.
-  * In this project, you need to have added *mlBundle* to your DHF ``build.gradle`` file (see the [main Pipes documentation](https://github.com/marklogic-community/pipes) for more information)
+  * In this project, you need to have added the Pipes [mlBundle](https://github.com/marklogic-community/ml-gradle/wiki/Bundles) to your DHF ``build.gradle`` file (see the [main Pipes documentation](https://github.com/marklogic-community/pipes) for more information)
   
 ## Getting the image
 
@@ -33,8 +34,6 @@ Next, pull the image:
 ``docker pull dhfpipes/pipes:v1``
 
 ## Running Pipes
-
-In order for Pipes to run, it needs to connect to a MarkLogic instance that has a Pipes-enabled DHF installed (please see the **prerequisites** above for more details).
 
 ### Connecting to an existing MarkLogic container 
 
@@ -81,7 +80,7 @@ Create an ``.env`` file. This file contains the values your containers will use.
 
 ``docker-compose -f marklogic.yml up``
 
-After a few minutes the terminal output will stop and MarkLogic will have been installed and initiated. To check, login to your MarkLogic instance (e.g., [localhost:8000]()) with the username and password you set in the ``.env`` file.
+After a few minutes the terminal output will stop and MarkLogic will have been installed and initiated. To check, log-in to your MarkLogic instance (e.g., [localhost:8000]()) with the username and password you set in the ``.env`` file.
 
 #### 3) Deploy your DHF project to MarkLogic
 
@@ -89,7 +88,7 @@ Open a new terminal window. Change directory to the location of your DHF project
 
 ``./gradlew mlDeploy``
 
-Gradle will deploy the DHF to your MarkLogic container, via localhost, using the port-binding you specified in the ``.env`` file.
+Gradle will deploy the DHF to your MarkLogic container, via *localhost*, using the port-binding you specified in the ``.env`` file.
 
 #### 4) Start Pipes
 
