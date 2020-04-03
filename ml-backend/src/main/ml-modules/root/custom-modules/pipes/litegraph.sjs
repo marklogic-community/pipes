@@ -11043,6 +11043,7 @@ LGraphNode.prototype.executeAction = function(action)
   };
 
   GraphInput.prototype.onExecute = function() {
+    xdmp.log("GraphInput.prototype.onExecute")
     var name = this.properties.name;
     //read from global input
     var data = this.graph.inputs[name];
@@ -11139,6 +11140,7 @@ LGraphNode.prototype.executeAction = function(action)
   GraphOutput.desc = "Output of the graph";
 
   GraphOutput.prototype.onExecute = function() {
+    xdmp.log("GraphOutput.prototype.onExecute")
     this._value = this.getInputData(0);
     this.graph.setOutputData(this.properties.name, this._value);
   };
