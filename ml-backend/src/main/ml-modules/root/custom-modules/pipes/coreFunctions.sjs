@@ -1,12 +1,100 @@
 module.exports = {
-
+  executeBlock,
   getCurrentDate,
   lookUpCollectionPropertyValue,
   split,
   lookUp,
-  regExpReplace
+  regExpReplace,
+  mapValues
 };
 
+function executeBlock(block) {
+  if (! ("getRuntimeLibraryFunctionName" in block) ) {
+    throw Error("Block does not implement getRuntimeLibraryFunctionName")
+  }
+  const functionName = block.getRuntimeLibraryFunctionName();
+  const library = "getRuntimeLibraryPath" in  block ? block.getRuntimeLibraryPath() : null;
+  const inputs = getInputs(block);
+  const propertiesAndWidgets = getPropertiesAndWidgets(block);
+  const lib = library !== null ? require(library) : this;
+  const func = lib[functionName];
+  if ( typeof func !== "function") {
+    const libraryString = library === null ? "/custom-modules/pipes/coreFunctions.sjs" : library;
+    throw Error("Function '"+functionName+"' not found in '"+libraryString+"'")
+  }
+  const outputValues = func(propertiesAndWidgets, ...inputs);
+  outputValues.map((v,index) =>{ if ( typeof  v !== "undefined" ) { block.setOutputData(index,v) }  } );
+  return outputValues;
+}
+
+function getPropertiesAndWidgets(block) {
+  let propertiesWidgets ={
+    properties : block.properties,
+    widgets : {}
+  }
+  for ( widget of block.widgets ) {
+    const name = widget.name;
+    const value = block[widget.name].value;
+    propertiesWidgets.widgets[name] = value;
+  }
+  return propertiesWidgets;
+}
+
+function getInputs(block) {
+  // flatten the inputs
+  let inputs = [];
+  if ( block.inputs && block.inputs.length > 0 ) {
+    for ( let i = 0 ; i <= block.inputs.length ; i++ ) {
+        inputs.push(block.getInputData(i));
+    }
+  } else {
+    inputs = []
+  }
+  return inputs;
+}
+
+function mapValues(propertiesAndWidgets,val) {
+  if( val === undefined ) {
+    val = "#NULL#";
+  }
+  if( val === null ) {
+    val ="#NULL#";
+  }
+  if( val=== "" ) {
+    val = "#EMPTY#";
+  }
+  let mappedValue = null;
+  if ( propertiesAndWidgets.widgets.wildcarded
+  ) {
+    mappedValue = [];
+    for ( const map of propertiesAndWidgets.properties['mapping'] ) {
+      const wildcard = map.source;
+      const re = new RegExp(`^${wildcard.replace(/\*/g,'.*').replace(/\?/g,'.')}$`,'');
+      if ( re.test(val) ) {
+        mappedValue.push(map);
+      }
+    }
+  } else {
+    mappedValue = propertiesAndWidgets.properties['mapping'].filter(item => {
+      return item.source === val;
+    });
+  }
+  let output= val;
+  if( mappedValue != null && mappedValue.length > 0 ) {
+    output = mappedValue[0].target;
+  }
+  if (propertiesAndWidgets.widgets.castOutput === 'bool'){
+    if( output === "true" ) {
+      output = true;
+    } else if( output === "false" ) {
+      output = false;
+    }
+  }
+  if(output=="#NULL#") { output = null; }
+  if(output=="#EMPTY#") { output =""; }
+
+  return [output];
+}
 
 function getCurrentDate(dateOption) {
   switch (dateOption) {

@@ -1209,88 +1209,18 @@ function init(LiteGraph){
   }
 
 //name to show
-  mapValueBlock.title = "mapValues";
+ mapValueBlock.title = "mapValues";
 
-//function to call when the node is executeddhf/envelope
+  mapValueBlock.prototype.getRuntimeLibraryFunctionName = function() {
+    return "mapValues";
+  }
+  mapValueBlock.prototype.getRuntimeLibraryPath = function() {
+    // if this function is not here it assumes coreFunctions.sjs. So this is here for illustration only
+    return "/custom-modules/pipes/coreFunctions.sjs";
+  }
 
-  mapValueBlock.prototype.onCodeGeneration = function(tempVarPrefix,inputVariables,outputVariables,propertiesWidgets) {
-    let code = [];
-    code.push('let '+tempVarPrefix+'val = '+inputVariables.input0+';');
-    code.push('if('+tempVarPrefix+'val==undefined) {');
-    code.push(' '+tempVarPrefix+'val ="#NULL#"; }');
-    code.push('if('+tempVarPrefix+'val==null) { ');
-    code.push(' '+tempVarPrefix+'val ="#NULL#"; }');
-    code.push('if('+tempVarPrefix+'val=="") { ');
-    code.push(' '+tempVarPrefix+'val ="#EMPTY#"; }');
-    code.push('let '+tempVarPrefix+'mappedValue = '+JSON.stringify(propertiesWidgets.properties.mapping)+'.filter(item => {return item.source=='+tempVarPrefix+'val});');
-    code.push('let '+tempVarPrefix+'output= '+tempVarPrefix+'val;');
-    code.push('if('+tempVarPrefix+'mappedValue!=null && '+tempVarPrefix+'mappedValue.length>0) {');
-    code.push(' '+tempVarPrefix+'output='+tempVarPrefix+'mappedValue[0].target;');
-    code.push('}');
-    code.push('if ("'+propertiesWidgets.widgets.castOutput+'"=="bool"){');
-    code.push(' if('+tempVarPrefix+'output=="true") {');
-    code.push('  '+tempVarPrefix+'output=true;');
-    code.push(' }');
-    code.push(' if('+tempVarPrefix+'output=="false") {');
-    code.push('  '+tempVarPrefix+'output=false;');
-    code.push(' }');
-    code.push('}');
-    code.push('if('+tempVarPrefix+'output=="#NULL#") {');
-    code.push('  '+tempVarPrefix+'output = null;');
-    code.push('}');
-    code.push('if('+tempVarPrefix+'output=="#EMPTY#") {');
-    code.push(' '+tempVarPrefix+'output ="";');
-    code.push('}');
-    code.push('const '+outputVariables.output0+' = '+tempVarPrefix+"output;");
-    return code;
-  };
-
-  mapValueBlock.prototype.onExecute = function()
-  {
-    let val = this.getInputData(0);
-    if( val === undefined ) {
-      val = "#NULL#";
-    }
-    if( val === null ) {
-      val ="#NULL#";
-    }
-    if( val=== "" ) {
-      val = "#EMPTY#";
-    }
-    let mappedValue = null;
-    if ( this.wildcarded.value ) {
-      mappedValue = [];
-      for ( const map of this.properties['mapping'] ) {
-        const wildcard = map.source;
-        const re = new RegExp(`^${wildcard.replace(/\*/g,'.*').replace(/\?/g,'.')}$`,'');
-        if ( re.test(val) ) {
-          mappedValue.push(map);
-        }
-      }
-    } else {
-      mappedValue = this.properties['mapping'].filter(item => {
-        return item.source === val;
-      });
-    }
-    let output= this.getInputData(1);
-    if( mappedValue != null && mappedValue.length > 0 ) {
-      output = mappedValue[0].target;
-    }
-    if (this.castOutput.value === 'bool'){
-      if( output === "true" ) {
-        output = true;
-      } else if( output === "false" ) {
-        output = false;
-      }
-    }
-
-    if(output=="#NULL#") output = null
-    if(output=="#EMPTY#") output =""
-
-    this.setOutputData( 0,output);
-
-
-
+  mapValueBlock.prototype.onExecute = function()  {
+    return coreFunctions.executeBlock(this);
   }
 
 //register in the system
