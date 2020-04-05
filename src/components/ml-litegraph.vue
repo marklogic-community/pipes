@@ -9,136 +9,8 @@
       width='1800'
     ></canvas>
 
-<!-- Reusable edit dialog -->
- <q-dialog persistent v-model="showDynamicEdit">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6 absolute-center">{{ editPopupTitle }}</div>
-        </q-card-section>
-
-        <q-card-section>
-          <div class="q-pa-md" style="min-width: 500px">
-            <q-input v-model="EditForm.editProp" filled type="textarea" />
-          </div>
-          </q-card-section>
-
-    <!--    <q-card-section> -->
-          <div class="row" align="middle">
-            <div class="col-6">
-             <q-btn
-              color="secondary"
-              label="Cancel"
-              @click="cancelBlockPropertyEdit()"
-              v-close-popup/>
-
-              </div>
-
-            <div class="col-6">
-              <q-btn
-              ref="blockPropertySaveBtn"
-              color="primary"
-              label="Save"
-              @preSave=""
-              @click="saveBlockPropertyEdit()"/>
-            </div>
-          </div>
-          <q-space></q-space>
-
-	    <q-icon v-if="EditForm.contentValid == true && EditForm.neverValidated == false" color="green" name="fas fa-check-circle">
-		    <q-tooltip content-class="pipes-tooltip">Some fields have been sampled and are ready in next step</q-tooltip>
-	    </q-icon>
-	    <q-icon v-if="EditForm.contentValid == false && EditForm.neverValidated == false" color="red" name="fas fa-check-circle">
-		    <q-tooltip content-class="pipes-tooltip">Some fields have been sampled and are ready in next step</q-tooltip>
-	    </q-icon>
-	    <q-icon v-if="EditForm.contentValid == false && EditForm.neverValidated == true" color="grey" name="fas fa-check-circle">
-		    <q-tooltip content-class="pipes-tooltip">No document fields sampled yet based on current selection</q-tooltip>
-	    </q-icon>
-
-      {{ this.EditForm.validationMessage}}
-
-     <!--   </q-card-section> -->
-      </q-card>
-    </q-dialog>
-
-    <!-- end of reusable dialog -->
-
-    <q-dialog
-      persistent
-      v-model="editJson"
-    >
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Edit data mapping</div>
-        </q-card-section>
-
-        <q-card-section>
-          <q-table
-            :columns="columns"
-            :data="currentProperties"
-            binary-state-sort
-            row-key="name"
-            title="Mappings"
-          >
-            <template v-slot:body="props">
-              <q-tr :props="props">
-                <q-td
-                  :props="props"
-                  key="source"
-                >
-                  {{ props.row.source }}
-                  <q-popup-edit
-                    buttons
-                    title="Update mapping"
-                    v-model="props.row.source"
-                  >
-                    <q-input
-                      autofocus
-                      dense
-                      type="string"
-                      v-model="props.row.source"
-                    />
-                  </q-popup-edit>
-                </q-td>
-                <q-td
-                  :props="props"
-                  key="target"
-                >
-                  {{ props.row.target }}
-                  <q-popup-edit
-                    buttons
-                    title="Update mapping"
-                    v-model="props.row.target"
-                  >
-                    <q-input
-                      autofocus
-                      dense
-                      type="string"
-                      v-model="props.row.target"
-                    />
-                  </q-popup-edit>
-                </q-td>
-
-              </q-tr>
-            </template>
-          </q-table>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn
-            @click="addMapping()"
-            color="primary"
-            flat
-            label="Add mapping"
-          />
-          <q-btn
-            color="primary"
-            flat
-            label="OK"
-            v-close-popup
-          />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+    <BlockPropertyEditDialog/>
+    <BlockMappingEditDialog/>
 
     <q-dialog
       :content-css="{minWidth: '60vw', minHeight: '80vh'}"
@@ -829,18 +701,23 @@ import CollectionFilter from '../components/collectionFilter.js';
 import codeGenerationConfig from '../components/codeGenerationConfig.vue'
 import CSVLoader from '../components/csvLoader.vue';
 import EntityManager from '../components/entityManager.js';
-import LiteGraphHelper from '../components/liteGraphHelper.js'
+import LiteGraphHelper from '../components/liteGraphHelper.js';
+import BlockPropertyEditDialog from '../components/propertyEditDialog.vue';
+import BlockMappingEditDialog from '../components/mappingEditDialog.vue'
 import Vue from 'vue';
 Vue.use(require('vue-shortkey'))
 import {  ENTITY_BLOCK_TYPE, SOURCE_BLOCK_TYPE, BLOCK_PATH, BLOCK_LABEL, BLOCK_FIELDS, BLOCK_FIELD, BLOCK_COLLECTION, BLOCK_SOURCE, BLOCK_OPTIONS,
   BLOCK_OPTION_FIELDS_INPUT, BLOCK_OPTION_FIELDS_OUTPUT, BLOCK_OPTION_NODE_INPUT, BLOCK_OPTION_NODE_OUTPUT} from '../components/constants.js'
 const ADVANCED_SETTINGS_KEY = "pipes.settings"
+const qs = require('querystring')
 
 export default {
   components: {
     VueJsonPretty,
     codeGenerationConfig,
-    CSVLoader
+    CSVLoader,
+    BlockPropertyEditDialog,
+    BlockMappingEditDialog
   },
   name: 'PageIndex',
   mixins: [
@@ -857,26 +734,8 @@ export default {
       selectedStep: null,
       previewSource: null,
       previewWizard: 1,
-      currentCtsQuery: "",			//query edit popup
-      currentSJSCode : "",
-      currentCases: "",				//selectCase edit popup
       selectedTargetDB: null,
-      editQuery: false,				// show ctsQuery block edit popup
-      editJson: false,				//
-      editCases: false,				// swho selectCase cases property popup
       saveToDB: false,
-      showDynamicEdit: false,
-      EditForm: {
-        blockRef: null,
-        title : "",
-        refProp: null,
-        propName: "",
-        editProp: null,
-        oldValue: "",
-        neverValidated: true,
-        contentValid: false,
-        validationMessage: ''
-      },
       confirmDeleteGraph: false,
       confirmResetGraph: false,
       warnBlockOnGraph: false,
@@ -897,10 +756,6 @@ export default {
         author: "",
         description: ""
       },
-      columns: [
-        { name: 'source', align: 'left', label: 'Source', field: 'source', sortable: true },
-        { name: 'target', label: 'Target', field: 'target', sortable: true, align: 'left' },
-      ],
       opened: true,
       isExported: false,
       graph: null,                // LiteGraphObject
@@ -916,7 +771,7 @@ export default {
       loadPopUpOpened: false,
       graphName: "",
       savedGraph: [],
-      currentProperties: [],
+   //   currentProperties: [],
       jsoneditor: null,
       availableCollections: [],
       selectedDB: null,
@@ -977,9 +832,6 @@ export default {
     }
   },
   computed: {
-    editPopupTitle: function() {
-      return ( this.EditForm.title !== null) ? this.EditForm.title : ""
-    },
     blockModels: function () {
       return this.$store.getters.models
     },
@@ -1078,37 +930,6 @@ export default {
       }
       return disable;
     },
-    saveBlockPropertyEdit() {
-      if ( this.EditForm.blockRef.beforePropSave ) {
-        var validation = {}
-        if (! this.EditForm.blockRef.beforePropSave(this.EditForm.editProp, validation) ) {
-         // console.log("Edit save stopped by block beforePropSave logic: " + validation.message)
-          this.EditForm.contentValid = false
-          this.EditForm.neverValidated = false
-          this.EditForm.validationMessage = validation.message
-          return
-        }
-      } else {
-        console.log("No block validation provided. Saving content")
-      }
-      this.EditForm.refProp[this.EditForm.propName] = this.EditForm.editProp
-      this.resetEditDialog()
-    },
-    cancelBlockPropertyEdit() {
-      this.EditForm.refProp[this.EditForm.propName] = this.EditForm.oldValue
-      this.resetEditDialog()
-    },
-    // close edit dialog and reset everything
-    resetEditDialog() {
-      this.showDynamicEdit = false
-      this.EditForm.refProp = null
-      this.EditForm.editProp = null
-      this.EditForm.title = ''
-      this.EditForm.neverValidated = true
-      this.EditForm.blockRed = false
-      this.EditForm.validationMessage = ''
-    },
-
     createBlock (blockDef) {
       var blockInList = false;
       const BLOCK_KEY = blockDef.source + "/" + blockDef.collection
@@ -1145,10 +966,6 @@ export default {
 
       this.notifyPositive(this, blockDef.label + " is now available in the library (right click)")
 
-    },
-
-    addMapping () {
-      this.currentProperties.push({ source: "val", target: "newVal" })
     },
 
     getDatabaseEntities () {
@@ -1200,8 +1017,7 @@ export default {
 	  if ( notifyLoaded ) this.notifyPositive(self, "Loaded graph " + this.graphMetadata.title)
 	  this.$root.$emit("resetGraphTitle") // reset the titlebar to top graph (remove all subgraph history)
       this.showUploadGraph = false
-    }
-    ,
+    },
     getSavedGraph (uri, graphName) {
       //if(uri!=null)
 	  console.log("Reloading saved graph " + graphName)
@@ -1754,22 +1570,14 @@ export default {
 
 	    if ( block.node_over && block.node_over.properties ) {
 
-	    // string/Mapvalues block
+	    // Mapping edit (string/Mapvalues block)
       if (block.node_over.properties.mapping) {
-		    this.currentProperties = block.node_over.properties.mapping
-        this.editJson = true
+        this.$root.$emit("openMappingEdit",block.node_over.properties.mapping)
       } else {
 
-		// selectCase, Lookup, EvalJavaScript, & generic edit window hook
+		// Property edit. selectCase, Lookup, EvalJavaScript, & generic edit window hook
         if ( this.isNotEmpty(block.node_over.properties.pipesDblClickProp) && block.node_over.properties.editProp  ) {
-          this.EditForm.blockRef = block.node_over
-          this.EditForm.propName = block.node_over.properties.editProp
-          this.EditForm.refProp =  block.node_over.properties
-          this.EditForm.editProp = block.node_over.properties[this.EditForm.propName]
-          this.EditForm.oldValue = this.EditForm.editProp // copy of original value so can revert on cancel
-          this.EditForm.title = this.isNotEmpty(block.node_over.properties.editWindowTitle) ? block.node_over.properties.editWindowTitle : "Edit"
-       //   console.log("Editing property " + this.EditForm.propName + ": current val = " + this.EditForm.editProp)
-          this.showDynamicEdit = true
+         this.$root.$emit("openPropertyEdit",block.node_over)
       }
 
       }
@@ -1841,7 +1649,7 @@ export default {
     }
     	// beforePropSave event for validating block property editing
     if ( config.events && config.events.beforePropSave && config.events.beforePropSave != undefined ) {
-				blockCode += config.functionName + ".prototype.beforePropSave = function(v,validation){" + config.events.beforePropSave + "};"
+				blockCode += config.functionName + ".prototype.beforePropSave = function(v,validation,ctx){" + config.events.beforePropSave + "};"
       }
 
 		    blockCode += config.functionName + ".prototype.notify = function(node){this.$root.$emit(\"nodeSelected\",node)}.bind(this);";
@@ -1923,7 +1731,7 @@ export default {
       var storedSettings = this.$q.localStorage.getItem(ADVANCED_SETTINGS_KEY)
       this.advancedSettings.confirmBrowserRefresh = storedSettings.confirmBrowserRefresh != null ? storedSettings.confirmBrowserRefresh : true
     }
-    this.resetDhfDefaultGraph()
+   // this.resetDhfDefaultGraph()
   },
   beforeMount () {
     window.addEventListener("beforeunload", this.browserRefreshConfirm)

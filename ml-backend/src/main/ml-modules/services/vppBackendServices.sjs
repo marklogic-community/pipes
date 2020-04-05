@@ -598,8 +598,21 @@ function verifyUri(params) {
   return response
 }
 
-function get(context, params) {
+function validateCTSQuery(input, params) {
+  var query = JSON.parse(input).query
+  console.log("Validating ctsquery : " + query)
+  var testQuery = 'fn.count(' + query + ')'
+  var result
+  try {
+    result = xdmp.eval(testQuery)
+    return {"valid" : true}
+  } catch (e) {
+    console.log("Not valid: " + e)
+    return {"valid" : false, "error" : e}
+  }
+}
 
+function get(context, params) {
 
   switch (params.action) {
     case "collectionModel":
@@ -703,6 +716,8 @@ function post(context, params, input) {
     case "SaveGraph":
       return saveGraph(input, params)
       break;
+    case "ValidateCtsQuery":
+      return validateCTSQuery(input, params)
     default:
     // code block
   }
