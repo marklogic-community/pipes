@@ -419,10 +419,10 @@
   {
     "functionName": "Lookup",
     "blockName": "Lookup",
-	"library": "feature",
-	"events": {
+	  "library": "feature",
+	  "events": {
     "onConfigure": "let v = this.widgets[0].value;if (this.widgets.length == (parseInt(v) + 2)) return; this.widgets=this.widgets.slice(0,2);for (let x=0;x < v ;x++) {this.addWidget(\"text\", \"value\" + x + \"Path\" , this.widgets_values[x+2], function (v) {})};return;",
-    "beforePropSave" : "if (v.length > 0) {return true} else {validation.message = 'Query cannot be empty'}"
+    "beforePropSave" : "validation.override = true; return ctx.validateCtsQuery(v)"
 			},
     "inputs": [
       {
@@ -1533,6 +1533,9 @@
     "blockName": "selectCase",
     "library": "feature",
     "description" : "This block returns one of the inputX value depending on the value2Test input. The selection of inputX is done based on the block configuration (double click)",
+    "events": {
+      "beforePropSave" : "if (v.trim().length > 0) {return true} else { validation.message = 'Cannot be empty'; return false }"
+    },
     "inputs": [
       {
         "name": "value2Test",
