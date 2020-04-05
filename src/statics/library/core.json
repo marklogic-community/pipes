@@ -366,6 +366,9 @@
     "functionName": "EvalJavaScript",
     "blockName": "EvalJavaScript",
     "library": "feature",
+    "events" : {
+      "beforePropSave" : "var result=true;try{eval('var var1,var2,var3,var4,var5;'+v)}catch(e){validation.message=e;result=false};return result"
+    },
     "inputs": [
       {
         "name": "var1",
