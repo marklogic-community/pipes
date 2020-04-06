@@ -43,7 +43,7 @@ To run both Pipes and MarkLogic DHF in containers, we recommend using [Docker Co
 
 #### 1) Set the Docker Compose environment values
 
-Create an ``.env`` file. This file contains the values your containers will use. You can use the ``example.env`` file for reference. You can use most of the default values from ``example.env``, but will need to change:
+Create a file called ``.env`` (that's right, just ```.env```). This file contains the values your containers will use. You can use the ``example.env`` file for reference. You can use most of the default values from ``example.env``, but will need to change:
 
 * mlAdmin (your MarkLogic username)
 
