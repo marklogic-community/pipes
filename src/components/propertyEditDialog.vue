@@ -1,12 +1,22 @@
 <!-- Copyright ©2020 MarkLogic Corporation. -->
 <template>
-  <div>
+
 <!-- Reusable property edit dialog -->
  <q-dialog persistent v-model="showDynamicEdit">
-      <q-card>
+      <q-card style="padding: 5px">
         <q-card-section>
           <div class="text-h6 absolute-center">{{ editPopupTitle }}</div>
         </q-card-section>
+            <div class="row">
+              <div class="col-1">
+                <q-icon v-if="EditForm.validationRun && EditForm.contentValid" color="green" name="fas fa-check-circle"/>
+	              <q-icon v-if="EditForm.validationRun && ! EditForm.contentValid" color="red" name="fas fa-check-circle">
+		            <q-tooltip content-class="pipes-tooltip">Error</q-tooltip>
+	              </q-icon>
+	              <q-icon v-if="! EditForm.validationRun" color="grey" name="fas fa-check-circle"/>
+              </div>
+            <div class="col-11" float-left>{{ this.EditForm.validationMessage}}</div>
+            </div>
 
         <q-card-section>
           <div class="q-pa-md" style="min-width: 500px">
@@ -15,6 +25,7 @@
           </q-card-section>
 
           <div class="row" align="middle">
+
             <div class="col-6">
              <q-btn
               color="secondary"
@@ -32,20 +43,12 @@
               @preSave=""
               @click="saveBlockPropertyEdit()"/>
             </div>
-          </div>
-          <q-space></q-space>
 
-	    <q-icon v-if="EditForm.validationRun && EditForm.contentValid" color="green" name="fas fa-check-circle">
-	    </q-icon>
-	    <q-icon v-if="EditForm.validationRun && ! EditForm.contentValid" color="red" name="fas fa-check-circle">
-		    <q-tooltip content-class="pipes-tooltip">Error</q-tooltip>
-	    </q-icon>
-	    <q-icon v-if="! EditForm.validationRun" color="grey" name="fas fa-check-circle">
-	    </q-icon>
-      {{ this.EditForm.validationMessage}}
+          </div>
+
       </q-card>
     </q-dialog>
-    </div>
+
 </template>
 
 <script>
@@ -93,7 +96,15 @@ export default {
     // Close edit dialog and reset everything
     closeForm() {
       this.showDynamicEdit = false
-      this.EditForm = FORM_DEFAULTS
+      this.EditForm.blockRef = null
+      this.EditForm.title  = ""
+      this.EditForm.refProp = null
+      this.EditForm.propName = ""
+      this.EditForm.editProp = null
+      this.EditForm.oldValue = ""
+      this.EditForm.validationRun = false
+      this.EditForm.contentValid = false
+      this.EditForm.validationMessage = ''
     },
 
      saveBlockPropertyEdit() {
@@ -114,9 +125,6 @@ export default {
         } else {
            // Passed block validation logic
             this.EditForm.refProp[this.EditForm.propName] = this.EditForm.editProp
-       //     this.EditForm.contentValid = true
-            this.EditForm.validationRun = false
-            this.EditForm.validationMessage = ''
             this.closeForm()
            }
       } else {
@@ -139,9 +147,6 @@ export default {
         .then((response) => {
           if ( response.data.valid == true ) {
             this.EditForm.refProp[this.EditForm.propName] = this.EditForm.editProp
-            this.EditForm.contentValid = false
-            this.EditForm.validationRun = false
-            this.EditForm.validationMessage = ''
             this.closeForm()
           } else {
             this.EditForm.validationMessage = 'Not a valid cts query'
