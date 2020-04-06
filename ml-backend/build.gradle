@@ -10,7 +10,7 @@ repositories {
 }
 
 group = "com.marklogic"
-version = "1.0-beta.4"
+version = "1.0.1"
 
 configurations {
   modules

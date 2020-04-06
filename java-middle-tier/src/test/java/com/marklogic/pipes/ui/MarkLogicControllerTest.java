@@ -7,7 +7,6 @@ package com.marklogic.pipes.ui;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
-import com.marklogic.client.admin.ResourceExtensionsManager;
 import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.DocumentMetadataHandle;
@@ -16,15 +15,22 @@ import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.util.json.JSONObject;
+import com.marklogic.pipes.ui.auth.AuthService;
 import com.marklogic.pipes.ui.config.ClientConfig;
 import com.marklogic.pipes.ui.config.PipesResourceManager;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.io.InputStream;
 
@@ -33,6 +39,7 @@ import static org.springframework.test.util.AssertionErrors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
@@ -46,13 +53,22 @@ class MarkLogicControllerTest {
   public static final String GRAPH_JSON = "test-save-graph.json";
   public static final String SAVED_GRAPH_COLLECTION = "marklogic-pipes/type/savedGraph";
   public static final String CREATE_SOURCE_BLOCK_PAYLOAD_JSON = "createSourceBlock/createSourceBlockPayload.json";
+
+  protected final static String SESSION_SERVICE = "pipes-service";
+  protected final static String SESSION_USERNAME_KEY = "pipes-username";
+
+  static MockHttpSession session;
+
   @Autowired
   private MockMvc mockMvc;
 
   @Autowired
   ClientConfig clientConfig;
 
-  void addCustomerSource() throws Exception {
+  @Autowired
+  AuthService authService;
+
+  void addCustomerSourceDocument() throws Exception {
     DatabaseClient client = getDatabaseClient();
 
     JSONDocumentManager jsonDocumentManager = client.newJSONDocumentManager();
@@ -77,10 +93,11 @@ class MarkLogicControllerTest {
   }
 
   private DatabaseClient getDatabaseClient() {
-    return DatabaseClientFactory.newClient(
-      clientConfig.getMlHost(),
-      clientConfig.getMlStagingPort(),
-      new DatabaseClientFactory.DigestAuthContext(clientConfig.getMlUsername(), clientConfig.getMlPassword()));
+
+    assertTrue("Failed to authorize",authService.tryAuthorize(clientConfig,clientConfig.getMlUsername(), clientConfig.getMlPassword()));
+
+
+    return authService.getDatabaseClient();
   }
 
   void removeCustomerSource() throws Exception {
@@ -136,6 +153,22 @@ class MarkLogicControllerTest {
 
   }
 
+  @BeforeEach
+  void setup() throws Exception {
+    System.out.println("BeforeAll init() method called");
+
+
+    String loginPayload="{\"username\":\""+clientConfig.getMlUsername()+"\",\"password\":\""+clientConfig.getMlPassword()+"\"}";
+
+    this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON)
+      .content(loginPayload))
+      .andExpect(status().isOk());
+
+    session = new MockHttpSession();
+
+    session.setAttribute(SESSION_USERNAME_KEY, clientConfig.getMlUsername());
+    session.setAttribute(SESSION_SERVICE, authService.getService());
+  }
 
   /**
    * Tests execution of a minimal graph (Input-Output) for a specific document URI in the staging DB
@@ -146,12 +179,18 @@ class MarkLogicControllerTest {
   void ExecuteMinimalGraphTest() throws Exception {
     try {
 
-      addCustomerSource();
+      addCustomerSourceDocument();
       String payload = "{\"jsonGraph\":{\"models\":[],\"executionGraph\":{\"last_node_id\":2,\"last_link_id\":1,\"nodes\":[{\"id\":2,\"type\":\"dhf/output\",\"pos\":[1308,434],\"size\":[180,160],\"flags\":{},\"order\":1,\"mode\":0,\"inputs\":[{\"name\":\"output\",\"type\":0,\"link\":1}],\"properties\":{}},{\"id\":1,\"type\":\"dhf/input\",\"pos\":[248,489],\"size\":[180,60],\"flags\":{},\"order\":0,\"mode\":0,\"outputs\":[{\"name\":\"input\",\"type\":\"\",\"links\":[1]},{\"name\":\"uri\",\"type\":\"\",\"links\":null},{\"name\":\"collections\",\"type\":\"\",\"links\":null}],\"properties\":{}}],\"links\":[[1,1,0,2,0,0]],\"groups\":[],\"config\":{},\"version\":0.4}},\"collection\":\"customer-ingest\",\"collectionRandom\":false,\"previewUri\":\"" + TEST_CUSTOMER_1_JSON + "\"}";
-      String request = "/v1/resources/vppBackendServices?rs:action=ExecuteGraph&rs:database=11948715645976432197";
-      String response = "{\"envelope\":{\"headers\":{\"sources\":[{\"name\":\"Customer360\"}], \"createdOn\":\"2020-01-21T16:04:45.849756Z\", \"createdBy\":\"admin\", \"createdUsingFile\":\"/Users/smitrovi/MarkLogic/dev/vpp-java-test/data/customer/dump1.csv\"}, \"triples\":[], \"instance\":{\"id\":\"652\", \"first_name\":\"Connie\", \"last_name\":\"Harnor\", \"email\":\"charnori3@ibm.com\", \"gender\":\"Male\", \"ip_address\":\"3.115.93.14\", \"dob\":\"14/05/2001\", \"street\":\"49 Killdeer Lane\", \"city\":\"Zhangjiapan\", \"zipcode\":\"\", \"country\":\"China\"}, \"attachments\":null}}";
+      String request = "/v1/resources/vppBackendServices?rs:action=ExecuteGraph&rs:database=17058662230699828412";
+      String expectedResponse = "{\"envelope\":{\"headers\":{\"sources\":[{\"name\":\"Customer360\"}], \"createdOn\":\"2020-01-21T16:04:45.849756Z\", \"createdBy\":\"admin\", \"createdUsingFile\":\"/Users/smitrovi/MarkLogic/dev/vpp-java-test/data/customer/dump1.csv\"}, \"triples\":[], \"instance\":{\"id\":\"652\", \"first_name\":\"Connie\", \"last_name\":\"Harnor\", \"email\":\"charnori3@ibm.com\", \"gender\":\"Male\", \"ip_address\":\"3.115.93.14\", \"dob\":\"14/05/2001\", \"street\":\"49 Killdeer Lane\", \"city\":\"Zhangjiapan\", \"zipcode\":\"\", \"country\":\"China\"}, \"attachments\":null}}";
 
-      this.mockMvc.perform(post(request).content(payload)).andExpect(content().string(containsString(response)));
+
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(request).content(payload)
+        .session(session);
+
+      this.mockMvc.perform(builder)
+        .andExpect(status().isOk())
+        .andExpect(content().string(containsString(expectedResponse)));
     } finally {
       removeCustomerSource();
     }
@@ -167,7 +206,10 @@ class MarkLogicControllerTest {
       String payload = "{\"models\":[],\"executionGraph\":{\"last_node_id\":2,\"last_link_id\":1,\"nodes\":[{\"id\":2,\"type\":\"dhf/output\",\"pos\":[1308,434],\"size\":[180,160],\"flags\":{},\"order\":1,\"mode\":0,\"inputs\":[{\"name\":\"output\",\"type\":0,\"link\":1}],\"properties\":{}},{\"id\":1,\"type\":\"dhf/input\",\"pos\":[248,489],\"size\":[180,60],\"flags\":{},\"order\":0,\"mode\":0,\"outputs\":[{\"name\":\"input\",\"type\":\"\",\"links\":[1]},{\"name\":\"uri\",\"type\":\"\",\"links\":null},{\"name\":\"collections\",\"type\":\"\",\"links\":null}],\"properties\":{}}],\"links\":[[1,1,0,2,0,0]],\"groups\":[],\"config\":{},\"version\":0.4},\"name\":\"test-save-graph\",\"metadata\":{\"title\":\"test-save-graph\",\"version\":\"00.01\",\"author\":\"\"}}";
       String request = "/v1/resources/vppBackendServices?rs:action=SaveGraph";
 
-      this.mockMvc.perform(post(request).content(payload)).andExpect(status().isOk());
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(request).content(payload)
+        .session(session);
+
+      this.mockMvc.perform(builder).andExpect(status().isOk());
     } finally {
       deleteGraph();
     }
@@ -206,7 +248,10 @@ class MarkLogicControllerTest {
       String request = "/v1/resources/vppBackendServices?rs:action=GetSavedGraph&rs:uri=/marklogic-pipes/savedGraph/test-save-graph.json";
       String response = "{\"models\":[], \"executionGraph\":{\"last_node_id\":2, \"last_link_id\":1, \"nodes\":[{\"id\":2, \"type\":\"dhf/output\", \"pos\":[1308, 434], \"size\":[180, 160], \"flags\":{}, \"order\":1, \"mode\":0, \"inputs\":[{\"name\":\"output\", \"type\":0, \"link\":1}], \"properties\":{}}, {\"id\":1, \"type\":\"dhf/input\", \"pos\":[248, 489], \"size\":[180, 60], \"flags\":{}, \"order\":0, \"mode\":0, \"outputs\":[{\"name\":\"input\", \"type\":\"\", \"links\":[1]}, {\"name\":\"uri\", \"type\":\"\", \"links\":null}, {\"name\":\"collections\", \"type\":\"\", \"links\":null}], \"properties\":{}}], \"links\":[[1, 1, 0, 2, 0, 0]], \"groups\":[], \"config\":{}, \"version\":0.4}, \"name\":\"test-save-graph\", \"metadata\":{\"title\":\"test-save-graph\", \"version\":\"00.01\", \"author\":\"\"}}";
 
-      this.mockMvc.perform(get(request)).andExpect(content().string(response));
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(request).content(request)
+        .session(session);
+
+      this.mockMvc.perform(builder).andExpect(content().string(response));
 
     } finally {
       deleteGraph();
@@ -223,7 +268,12 @@ class MarkLogicControllerTest {
 
       // now check for existance of block
       request = "/v1/resources/vppBackendServices?rs:action=ListSavedBlock";
-      MvcResult mvcResult = mockMvc.perform(get(request)).andReturn();
+
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(request)
+        .session(session);
+
+      MvcResult mvcResult = mockMvc.perform(builder).andReturn();
+
       String response= mvcResult.getResponse().getContentAsString();
 
 
@@ -263,7 +313,11 @@ class MarkLogicControllerTest {
 
     String payload = handle.toString();
 
-    mockMvc.perform(post(request).content(payload)).andExpect(status().isOk());
+
+    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(request).content(payload)
+      .session(session);
+
+    mockMvc.perform(builder).andExpect(status().isOk());
   }
 
   @Test

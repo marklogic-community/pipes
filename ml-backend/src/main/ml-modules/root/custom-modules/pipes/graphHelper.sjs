@@ -152,7 +152,7 @@ function createGraphNodeFromModel(blockDef) {
   }
 
   block.prototype.onExecute = function(){
-
+    xdmp.log("Exeecuting "+this.title);
 
     if (this.blockDef.options.indexOf("nodeInput")>-1) {
 
@@ -188,6 +188,22 @@ function createGraphNodeFromModel(blockDef) {
         let path = "." + this.blockDef.fields[i].path
         let v= docNode.xpath(path)
         if(v==null || fn.count(v)==0) {
+
+          if(docNode && fn.exists(docNode.xpath("./.."))) {
+            let root = fn.head(docNode.xpath(".//name(.)"))
+            let rootPos = path.indexOf(root + "/")
+            if(rootPos >=0) {
+              path = "." + path.substring(rootPos + root.length)
+            }else {
+
+              rootPos = path.indexOf(root)
+              if(path.substring(rootPos).indexOf("/")<0)
+                path = path.substring(path.lastIndexOf("/"))
+
+            }
+          }
+
+          /*
           //let last = path.lastIndexOf("array-node()/object-node()")
           // if (fn.matches(path, "array-node\\('[\\s\\w]*'\\)/object-node\\(\\)")) {
           let last = path.substring(path.lastIndexOf("array-node")).substring(path.indexOf("/object-node"))
@@ -197,13 +213,18 @@ function createGraphNodeFromModel(blockDef) {
             path = "./" + path.substring(path.lastIndexOf("/"))
           }
           //}
+
+           */
         }
         let children = docNode.xpath( path + "//*")
         if(fn.count(children)>1)
           v= docNode.xpath(path).toArray();
         else
           v=   docNode.xpath( path + "/string()");
-        this.doc.output[this.blockDef.fields[i].field] = v
+
+
+        xdmp.log(path)
+        this.doc.output[this.blockDef.fields[i].field] =  v
 
 
 

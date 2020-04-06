@@ -250,6 +250,9 @@ function getCollectionsModels(ctx) {
 
 }
 
+function checkDocumentExists(uri) {
+      return cts.doc(uri);
+}
 
 function getCollectionDetails() {
   return {
@@ -272,11 +275,19 @@ function getCollectionDetails() {
 
 function getDHFEntities() {
 
-  return sem.sparql(
-    "SELECT DISTINCT ?value ?label WHERE {?value <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>	 <http://marklogic.com/entity-services#EntityType>. \
-      ?value <http://marklogic.com/entity-services#title> ?label.\
-        FILTER NOT EXISTS {?any <http://marklogic.com/entity-services#ref> ?value}\
-      }").toArray()
+  return sem.sparql("PREFIX es: <http://marklogic.com/entity-services#>\
+    SELECT DISTINCT ?value ?label ?description WHERE {\
+      ?value a es:EntityType ;\
+             es:title ?label .\
+      OPTIONAL {\
+        ?value es:description ?description .\
+      }\
+      ?def es:definitions ?value. optional { ?def es:description ?description }\
+      FILTER NOT EXISTS {\
+        ?any es:ref ?value .\
+      }\
+    }").toArray()
+
 }
 
 function getDHFEntityProperties(entity) {
@@ -287,12 +298,15 @@ function getDHFEntityProperties(entity) {
   }
 
   entityModel.children = sem.sparql(
-    "SELECT * WHERE {\
-      ?entity <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>	 <http://marklogic.com/entity-services#EntityType>.\
-      ?entity <http://marklogic.com/entity-services#property> ?property.\
-      ?property <http://marklogic.com/entity-services#title> ?label.\
-      OPTIONAL {?property <http://marklogic.com/entity-services#datatype>|<http://marklogic.com/entity-services#ref> ?type.}\
-      }", {"entity": sem.iri(entityModel.label)}).toArray()
+      "PREFIX es: <http://marklogic.com/entity-services#>\
+       SELECT * WHERE {\
+        ?entity <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> es:EntityType.\
+        ?entity es:property ?property.\
+        ?property es:title ?label.\
+        OPTIONAL {?property es:datatype|es:ref ?type.}\
+        OPTIONAL { ?property es:description ?description }\
+        }",
+      {"entity": sem.iri(entityModel.label)}).toArray()
   return entityModel
 }
 
@@ -314,7 +328,7 @@ function InvokeExecuteGraph(input) {
       let doc = null
       if (execContext.collectionRandom) {
         let nbDocs = cts.estimate(cts.collectionQuery(execContext.collection))
-        doc = cts.doc(fn.head(fn.subsequence(cts.uris(null, null, cts.collectionQuery(execContext.collection)), xdmp.random(nbDocs - 1) + 1)))
+        if(nbDocs>0) doc = cts.doc(fn.head(fn.subsequence(cts.uris(null, null, cts.collectionQuery(execContext.collection)), xdmp.random(nbDocs - 1) + 1)))
 
       } else {
         if (execContext.previewUri == null || execContext.previewUri == "")
@@ -322,16 +336,29 @@ function InvokeExecuteGraph(input) {
         else
           doc = cts.doc(execContext.previewUri)
       }
-      let uri = fn.baseUri(doc)
 
-      console.log("input=", input)
-      console.log("execContext=", execContext)
-      console.log("execContext.collection=", execContext.collection)
-      console.log("execContext[\"collection\"]=", execContext["collection"])
-      console.log("input.collection=", input.collection)
-      console.log("uri=", uri);
+      if (doc != null) {
+        let uri = fn.baseUri(doc)
 
-      return gHelper.executeGraphFromJson(execContext.jsonGraph, uri, doc, {collections: xdmp.documentGetCollections(uri)})
+        console.log("input=", input)
+        console.log("execContext=", execContext)
+        console.log("execContext.collection=", execContext.collection)
+        console.log("execContext[\"collection\"]=", execContext["collection"])
+        console.log("input.collection=", input.collection)
+        console.log("uri=", uri);
+
+        return gHelper.executeGraphFromJson(execContext.jsonGraph, uri, doc, {collections: xdmp.documentGetCollections(uri)})
+
+      } else {
+
+        let result = {
+
+          error: "No source document, nothing to preview for the given context"
+
+        }
+        return result
+
+      }
 
     }
   }
@@ -384,10 +411,10 @@ function getFieldsByCollection(collection, customURI) {
       let i = 0
       let fields = {}
       let docs = []
-      let nbDocs = fn.count(fn.collection(collection))
-      if (collection != null && collection != "") {
+      let collectionDocs = fn.count(fn.collection(collection))
+      if (collection != null && collection != "" && collectionDocs > 0) {
         for (let j = 0; j < 10; j++) {
-          docs.push(fn.head(fn.subsequence(fn.collection(collection), xdmp.random(nbDocs))))
+          docs.push(fn.head(fn.subsequence(fn.collection(collection), xdmp.random(collectionDocs))))
           //let doc = fn.head(fn.collection(collection))
         }
       }
@@ -402,33 +429,59 @@ function getFieldsByCollection(collection, customURI) {
           }
         }
       }
+
       docs.map(doc => doc.xpath(".//*").toArray().map(node => {
 
         let name = fn.name(node)
-        let path = String(xdmp.path(node)).replace(/\/object-node\(\)/g, "").replace(/\[\d*\]/g, "").replace(/null-node\('([\s\w]*)'\)/g, "$1")
-        let lastSlash = path.lastIndexOf("/")
-        let nodeLastPath = path.substring(lastSlash)
-        let parentPath = path.substring(0, lastSlash)
-        let newParentPath = parentPath.replace(/array-node\('([\s\w]*)'\)/g, "$1")
-        //if(nodeLastPath.includes("object-node()")) nodeLastPath = nodeLastPath.replace(/\/object-node\(\)/,"")
-        path = newParentPath + nodeLastPath
-        if (nodeLastPath.includes("array-node")) path += "/*"
+        let originalPath = String(xdmp.path(node))
+
+        //let path = originalPath.replace(/[A-z]+-node\('([\s]*)'\)/g, "$1").replace(/text\('([\s]+)'\)/g, "$1").replace(/text\('([\s\w]+)'\)/g, "node('$1')").replace(/[A-z]+-node\('([\s]*)'\)/g, "node('$1')")
+        pathTokens = originalPath.replace(/(\/object-node\(\))/g,"").replace(/(\[\d+\])/g,"").split("/")
+
+        pathTokens = pathTokens.map((item,index)=>{
+          if(item=="") return null
+          if(item.includes("array-node") && item.includes(" "))
+            if(index==pathTokens.length-1)
+              return item + "/*"
+            else return item + "/"
+
+          if(item.includes(" ") || item.includes("@"))
+            return item.replace(/[A-z]+-node\('([\s\w@]*)'\)/g, "node('$1')").replace(/text\('([\s\w@]+)'\)/g, "node('$1')")
+          else
+            return item.replace(/[A-z]+-node\('([\s\w@]*)'\)/g, "$1").replace(/text\('([\s\w@]+)'\)/g, "$1")
+        })
+
+        let lastSlash = originalPath.replace(/(\/object-node\(\))/g,"").lastIndexOf("/")
+        let nodeLastPath = originalPath.substring(lastSlash + 1)
+        //if(nodeLastPath.includes("array-node") && path[path.length-1].includes(" "))
+        //path[path.length-1]=nodeLastPath
+
+        path = pathTokens.join("/")
+        let parentPath =path.replace(/(\/object-node\(\))/g,"").replace(/\/\*/g,"")
+        parentPath = parentPath.substring(0, parentPath.lastIndexOf("/"))
+        path = path.replace(/(\/object-node\(\))/g,"")
+        let newParentPath = parentPath//.replace(/array-node\('([\s\w]*)'\)/g, "$1")
+
+        pathTokens = path.split("/")
+        let pathKey = pathTokens.splice(0,pathTokens.length-1).join("/")
+
+        newParentPath=newParentPath.replace("/*", "").replace(/\/\//,"/").replace(/\/$/,"")
         if (newParentPath == "") newParentPath = "/"
 
-
-        if (fields[path.replace("/*", "").replace(/array-node\('([\s\w]*)'\)/g, "$1")] == null) fields[path.replace("/*", "").replace(/array-node\('([\s\w]*)'\)/g, "$1")] = {
-          label: name + " [id" + i++ + "]",
-          field: node.xpath("name(.)"),
-          value: node.xpath("name(.)"),
-          path: path,
-          type: node.nodeType,
-          children: [],
-          parent: newParentPath
-        }
-
+        if (fields[path.replace("/*", "").replace(/\/\//,"/")] == null)
+          fields[path.replace("/*", "").replace(/\/\//,"/")] = {
+            label: name + " [id" + i++ + "]",
+            field: node.xpath("name(.)"),
+            value: node.xpath("name(.)"),
+            path: path,
+            originalPath: originalPath,
+            type: node.nodeType,
+            children: [],
+            parent: newParentPath
+          }
 
       }))
-      //return fields
+      // return fields
       let results = []
       Object.keys(fields).map(item => {
         results.push(fields[item])
@@ -443,14 +496,9 @@ function getFieldsByCollection(collection, customURI) {
         fields[path].children = results.filter(item => {
           return (item.parent == path)
         })
-
-
       }
 
-
       return results.filter(item => item.parent == "/")
-
-
     }
 
   }
@@ -534,17 +582,37 @@ function saveGraph(input, params) {
   let targetDb = (params.toDatabase != null) ? params.toDatabase : xdmp.database()
   xdmp.invokeFunction(() => {
 
-      xdmp.documentInsert("/marklogic-pipes/savedGraph/" + graph.name + ".json", graph, null
+      xdmp.documentInsert("/marklogic-pipes/savedGraph/" + graph.name + ".json", graph, xdmp.defaultPermissions()
         , graphsCollection)
 
     }, {"database": targetDb, "update": "true"}
   )
+}
 
+function verifyUri(params) {
+  console.log("verifyUri " + params)
+  if ( params.uri === null || params.uri.length < 1 ) return {'documentExists' : false}
+  var docExists = (checkDocumentExists(params.uri) !== null)
+  var response = {}
+  response.documentExists = docExists
+  return response
+}
 
+function validateCTSQuery(input, params) {
+  var query = JSON.parse(input).query
+  console.log("Validating ctsquery : " + query)
+  var testQuery = 'fn.count(' + query + ')'
+  var result
+  try {
+    result = xdmp.eval(testQuery)
+    return {"valid" : true}
+  } catch (e) {
+    console.log("Not valid: " + e)
+    return {"valid" : false, "error" : e}
+  }
 }
 
 function get(context, params) {
-
 
   switch (params.action) {
     case "collectionModel":
@@ -575,6 +643,9 @@ function get(context, params) {
       break;
     case "ListSavedGraph":
       return listSavedGraph(params)
+      break;
+    case "verifyDocumentUri":
+      return verifyUri(params)
       break;
     default:
   }
@@ -645,6 +716,8 @@ function post(context, params, input) {
     case "SaveGraph":
       return saveGraph(input, params)
       break;
+    case "ValidateCtsQuery":
+      return validateCTSQuery(input, params)
     default:
     // code block
   }

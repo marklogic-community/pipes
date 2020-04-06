@@ -4,24 +4,16 @@ Copyright ©2020 MarkLogic Corporation.
 
 package com.marklogic.pipes.ui.auth;
 
-import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.DatabaseClientFactory;
-import com.marklogic.client.ext.SecurityContextType;
-import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager;
 import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.SearchHandle;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StringQueryDefinition;
 import com.marklogic.mgmt.ManageClient;
-import com.marklogic.mgmt.ManageConfig;
-import com.marklogic.mgmt.admin.AdminConfig;
 import com.marklogic.mgmt.admin.AdminManager;
 import com.marklogic.pipes.ui.config.ClientConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.io.File;
 
 @Service
 public class AuthService extends AbstractLoggingClass {

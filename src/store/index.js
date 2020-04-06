@@ -10,6 +10,7 @@ export default function () {
   const store =  new Vuex.Store({
     state: {
       models: [],
+      helpMode: false,
       GraphMetadata: {
         title: "My graph",
         version: "00.01",
@@ -21,6 +22,7 @@ export default function () {
     },
     getters: {
     models: state => { return state.models },
+    helpMode: state => { return state.helpMode },
     sourceBlocks: state => {
       return this.$store.state.models.filter(function (block) {
       return block.source == "Sources"
@@ -28,6 +30,9 @@ export default function () {
 }
     },
     mutations: {
+    helpMode(state, mode) {
+      state.helpMode = mode
+    },
     addBlock(state, block) {
      // console.log("addBlock:" + block.source + "/"+ block.label) 
       var blockExists = false

@@ -18,3 +18,4 @@ export const BLOCK_OPTION_FIELDS_INPUT = "fieldsInputs"
 export const BLOCK_OPTION_NODE_OUTPUT = "nodeOutput"
 export const BLOCK_OPTION_NODE_INPUT = "nodeInput"
 export const BLOCK_OPTION_FIELDS_OUTPUT = "fieldsOutputs"
+export const BLOCK_OPTIONS_DOC_BY_URI = 'getByUri'

@@ -26,9 +26,10 @@ export default {
         url: "http://localhost",
         autoQueue:false,
         thumbnailWidth: 150,
-        maxFilesize: 10,
+        maxFilesize: 1,
         addRemoveLinks: true,
-        maxFiles: 1,
+		maxFiles: 1,
+		acceptedFiles: ".json,.csv",
         headers: { "My-Awesome-Header": "header value" }
       }
     }

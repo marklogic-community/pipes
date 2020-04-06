@@ -80,6 +80,7 @@ module.exports = function (ctx) {
         'QSeparator',
         'QScrollArea',
         'QCheckbox',
+        'QSpace',
         'QForm',
         'QStepper',
         'QStep',
@@ -135,6 +136,12 @@ module.exports = function (ctx) {
           // }
         },
         '/login': {
+          target: 'http://localhost:8081/',
+          // pathRewrite: {
+          //   '^/api': ''
+          // }
+        },
+        '/customSteps': {
           target: 'http://localhost:8081/',
           // pathRewrite: {
           //   '^/api': ''
