@@ -55,3 +55,10 @@ java-middle-tier/.gradle
 #gren stuff
 .grenrc.yml
 CHANGELOG.md
+
+#Docker stuff
+docker/.env
+docker/jar/
+docker/data/
+docker/volumes/
+
