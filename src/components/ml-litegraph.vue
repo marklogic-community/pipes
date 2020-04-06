@@ -1630,7 +1630,7 @@ export default {
         }).join("") : ""
         blockCode += (config.widgets != null) ? config.widgets.map((widget) => {
           if (widget.default =="#DATABASES#") widget.values = this.availableDB.map(item => item.label)
-          return "this.addWidget('" + widget.type + "','" + widget.name + "','" + widget.default + "', function(v){" + (widget.callback ? widget.callback : "") + "}.bind(this), { values:" + JSON.stringify(widget.values) + "} );"
+          return "this.addWidget('" + widget.type + "','" + widget.name + "'," + ((typeof(widget.default)=="boolean")?widget.default:"'" + widget.default+"'") + ", function(v){" + (widget.callback ? widget.callback : "") + "}.bind(this), { values:" + JSON.stringify(widget.values) + "} );"
         }).join("") : "";
 
         if (config.width)
