@@ -33,7 +33,7 @@ function split(v,splitChar){
 function lookUp(block,var1,var2,nbOutputValues,ctsQuery){
   xdmp.log("CTS QUERY "+ctsQuery);
   let template = "`"+ ctsQuery +"`";
-  xdmp.log("TEMPLATE: "+template)
+  xdmp.log("TEMPLATE: "+template);
   let result = eval(template);
   xdmp.log("RESULT "+result);
   let query = eval(result);

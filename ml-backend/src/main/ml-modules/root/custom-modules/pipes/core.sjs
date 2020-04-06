@@ -1502,6 +1502,7 @@ function init(LiteGraph){
     let v6 = this.getInputData(5)
     let v7 = this.getInputData(6)
     let template = "`"+ this.properties.ctsQuery +"`"
+    xdmp.log("Template "+template);
     let result = eval(eval(template))
     this.setOutputData(0, result);
 
