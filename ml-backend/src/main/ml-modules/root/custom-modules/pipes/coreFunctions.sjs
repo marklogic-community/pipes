@@ -31,9 +31,13 @@ function split(v,splitChar){
 }
 
 function lookUp(block,var1,var2,nbOutputValues,ctsQuery){
+  xdmp.log("CTS QUERY "+ctsQuery);
   let template = "`"+ ctsQuery +"`";
+  xdmp.log("TEMPLATE: "+template)
   let result = eval(template);
+  xdmp.log("RESULT "+result);
   let query = eval(result);
+  xdmp.log("QUERY "+query);
   let foundDoc = fn.head(xdmp.invokeFunction(()=>{
      return cts.search(query,["unfiltered", "score-zero"],0);
   }, {database: xdmp.database(block.database.value)}));
