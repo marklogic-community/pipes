@@ -1716,35 +1716,5 @@
       "ref": null,
       "code": null
     }
-  },
-  {
-    "functionName": "parseWsrlPhoneBookHtml",
-    "blockName": "parseWsrlPhoneBookHtml",
-    "library": "user",
-    "description" : "This block generates an UUID string",
-    "inputs": [
-      {
-        "name": "in",
-        "type": null
-      }
-    ],
-
-    "widgets": [
-
-
-    ],
-    "properties": [],
-    "outputs": [
-
-      {
-        "name": "out",
-        "type": null
-      }
-    ],
-    "function": {
-      "ref": null,
-      "code": ""
-    }
-
   }
 ]
