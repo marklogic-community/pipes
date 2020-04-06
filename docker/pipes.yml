@@ -5,7 +5,7 @@ networks:
 
 services:
     pipes:
-      image: pipes:v1
+      image: dhfpipes/pipes:v1
       environment:
         - ML_HOST_NAME=${mlHostName}
         - SERVER_PORT=${pipesPort}
