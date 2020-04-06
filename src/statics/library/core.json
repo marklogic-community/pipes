@@ -842,6 +842,52 @@
     }
   },
   {
+    "functionName": "mapRangeValues",
+    "blockName": "mapRangeValues",
+    "library": "feature",
+    "description" : "This block maps an input from an range value to another using the configuration of the block (double click)",
+    "inputs": [
+      {
+        "name": "value",
+        "type": "number"
+      },
+      {
+        "name": "default",
+        "type": "number"
+      }
+    ],
+    "properties": [
+      {
+        "name": "mappingRange",
+        "type": [{"from": "1","to": "3", "target": "100"},
+          {"from": "4","to": "6", "target": "#INPUT#"}
+        ]
+      }
+
+    ],
+    "widgets": [
+      {
+        "type": "combo",
+        "name": "castOutput",
+        "default": "number",
+        "values": ["number","string","bool"]
+      }
+    ],
+    "outputs": [
+      {
+        "name": "mappedValue",
+        "type": null
+      }
+    ],
+    "function": {
+      "ref": null,
+      "code": ""
+
+
+    }
+  }
+,
+  {
     "functionName": "mapValues",
     "blockName": "Map values",
     "library": "string",
@@ -849,6 +895,9 @@
     "inputs": [
       {
         "name": "value",
+        "type": "xs:string"
+      },{
+        "name": "default",
         "type": "xs:string"
       }
     ],

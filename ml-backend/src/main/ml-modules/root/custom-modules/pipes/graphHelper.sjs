@@ -152,7 +152,7 @@ function createGraphNodeFromModel(blockDef) {
   }
 
   block.prototype.onExecute = function(){
-
+    xdmp.log("Exeecuting "+this.title);
 
     if (this.blockDef.options.indexOf("nodeInput")>-1) {
 
