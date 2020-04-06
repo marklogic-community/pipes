@@ -950,7 +950,11 @@ export default {
           return "this.addProperty('" + property.name + ((property.type) ? "'," + JSON.stringify(property.type) + ");" : "');")
         }).join("") : ""
         blockCode += (config.widgets != null) ? config.widgets.map((widget) => {
+<<<<<<< HEAD
           if (widget.default =="#DATABASES#") widget.values = availableDatabases.map(item => item.label)
+=======
+          if (widget.default =="#DATABASES#") widget.values = this.availableDB.map(item => item.label)
+>>>>>>> #167 Fix default value for toggle
           return "this.addWidget('" + widget.type + "','" + widget.name + "'," + ((typeof(widget.default)=="boolean")?widget.default:"'" + widget.default+"'") + ", function(v){" + (widget.callback ? widget.callback : "") + "}.bind(this), { values:" + JSON.stringify(widget.values) + "} );"
         }).join("") : "";
 
