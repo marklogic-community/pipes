@@ -2,11 +2,10 @@
 <template>
   <div>
 <!-- Reusable mapping edit dialog -->
-<q-dialog persistent v-model="showDynamicEdit"
-    >
+<q-dialog persistent v-model="showMappingEdit">
       <q-card>
         <q-card-section>
-          <div class="text-h6">Edit data mapping</div>
+          <div class="text-h6">{{ editPopupTitle }}</div>
         </q-card-section>
 
         <q-card-section>
@@ -77,6 +76,95 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+
+<!-- Reusable Range Mapping Dialog -->
+<q-dialog persistent v-model="showMappingRangeEdit">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">{{editPopupTitle}}</div>
+        </q-card-section>
+
+        <q-card-section>
+          <q-table
+            :columns="columnsRange"
+            :data="EditForm.currentProperties"
+            binary-state-sort
+            row-key="name"
+            title="Mappings"
+          >
+            <template v-slot:body="props">
+              <q-tr :props="props">
+                <q-td
+                  :props="props"
+                  key="from"
+                >
+                  {{ props.row.from }}
+                  <q-popup-edit
+                    buttons
+                    title="Update mapping"
+                    v-model="props.row.from"
+                  >
+                    <q-input
+                      autofocus
+                      dense
+                      type="string"
+                      v-model="props.row.from"
+                    />
+                  </q-popup-edit>
+                </q-td>
+                <q-td :props="props" key="to" >
+                                  {{ props.row.to }}
+                                  <q-popup-edit
+                                    buttons
+                                    title="Update mapping"
+                                    v-model="props.row.to"
+                                  >
+                                    <q-input
+                                      autofocus
+                                      dense
+                                      type="string"
+                                      v-model="props.row.to"
+                                    />
+                                  </q-popup-edit>
+                                </q-td>
+                <q-td :props="props" key="target">
+                  {{ props.row.target }}
+                  <q-popup-edit
+                    buttons
+                    title="Update mapping"
+                    v-model="props.row.target"
+                  >
+                    <q-input
+                      autofocus
+                      dense
+                      type="string"
+                      v-model="props.row.target"
+                    />
+                  </q-popup-edit>
+                </q-td>
+
+              </q-tr>
+            </template>
+          </q-table>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn
+            @click="addMappingRange()"
+            color="primary"
+            flat
+            label="Add mapping"
+          />
+          <q-btn
+            color="primary"
+            flat
+            label="OK"
+            v-close-popup
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+<!-- end of reusable range mapping dialog -->
     </div>
 </template>
 
@@ -89,7 +177,8 @@ export default {
   ],
   data () {
     return {
-        showDynamicEdit: false,
+        showMappingEdit: false,
+        showMappingRangeEdit: false,
         EditForm: {
           title: '',
           currentProperties: [],
@@ -98,6 +187,11 @@ export default {
         { name: 'source', align: 'left', label: 'Source', field: 'source', sortable: true },
         { name: 'target', label: 'Target', field: 'target', sortable: true, align: 'left' },
       ],
+        columnsRange: [
+         { name: 'from', align: 'left', label: 'From (inc)', field: 'from', sortable: true },
+         { name: 'to', label: 'To (inc)', field: 'to', sortable: true, align: 'left' },
+         { name: 'target', label: 'Target', field: 'target', sortable: true, align: 'left' },
+        ],
     }
   },
   computed: {
@@ -107,19 +201,34 @@ export default {
   },
   methods:{
 
-    openForm( properties ) {
+    openForm( properties , isRange ) {
+
+      console.log("Opening the form: " + isRange)
+
       this.EditForm.currentProperties = properties
-    //  this.EditForm.oldValue = ...[this.EditForm.editProp]
+
+      if ( isRange ) {
+
+      this.EditForm.title = "Edit Mapping Range"
+      this.showMappingRangeEdit = true
+
+      } else {
+
       this.EditForm.title = "Edit Mapping"
-      this.showDynamicEdit = true
+      this.showMappingEdit = true
+    }
     },
     // Close edit dialog and reset everything
     closeForm() {
-      this.showDynamicEdit = false
-   //   this.EditForm = FORM_DEFAULTS
+      this.showMappingEdit = false
+      this.showMappingRangeEdit = false
+      this.EditForm.currentProperties = null
     },
     addMapping () {
       this.EditForm.currentProperties.push({ source: "val", target: "newVal" })
+    },
+    addMappingRange () {
+      this.EditForm.currentProperties.push({ from: "0", to: "0", target: "0" })
     },
   },
   mounted() {

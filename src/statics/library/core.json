@@ -862,8 +862,11 @@
         "type": [{"from": "1","to": "3", "target": "100"},
           {"from": "4","to": "6", "target": "#INPUT#"}
         ]
+      },
+      {
+        "name" : "hoverText",
+        "type" : "Double click block to edit the mapping rules"
       }
-
     ],
     "widgets": [
       {

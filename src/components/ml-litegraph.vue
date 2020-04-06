@@ -1575,9 +1575,15 @@ export default {
         this.$root.$emit("openMappingEdit",block.node_over.properties.mapping)
       } else {
 
+      if (block.node_over.properties.mappingRange) {
+        this.$root.$emit("openMappingEdit",block.node_over.properties.mappingRange, true)
+      } else {
+
 		// Property edit. selectCase, Lookup, EvalJavaScript, & generic edit window hook
         if ( this.isNotEmpty(block.node_over.properties.pipesDblClickProp) && block.node_over.properties.editProp  ) {
          this.$root.$emit("openPropertyEdit",block.node_over)
+      }
+
       }
 
       }
