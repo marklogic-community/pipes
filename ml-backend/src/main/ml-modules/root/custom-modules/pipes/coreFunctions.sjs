@@ -31,6 +31,19 @@ function split(v,splitChar){
 }
 
 function lookUp(block,var1,var2,nbOutputValues,ctsQuery){
+  xdmp.log("VAR1 "+var1);
+  xdmp.log("TYPEOF VAR1 "+typeof var1);
+  xdmp.log("NULL VAR1 "+(var1 !== null));
+  if ( var1 != null ) {
+    if (var1 instanceof Sequence) {
+      var1 = fn.head(var1);
+    }
+  }
+  if ( var2 != null ){
+    if (var2 instanceof Sequence) {
+      var2 = fn.head(var2);
+    }
+  }
   xdmp.log("CTS QUERY "+ctsQuery);
   let template = "`"+ ctsQuery +"`";
   xdmp.log("TEMPLATE: "+template);

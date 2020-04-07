@@ -1490,17 +1490,26 @@ function init(LiteGraph){
 
 //function to call when the node is executed
 
+  function mapSequence(input) {
+    if (input != null) {
+      if (input instanceof Sequence) {
+        return fn.head(input);
+      }
+    }
+    return input;
+  }
+
   featureQueryBuilderBlock.prototype.onExecute = function()
   {
     //let output = "lookup(" + this.getInputData(0) + "," + this.getInputData(1) + "," + this.getInputData(2) + ")"
 
-    let v0= this.getInputData(0)
-    let v1= this.getInputData(1)
-    let v2= this.getInputData(2)
-    let v4 = this.getInputData(3)
-    let v5 = this.getInputData(4)
-    let v6 = this.getInputData(5)
-    let v7 = this.getInputData(6)
+    let v0= mapSequence(this.getInputData(0));
+    let v1= mapSequence(this.getInputData(1));
+    let v2= mapSequence(this.getInputData(2));
+    let v4 = mapSequence(this.getInputData(3));
+    let v5 = mapSequence(this.getInputData(4));
+    let v6 = mapSequence(this.getInputData(5));
+    let v7 = mapSequence(this.getInputData(6));
     let template = "`"+ this.properties.ctsQuery +"`"
     xdmp.log("Template "+template);
     let result = eval(eval(template))
