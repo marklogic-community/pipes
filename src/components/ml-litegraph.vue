@@ -730,6 +730,7 @@ export default {
   ],
   data () {
     return {
+      loggedIn : false,
       dhfSteps: [],
       selectedStep: null,
       previewSource: null,
@@ -1685,15 +1686,29 @@ export default {
       }
       //xdmp.log(code)
       eval(allBlockCode)
-    }
-  },
-  created () {
+    },
+    checkLoggedIn() {
 
+    console.log("Checking session login status:")
+
+    this.$axios.get('/status').then(response => {
+
+    if (response.data && response.data.authenticated) {
+        console.log("Logged in")
+        this.$store.commit('authenticated',true)
+      } else {
+      console.log("Not logged in. Redirecting to login page")
+       this.$router.push({ path: "/" })
+      }
+    })
+    }
   },
 
   mounted: function () {
 
     console.log("mounted")
+
+    this.checkLoggedIn()
 
     this.$root.$on("csvLoadingRequested", this.createGraphFromMapping)
     this.$root.$on('executeGraphCall', function () {
@@ -1733,11 +1748,10 @@ export default {
     if (this.$q.localStorage.getItem(ADVANCED_SETTINGS_KEY) == null) {
       this.persistSettings()
     } else {
-      console.log("Restoring settings:")
       var storedSettings = this.$q.localStorage.getItem(ADVANCED_SETTINGS_KEY)
       this.advancedSettings.confirmBrowserRefresh = storedSettings.confirmBrowserRefresh != null ? storedSettings.confirmBrowserRefresh : true
     }
-   // this.resetDhfDefaultGraph()
+    this.resetDhfDefaultGraph()
   },
   beforeMount () {
     window.addEventListener("beforeunload", this.browserRefreshConfirm)
@@ -1747,6 +1761,7 @@ export default {
     )
   },
   beforeDestroy () {
+
     // de-register events otherwise multiple events get fired
     this.$root.$off('blockRequested', this.createBlock);
     this.$root.$off("loadGraphJsonCall", this.loadGraphFromJson);
@@ -1757,6 +1772,9 @@ export default {
     this.$root.$off("downloadGraphCall", this.downloadGraph);
     this.$root.$off("uploadGraphCall", function () {
       this.showUploadGraph = true
+    }.bind(this))
+    this.$root.$off('executeGraphCall', function () {
+      this.showPreview = true
     }.bind(this))
     this.$root.$off("loadGraphCall", this.loadGraph);
     this.$root.$off("loadGraphJsonCall", this.loadGraphFromJson);

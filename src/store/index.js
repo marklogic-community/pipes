@@ -11,6 +11,7 @@ export default function () {
     state: {
       models: [],
       helpMode: false,
+      authenticated: false,
       GraphMetadata: {
         title: "My graph",
         version: "00.01",
@@ -18,9 +19,10 @@ export default function () {
         description: "",
         dateCreated: "",
         dateUpdated: ""
-      } 
+      }
     },
     getters: {
+    authenticated: state => { return state.authenticated },
     models: state => { return state.models },
     helpMode: state => { return state.helpMode },
     sourceBlocks: state => {
@@ -30,11 +32,14 @@ export default function () {
 }
     },
     mutations: {
+    authenticated( state, auth ) {
+      state.authenticated = auth
+    },
     helpMode(state, mode) {
       state.helpMode = mode
     },
     addBlock(state, block) {
-     // console.log("addBlock:" + block.source + "/"+ block.label) 
+     // console.log("addBlock:" + block.source + "/"+ block.label)
       var blockExists = false
       for (var x = 0; x < state.models.length; x++) {
         if ( state.models[x].label == block.label && state.models[x].source == block.source) {
@@ -46,10 +51,10 @@ export default function () {
         //    console.log( "[current] " + state.models[x].fields.length + " vs " + block.fields.length + "[new]" )
           }
           break;
-        } 
+        }
       }
- 
-        state.models.push(block) 
+
+        state.models.push(block)
 
     },
     // blockKey should be block.source/block.label
