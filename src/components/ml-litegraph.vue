@@ -9,182 +9,8 @@
       width='1800'
     ></canvas>
 
-    <q-dialog
-      persistent
-      v-model="editQuery"
-    >
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Edit Query</div>
-        </q-card-section>
-
-        <q-card-section>
-          <div
-            class="q-pa-md"
-            style="max-width: 600px;min-width:500px"
-          >
-            <q-input
-              v-model="currentCtsQuery.ctsQuery"
-              filled
-              type="textarea"
-            />
-          </div>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn
-            color="primary"
-            flat
-            label="OK"
-            v-close-popup
-          />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-
-    <q-dialog
-      persistent
-      v-model="editSJSCode"
-    >
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Edit JavaScript</div>
-        </q-card-section>
-
-        <q-card-section>
-          <div
-            class="q-pa-md"
-            style="max-width: 600px;min-width:500px"
-          >
-            <q-input
-              v-model="currentSJSCode.sjsCode"
-              filled
-              type="textarea"
-            />
-          </div>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn
-            color="primary"
-            flat
-            label="OK"
-            v-close-popup
-          />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-
-    <q-dialog
-      persistent
-      v-model="editCases"
-    >
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Edit Cases</div>
-        </q-card-section>
-
-        <q-card-section>
-          <div
-            class="q-pa-md"
-            style="max-width: 600px;min-width:500px"
-          >
-            <q-input
-              v-model="currentCases.testCases"
-              filled
-              type="textarea"
-            />
-          </div>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn
-            color="primary"
-            flat
-            label="OK"
-            v-close-popup
-          />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-
-    <q-dialog
-      persistent
-      v-model="editJson"
-    >
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Edit data mapping</div>
-        </q-card-section>
-
-        <q-card-section>
-          <q-table
-            :columns="columns"
-            :data="currentProperties"
-            binary-state-sort
-            row-key="name"
-            title="Mappings"
-          >
-            <template v-slot:body="props">
-              <q-tr :props="props">
-                <q-td
-                  :props="props"
-                  key="source"
-                >
-                  {{ props.row.source }}
-                  <q-popup-edit
-                    buttons
-                    title="Update mapping"
-                    v-model="props.row.source"
-                  >
-                    <q-input
-                      autofocus
-                      dense
-                      type="string"
-                      v-model="props.row.source"
-                    />
-                  </q-popup-edit>
-                </q-td>
-                <q-td
-                  :props="props"
-                  key="target"
-                >
-                  {{ props.row.target }}
-                  <q-popup-edit
-                    buttons
-                    title="Update mapping"
-                    v-model="props.row.target"
-                  >
-                    <q-input
-                      autofocus
-                      dense
-                      type="string"
-                      v-model="props.row.target"
-                    />
-                  </q-popup-edit>
-                </q-td>
-
-              </q-tr>
-            </template>
-          </q-table>
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn
-            @click="addMapping()"
-            color="primary"
-            flat
-            label="Add mapping"
-          />
-          <q-btn
-            color="primary"
-            flat
-            label="OK"
-            v-close-popup
-          />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+    <BlockPropertyEditDialog />
+    <BlockMappingEditDialog />
 
     <q-dialog
       :content-css="{minWidth: '60vw', minHeight: '80vh'}"
@@ -875,18 +701,23 @@ import CollectionFilter from '../components/collectionFilter.js';
 import codeGenerationConfig from '../components/codeGenerationConfig.vue'
 import CSVLoader from '../components/csvLoader.vue';
 import EntityManager from '../components/entityManager.js';
-import LiteGraphHelper from '../components/liteGraphHelper.js'
+import LiteGraphHelper from '../components/liteGraphHelper.js';
+import BlockPropertyEditDialog from '../components/propertyEditDialog.vue';
+import BlockMappingEditDialog from '../components/mappingEditDialog.vue'
 import Vue from 'vue';
 Vue.use(require('vue-shortkey'))
 import {  ENTITY_BLOCK_TYPE, SOURCE_BLOCK_TYPE, BLOCK_PATH, BLOCK_LABEL, BLOCK_FIELDS, BLOCK_FIELD, BLOCK_COLLECTION, BLOCK_SOURCE, BLOCK_OPTIONS,
   BLOCK_OPTION_FIELDS_INPUT, BLOCK_OPTION_FIELDS_OUTPUT, BLOCK_OPTION_NODE_INPUT, BLOCK_OPTION_NODE_OUTPUT} from '../components/constants.js'
 const ADVANCED_SETTINGS_KEY = "pipes.settings"
+const qs = require('querystring')
 
 export default {
   components: {
     VueJsonPretty,
     codeGenerationConfig,
-    CSVLoader
+    CSVLoader,
+    BlockPropertyEditDialog,
+    BlockMappingEditDialog
   },
   name: 'PageIndex',
   mixins: [
@@ -899,18 +730,12 @@ export default {
   ],
   data () {
     return {
+      loggedIn: false,
       dhfSteps: [],
       selectedStep: null,
       previewSource: null,
       previewWizard: 1,
-      currentCtsQuery: "",			//query edit popup
-      currentSJSCode: "",
-      currentCases: "",				//selectCase edit popup
       selectedTargetDB: null,
-      editQuery: false,				// show ctsQuery block edit popup
-      editSJSCode: false,
-      editJson: false,				//
-      editCases: false,				// swho selectCase cases property popup
       saveToDB: false,
       confirmDeleteGraph: false,
       confirmResetGraph: false,
@@ -932,10 +757,6 @@ export default {
         author: "",
         description: ""
       },
-      columns: [
-        { name: 'source', align: 'left', label: 'Source', field: 'source', sortable: true },
-        { name: 'target', label: 'Target', field: 'target', sortable: true, align: 'left' },
-      ],
       opened: true,
       isExported: false,
       graph: null,                // LiteGraphObject
@@ -951,7 +772,7 @@ export default {
       loadPopUpOpened: false,
       graphName: "",
       savedGraph: [],
-      currentProperties: [],
+      //   currentProperties: [],
       jsoneditor: null,
       availableCollections: [],
       selectedDB: null,
@@ -1081,7 +902,6 @@ export default {
       }
     },
     selectedStep: function (val) {
-
       let availableDbHash = this.availableDB.reduce(function (map, obj) {
         map[obj.label] = obj.value;
         return map;
@@ -1089,38 +909,29 @@ export default {
 
       this.selectedDB = { "label": this.dhfSteps[val.label].database, "value": availableDbHash[this.dhfSteps[val.label].database] };
       this.collectionForPreview = { "label": this.dhfSteps[val.label].collection, "value": this.dhfSteps[val.label].collection };
-
-
     }
   },
-
   methods: {
     // criteria for disabling the "Execute Preview" button
     shouldDisable () {
       let disable = false;
-
       // if the source DB not selected
       if (this.selectedDB === '' || this.selectedDB === null) {
         disable = true;
       }
-
       // if the source collection not selected or docUri not used
       if ((this.collectionForPreview === '' || this.collectionForPreview === null) && (this.docUri === '' || this.docUri === null)) {
         disable = true;
       }
-
       // if tryin to save to DB but the target DB not selected
       if (this.saveToDB === true) {
         if (this.selectedTargetDB === '' || this.selectedTargetDB === null) {
           disable = true;
         }
       }
-
       return disable;
     },
-
     createBlock (blockDef) {
-
       var blockInList = false;
       const BLOCK_KEY = blockDef.source + "/" + blockDef.collection
       blockInList = this.isblockInModelList(this.blockModels, BLOCK_KEY)
@@ -1158,10 +969,6 @@ export default {
 
     },
 
-    addMapping () {
-      this.currentProperties.push({ source: "val", target: "newVal" })
-    },
-
     getDatabaseEntities () {
       var self = this;
       this.$axios.get('/v1/resources/vppBackendServices?rs:action=DHFEntities')
@@ -1174,7 +981,7 @@ export default {
         })
     },
 
-    loadGraphFromJson (graph) {
+    loadGraphFromJson (graph, notifyLoaded) {
 
       this.checkEntityBlocks(graph)
       this.graphStatistics(graph.executionGraph)
@@ -1208,20 +1015,26 @@ export default {
       if (graph.metadata && graph.metadata.description != null) this.graphMetadata.description = graph.description; else this.graphMetadata.description = ""
       this.$root.$emit("initGraphMetadata", this.graphMetadata)
 
-      this.notifyPositive(self, "Loaded graph " + this.graphMetadata.title)
+      if (notifyLoaded) this.notifyPositive(self, "Loaded graph " + this.graphMetadata.title)
       this.$root.$emit("resetGraphTitle") // reset the titlebar to top graph (remove all subgraph history)
       this.showUploadGraph = false
-    }
-    ,
+    },
     getSavedGraph (uri, graphName) {
       //if(uri!=null)
-      console.log("Get saved graph")
+      console.log("Reloading saved graph " + graphName)
       var self = this; // keep reference for notifications called from catch block
       this.$axios.get('/v1/resources/vppBackendServices?rs:action=GetSavedGraph&rs:uri=' + encodeURI(uri))
         .then((response) => {
           let graph = response.data;
-          this.loadGraphFromJson(graph)
-          this.notifyPositive(self, "Loaded graph '" + graphName + "'")
+          console.log("restoring the graph")
+          this.loadGraphFromJson(graph, true)
+          //self.notifyPositive(this, "Loaded graph '" + graphName + "'")
+          this.$q.notify({
+            color: 'positive',
+            position: 'top',
+            message: "Loaded graph '" + graphName + "'",
+            icon: 'code'
+          })
           this.loadPopUpOpened = false
         })
         .catch((error) => {
@@ -1531,7 +1344,7 @@ export default {
         .then((response) => {
           let defaultGraph = response.data
           defaultGraph.models = this.blockModels
-          this.loadGraphFromJson(defaultGraph)
+          this.loadGraphFromJson(defaultGraph, false)
         })
     }
     ,
@@ -1687,25 +1500,20 @@ export default {
       }
     },
     selectNode (block) {
-      console.log(block)
-      let message = null
-      if (block.properties.testCases)
-        message = 'Double click block to edit the test cases'
 
-      if (block.properties.mapping)
-        message = 'Double click block to edit the mapping rules'
+      if (this.isNotEmpty(block.properties) && block.properties.hoverText) {
 
-      if (block.properties.ctsQuery)
-        message = 'Double click block to edit the lookup query'
-
-      if (message != null)
-        this.$q.notify({
-          color: 'secondary',
-          position: 'center',
-          message: message,
-          icon: 'info',
-          timeout: 800
-        })
+        let message = this.isNotEmpty(block.properties) && block.properties.hoverText ? block.properties.hoverText : ""
+        if (this.isNotEmpty(message)) {
+          this.$q.notify({
+            color: 'secondary',
+            position: 'center',
+            message: message,
+            icon: 'info',
+            timeout: 500
+          })
+        }
+      }
     },
     discoverDhfSteps () {
       var self = this;
@@ -1766,34 +1574,32 @@ export default {
           self.notifyError("collectionDetails", error, self);
         })
     },
-    DblClickNode (block) {
+    // Double click on nodes
+    nodeDoubleClick (block) {
 
       if (block.node_over && block.node_over.properties) {
 
-        // string/Mapvalues block
+        // Mapping edit (string/Mapvalues block)
         if (block.node_over.properties.mapping) {
-          if (block.node_over.properties.mapping != null) this.currentProperties = block.node_over.properties.mapping
-          this.editJson = true
-        }
+          this.$root.$emit("openMappingEdit", block.node_over.properties.mapping)
+        } else {
 
-        // Lookup block
-        if (block.node_over.properties.ctsQuery) {
-          if (block.node_over.properties != null) this.currentCtsQuery = block.node_over.properties
-          this.editQuery = true
-        }
-        if (block.node_over.properties.sjsCode) {
-          if (block.node_over.properties != null) this.currentSJSCode = block.node_over.properties
-          this.editSJSCode = true
-        }
+          if (block.node_over.properties.mappingRange) {
+            this.$root.$emit("openMappingEdit", block.node_over.properties.mappingRange, true)
+          } else {
 
-        // selectCase block
-        if (block.node_over.properties.testCases) {
-          if (block.node_over.properties.testCases != null) this.currentCases = block.node_over.properties
-          this.editCases = true
-        }
+            // Property edit. selectCase, Lookup, EvalJavaScript, & generic edit window hook
+            if (this.isNotEmpty(block.node_over.properties.pipesDblClickProp) && block.node_over.properties.editProp) {
+              this.$root.$emit("openPropertyEdit", block.node_over)
+            }
 
+          }
+
+        }
       }
-
+    },
+    isNotEmpty (prop) {
+      return (prop !== null && prop != '')
     },
     copyResultToClipboard (result) {
       var document;
@@ -1833,7 +1639,7 @@ export default {
         }).join("") : ""
         blockCode += (config.widgets != null) ? config.widgets.map((widget) => {
           if (widget.default == "#DATABASES#") widget.values = this.availableDB.map(item => item.label)
-          return "this.addWidget('" + widget.type + "','" + widget.name + "','" + widget.default + "', function(v){" + (widget.callback ? widget.callback : "") + "}.bind(this), { values:" + JSON.stringify(widget.values) + "} );"
+          return "this.addWidget('" + widget.type + "','" + widget.name + "'," + ((typeof (widget.default) == "boolean") ? widget.default : "'" + widget.default + "'") + ", function(v){" + (widget.callback ? widget.callback : "") + "}.bind(this), { values:" + JSON.stringify(widget.values) + "} );"
         }).join("") : "";
 
         if (config.width)
@@ -1843,9 +1649,10 @@ export default {
         //blockCode += (config.properties)?"config.properties = " +  config.properties +";":"";
         blockCode += "};"
 
+        if (config.title_color) blockCode += config.functionName + ".title_color = \"" + config.title_color + "\";"
         blockCode += config.functionName + ".title = '" + config.blockName + "';";
 
-        // Add event to onDrawForeground for block when defined
+        // Add event to onConfigure for block when defined
         // !== undefined is required
         if (config.events && config.events != null && config.events != undefined) {
           if (config.events.onDrawForeground !== null && config.events.onDrawForeground != undefined && config.events.onDrawForeground != '') {
@@ -1854,6 +1661,10 @@ export default {
           if (config.events.onConfigure !== null && config.events.onConfigure != undefined && config.events.onConfigure != '') {
             blockCode += config.functionName + ".prototype.onConfigure = function(node){" + config.events.onConfigure + "};"
           }
+        }
+        // beforePropSave event for validating block property editing
+        if (config.events && config.events.beforePropSave && config.events.beforePropSave != undefined) {
+          blockCode += config.functionName + ".prototype.beforePropSave = function(v,validation,ctx){" + config.events.beforePropSave + "};"
         }
 
         blockCode += config.functionName + ".prototype.notify = function(node){this.$root.$emit(\"nodeSelected\",node)}.bind(this);";
@@ -1883,14 +1694,29 @@ export default {
       }
       //xdmp.log(code)
       eval(allBlockCode)
-    }
-  },
-  created () {
+    },
+    checkLoggedIn () {
 
+      console.log("Checking session login status:")
+
+      this.$axios.get('/status').then(response => {
+
+        if (response.data && response.data.authenticated) {
+          console.log("Logged in")
+          this.$store.commit('authenticated', true)
+        } else {
+          console.log("Not logged in. Redirecting to login page")
+          this.$router.push({ path: "/" })
+        }
+      })
+    }
   },
 
   mounted: function () {
+
     console.log("mounted")
+
+    this.checkLoggedIn()
 
     this.$root.$on("csvLoadingRequested", this.createGraphFromMapping)
     this.$root.$on('executeGraphCall', function () {
@@ -1905,7 +1731,7 @@ export default {
     this.$root.$on("loadGraphCall", this.loadGraph);
     this.$root.$on("loadGraphJsonCall", this.loadGraphFromJson);
     this.$root.$on("exportGraphCall", this.exportDHFModule);
-    this.$root.$on("nodeDblClicked", this.DblClickNode);
+    this.$root.$on("nodeDblClicked", this.nodeDoubleClick);
     this.$root.$on("nodeSelected", this.selectNode);
     this.$root.$on("loadDHFDefaultGraphCall", this.resetDhfDefaultGraph);
     this.$root.$on("listGraphBlocks", this.listGraphBlocks);
@@ -1930,7 +1756,6 @@ export default {
     if (this.$q.localStorage.getItem(ADVANCED_SETTINGS_KEY) == null) {
       this.persistSettings()
     } else {
-      console.log("Restoring settings:")
       var storedSettings = this.$q.localStorage.getItem(ADVANCED_SETTINGS_KEY)
       this.advancedSettings.confirmBrowserRefresh = storedSettings.confirmBrowserRefresh != null ? storedSettings.confirmBrowserRefresh : true
     }
@@ -1944,6 +1769,7 @@ export default {
     )
   },
   beforeDestroy () {
+
     // de-register events otherwise multiple events get fired
     this.$root.$off('blockRequested', this.createBlock);
     this.$root.$off("loadGraphJsonCall", this.loadGraphFromJson);
@@ -1954,6 +1780,9 @@ export default {
     this.$root.$off("downloadGraphCall", this.downloadGraph);
     this.$root.$off("uploadGraphCall", function () {
       this.showUploadGraph = true
+    }.bind(this))
+    this.$root.$off('executeGraphCall', function () {
+      this.showPreview = true
     }.bind(this))
     this.$root.$off("loadGraphCall", this.loadGraph);
     this.$root.$off("loadGraphJsonCall", this.loadGraphFromJson);

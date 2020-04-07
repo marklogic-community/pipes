@@ -366,6 +366,9 @@
     "functionName": "EvalJavaScript",
     "blockName": "EvalJavaScript",
     "library": "feature",
+    "events" : {
+      "beforePropSave" : "var result=true;try{eval('var var1,var2,var3,var4,var5;'+v)}catch(e){validation.message=e;result=false};return result"
+    },
     "inputs": [
       {
         "name": "var1",
@@ -393,6 +396,14 @@
       {
         "name": "sjsCode",
         "type": "if ( Number(var1) > 100 ) 'BIG'; else 'SMALL';"
+      },
+      {
+        "name" : "editProp",
+        "type" : "sjsCode"
+      },
+      {
+        "name" : "editWindowTitle",
+        "type" : "Edit JavaScript"
       }
     ],
     "widgets": [],
@@ -411,9 +422,10 @@
   {
     "functionName": "Lookup",
     "blockName": "Lookup",
-	"library": "feature",
-	"events": {
-		"onConfigure": "console.debug('Lookup block onConfigure event: '+ JSON.stringify(node) + ' widgets.length=' + this.widgets.length + ' inputs:' + this.inputs.length + ' outputs:' + this.outputs.length + ', v:' + this.widgets[0].value);let v = this.widgets[0].value;if (this.widgets.length == (parseInt(v) + 2)) return; this.widgets=this.widgets.slice(0,2);for (let x=0;x < v ;x++) {this.addWidget(\"text\", \"value\" + x + \"Path\" , this.widgets_values[x+2], function (v) {})};return;"
+	  "library": "feature",
+	  "events": {
+    "onConfigure": "let v = this.widgets[0].value;if (this.widgets.length == (parseInt(v) + 2)) return; this.widgets=this.widgets.slice(0,2);for (let x=0;x < v ;x++) {this.addWidget(\"text\", \"value\" + x + \"Path\" , this.widgets_values[x+2], function (v) {})};return;",
+    "beforePropSave" : "validation.override = true; return ctx.validateCtsQuery(v)"
 			},
     "inputs": [
       {
@@ -430,6 +442,18 @@
       {
         "name": "ctsQuery",
         "type": "cts.collectionQuery(\"${var1}\")"
+      },
+      {
+        "name" : "editProp",
+        "type" : "ctsQuery"
+      },
+      {
+        "name" : "editWindowTitle",
+        "type" : "Edit Query"
+      },
+      {
+        "name" : "hoverText",
+        "type" : "Double click block to edit the lookup query"
       }
     ],
     "widgets": [
@@ -438,7 +462,7 @@
         "name": "nbOutputValues",
         "default": "1",
         "values": "1",
-		"callback": "let nb = this.outputs.length;let vInt = parseInt(v);if (vInt < nb) {for (let i=0;i<(nb - vInt);i++){this.removeOutput(this.outputs.length-1);this.widgets.pop()}}else if (vInt > nb) { this.widgets=this.widgets.slice(0,2 + nb);for(let i=nb;i<vInt;i++) {this.addOutput('value' + i,null);this.addWidget(\"text\", \"value\" + i + \"Path\" , '', function (v) {})};}"	},
+		    "callback": "let nb = this.outputs.length;let vInt = parseInt(v); if (vInt < nb) {for (let i=0;i<(nb - vInt);i++){this.removeOutput(this.outputs.length-1);this.widgets.pop()}} else if (vInt > nb) { this.widgets=this.widgets.slice(0,2 + nb);for(let i=nb;i<vInt;i++) {this.addOutput('value' + i,null);this.addWidget(\"text\", \"value\" + i + \"Path\" , '', function (v) {})};}"	},
       {
         "type": "combo",
         "name": "database",
@@ -818,6 +842,55 @@
     }
   },
   {
+    "functionName": "mapRangeValues",
+    "blockName": "mapRangeValues",
+    "library": "feature",
+    "description" : "This block maps an input from an range value to another using the configuration of the block (double click)",
+    "inputs": [
+      {
+        "name": "value",
+        "type": "number"
+      },
+      {
+        "name": "default",
+        "type": "number"
+      }
+    ],
+    "properties": [
+      {
+        "name": "mappingRange",
+        "type": [{"from": "1","to": "3", "target": "100"},
+          {"from": "4","to": "6", "target": "#INPUT#"}
+        ]
+      },
+      {
+        "name" : "hoverText",
+        "type" : "Double click block to edit the mapping rules"
+      }
+    ],
+    "widgets": [
+      {
+        "type": "combo",
+        "name": "castOutput",
+        "default": "number",
+        "values": ["number","string","bool"]
+      }
+    ],
+    "outputs": [
+      {
+        "name": "mappedValue",
+        "type": null
+      }
+    ],
+    "function": {
+      "ref": null,
+      "code": ""
+
+
+    }
+  }
+,
+  {
     "functionName": "mapValues",
     "blockName": "Map values",
     "library": "string",
@@ -825,6 +898,9 @@
     "inputs": [
       {
         "name": "value",
+        "type": "xs:string"
+      },{
+        "name": "default",
         "type": "xs:string"
       }
     ],
@@ -834,8 +910,11 @@
         "type": [{"source": "#NULL#", "target": "#NULL#"},
           {"source": "#EMPTY#", "target": "#EMPTY#"}
         ]
+      },
+      {
+        "name" : "hoverText",
+        "type" : "Double click block to edit the mapping rules"
       }
-
     ],
     "widgets": [
       {
@@ -1509,6 +1588,9 @@
     "blockName": "selectCase",
     "library": "feature",
     "description" : "This block returns one of the inputX value depending on the value2Test input. The selection of inputX is done based on the block configuration (double click)",
+    "events": {
+      "beforePropSave" : "if (v.trim().length > 0) {return true} else { validation.message = 'Cannot be empty'; return false }"
+    },
     "inputs": [
       {
         "name": "value2Test",
@@ -1535,6 +1617,18 @@
       {
         "name": "testCases",
         "type": "v1;0\nv2;1\nv3;2"
+      },
+      {
+        "name" : "editProp",
+        "type" : "testCases"
+      },
+      {
+        "name" : "editWindowTitle",
+        "type" : "Edit Cases"
+      },
+      {
+        "name" : "hoverText",
+        "type" : "Double click block to edit the test cases"
       }
     ],
     "widgets": [
@@ -1667,35 +1761,5 @@
       "ref": null,
       "code": null
     }
-  },
-  {
-    "functionName": "parseWsrlPhoneBookHtml",
-    "blockName": "parseWsrlPhoneBookHtml",
-    "library": "user",
-    "description" : "This block generates an UUID string",
-    "inputs": [
-      {
-        "name": "in",
-        "type": null
-      }
-    ],
-
-    "widgets": [
-
-
-    ],
-    "properties": [],
-    "outputs": [
-
-      {
-        "name": "out",
-        "type": null
-      }
-    ],
-    "function": {
-      "ref": null,
-      "code": ""
-    }
-
   }
 ]

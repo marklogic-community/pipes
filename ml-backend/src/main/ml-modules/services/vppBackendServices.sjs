@@ -275,11 +275,19 @@ function getCollectionDetails() {
 
 function getDHFEntities() {
 
-  return sem.sparql(
-    "SELECT DISTINCT ?value ?label WHERE {?value <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>	 <http://marklogic.com/entity-services#EntityType>. \
-      ?value <http://marklogic.com/entity-services#title> ?label.\
-        FILTER NOT EXISTS {?any <http://marklogic.com/entity-services#ref> ?value}\
-      }").toArray()
+  return sem.sparql("PREFIX es: <http://marklogic.com/entity-services#>\
+    SELECT DISTINCT ?value ?label ?description WHERE {\
+      ?value a es:EntityType ;\
+             es:title ?label .\
+      OPTIONAL {\
+        ?value es:description ?description .\
+      }\
+      ?def es:definitions ?value. optional { ?def es:description ?description }\
+      FILTER NOT EXISTS {\
+        ?any es:ref ?value .\
+      }\
+    }").toArray()
+
 }
 
 function getDHFEntityProperties(entity) {
@@ -290,12 +298,15 @@ function getDHFEntityProperties(entity) {
   }
 
   entityModel.children = sem.sparql(
-    "SELECT * WHERE {\
-      ?entity <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>	 <http://marklogic.com/entity-services#EntityType>.\
-      ?entity <http://marklogic.com/entity-services#property> ?property.\
-      ?property <http://marklogic.com/entity-services#title> ?label.\
-      OPTIONAL {?property <http://marklogic.com/entity-services#datatype>|<http://marklogic.com/entity-services#ref> ?type.}\
-      }", {"entity": sem.iri(entityModel.label)}).toArray()
+      "PREFIX es: <http://marklogic.com/entity-services#>\
+       SELECT * WHERE {\
+        ?entity <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> es:EntityType.\
+        ?entity es:property ?property.\
+        ?property es:title ?label.\
+        OPTIONAL {?property es:datatype|es:ref ?type.}\
+        OPTIONAL { ?property es:description ?description }\
+        }",
+      {"entity": sem.iri(entityModel.label)}).toArray()
   return entityModel
 }
 
@@ -400,10 +411,10 @@ function getFieldsByCollection(collection, customURI) {
       let i = 0
       let fields = {}
       let docs = []
-      let nbDocs = fn.count(fn.collection(collection))
-      if (collection != null && collection != "") {
+      let collectionDocs = fn.count(fn.collection(collection))
+      if (collection != null && collection != "" && collectionDocs > 0) {
         for (let j = 0; j < 10; j++) {
-          docs.push(fn.head(fn.subsequence(fn.collection(collection), xdmp.random(nbDocs))))
+          docs.push(fn.head(fn.subsequence(fn.collection(collection), xdmp.random(collectionDocs))))
           //let doc = fn.head(fn.collection(collection))
         }
       }
@@ -418,6 +429,7 @@ function getFieldsByCollection(collection, customURI) {
           }
         }
       }
+
       docs.map(doc => doc.xpath(".//*").toArray().map(node => {
 
         let name = fn.name(node)
@@ -438,9 +450,6 @@ function getFieldsByCollection(collection, customURI) {
           else
             return item.replace(/[A-z]+-node\('([\s\w@]*)'\)/g, "$1").replace(/text\('([\s\w@]+)'\)/g, "$1")
         })
-
-
-
 
         let lastSlash = originalPath.replace(/(\/object-node\(\))/g,"").lastIndexOf("/")
         let nodeLastPath = originalPath.substring(lastSlash + 1)
@@ -589,8 +598,21 @@ function verifyUri(params) {
   return response
 }
 
-function get(context, params) {
+function validateCTSQuery(input, params) {
+  var query = JSON.parse(input).query
+  console.log("Validating ctsquery : " + query)
+  var testQuery = 'fn.count(' + query + ')'
+  var result
+  try {
+    result = xdmp.eval(testQuery)
+    return {"valid" : true}
+  } catch (e) {
+    console.log("Not valid: " + e)
+    return {"valid" : false, "error" : e}
+  }
+}
 
+function get(context, params) {
 
   switch (params.action) {
     case "collectionModel":
@@ -694,6 +716,8 @@ function post(context, params, input) {
     case "SaveGraph":
       return saveGraph(input, params)
       break;
+    case "ValidateCtsQuery":
+      return validateCTSQuery(input, params)
     default:
     // code block
   }
