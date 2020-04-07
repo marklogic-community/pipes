@@ -53,7 +53,7 @@ public class Application {
           }
         }
         else {
-          logger.warn("If you intent to use user blocks (user.json/user.sjs) then beware that this feature is unavailabe becase property customModulesRoot is not set in the application properties.");
+          logger.info("If you intent to use user blocks (user.json/user.sjs) then beware that this feature is unavailabe becase property customModulesRoot is not set in the application properties.");
           registry.addResourceHandler("/resources/**")
             .addResourceLocations("/public", "classpath:/static/")
             .setCachePeriod(0);
