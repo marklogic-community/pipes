@@ -2745,9 +2745,9 @@ function init(LiteGraph){
     let o = map2Output[value2test];
     let r = null;
     if ( o != null ) {
-      r = this.getInputData(o + 1);
+      r = this.getInputData(o + 2);
     } else {
-      const defaultValue = this.getInputData(4);
+      const defaultValue = this.getInputData(1);
       if ( defaultValue == null ) {
         r = value2test;
       } else {
