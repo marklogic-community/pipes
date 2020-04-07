@@ -53,6 +53,7 @@ public class Application {
           }
         }
         else {
+          logger.warn("USER BLOCKS UNAVAILABLE! Property customModulesRoot not set in the application properties.")
           registry.addResourceHandler("/resources/**")
             .addResourceLocations("/public", "classpath:/static/")
             .setCachePeriod(0);
