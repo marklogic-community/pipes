@@ -11,6 +11,7 @@
 
     <BlockPropertyEditDialog/>
     <BlockMappingEditDialog/>
+    <GraphExecutePreview/>
 
     <q-dialog
       :content-css="{minWidth: '60vw', minHeight: '80vh'}"
@@ -221,366 +222,6 @@
       </q-card>
     </q-dialog>
 
-    <q-dialog v-model="showPreview">
-      <q-card>
-        <q-card-section class="row items-center">
-          <div class="text-h6">Preview Graph Execution</div>
-        </q-card-section>
-        <q-card-section class="row">
-          <div style="min-width: 250px; max-width: 500px">
-
-            <div style="width:532px">
-              <q-stepper
-                v-model="previewWizard"
-                vertical
-                flat
-                color="primary"
-                animated
-              >
-                <q-step
-                  :name="1"
-                  title="Select the source of the document for preview"
-                  icon="settings"
-                  :done="previewWizard > 1"
-                >
-                  <q-list>
-                    <q-item
-                      tag="label"
-                      v-ripple
-                    >
-                      <q-item-section avatar>
-                        <q-radio
-                          v-model="previewSource"
-                          val="collection"
-                          color="teal"
-                        />
-                      </q-item-section>
-                      <q-item-section>
-                        <q-item-label>Documents Collection</q-item-label>
-                        <q-item-label caption>Select this option if you want to run the preview on document(s) from a DB collection</q-item-label>
-                      </q-item-section>
-                    </q-item>
-
-                    <q-item
-                      tag="label"
-                      v-ripple
-                    >
-                      <q-item-section avatar>
-                        <q-radio
-                          v-model="previewSource"
-                          val="uri"
-                          color="teal"
-                        />
-                      </q-item-section>
-                      <q-item-section>
-                        <q-item-label>Document URI</q-item-label>
-                        <q-item-label caption>Select this option if you want to run the preview on a specific document whose URI you know</q-item-label>
-                      </q-item-section>
-                    </q-item>
-
-                    <q-item
-                      tag="label"
-                      v-ripple
-                    >
-                      <q-item-section avatar>
-                        <q-radio
-                          v-model="previewSource"
-                          val="dhfStep"
-                          color="teal"
-                        />
-                      </q-item-section>
-                      <q-item-section>
-                        <q-item-label>Custom DHF Step</q-item-label>
-                        <q-item-label caption>Select this option if you already have a custom DHF step definition for your Pipes graph</q-item-label>
-                      </q-item-section>
-                    </q-item>
-
-                  </q-list>
-
-                  <q-stepper-navigation>
-                    <q-btn
-                      @click="previewWizard = 2"
-                      color="primary"
-                      label="Continue"
-                      :disable="isStep1ContinueDisabled"
-                    />
-                  </q-stepper-navigation>
-                </q-step>
-
-                <q-step
-                  :name="2"
-                  title="Select details"
-                  caption=""
-                  icon="settings"
-                  :done="previewWizard > 2"
-                >
-
-                  <div v-if="isCollectionSelected || isUriSelected">
-                    <q-select
-                      :options="availableDB"
-                      filled
-                      label="Source Database*"
-                      v-model="selectedDB"
-                      @input="dbChanged()"
-                    >
-                      <q-tooltip content-style="font-size: 1em">
-                        Preview will be executed on documents from this database
-                      </q-tooltip>
-                      <template v-slot:prepend>
-                        <q-icon
-                          name="fas fa-database"
-                          @click.stop
-                        />
-                      </template>
-                    </q-select>
-                  </div>
-
-                  <div
-                    id="collectionGroup"
-                    v-if="isCollectionSelected"
-                  >
-
-                    <q-select
-                      :options="availableCollections"
-                      filled
-                      label="Source Collection*"
-                      v-model="collectionForPreview"
-                    >
-
-                      <template v-slot:prepend>
-                        <q-icon
-                          name="fas fa-tags"
-                          @click.stop
-                        />
-                      </template>
-                      <q-tooltip content-style="font-size: 1em">
-                        Preview will be executed on documents from this collection
-                      </q-tooltip>
-                    </q-select>
-
-                    <q-toggle
-                      label="Random document"
-                      v-model="randomDocPreview"
-                    >
-                      <q-tooltip content-style="font-size: 1em">
-                        When checked, a random document from collection will be picked. Otherwise, the first document in the collection will be used.
-                      </q-tooltip>
-                    </q-toggle>
-
-                  </div>
-
-                  <div
-                    id="uriGroup"
-                    v-if="isUriSelected"
-                  >
-                    <q-input
-                      v-model="docUri"
-                      label="Optional doc URI"
-                    />
-                  </div>
-
-                  <div
-                    id="dhfStepGroup"
-                    v-if="isDhfStepSelected"
-                  >
-                    <div>Select a DHF step from your project</div>
-                    <q-select
-                      v-if="this.previewSource==='dhfStep'"
-                      dense
-                      outlined
-                      v-model="selectedStep"
-                      :options="dhfStepSelectOptions"
-                      label="Select the DHF 5.x Step"
-                    />
-                    <q-toggle
-                      label="Random document"
-                      v-model="randomDocPreview"
-                    >
-                      <q-tooltip content-style="font-size: 1em">
-                        When checked, a random document from collection will be picked. Otherwise, the first document in the collection will be used.
-                      </q-tooltip>
-                    </q-toggle>
-                  </div>
-
-                  <q-stepper-navigation>
-                    <q-btn
-                      @click="previewWizard = 3"
-                      color="primary"
-                      label="Continue"
-                      :disable="isStep2ContinueDisabled"
-                    />
-                    <q-btn
-                      flat
-                      @click="previewWizard = 1"
-                      color="primary"
-                      label="Back"
-                      class="q-ml-sm"
-                    />
-                  </q-stepper-navigation>
-                </q-step>
-
-                <q-step
-                  :name="3"
-                  title="Save result to a Database?"
-                  icon="settings"
-                >
-                  <q-toggle
-                    label="Save to DB"
-                    v-model="saveToDB"
-                  />
-
-                  <q-select
-                    v-if="saveToDB"
-                    :options="availableDB"
-                    filled
-                    label="Save to Database"
-                    v-model="selectedTargetDB"
-                  >
-
-                    <template v-slot:prepend>
-                      <q-icon
-                        name="fas fa-database"
-                        @click.stop
-                      />
-                    </template>
-
-                  </q-select>
-
-                  <q-stepper-navigation>
-                    <q-btn
-                      @click="previewWizard = 4"
-                      color="primary"
-                      label="Continue"
-                      :disable="isStep3ContinueDisabled"
-                    />
-                    <q-btn
-                      flat
-                      @click="previewWizard = 2"
-                      color="primary"
-                      label="Back"
-                      class="q-ml-sm"
-                    />
-                  </q-stepper-navigation>
-
-                </q-step>
-
-                <q-step
-                  :name="4"
-                  title="Summary"
-                  icon="list"
-                >
-
-                  <div>Source Database: <q-chip icon="storage"> {{summarySelectedDB}}</q-chip>
-                  </div>
-                  <div
-                    id="collectionGroupSummary"
-                    v-if="isCollectionSelected || isDhfStepSelected"
-                  >
-                    <div>Source Document Collection: <q-chip icon="collections">{{summaryCollectionForPreview}}</q-chip>
-                    </div>
-                    <div>Random Document:
-                      <q-toggle
-                        v-model="randomDocPreview"
-                        checked-icon="check"
-                        color="green"
-                        unchecked-icon="clear"
-                      />
-                    </div>
-                  </div>
-
-                  <div
-                    id="uriGroup"
-                    v-if="isUriSelected"
-                  >
-                    Source Document URI: <q-chip icon="menu_book">{{docUri}}</q-chip>
-                  </div>
-
-                  <div
-                    id="saveToDbGroup"
-                    v-if="saveToDB"
-                  >
-                    Save result to Database: <q-chip icon="storage"> {{summarySaveDB}}</q-chip>
-                  </div>
-
-                  <div class="q-pa-md q-gutter-sm">
-
-                  </div>
-
-                  <q-stepper-navigation>
-                    <q-btn
-                      :loading="graphPreviewExecuting"
-                      v-bind:disabled="graphPreviewExecuting"
-                      @click="executeGraph()"
-                      color="primary"
-                      label="Execute Preview"
-                    />
-
-                    <q-btn
-                      flat
-                      @click="previewWizard = 3"
-                      color="primary"
-                      label="Back"
-                      class="q-ml-sm"
-                    />
-
-                  </q-stepper-navigation>
-                </q-step>
-              </q-stepper>
-            </div>
-
-          </div>
-
-        </q-card-section>
-        <q-list
-          dense
-          bordered
-          padding
-          class="rounded-borders"
-        >
-          <q-item
-            clickable
-            v-ripple
-            v-for="(item, index) in validationInfos"
-            v-bind:key="index"
-          >
-            <q-item-section avatar>
-              <q-icon
-                :color="(item.type=='error')?'negative':'primary'"
-                :name="item.type"
-              />
-            </q-item-section>
-
-            <q-item-section>{{item.msg}}</q-item-section>
-          </q-item>
-
-        </q-list>
-
-        <q-card align="right">
-          <q-btn
-            @click="copyResultToClipboard(jsonFromPreview)"
-            :ripple="{ color: 'green' }"
-          >
-            <q-tooltip
-              self="top middle"
-              content-class="pipes-tooltip"
-            >Copy to clipboard</q-tooltip>
-            <q-icon name="fas fa-paste" />
-          </q-btn>
-        </q-card>
-
-        <q-scroll-area style="height: 500px; max-width: 500px;">
-          <div class="q-py-xs">
-            <vue-json-pretty
-              id="prettyJSON"
-              :data="jsonFromPreview"
-            >
-            </vue-json-pretty>
-          </div>
-        </q-scroll-area>
-        </q-card-section>
-      </q-card>
-    </q-dialog>
-
     <q-dialog v-model="showUploadGraph">
       <CSVLoader />
     </q-dialog>
@@ -694,7 +335,6 @@ import { LiteGraph } from 'litegraph.js';
 import { saveAs } from 'file-saver';
 import { Vuex } from "vuex";
 import { LocalStorage, copyToClipboard } from 'quasar';
-import VueJsonPretty from 'vue-json-pretty';
 import Notifications from '../components/notificationHandler.js';
 import DatabaseFilter from '../components/databaseFilter.js';
 import CollectionFilter from '../components/collectionFilter.js';
@@ -703,7 +343,8 @@ import CSVLoader from '../components/csvLoader.vue';
 import EntityManager from '../components/entityManager.js';
 import LiteGraphHelper from '../components/liteGraphHelper.js';
 import BlockPropertyEditDialog from '../components/propertyEditDialog.vue';
-import BlockMappingEditDialog from '../components/mappingEditDialog.vue'
+import BlockMappingEditDialog from '../components/mappingEditDialog.vue';
+import GraphExecutePreview from '../components/graphExecutePreview.vue'
 import Vue from 'vue';
 Vue.use(require('vue-shortkey'))
 import {  ENTITY_BLOCK_TYPE, SOURCE_BLOCK_TYPE, BLOCK_PATH, BLOCK_LABEL, BLOCK_FIELDS, BLOCK_FIELD, BLOCK_COLLECTION, BLOCK_SOURCE, BLOCK_OPTIONS,
@@ -713,11 +354,11 @@ const qs = require('querystring')
 
 export default {
   components: {
-    VueJsonPretty,
     codeGenerationConfig,
     CSVLoader,
     BlockPropertyEditDialog,
-    BlockMappingEditDialog
+    BlockMappingEditDialog,
+    GraphExecutePreview
   },
   name: 'PageIndex',
   mixins: [
@@ -733,10 +374,6 @@ export default {
       loggedIn : false,
       dhfSteps: [],
       selectedStep: null,
-      previewSource: null,
-      previewWizard: 1,
-      selectedTargetDB: null,
-      saveToDB: false,
       confirmDeleteGraph: false,
       confirmResetGraph: false,
       warnBlockOnGraph: false,
@@ -757,179 +394,32 @@ export default {
         author: "",
         description: ""
       },
-      opened: true,
       isExported: false,
       graph: null,                // LiteGraphObject
-      results: null,
-      showPreview: false,
       showCodeGenConfig: false,
       showUploadGraph: false,
-      collectionForPreview: "",
-      jsonFromPreview: {},
-      randomDocPreview: false,
-      jsonSource: { test: "test" },
       savePopUpOpened: false,
       loadPopUpOpened: false,
       graphName: "",
       savedGraph: [],
-   //   currentProperties: [],
-      jsoneditor: null,
-      availableCollections: [],
-      selectedDB: null,
-      availableDB: [],
-      docUri: null,
-      graphPreviewExecuting: false,
       advancedSettings: {
         confirmBrowserRefresh: true
       },
-      showConfigScreen: false,
-      validationConfigs: [
-        {
-          block: "dhf/output",
-          mandatoryInputs: [
-            {
-              name: "output",
-              msg: "The final output of the graph is not connected to Custom Step Output. You won't get any result.",
-              type: "error"
-            }],
-          mandatoryOutputs: [],
-          count: {
-            "N": {
-              msg: "You should have only one Custom Step Output block in the graph.",
-              type: "error"
-            },
-            0: {
-              msg: "You should have at least one Custom Step Output block in the graph.",
-              type: "error"
-            }
-          }
-
-        },
-        {
-          block: "dhf/envelope",
-          mandatoryInputs: [
-            {
-              name: "instance",
-              msg: "The input '${input.name}' of the ${config.block} block should be connected.",
-              type: "error"
-            },
-            {
-              name: "uri",
-              msg: "If the input '${input.name}' of the ${config.block} block is not set, you might have conflicting URIs.",
-              type: "info"
-            }
-          ],
-          mandatoryOutputs: [],
-          count: {
-            0: {
-              msg: "Usually there is at least one ${config.block} in the graph.",
-              type: "info"
-            }
-          }
-        }
-      ],
-      validationInfos: []
-
+      showConfigScreen: false
     }
   },
   computed: {
     blockModels: function () {
       return this.$store.getters.models
     },
-    isStep1ContinueDisabled: function () {
-      return (this.previewSource == null)
-    },
-    isStep2ContinueDisabled: function () {
-      let disabled = true;
-      if (this.previewSource == 'collection' || this.previewSource == 'dhfStep') {
-        if (this.selectedDB != null && this.selectedDB != '' && this.collectionForPreview != null && this.collectionForPreview != '') {
-          disabled = false;
-        }
-      }
-      else if (this.previewSource == 'uri') {
-        if (this.selectedDB != null && this.selectedDB != '' && this.docUri != null && this.docUri != '') {
-          disabled = false;
-        }
-      }
-      return disabled;
-    },
-    isStep3ContinueDisabled: function () {
-      return (this.saveToDB == true && this.selectedTargetDB == null)
-    },
-    isCollectionSelected: function () {
-      return (this.previewSource == "collection")
-    },
-    isUriSelected: function () {
-      return (this.previewSource == "uri")
-    },
-    isDhfStepSelected: function () {
-      return (this.previewSource == "dhfStep")
-    },
-    summarySelectedDB: function () {
-      let val = "";
-      if (this.selectedDB != null) {
-        val = this.selectedDB.label;
-      }
-      return val;
-    },
-    summarySaveDB: function () {
-      let val = "";
-      if (this.selectedTargetDB != null) {
-        val = this.selectedTargetDB.label;
-      }
-      return val;
-    },
-    summaryCollectionForPreview: function () {
-      let val = "";
-      if (this.collectionForPreview != null) {
-        val = this.collectionForPreview.value;
-      }
-      return val;
-    }
-
-  },
-  watch: {
-    previewSource: function (val) {
-      if (val != null) {
-        if (this.previewSource == "uri") {
-          this.collectionForPreview = "";
-          this.randomDocPreview = false;
-        }
-        else if (this.previewSource == 'collection' || this.previewSource == 'dhfStep') {
-          this.docUri = null;
-        }
-        this.previewWizard = 2;
-      }
-    },
-    selectedStep: function (val) {
-      let availableDbHash = this.availableDB.reduce(function (map, obj) {
-        map[obj.label] = obj.value;
-        return map;
-      }, {});
-
-      this.selectedDB = { "label": this.dhfSteps[val.label].database, "value": availableDbHash[this.dhfSteps[val.label].database] };
-      this.collectionForPreview = { "label": this.dhfSteps[val.label].collection, "value": this.dhfSteps[val.label].collection };
+    availableDB: function() {
+      return this.$store.getters.availableDatabases
     }
   },
   methods: {
-    // criteria for disabling the "Execute Preview" button
-    shouldDisable () {
-      let disable = false;
-      // if the source DB not selected
-      if (this.selectedDB === '' || this.selectedDB === null) {
-        disable = true;
-      }
-      // if the source collection not selected or docUri not used
-      if ((this.collectionForPreview === '' || this.collectionForPreview === null) && (this.docUri === '' || this.docUri === null)) {
-        disable = true;
-      }
-      // if tryin to save to DB but the target DB not selected
-      if (this.saveToDB === true) {
-        if (this.selectedTargetDB === '' || this.selectedTargetDB === null) {
-          disable = true;
-        }
-      }
-      return disable;
+    // Open the Preview Graph Dialog. Pass graph details
+    openGraphPreviewDialog() {
+      this.$root.$emit("openExecutionPreview", this.graph, this.graphMetadata, this.blockModels)
     },
     createBlock (blockDef) {
       var blockInList = false;
@@ -949,7 +439,6 @@ export default {
       }
 
     },
-
     doBlockAdd (blockDef) {
 
       console.log("Adding block: " + JSON.stringify(blockDef))
@@ -966,7 +455,6 @@ export default {
       this.$root.$emit("resetBlockFormFields")
 
       this.notifyPositive(this, blockDef.label + " is now available in the library (right click)")
-
     },
 
     getDatabaseEntities () {
@@ -981,6 +469,7 @@ export default {
         })
     },
 
+    // Reload a graph
     loadGraphFromJson (graph, notifyLoaded) {
 
       this.checkEntityBlocks(graph)
@@ -994,7 +483,6 @@ export default {
       }
 
       for (let blockKey of blockMap.keys()) {
-        // console.log("block in map: " + blockKey)
         var model = blockMap.get(blockKey)
         let newBlock = this.createGraphNodeFromModel(model);
         this.$store.commit('addBlock', model)
@@ -1017,7 +505,7 @@ export default {
 
 	  if ( notifyLoaded ) this.notifyPositive(self, "Loaded graph " + this.graphMetadata.title)
 	  this.$root.$emit("resetGraphTitle") // reset the titlebar to top graph (remove all subgraph history)
-      this.showUploadGraph = false
+    this.showUploadGraph = false
     },
     getSavedGraph (uri, graphName) {
       //if(uri!=null)
@@ -1026,15 +514,14 @@ export default {
       this.$axios.get('/v1/resources/vppBackendServices?rs:action=GetSavedGraph&rs:uri=' + encodeURI(uri))
         .then((response) => {
           let graph = response.data;
-          console.log("restoring the graph")
           this.loadGraphFromJson(graph, true)
           //self.notifyPositive(this, "Loaded graph '" + graphName + "'")
            this.$q.notify({
-    color: 'positive',
-    position: 'top',
-    message: "Loaded graph '" + graphName + "'",
-    icon: 'code'
-  })
+              color: 'positive',
+              position: 'top',
+              message: "Loaded graph '" + graphName + "'",
+              icon: 'code'
+            })
           this.loadPopUpOpened = false
         })
         .catch((error) => {
@@ -1054,27 +541,6 @@ export default {
           self.notifyError("ListSavedGraph", error, self);
         })
     },
-    dbChanged () {
-      this.collectionForPreview = ""
-      this.availableCollections = []
-      this.discoverCollections()
-    },
-    discoverCollections () {
-
-      var self = this; // keep reference for notifications called from catch block
-      let dbOption = ""
-      if (this.selectedDB != null && this.selectedDB != "") {
-        dbOption += "&rs:database=" + this.selectedDB.value
-
-        this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionDetails' + dbOption)
-          .then((response) => {
-            this.availableCollections = self.filterCollections(response.data)
-          })
-          .catch((error) => {
-            self.notifyError("collectionDetails", error, self);
-          })
-      }
-    },
     csvJSON (csv) {
 
       var lines = csv.split("\n");
@@ -1082,7 +548,6 @@ export default {
       var result = [];
 
       var headers = lines[0].split(";");
-
 
       headers = headers.map(function (h) {
         return h.trim();
@@ -1184,8 +649,6 @@ export default {
       })
 
       for (let map of mappings) {
-
-
         if (map.source != null && map.target != null && map.sourceField != null && map.targetField != null && map.source != "" && map.target != "" && map.sourceField != "" && map.targetField != "") {
           // console.log(map.sourceField)
           // console.log(blocks[map.target].block.ioSetup)
@@ -1193,12 +656,9 @@ export default {
             blockCache[map.source].ioSetup.outputs["//text('" + map.sourceField + "')"],
             blockCache[map.target].id,
             blockCache[map.target].ioSetup.inputs["//text('" + map.targetField + "')"])
-
         }
-
       }
-    }
-    ,
+    },
     createGraphNodeFromModel (blockDef) {
 
       let block = function () {
@@ -1280,7 +740,6 @@ export default {
           self.notifyError("Deleting Graph", error, self);
         })
     },
-
     createGraphDef() {
       const jsonGraph = this.graph.serialize()
       return {
@@ -1291,7 +750,6 @@ export default {
             metadata: this.graphMetadata
           }
     },
-
     downloadGraph () {
       const graphDef = this.createGraphDef();
       var blob = new Blob([JSON.stringify(graphDef)], {
@@ -1302,10 +760,8 @@ export default {
       if (this.graphMetadata && this.graphMetadata.title != null && this.graphMetadata.title != "") name += this.graphMetadata.title; else name += "currentGraph"
       if (this.graphMetadata && this.graphMetadata.version != null && this.graphMetadata.version != "") name += "-" + this.graphMetadata.version
       saveAs(blob, name + ".json");
-
     },
-    exportDHFModule
-     () {
+    exportDHFModule() {
       this.showCodeGenConfig = true
     },
     saveCurrentGraph () {
@@ -1332,126 +788,18 @@ export default {
 
     },
     resetDhfDefaultGraph () {
-
       this.$axios.get('/statics/graph/dhfDefaultGraph.json')
         .then((response) => {
           let defaultGraph = response.data
           defaultGraph.models = this.blockModels
           this.loadGraphFromJson(defaultGraph, false)
         })
-    }
-    ,
-    findBlock (graph, nodeType) {
-
-      let node = graph.nodes.filter(node => node.type == nodeType)
-      if (node.length > 0)
-        return node
-      else null
-    },
-
-    findIO (node, type, IOName) {
-
-      let IO = node[type].filter(input => input.name == IOName)
-      if (IO.length > 0)
-        return IO[0]
-      else null
-    },
-    addInfos (validationInfos, type, msg) {
-
-      validationInfos.push({
-        type: type,
-        msg: msg
-      })
-    },
-    checkConfiguration (graph, configs) {
-      let result = []
-      for (let config of configs) {
-
-        let blocks = this.findBlock(graph, config.block)
-        let ok = true
-        if (blocks) {
-
-          if (blocks.length > 1) {
-            if (config.count["N"])
-              this.addInfos(result, config.count["N"].type, eval("`" + config.count["N"].msg + "`"))
-          }
-
-          for (let block of blocks) {
-            for (let input of config.mandatoryInputs) {
-              let inputIO = this.findIO(block, "inputs", input.name)
-              if (!inputIO || inputIO.link == null) this.addInfos(result, input.type, eval("`" + input.msg + "`"))
-              ok = ok && inputIO
-            }
-
-            for (let output of config.mandatoryOutputs) {
-              let outputIO = this.findIO(block, "outputs", output)
-              if (!outputIO || outputIO.link == null) this.addInfos(result, output.type, eval("`" + output.msg + "`"))
-              ok = ok && outputIO
-            }
-          }
-        } else {
-
-          if (config.count[0])
-            this.addInfos(result, config.count[0].type, eval("`" + config.count[0].msg + "`"))
-        }
-      }
-      return result
-    },
-    executeGraph () {
-
-      console.log("Executing graph..")
-
-      this.validationInfos = []
-      this.jsonFromPreview = {};
-
-      const graphDef  = this.createGraphDef()
-      const graphDetail = graphDef.executionGraph;
-
-      this.validationInfos = this.checkConfiguration(graphDetail, this.validationConfigs)
-
-      if (this.validationInfos.filter(item => item.type == "error").length == 0) {
-
-
-        var self = this; // keep reference for notifications called from catch block
-        let dbOption = ""
-        if (this.selectedDB != null && this.selectedDB != "") {
-          dbOption += "&rs:database=" + this.selectedDB.value
-        }
-
-        if (this.saveToDB) {
-
-          if (dbOption != "")
-            dbOption += "&rs:toDatabase=" + this.selectedTargetDB.value + "&rs:save=true"
-          else
-            dbOption += "?rs:toDatabase=" + this.selectedTargetDB.value + "&rs:save=true"
-        }
-        let request = {
-          jsonGraph: graphDef,
-          collection: this.collectionForPreview.value,
-          collectionRandom: this.randomDocPreview,
-          previewUri: this.docUri
-        }
-
-        this.$axios.post('/v1/resources/vppBackendServices?rs:action=ExecuteGraph' + dbOption, request)
-          .then((response) => {
-            this.jsonFromPreview = response.data
-
-            if(response.data.error)
-              self.notifyError("ExecuteGraph", {message : response.data.error}, self);
-          })
-          .catch((error) => {
-            self.notifyError("ExecuteGraph", error, self);
-          })
-      }
     },
     saveGraph (event) {
       this.savePopUpOpened = true;
-    },
-    loadGraph (event) {
-
+    },loadGraph (event) {
       this.listSavedGraphs()
       this.loadPopUpOpened = true;
-
     },
 
     // Remove block from modelList, checking the graph first
@@ -1527,7 +875,9 @@ export default {
       var self = this;
       this.$axios.get('/v1/resources/vppBackendServices?rs:action=databasesDetails')
         .then((response) => {
-          this.availableDB = this.filterDatabases(response.data)
+
+          this.$store.commit('availableDatabases',this.filterDatabases(response.data))
+         // this.availableDB = this.filterDatabases(response.data)
 
           this.$axios.get('/statics/library/core.json')
             .then((response) => {
@@ -1541,7 +891,7 @@ export default {
 
           this.$root.$emit("initGraphMetadata", this.graphMetadata)
 
-          this.discoverCollections()
+       //   this.discoverCollections()
         })
         .catch((error) => {
           if (showError) self.notifyError("databasesDetails", error, self)
@@ -1551,24 +901,8 @@ export default {
     listGraphBlocks () {
       this.listTheGraphBlocks(this.graph, this.blockModels)
     },
-    discoverCollections () {
-      var self = this;
-      let dbOption = ""
-      if (this.selectedDB != null && this.selectedDB != "") {
-        dbOption += "&rs:database=" + this.selectedDB.value
-      }
-
-      this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionDetails' + dbOption)
-        .then((response) => {
-          this.availableCollections = self.filterCollections(response.data)
-        })
-        .catch((error) => {
-          self.notifyError("collectionDetails", error, self);
-        })
-    },
     // Double click on nodes
     nodeDoubleClick(block) {
-
 	    if ( block.node_over && block.node_over.properties ) {
 
 	    // Mapping edit (string/Mapvalues block)
@@ -1593,31 +927,15 @@ export default {
     isNotEmpty(prop) {
       return (prop !== null && prop != '')
     },
-    copyResultToClipboard (result) {
-      var document;
-      document = ((typeof result == "object") ? JSON.stringify(result) : result)
-      copyToClipboard(document)
-        .then(() => {
-          console.log("Copied to clip board!")
-        })
-        .catch(() => {
-          console.log("Failed to copy to clip board!")
-        })
-    },
-    setCurrrentDatabase (db) {
-
-      this.selectedDB = db.selectedDatabase;
-      this.availableDB = db.availableDatabases;
-      this.discoverCollections()
-
-	},
     registerBlocksByConf (configs, LiteGraph) {
 
       let allBlockCode = ""
 
+      const availableDatabases = [...this.availableDB]
+
       for (let config of configs) {
 
-		var blockCode = ''
+      var blockCode = ''
 
         blockCode += "function " + config.functionName + "(){"
         blockCode += config.inputs.map((input) => {
@@ -1630,7 +948,7 @@ export default {
           return "this.addProperty('" + property.name + ((property.type) ? "'," + JSON.stringify(property.type) + ");" : "');")
         }).join("") : ""
         blockCode += (config.widgets != null) ? config.widgets.map((widget) => {
-          if (widget.default =="#DATABASES#") widget.values = this.availableDB.map(item => item.label)
+          if (widget.default =="#DATABASES#") widget.values = availableDatabases.map(item => item.label)
           return "this.addWidget('" + widget.type + "','" + widget.name + "'," + ((typeof(widget.default)=="boolean")?widget.default:"'" + widget.default+"'") + ", function(v){" + (widget.callback ? widget.callback : "") + "}.bind(this), { values:" + JSON.stringify(widget.values) + "} );"
         }).join("") : "";
 
@@ -1703,7 +1021,6 @@ export default {
     })
     }
   },
-
   mounted: function () {
 
     console.log("mounted")
@@ -1711,10 +1028,8 @@ export default {
     this.checkLoggedIn()
 
     this.$root.$on("csvLoadingRequested", this.createGraphFromMapping)
-    this.$root.$on('executeGraphCall', function () {
-      this.showPreview = true
-    }.bind(this))
-    this.$root.$on("databaseChanged", this.setCurrrentDatabase);
+    this.$root.$on("openGraphPreview", this.openGraphPreviewDialog)
+    this.$root.$on("executeGraph", this.openGraphPreviewDialog);
     this.$root.$on("saveGraphCall", this.saveGraph);
     this.$root.$on("downloadGraphCall", this.downloadGraph);
     this.$root.$on("uploadGraphCall", function () {
@@ -1761,20 +1076,16 @@ export default {
     )
   },
   beforeDestroy () {
-
     // de-register events otherwise multiple events get fired
     this.$root.$off('blockRequested', this.createBlock);
     this.$root.$off("loadGraphJsonCall", this.loadGraphFromJson);
-
+    this.$root.$off("openGraphPreview", this.openGraphPreviewDialog)
     this.$root.$off("csvLoadingRequested", this.createGraphFromMapping)
-    this.$root.$off("databaseChanged", this.setCurrrentDatabase);
+    this.$root.$off("executeGraph", this.openGraphPreviewDialog);
     this.$root.$off("saveGraphCall", this.saveGraph);
     this.$root.$off("downloadGraphCall", this.downloadGraph);
     this.$root.$off("uploadGraphCall", function () {
       this.showUploadGraph = true
-    }.bind(this))
-    this.$root.$off('executeGraphCall', function () {
-      this.showPreview = true
     }.bind(this))
     this.$root.$off("loadGraphCall", this.loadGraph);
     this.$root.$off("loadGraphJsonCall", this.loadGraphFromJson);
@@ -1788,6 +1099,3 @@ export default {
 
 }
 </script>
-
-<style>
-</style>

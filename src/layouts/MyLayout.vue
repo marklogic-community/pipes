@@ -310,7 +310,7 @@ export default {
 		this.currentGraphTitle = this.graphMetadata.title
 	},
     executeGraph () {
-      this.$root.$emit("executeGraphCall");
+      this.$root.$emit("openGraphPreview");
     },
     saveGraph () {
       this.$root.$emit("saveGraphCall");
