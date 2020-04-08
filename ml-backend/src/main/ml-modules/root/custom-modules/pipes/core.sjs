@@ -184,11 +184,16 @@ function init(LiteGraph){
 
     //let result = {'envelope' : {}} ;
     // if(this.getInputData(0)==undefined) {
-    let headers = (this.getInputData(0)!=undefined)?this.getInputData(0):{};
-    let triples = (this.getInputData(1)!=undefined)?this.getInputData(1):[];
-    let instance = (this.getInputData(2)!=undefined)?this.getInputData(2):{};
-    let attachments  = (this.getInputData(3)!=undefined)?this.getInputData(3):{};
+    let headers = (this.getInputData(0))?this.getInputData(0):{};
+    let triples = (this.getInputData(1))?this.getInputData(1):[];
+    let instance = (this.getInputData(2))?this.getInputData(2):{};
+    let attachments  = (this.getInputData(3))?this.getInputData(3):{};
 
+
+    if (xdmp.type(headers)!="object")  headers ={"value" : headers}
+    if (xdmp.type(triples)!="array" && triples.triple)  triples =[triples]
+    if (xdmp.type(instance)!="object")  instance ={"value" : instance}
+    if (xdmp.type(attachments)!="object")  attachments ={"value" : attachments}
 
 
     if(this.format.value=="json") {
