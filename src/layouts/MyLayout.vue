@@ -257,6 +257,7 @@ import modelselector from '../components/modelselector.vue'
 import resultViewer from '../components/resultViewer.vue'
 import entityselector from '../components/entityselector.vue'
 import { LiteGraph } from 'litegraph.js';
+import { Vuex } from "vuex";
 
 export default {
   name: 'MyLayout',
@@ -265,7 +266,6 @@ export default {
   },
   data () {
     return {
-      loggedIn: false,
       leftDrawerOpen: false,
 	  rightDrawerOpen: this.$q.platform.is.desktop,
       tab: "metadata",
@@ -279,6 +279,12 @@ export default {
         dateCreated: new Date().toISOString()
       }
     }
+  },
+  computed: {
+    loggedIn: function() {
+      console.log('LoggedIn returning ' + this.$store.getters.authenticated)
+      return this.$store.getters.authenticated
+  }
   },
   methods: {
     updateTitle() {
@@ -344,10 +350,6 @@ export default {
     openHelp () {
       window.open("https://github.com/marklogic-community/pipes/wiki", "_pipesHelp");
     },
-    logIn () {
-      this.loggedIn = true
-
-    },
     logOut () {
       this.$q.dialog({
         title: 'Log out',
@@ -357,9 +359,8 @@ export default {
         cancel: true
 
       }).onOk(() => {
-        // console.log('>>>> OK')
         this.$axios.post('/logout').then(response => {
-          this.loggedIn = false
+          this.$store.commit('authenticated',false)
           this.$q.notify({
             color: 'positive',
             position: 'center',
@@ -376,10 +377,7 @@ export default {
       }).onDismiss(() => {
         // console.log('I am triggered on both OK and Cancel')
       })
-
-
     }
-
   },
   components: {
     modelselector,
@@ -387,19 +385,10 @@ export default {
     entityselector
   },
   beforeMount: function () {
-    this.$axios.get('/status').then(response => {
 
-      if (response.data && response.data.authenticated) {
-        this.loggedIn = true
-      }
-      else this.loggedIn = false
-      this.$router.push({ path: "/" })
-    })
-
-    console.log("init receive")
     this.$root.$on("initGraphMetadata", this.setGraphMetadata);
-    this.$root.$on("logIn", this.logIn);
-    this.$root.$on("logOut", this.logOut);
+  //  this.$root.$on("logIn", this.logIn);
+  //  this.$root.$on("logOut", this.logOut);
   },
   mounted: function() {
 	  this.$root.$on('enteredSubGraph', this.enteredSubGraph);

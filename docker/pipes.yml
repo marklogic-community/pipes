@@ -1,0 +1,27 @@
+version: '3.7'
+
+networks:
+  marklogicDHF:
+
+services:
+    pipes:
+      image: dhfpipes/pipes:1.0-beta.4
+      environment:
+        - ML_HOST_NAME=${mlHostName}
+        - SERVER_PORT=${pipesPort}
+        - MARKLOGIC_ADMIN_USERNAME=${mlAdmin}
+        - MARKLOGIC_ADMIN_PASSWORD=${mlPassword}
+        - STACK_NAME=${stackName}
+        - ADMIN_PORT=${mlAdminPort}
+        - APPSERVICES_PORT=${mlAppServicesPort}
+        - MANAGE_PORT=${mlManagePort}
+        - STAGING_PORT=${mlStagingPort}
+        - DHF_ROOT=/PIPES-dhf
+      container_name: ${stackName}.pipes
+      ports:
+       - ${pipesPortMapping}:${pipesPort}
+      volumes:
+        - ./PIPES-dhf:/${DHFfiles}:delegated
+        - ./data:/data:delegated
+      networks:
+        - marklogicDHF

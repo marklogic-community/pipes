@@ -36,6 +36,7 @@
 </template>
 
 <script>
+import { Vuex } from "vuex";
 export default {
   // name: 'PageName',
   data () {
@@ -53,10 +54,11 @@ export default {
       let payload = {"username":this.username, "password": this.password}
       this.$axios.post('/login', payload).then(response => {
 
-        this.$root.$emit("logIn");
+        this.$store.commit('authenticated',true)
         this.$router.push({path:"/home"})
       })
         .catch((error) => {
+          this.$store.commit('authenticated',true)
           this.$q.notify({
             color: 'negative',
             position: 'center',
@@ -66,24 +68,18 @@ export default {
           })
         })
 
-
     }
     },
   beforeCreate() {
   this.$axios.get('/status').then(response => {
 
     if(response.data && response.data.authenticated) {
-      this.$root.$emit("logIn");
+      this.$store.commit('authenticated',true)
       this.$router.push({path: "/home"})
     }
     else this.showLogin=true
   })
 
-},
-  mounted: function () {
-
-
-
-  }
+}
 }
 </script>
