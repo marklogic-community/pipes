@@ -2507,9 +2507,9 @@ function init(LiteGraph){
   multicast.prototype.onExecute = function()
   {
 
-    for(let i=0;i<5;i++) {
+    for(let i=0;i<4;i++) {
       if (this.getInputData(i) != undefined) {
-        switch (this["type" + i].value) {
+        switch (this["type" + (i+1)].value) {
           case "string":
             this.setOutputData(i, String(this.getInputData(i)) )
             break;
