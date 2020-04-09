@@ -334,7 +334,6 @@
 import { LiteGraph } from 'litegraph.js';
 import { saveAs } from 'file-saver';
 import { Vuex } from "vuex";
-import { LocalStorage, copyToClipboard } from 'quasar';
 import Notifications from '../components/notificationHandler.js';
 import DatabaseFilter from '../components/databaseFilter.js';
 import CollectionFilter from '../components/collectionFilter.js';
@@ -344,7 +343,8 @@ import EntityManager from '../components/entityManager.js';
 import LiteGraphHelper from '../components/liteGraphHelper.js';
 import BlockPropertyEditDialog from '../components/propertyEditDialog.vue';
 import BlockMappingEditDialog from '../components/mappingEditDialog.vue';
-import GraphExecutePreview from '../components/graphExecutePreview.vue'
+import GraphExecutePreview from '../components/graphExecutePreview.vue';
+import { LocalStorage } from 'quasar';
 import Vue from 'vue';
 Vue.use(require('vue-shortkey'))
 import {  ENTITY_BLOCK_TYPE, SOURCE_BLOCK_TYPE, BLOCK_PATH, BLOCK_LABEL, BLOCK_FIELDS, BLOCK_FIELD, BLOCK_COLLECTION, BLOCK_SOURCE, BLOCK_OPTIONS,
@@ -373,6 +373,7 @@ export default {
     return {
       loggedIn : false,
       dhfSteps: [],
+      dhfStepSelectOptions: [],
       selectedStep: null,
       confirmDeleteGraph: false,
       confirmResetGraph: false,
@@ -419,7 +420,7 @@ export default {
   methods: {
     // Open the Preview Graph Dialog. Pass graph details
     openGraphPreviewDialog() {
-      this.$root.$emit("openExecutionPreview", this.graph, this.graphMetadata, this.blockModels)
+      this.$root.$emit("openExecutionPreview", this.graph, this.graphMetadata, this.blockModels, this.dhfSteps, this.dhfStepSelectOptions)
     },
     createBlock (blockDef) {
       var blockInList = false;
@@ -865,7 +866,8 @@ export default {
           return map;
         }, {});
 
-        this.dhfStepSelectOptions = response.data.customSteps.map(item => { return { "label": item.name, "value": item.name } })
+       this.dhfStepSelectOptions = response.data.customSteps.map(item => { return { "label": item.name, "value": item.name } })
+
       })
         .catch((error) => {
           self.notifyError("databasesDetails", error, self);

@@ -148,7 +148,7 @@
                   <div id="uriGroup" v-if="isUriSelected">
                     <q-input
                       v-model="docUri"
-                      label="Optional doc URI"
+                      label="document URI"
                     />
                   </div>
 
@@ -397,13 +397,17 @@ export default {
       graph: null,
       serializedGraph: '',
       graphMetadata: null,
+      dhfStepSelectOptions: [],
+      dhfSteps: null,
       blocks: null,
       showPreview: false,
       selectedDB: null,
+      selectedStep: null,
       availableCollections: [],
       selectedTargetDB: null,
       randomDocPreview: false,
       previewWizard: 1,
+      docUri: null,
       previewSource: null,
       collectionForPreview: "",
       jsonFromPreview: {},
@@ -458,11 +462,14 @@ export default {
     }
   },
   methods:{
-    openDialog(graph, graphMetadata, blockList) {
+    openDialog(graph, graphMetadata, blockList, dhfSteps, dhfStepOptions) {
         this.showPreview = true
         this.graph = graph
         this.graphMetadata = graphMetadata
         this.blocks = blockList
+        this.dhfSteps = dhfSteps
+        this.dhfStepSelectOptions = dhfStepOptions
+
     },
      copyResultToClipboard (result) {
       var document;
@@ -667,9 +674,8 @@ watch: {
         if (this.selectedDB != null && this.selectedDB != '' && this.collectionForPreview != null && this.collectionForPreview != '') {
           disabled = false;
         }
-      }
-      else if (this.previewSource == 'uri') {
-        if (this.selectedDB != null && this.selectedDB != '' && this.docUri != null && this.docUri != '') {
+      } else if (this.previewSource == 'uri') {
+        if (this.selectedDB !== null && this.docUri !== null && this.docUri.length > 0) {
           disabled = false;
         }
       }

@@ -24,8 +24,7 @@ export default function () {
       }
     },
     getters: {
-    availableDatabases: state => { return state.availableDatabases },
-    databasesMap: state => { return state.databasesMap },
+    availableDatabases: state => { return state.databases },
     authenticated: state => { return state.authenticated },
     models: state => { return state.models },
     helpMode: state => { return state.helpMode },
@@ -37,7 +36,7 @@ export default function () {
     },
     mutations: {
     availableDatabases( state, dbs) {
-      state.availableDatabases = dbs
+      state.databases = dbs
     },
     authenticated( state, auth ) {
       state.authenticated = auth
