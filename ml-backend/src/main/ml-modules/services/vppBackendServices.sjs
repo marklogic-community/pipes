@@ -367,8 +367,8 @@ function InvokeExecuteGraph(input) {
 function executeGraph(input, params) {
 
   const invokeExecuteGraph = InvokeExecuteGraph(input)
-  let db = (params.database != null) ? params.database : xdmp.database()
-  let targetDb = (params.toDatabase != null) ? params.toDatabase : xdmp.database()
+  let db = (params.database != null) ? xdmp.database(params.database) : xdmp.database()
+  let targetDb = (params.toDatabase != null) ? xdmp.database(params.toDatabase) : xdmp.database()
   let result = xdmp.invokeFunction(invokeExecuteGraph.execute, {database: db})
   let jsonResults = result
   if (params.save == "true") {
