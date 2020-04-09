@@ -550,15 +550,15 @@ export default {
         var self = this; // keep reference for notifications called from catch block
         let dbOption = ""
         if (this.selectedDB != null && this.selectedDB != "") {
-          dbOption += "&rs:database=" + this.selectedDB.value
+          dbOption += "&rs:database=" + this.selectedDB.label
         }
 
         if (this.saveToDB) {
 
           if (dbOption != "")
-            dbOption += "&rs:toDatabase=" + this.selectedTargetDB.value + "&rs:save=true"
+            dbOption += "&rs:toDatabase=" + this.selectedTargetDB.label + "&rs:save=true"
           else
-            dbOption += "?rs:toDatabase=" + this.selectedTargetDB.value + "&rs:save=true"
+            dbOption += "?rs:toDatabase=" + this.selectedTargetDB.label + "&rs:save=true"
         }
         let request = {
           jsonGraph: graphDef,
