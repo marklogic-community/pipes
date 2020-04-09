@@ -253,19 +253,14 @@ function init(LiteGraph){
     return this.title;
   };
 
-//LiteGraph.GraphOutput = GraphOutputDHF;
+
   LiteGraph.registerNodeType("dhf/envelope", GraphOutputObjectDHF);
 
 
 //Output for a subgraph
   function GraphOutputDHF() {
     this.addInput("output", null );
-    /*   this.addInput("headers", null );
-       this.addInput("triples", null );
-       this.addInput("instance", null );
-       this.addInput("attachments", null );
-       this.addInput("uri", null );
-       this.addInput("collections", null );*/
+
 
     this.name_in_graph = "";
     this.properties = {};
@@ -282,33 +277,6 @@ function init(LiteGraph){
 
   GraphOutputDHF.prototype.onExecute = function() {
 
-
-
-    //let result = {'envelope' : {}} ;
-    /* if(this.getInputData(0)==undefined) {
-       result.envelope.headers = (this.getInputData(1)!=undefined)?this.getInputData(1):{};
-       result.envelope.triples = (this.getInputData(2)!=undefined)?this.getInputData(2):{};
-       result.envelope.instance = (this.getInputData(3)!=undefined)?this.getInputData(3):{};
-       result.envelope.attachments  = (this.getInputData(4)!=undefined)?this.getInputData(4):{};
-
-
-       let defaultCollections = (this.graph.inputs["collections"]!=null)?this.graph.inputs["collections"].value:null
-       let defaultUri = (this.graph.inputs["uri"]!=null)?this.graph.inputs["uri"].value:sem.uuidString()
-       let defaultContext = (this.graph.inputs["context"]!=null)?this.graph.inputs["context"].value:{}
-
-       let uri  = (this.getInputData(5)!=undefined)?this.getInputData(5):defaultUri;
-       let collections  = (this.getInputData(6)!=undefined)?this.getInputData(6):defaultCollections;
-       let context = defaultContext
-
-       let content = {}
-       content.value = result;
-       content.uri = uri
-
-       context.collections = collections
-       content.context = context;
-
-       this.graph.setOutputData( "output", content );}
-     else {*/
     let output =  this.getInputData(0)
     if(output && output.constructor === Array){
       let globalArray = []
@@ -554,16 +522,7 @@ function init(LiteGraph){
 
 
 
-//Added by ERP
 
-  /*
-    function fn_doc(uri)
-    {
-        return fn.doc(uri);
-    }
-    LiteGraph.wrapFunctionAsNode('fn/fn_doc',fn_doc,
-        ['xs:string'],'node')
-        */
 
   let configs = [
     {
@@ -863,95 +822,6 @@ function init(LiteGraph){
 
 
     },
-    {
-      "functionName" : "isNumber",
-      "blockName" : "isNumber*",
-      "library" : "controls",
-      "inputs":[
-        {
-          name:"value",
-          type:null}
-      ],
-      "outputs":[
-        {
-          "name": "status",
-          "type":"bool"
-        }
-      ],
-      "function":{
-        "ref":null,
-        "code" :null
-      }
-
-
-    },
-    {
-      "functionName" : "isDate",
-      "blockName" : "isDate*",
-      "library" : "controls",
-      "inputs":[
-        {
-          name:"value",
-          type:null}
-      ],
-      "outputs":[
-        {
-          "name": "status",
-          "type":"bool"
-        }
-      ],
-      "function":{
-        "ref":null,
-        "code" :null
-      }
-
-
-    },
-    {
-      "functionName" : "isInDictionnary",
-      "blockName" : "isInDictionnary*",
-      "library" : "controls",
-      "inputs":[
-        {
-          name:"value",
-          type:null}
-      ],
-      "outputs":[
-        {
-          "name": "status",
-          "type":"bool"
-        }
-      ],
-      "function":{
-        "ref":null,
-        "code" :""
-      }
-
-
-    },
-    {
-      "functionName" :"checkRequiredFields",
-      "blockName" : "checkRequiredFields*",
-      "library" : "controls",
-      "inputs":[
-        {
-          name:"node",
-          type:null}
-      ],
-      "outputs":[
-        {
-          "name": "status",
-          "type":"bool"
-        }
-      ],
-      "function":{
-        "ref":null,
-        "code" :null
-      }
-
-
-    }
-    ,
 
     {
       "functionName": "ctsDoc",
@@ -977,79 +847,7 @@ function init(LiteGraph){
       }
 
     },
-    /* {
-        "functionName" : "cts_jsonPropertyValueQuery",
-        "blockName" : "jsonPropertyValueQuery",
-        "library" : "cts",
-        "inputs":[
-            {
-                name:"property",
-                type:"xs:string"},
-            {
-                name:"value",
-                type:"xs:string"}
-        ],
-        "outputs":[
-            {
-                "name": "query",
-                "type":"cts:query"
-            }
-        ],
-        "function":{
-            "ref":"cts.jsonPropertyValueQuery",
-            "code" :null
-        }
 
-
-    },
-    {
-        "functionName" : "mapValues",
-        "blockName" : "Map values",
-        "library" : "string",
-        "inputs":[
-            {
-                name:"value",
-                type:"xs:string"}
-        ],
-        "properties" : [
-            {
-                name:"mapping",
-                type:[{"source":"srcVal","target": "targetVal"}]}
-
-        ],
-        "widgets": [
-            {
-                "type": "combo",
-                "name": "cast",
-                "default": "string",
-                "values": ["string","bool","date","int","float"]
-
-            }
-
-        ],
-        "outputs":[
-            {
-                "name": "mappedValue",
-                "type":"xs:string"
-            }
-        ],
-        "function":{
-            "ref":null,
-            "code" : "\
-           let val = (this.getInputData(0)!=undefined)?this.getInputData(0):'';\
-           let mappedValue = this.properties['mapping'].filter(item => {return item.source==val});\
-           if (this.cast.value=='bool'){\
-           if(mappedValue==\"true\") mappedValue=true;\
-           if(mappedValue==\"false\") mappedValue=false;\
-           }\
-           \
-            if(mappedValue.length >0) this.setOutputData( 0,mappedValue[0].target);\
-                                  else  this.setOutputData( 0,null);"
-
-
-        }
-    }
-    , */
     {
       "functionName" : "toEnvelope",
       "blockName" : "to Envelope",
@@ -1087,49 +885,6 @@ function init(LiteGraph){
 
     }
     ,
-    {
-      "functionName" : "fromEnvelope",
-      "blockName" : "from Envelope",
-      "library" : "dhf",
-      "inputs":[
-        {
-          "name": "doc",
-          "type":"node"
-        }
-
-      ],
-      "outputs":[
-
-        {
-          name:"headers",
-          type:"node"},
-        {
-          name:"triples",
-          type:"node"},
-        {
-          name:"instance",
-          type:"node"},
-        {
-          name:"attachments",
-          type:"node"}
-      ],
-      "function":{
-        "ref":null,
-        "code" :"\
-                let docNode = (this.getInputData(0)!=undefined)?this.getInputData(0):xdmp.toJSON({});\
-                let headers = docNode.xpath('//headers');\
-                let triples = docNode.xpath('//triples');\
-                let instance = docNode.xpath('//instance');\
-                let attachments = docNode.xpath('//attachments');\
-                this.setOutputData( 0, headers);\
-                this.setOutputData( 1, triples);\
-                this.setOutputData(2, instance);\
-                this.setOutputData( 3, attachments);"
-
-
-      }
-
-    },
     {
       "functionName" : "addProperty",
       "blockName" : "Add property",
@@ -1317,77 +1072,6 @@ function init(LiteGraph){
   LiteGraph.registerNodeType("dhf/StepEnvelopeOutput", GlobalEnvelopeOutput);
 
 
-  /*
-    function GlobalStepInputWithEnvelope()
-    {
-
-        //random name to avoid problems with other outputs when added
-        var input_name = "input";
-
-        this.addOutput("headers", null );
-        this.addOutput("headers", null );
-        this.addOutput("triples", null );
-        this.addOutput("instance", null );
-        this.addOutput("attachments", null );
-
-        this.properties = { name: input_name, type: null };
-
-        var that = this;
-
-        Object.defineProperty( this.properties, "name", {
-            get: function() {
-                return input_name;
-            },
-            set: function(v) {
-                if(v == "")
-                    return;
-
-                var info = that.getOutputInfo(0);
-                if(info.name == v)
-                    return;
-                info.name = v;
-                if(that.graph)
-                    that.graph.renameGlobalInput(input_name, v);
-                input_name = v;
-            },
-            enumerable: true
-        });
-
-        Object.defineProperty( this.properties, "type", {
-            get: function() { return that.outputs[0].type; },
-            set: function(v) {
-                that.outputs[0].type = v;
-                if(that.graph)
-                    that.graph.changeGlobalInputType(input_name, that.outputs[0].type);
-            },
-            enumerable: true
-        });
-    }
-
-    GlobalInput.title = "Input";
-    GlobalInput.desc = "Input of the graph";
-
-  //When added to graph tell the graph this is a new global input
-    GlobalInput.prototype.onAdded = function()
-    {
-        this.graph.addGlobalInput( this.properties.name, this.properties.type );
-    }
-
-    GlobalInput.prototype.onExecute = function()
-    {
-        var name = this.properties.name;
-
-        //read from global input
-        var	data = this.graph.global_inputs[name];
-        if(!data) return;
-
-        //put through output
-        this.setOutputData(0,data.value);
-    }
-
-    LiteGraph.registerNodeType("dhf/StepInput", GlobalInput);
-
-  */
 
   function StringConstant()
   {

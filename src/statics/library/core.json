@@ -1,5 +1,38 @@
 [
   {
+    "functionName": "constant",
+    "blockName": "constant",
+    "library": "string",
+    "description" : "Constant value",
+    "inputs": [
+
+    ],
+    "outputs": [
+      {
+        "name": "value",
+        "type": null,
+        "mandatory" : true,
+        "description" : ""
+      }
+    ],
+    "widgets": [
+      {
+        "type": "text",
+        "name": "string",
+        "default": "Your string",
+        "values": null
+
+      }
+
+    ],
+    "properties": [
+    ],
+    "function": {
+      "ref": "fn.doc",
+      "code": null
+    }
+  },
+  {
     "functionName": "hashNode",
     "blockName": "hashNode",
     "library": "feature",
