@@ -1,11 +1,12 @@
 //Copyright ©2020 MarkLogic Corporation.
-const  moment = require("/custom-modules/pipes/moment-with-locales.min.sjs")
+
+const moment = require("/custom-modules/pipes/moment-with-locales.min.sjs")
 const entity = require('/MarkLogic/entity');
 const lib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
-//const lib2 = require('/data-hub/5/builtins/steps/mapping/entity-services/lib.sjs')
-const  lib2 = require("/custom-modules/pipes/entity-services-lib-vpp.sjs")
+const lib2 = require("/custom-modules/pipes/entity-services-lib-vpp.sjs")
 const PNF = require('/custom-modules/pipes/google-libphonenumber.sjs').PhoneNumberFormat;
 const phoneUtil = require('/custom-modules/pipes/google-libphonenumber.sjs').PhoneNumberUtil.getInstance();
+
 const BLOCK_RUNTIME_DEBUG_TRACE = "pipesBlockRuntimeDebug";
 
 const coreFunctions = require("/custom-modules/pipes/coreFunctions.sjs")
@@ -24,29 +25,21 @@ function init(LiteGraph){
   Time.title = "Time";
   Time.desc = "Time";
 
-  Time.prototype.onExecute = function()
-  {
+  Time.prototype.onExecute = function()  {
     this.setOutputData(0, this.graph.globaltime * 1000 );
     this.setOutputData(1, this.graph.globaltime  );
   }
 
   LiteGraph.registerNodeType("basic/time", Time);
 
-
-
-
-
   //Input for a subgraph
   function GraphInputDHF() {
     this.addOutput("input", "");
     this.addOutput("uri", "");
     this.addOutput("collections", "");
-
     this.name_in_graph = "";
     this.properties = {};
     var that = this;
-
-
     this.widgets_up = true;
     this.size = [180, 60];
   }
@@ -68,15 +61,9 @@ function init(LiteGraph){
   };
 
   GraphInputDHF.prototype.onExecute = function() {
-    //var name = this.properties.name;
-
-    //read from global input
     var input = this.graph.inputs["input"];
     var uri = this.graph.inputs["uri"];
     var collections = this.graph.inputs["collections"];
-
-
-    //put through output
     this.setOutputData(0, input.value);
     this.setOutputData(1, uri.value);
     this.setOutputData(2, collections.value);
@@ -91,10 +78,7 @@ function init(LiteGraph){
   LiteGraph.GraphInput = GraphInputDHF;
   LiteGraph.registerNodeType("dhf/input", GraphInputDHF);
 
-
-  //Output for a subgraph
   function GraphOutputObjectDHF() {
-    //this.addInput("output", null );
     this.addInput("headers", null );
     this.addInput("triples", null );
     this.addInput("instance", null );
@@ -115,38 +99,27 @@ function init(LiteGraph){
   GraphOutputObjectDHF.desc = "DHF output object";
 
   GraphOutputObjectDHF.prototype.onExecute = function() {
-
-    //let result = {'envelope' : {}} ;
-    // if(this.getInputData(0)==undefined) {
     let headers = (this.getInputData(0))?this.getInputData(0):{};
     let triples = (this.getInputData(1))?this.getInputData(1):[];
     let instance = (this.getInputData(2))?this.getInputData(2):{};
     let attachments  = (this.getInputData(3))?this.getInputData(3):{};
 
-
     if (xdmp.type(headers)!="object")  headers ={"value" : headers}
     if (xdmp.type(triples)!="array" && triples.triple)  triples =[triples]
     if (xdmp.type(instance)!="object")  instance ={"value" : instance}
     if (xdmp.type(attachments)!="object")  attachments ={"value" : attachments}
-
-
     if(this.format.value=="json") {
       if(instance) {
         if (instance.toObject) instance = instance.toObject()
         instance["$attachments"] = attachments
       }
-
-  else{
-      instance={}
-      instance["$attachments"] = attachments
-
+      else {
+         instance={}
+        instance["$attachments"] = attachments
+      }
     }
-
-    }
-
 
     let result = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, this.format.value)
-
 
     let defaultCollections = (this.graph.inputs["collections"]!=null)?this.graph.inputs["collections"].value:null
     let defaultUri = (this.graph.inputs["uri"]!=null)?this.graph.inputs["uri"].value:sem.uuidString()
@@ -159,14 +132,10 @@ function init(LiteGraph){
     let content = {}
     content.value = result;
     content.uri = uri
-
     context.collections = collections
     content.context = context;
-
     this.setOutputData(0,content)
   };
-
-
 
   GraphOutputObjectDHF.prototype.onAction = function(action, param) {
     if (this.properties.type == LiteGraph.ACTION) {
@@ -187,30 +156,21 @@ function init(LiteGraph){
     return this.title;
   };
 
-
   LiteGraph.registerNodeType("dhf/envelope", GraphOutputObjectDHF);
 
-
-//Output for a subgraph
+   //Output for a subgraph
   function GraphOutputDHF() {
     this.addInput("output", null );
-
-
     this.name_in_graph = "";
     this.properties = {};
     var that = this;
-
-
-
     this.size = [180, 60];
   }
 
   GraphOutputDHF.title = "Output";
   GraphOutputDHF.desc = "Output of the graph";
 
-
   GraphOutputDHF.prototype.onExecute = function() {
-
     let output =  this.getInputData(0)
     if(output && output.constructor === Array){
       let globalArray = []
@@ -222,13 +182,14 @@ function init(LiteGraph){
     // }
   };
 
-
-  function flattenArray(globalArray,value){
+  function flattenArray(globalArray,value) {
     for(let v of value)
-      if(v.constructor === Array)
-        flattenArray(globalArray,v)
-      else
+      if(v.constructor === Array) {
+        flattenArray(globalArray, v)
+      }
+      else {
         globalArray.push(v)
+      }
   }
 
   GraphOutputDHF.prototype.onAction = function(action, param) {
@@ -253,9 +214,8 @@ function init(LiteGraph){
   LiteGraph.GraphOutput = GraphOutputDHF;
   LiteGraph.registerNodeType("dhf/output", GraphOutputDHF);
 
-//Constant
-  function Constant()
-  {
+  //Constant
+  function Constant()  {
     this.addOutput("value","number");
     this.addProperty( "value", 1.0 );
     this.editable = { property:"value", type:"number" };
@@ -265,30 +225,24 @@ function init(LiteGraph){
   Constant.desc = "Constant value";
 
 
-  Constant.prototype.setValue = function(v)
-  {
+  Constant.prototype.setValue = function(v) {
     if( typeof(v) == "string") v = parseFloat(v);
     this.properties["value"] = v;
     this.setDirtyCanvas(true);
   };
 
-  Constant.prototype.onExecute = function()
-  {
+  Constant.prototype. onExecute = function() {
     this.setOutputData(0, parseFloat( this.properties["value"] ) );
   }
 
-  Constant.prototype.onDrawBackground = function(ctx)
-  {
+  Constant.prototype.onDrawBackground = function(ctx) {
     //show the current value
     this.outputs[0].label = this.properties["value"].toFixed(3);
   }
 
   LiteGraph.registerNodeType("basic/const", Constant);
 
-
-//Watch a value in the editor
-  function Watch()
-  {
+  function Watch()  {
     this.size = [60,20];
     this.addInput("value",0,{label:""});
     this.value = 0;
@@ -297,41 +251,40 @@ function init(LiteGraph){
   Watch.title = "Watch";
   Watch.desc = "Show value of input";
 
-  Watch.prototype.onExecute = function()
-  {
-    if( this.inputs[0] )
+  Watch.prototype.onExecute = function() {
+    if( this.inputs[0] ) {
       this.value = this.getInputData(0);
+    }
   }
 
-  Watch.toString = function( o )
-  {
-    if( o == null )
+  Watch.toString = function( o ) {
+    if( o == null ) {
       return "null";
-    else if (o.constructor === Number )
+    }
+    else if (o.constructor === Number ) {
       return o.toFixed(3);
-    else if (o.constructor === Array )
-    {
+    }
+    else if (o.constructor === Array )  {
       var str = "[";
-      for(var i = 0; i < o.length; ++i)
-        str += Watch.toString(o[i]) + ((i+1) != o.length ? "," : "");
+      for(var i = 0; i < o.length; ++i) {
+        str += Watch.toString(o[i]) + ((i + 1) != o.length ? "," : "");
+      }
       str += "]";
       return str;
     }
-    else
+    else {
       return String(o);
+    }
   }
 
-  Watch.prototype.onDrawBackground = function(ctx)
-  {
+  Watch.prototype.onDrawBackground = function(ctx) {
     //show the current value
     this.inputs[0].label = Watch.toString(this.value);
   }
 
   LiteGraph.registerNodeType("basic/watch", Watch);
 
-//Watch a value in the editor
-  function Pass()
-  {
+  function Pass()  {
     this.addInput("in",0);
     this.addOutput("out",0);
     this.size = [40,20];
@@ -340,17 +293,14 @@ function init(LiteGraph){
   Pass.title = "Pass";
   Pass.desc = "Allows to connect different types";
 
-  Pass.prototype.onExecute = function()
-  {
+  Pass.prototype.onExecute = function()  {
     this.setOutputData( 0, this.getInputData(0) );
   }
 
   LiteGraph.registerNodeType("basic/pass", Pass);
 
-
-//Show value inside the debug console
-  function Console()
-  {
+  //Show value inside the debug console
+  function Console()  {
     this.mode = LiteGraph.ON_EVENT;
     this.size = [60,20];
     this.addProperty( "msg", "" );
@@ -361,36 +311,33 @@ function init(LiteGraph){
   Console.title = "Console";
   Console.desc = "Show value inside the console";
 
-  Console.prototype.onAction = function(action, param)
-  {
-    if(action == "log")
-      console.log( param );
-    else if(action == "warn")
-      console.warn( param );
-    else if(action == "error")
-      console.error( param );
+  Console.prototype.onAction = function(action, param) {
+    if(action == "log") {
+      console.log(param);
+    }
+    else if(action == "warn") {
+      console.warn(param);
+    }
+    else if(action == "error") {
+      console.error(param);
+    }
   }
 
-  Console.prototype.onExecute = function()
-  {
+  Console.prototype.onExecute = function() {
     var msg = this.getInputData(1);
-    if(msg !== null)
+    if(msg !== null) {
       this.properties.msg = msg;
+    }
     console.log(msg);
   }
 
-  Console.prototype.onGetInputs = function()
-  {
+  Console.prototype.onGetInputs = function()  {
     return [["log",LiteGraph.ACTION],["warn",LiteGraph.ACTION],["error",LiteGraph.ACTION]];
   }
 
   LiteGraph.registerNodeType("basic/console", Console );
 
-
-
-//Show value inside the debug console
-  function NodeScript()
-  {
+  function NodeScript()  {
     this.size = [60,20];
     this.addProperty( "onExecute", "" );
     this.addInput("in", "");
@@ -408,44 +355,32 @@ function init(LiteGraph){
     "onExecute": { type:"code" }
   };
 
-  NodeScript.prototype.onPropertyChanged = function(name,value)
-  {
-    if(name == "onExecute" && LiteGraph.allow_scripts )
-    {
+  NodeScript.prototype.onPropertyChanged = function(name,value) {
+    if(name == "onExecute" && LiteGraph.allow_scripts )  {
       this._func = null;
-      try
-      {
+      try {
         this._func = new Function( value );
       }
-      catch (err)
-      {
+      catch (err) {
         console.error("Error parsing script");
         console.error(err);
       }
     }
   }
 
-  NodeScript.prototype.onExecute = function()
-  {
+  NodeScript.prototype.onExecute = function() {
     if(!this._func)
       return;
-
-    try
-    {
+    try {
       this._func.call(this);
     }
-    catch (err)
-    {
+    catch (err) {
       console.error("Error in script");
       console.error(err);
     }
   }
 
   LiteGraph.registerNodeType("basic/script", NodeScript );
-
-
-
-
 
   let configs = [
     {

@@ -102,7 +102,7 @@ function getCurrentDate(dateOption) {
       return fn.currentDate();
       break;
     case "currentDateTime":
-      return fn.currentDateTime();
+      return  fn.currentDateTime();
       break;
     case "currentTime":
       return fn.currentTime();
