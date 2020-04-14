@@ -1,0 +1,1 @@
+{"uri":"/test/input.json", "result":[{"value":{"envelope":{"headers":{}, "triples":[], "instance":{"value":100}, "attachments":{}}}, "uri":"/test-output/100.json", "context":{"collections":null}}, {"value":{"envelope":{"headers":{}, "triples":[], "instance":{"value":200}, "attachments":{}}}, "uri":"/test-output/200.json", "context":{"collections":null}}]}
