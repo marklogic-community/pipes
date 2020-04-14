@@ -317,21 +317,6 @@
           </q-item>
         </q-list>
 
-<!--
-       <q-card align="right">
-          <q-btn
-            @click="copyResultToClipboard(jsonFromPreview.result)"
-            :ripple="{ color: 'green' }"
-          >
-            <q-tooltip
-              self="top middle"
-              content-class="pipes-tooltip"
-            >Copy to clipboard</q-tooltip>
-            <q-icon name="fas fa-paste" />
-          </q-btn>
-        </q-card>
--->
-
       <div class="row" style="white-space: nowrap;">
         <div class="col-11" style="overflow: hidden;text-overflow: ellipsis">{{ jsonFromPreview.uri }}</div>
         <div class="col-1">
@@ -473,7 +458,7 @@ export default {
     },
      copyResultToClipboard (result) {
       var document;
-      document = ((typeof result == "object") ? JSON.stringify(result) : result)
+      document = ((typeof result == "object") ? JSON.stringify(result,null,2) : result)
       copyToClipboard(document).then(() => {
         //  console.log("Copied to clip board!")
         }).catch(() => {

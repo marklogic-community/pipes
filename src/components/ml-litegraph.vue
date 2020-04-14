@@ -750,10 +750,11 @@ export default {
         name: this.graphMetadata.title,
         metadata: this.graphMetadata
       }
+
     },
     downloadGraph () {
       const graphDef = this.createGraphDef();
-      var blob = new Blob([JSON.stringify(graphDef)], {
+      var blob = new Blob([JSON.stringify(graphDef,null,2)], {
         type: "text/plain;charset=utf-8",
         endings: "transparent"
       });
