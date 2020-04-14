@@ -1,5 +1,282 @@
 [
   {
+    "functionName": "constant",
+    "blockName": "constant",
+    "library": "string",
+    "description" : "Constant value",
+    "inputs": [
+
+    ],
+    "outputs": [
+      {
+        "name": "value",
+        "type": null,
+        "mandatory" : true,
+        "description" : ""
+      }
+    ],
+    "widgets": [
+      {
+        "type": "text",
+        "name": "string",
+        "default": "Your string",
+        "values": null
+
+      }
+
+    ],
+    "properties": [
+    ],
+    "function": {
+      "ref": "fn.doc",
+      "code": null
+    }
+  },
+  {
+    "functionName": "hashNode",
+    "blockName": "hashNode",
+    "library": "feature",
+    "description" : "Hash Node content",
+    "inputs": [
+      {
+        "name": "node",
+        "type": null,
+        "mandatory" : true,
+        "description" : ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "hash",
+        "type": null,
+        "mandatory" : true,
+        "description" : ""
+      }
+    ],
+    "widgets": [
+      {
+        "type": "combo",
+        "name": "hash function",
+        "default": "hash64",
+        "values": ["hash64", "sha1", "sha256", "sha512"]
+
+      }
+
+    ],
+    "properties": [
+    ],
+    "function": {
+      "ref": "fn.doc",
+      "code": null
+    }
+  },
+  {
+  "functionName": "DocByKey",
+  "blockName": "Doc By Key",
+  "library": "feature",
+  "description" : "Get other doc by key",
+  "inputs": [
+    {
+      "name": "id",
+      "type": null,
+      "mandatory" : true,
+      "description" : ""
+    }
+  ],
+  "outputs": [
+    {
+      "name": "doc",
+      "type": null,
+      "mandatory" : true,
+      "description" : ""
+    }
+  ],
+  "widgets": [],
+  "properties": [
+    {
+      "name": "Template",
+      "type": "cts.andQuery([cts.collectionQuery('/otherCollection'),cts.jsonPropertyValueQuery('theKey',${id})])"
+    }
+  ],
+  "function": {
+    "ref": "fn.doc",
+    "code": null
+  }
+},
+  {
+    "functionName": "constBlock",
+    "blockName": "const",
+    "library": "basic",
+    "description" : "Constant value",
+    "inputs": [
+
+    ],
+    "outputs": [
+      {
+        "name": "value",
+        "type": null,
+        "mandatory" : true,
+        "description" : ""
+      }
+    ],
+    "widgets": [],
+    "properties": [
+      {
+        "name": "value",
+        "type": "number"
+      }
+    ],
+    "function": {
+      "ref": "fn.doc",
+      "code": null
+    }
+  },
+  {
+    "functionName": "Templating",
+    "blockName": "Templating",
+    "library": "string",
+    "description" : "Apply values to a template to generate a string ",
+    "inputs": [
+      {
+        "name": "v1",
+        "type": null,
+        "mandatory" : false,
+        "description" : ""
+      },{
+        "name": "v2",
+        "type": null,
+        "mandatory" : false,
+        "description" : ""
+      },{
+        "name": "v3",
+        "type": null,
+        "mandatory" : false,
+        "description" : ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "newString",
+        "type": null,
+        "mandatory" : false,
+        "description" : ""
+      }
+    ],
+    "widgets": [
+      {
+        "type": "text",
+        "name": "v4",
+        "default": "",
+        "values": []
+
+      },
+      {
+        "type": "text",
+        "name": "v5",
+        "default": "",
+        "values": []
+
+      },
+      {
+        "type": "text",
+        "name": "template",
+        "default": "${v1} ${v2} ${v3} ${v4}",
+        "values": []
+
+      }
+    ],
+    "function": {
+      "ref": "fn.doc",
+      "code": null
+    }
+
+
+  },
+  {
+    "functionName": "multicast",
+    "blockName": "multicast",
+    "library": "basic",
+    "description" : "This blocks allows to cast an input to a provided type",
+    "inputs": [
+      {
+        "name": "v1",
+        "type": null,
+        "mandatory" : false,
+        "description" : ""
+      },{
+        "name": "v2",
+        "type": null,
+        "mandatory" : false,
+        "description" : ""
+      },{
+        "name": "v3",
+        "type": null,
+        "mandatory" : false,
+        "description" : ""
+      },{
+        "name": "v4",
+        "type": null,
+        "mandatory" : false,
+        "description" : ""
+      }
+    ],
+    "outputs": [
+      {
+        "name": "v1",
+        "type": null,
+        "mandatory" : false,
+        "description" : ""
+      },{
+        "name": "v2",
+        "type": null,
+        "mandatory" : false,
+        "description" : ""
+      },{
+        "name": "v3",
+        "type": null,
+        "mandatory" : false,
+        "description" : ""
+      },{
+        "name": "v4",
+        "type": null,
+        "mandatory" : false,
+        "description" : ""
+      }
+    ],
+    "widgets": [
+      {
+        "type": "combo",
+        "name": "type1",
+        "default": "string",
+        "values": ["string", "int", "float"]
+      },
+      {
+        "type": "combo",
+        "name": "type2",
+        "default": "string",
+        "values": ["string", "int", "float"]
+      },
+      {
+        "type": "combo",
+        "name": "type3",
+        "default": "string",
+        "values": ["string", "int", "float"]
+      },
+      {
+        "type": "combo",
+        "name": "type4",
+        "default": "string",
+        "values": ["string", "int", "float"]
+      }
+    ],
+    "function": {
+      "ref": "fn.doc",
+      "code": null
+    }
+
+
+  },
+  {
     "functionName": "GeoReproject",
     "blockName": "GeoReproject",
     "library": "geo",

@@ -12,6 +12,8 @@ export default function () {
       models: [],
       helpMode: false,
       authenticated: false,
+      databases: [],
+      databasesMap: {},
       GraphMetadata: {
         title: "My graph",
         version: "00.01",
@@ -22,6 +24,7 @@ export default function () {
       }
     },
     getters: {
+    availableDatabases: state => { return state.databases },
     authenticated: state => { return state.authenticated },
     models: state => { return state.models },
     helpMode: state => { return state.helpMode },
@@ -32,6 +35,9 @@ export default function () {
 }
     },
     mutations: {
+    availableDatabases( state, dbs) {
+      state.databases = dbs
+    },
     authenticated( state, auth ) {
       state.authenticated = auth
     },
