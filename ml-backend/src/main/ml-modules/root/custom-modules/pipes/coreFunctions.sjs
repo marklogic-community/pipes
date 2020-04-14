@@ -31,9 +31,9 @@ function split(v,splitChar){
 }
 
 function lookUp(block,var1,var2,nbOutputValues,ctsQuery){
-  xdmp.log("VAR1 "+var1);
-  xdmp.log("TYPEOF VAR1 "+typeof var1);
-  xdmp.log("NULL VAR1 "+(var1 !== null));
+  //xdmp.log("VAR1 "+var1);
+  //xdmp.log("TYPEOF VAR1 "+typeof var1);
+  //xdmp.log("NULL VAR1 "+(var1 !== null));
   if ( var1 != null ) {
     if (var1 instanceof Sequence) {
       var1 = fn.head(var1);
@@ -44,13 +44,13 @@ function lookUp(block,var1,var2,nbOutputValues,ctsQuery){
       var2 = fn.head(var2);
     }
   }
-  xdmp.log("CTS QUERY "+ctsQuery);
+  //xdmp.log("CTS QUERY "+ctsQuery);
   let template = "`"+ ctsQuery +"`";
-  xdmp.log("TEMPLATE: "+template);
+  //xdmp.log("TEMPLATE: "+template);
   let result = eval(template);
-  xdmp.log("RESULT "+result);
+  //xdmp.log("RESULT "+result);
   let query = eval(result);
-  xdmp.log("QUERY "+query);
+  //xdmp.log("QUERY "+query);
   let foundDoc = fn.head(xdmp.invokeFunction(()=>{
      return cts.search(query,["unfiltered", "score-zero"],0);
   }, {database: xdmp.database(block.database.value)}));

@@ -1511,7 +1511,7 @@ function init(LiteGraph){
     let v6 = mapSequence(this.getInputData(5));
     let v7 = mapSequence(this.getInputData(6));
     let template = "`"+ this.properties.ctsQuery +"`"
-    xdmp.log("Template "+template);
+    //xdmp.log("Template "+template);
     let result = eval(eval(template))
     this.setOutputData(0, result);
 
@@ -1689,7 +1689,7 @@ function init(LiteGraph){
     let code = this.properties.sjsCode;
     let template = "`"+ code +"`";
     let result = eval(template);
-    xdmp.log("EXECUTING "+result);
+    //xdmp.log("EXECUTING "+result);
     let output = eval(result);
     this.setOutputData( 0,output);
   }

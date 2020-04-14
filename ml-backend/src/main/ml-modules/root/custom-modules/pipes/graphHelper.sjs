@@ -152,7 +152,7 @@ function createGraphNodeFromModel(blockDef) {
   }
 
   block.prototype.onExecute = function(){
-    xdmp.log("Exeecuting "+this.title);
+    //xdmp.log("Exeecuting "+this.title);
 
     if (this.blockDef.options.indexOf("nodeInput")>-1) {
 
@@ -223,7 +223,7 @@ function createGraphNodeFromModel(blockDef) {
           v=   docNode.xpath( path + "/string()");
 
 
-        xdmp.log(path)
+        //xdmp.log(path)
         this.doc.output[this.blockDef.fields[i].field] =  v
 
 

@@ -75,10 +75,10 @@ function parseGroup(group) {
 
   if (group.children != null) {
     let queries = []
-    xdmp.log(group)
+    //xdmp.log(group)
 
     for (let q of group.children) {
-      xdmp.log(q)
+      //xdmp.log(q)
       switch (q.type) {
         case "query-builder-rule":
           if (q.query.rule == "collection")
@@ -97,7 +97,7 @@ function parseGroup(group) {
 
 
     }
-    xdmp.log(queries)
+    //xdmp.log(queries)
     switch (group["logicalOperator"]) {
       case "and":
         return cts.andQuery(queries)
