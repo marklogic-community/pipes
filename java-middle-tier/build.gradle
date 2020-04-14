@@ -38,6 +38,10 @@ dependencyManagement {
 
 test {
 	useJUnitPlatform()
+
+ testLogging {
+        events "passed", "skipped", "failed", "standardOut", "standardError"
+    }
 }
 
 task copyLiteGraphOverride(type: Copy) {
@@ -140,3 +144,4 @@ task runLocal(type: JavaExec) {
 task buildPipes {
   dependsOn bootJar
 }
+
