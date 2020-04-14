@@ -65,7 +65,7 @@ when running the jar.
 #### Backend modules
 
 Pipes requires several backend modules to be installed on MarkLogic.
-They can be installed in 2 ways:
+They can be installed in 2 ways. Chose one and stick to it. Don't mix them:
 
 1) When you run the Pipes jar for the first time, use the following command:
 ```java -jar marklogic-pipes-1.0.1.jar --deployBackend=true```.
