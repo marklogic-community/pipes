@@ -242,11 +242,10 @@ function createGraphNodeFromModel(blockDef) {
         if ( v != null && v.constructor && v.constructor.name )  {
           if  ( v.constructor.name === "String" ) {
             v = v.trim();
-            if ( v.length === 0 ) {
+            if (v.length === 0) {
               v = undefined;
             }
-          }
-          if ( v.constructor.name === "Sequence" ) {
+          } else if ( v.constructor.name === "Sequence" ) {
             if ( fn.count(v) === 1 ) {
               let first = fn.head(v)
               if ( first != null && first.constructor && first.constructor.name && first.constructor.name === "String") {
