@@ -238,6 +238,27 @@ function createGraphNodeFromModel(blockDef) {
         //  if (this.getInputData(this.ioSetup.inputs[blockDef.fields[i].path]) != undefined) {
 
         let v = this.getInputData(this.ioSetup.inputs[this.blockDef.fields[i].path])
+
+        if ( v != null && v.constructor && v.constructor.name )  {
+          if  ( v.constructor.name === "String" ) {
+            v = v.trim();
+            if ( v.length === 0 ) {
+              v = undefined;
+            }
+          }
+          if ( v.constructor.name === "Sequence" ) {
+            if ( fn.count(v) === 1 ) {
+              let first = fn.head(v)
+              if ( first != null && first.constructor && first.constructor.name && first.constructor.name === "String") {
+                first = first.toString().trim();
+                if ( first.length === 0 ) {
+                  v = undefined;
+                }
+              }
+            }
+          }
+        }
+
         this.doc.output[this.blockDef.fields[i].field] = v ;
         try {
           let srcUri = fn.baseUri(v);
