@@ -349,11 +349,25 @@ function InvokeExecuteGraph(input) {
         console.log("input.collection=", input.collection)
         console.log("uri=", uri);
 
-        var graphResult = gHelper.executeGraphFromJson(execContext.jsonGraph, uri, doc, {collections: xdmp.documentGetCollections(uri)})
+        var graphResult = []
+
+        try {
+
+        graphResult = gHelper.executeGraphFromJson(execContext.jsonGraph, uri, doc, {collections: xdmp.documentGetCollections(uri)})
 
         result = {
           uri: uri,
           result: graphResult
+        }
+
+        } catch (e) {
+
+          result = {
+            uri: uri,
+            result: graphResult,
+            error: e
+          }
+
         }
 
       } else {
