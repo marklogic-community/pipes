@@ -71,7 +71,11 @@ public class AuthService extends AbstractLoggingClass {
 
   public Boolean tryAuthorize(ClientConfig clientConfig, String username, String password) {
 
-    DatabaseClient client=clientConfig.createClient(username,password,null);
+    String db=null;
+    if (clientConfig.getMlTestDatabase()!=null && clientConfig.getMlTestDatabase()!="") {
+      db=clientConfig.getMlTestDatabase();
+    }
+    DatabaseClient client=clientConfig.createClient(username,password,db);
 
     setAuthorized(true);
 

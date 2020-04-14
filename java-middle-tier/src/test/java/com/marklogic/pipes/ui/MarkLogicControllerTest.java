@@ -19,6 +19,7 @@ import com.marklogic.pipes.ui.config.ClientConfig;
 import com.marklogic.pipes.ui.config.PipesResourceManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -27,6 +28,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -44,16 +46,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
+@TestPropertySource(locations = "/test.properties")
 class MarkLogicControllerTest {
 
 
   public static final String TEST_INPUT_JSON = "/test/input.json";
-  public static final String CUSTOMER_SOURCE_COLLECTION = "ingest-unit-test";
-
-//  public static final String CUSTOMER_1_JSON = "customer1.json";
-//  public static final String ExecuteMinimalGraphTestGraph= "GraphTests/ExecuteMinimalGraphTest/Minimal/graph.json";
-//  public static final String ExecuteMinimalGraphTestResponse= "GraphTests/ExecuteMinimalGraphTest/Minimal/expectedResponse.json";
-//  public static final String ExecuteMinimalGraphTest= "GraphTests/ExecuteMinimalGraphTest/";
+  public static final String TEST_SOURCE_COLLECTION = "ingest-unit-test";
 
   public static final String TEST_SAVE_GRAPH_JSON = "/marklogic-pipes/savedGraph/test-save-graph.json";
   public static final String GRAPH_JSON = "test-save-graph.json";
@@ -88,7 +86,7 @@ class MarkLogicControllerTest {
     DocumentMetadataHandle metadataHandle = new DocumentMetadataHandle();
     DocumentMetadataHandle.DocumentCollections collections = metadataHandle.getCollections();
 
-    collections.add(CUSTOMER_SOURCE_COLLECTION);
+    collections.add(TEST_SOURCE_COLLECTION);
 
     // write
     jsonDocumentManager.write(TEST_INPUT_JSON, metadataHandle, handle);
@@ -105,7 +103,6 @@ class MarkLogicControllerTest {
   private DatabaseClient getDatabaseClient() {
 
     assertTrue("Failed to authorize",authService.tryAuthorize(clientConfig,clientConfig.getMlUsername(), clientConfig.getMlPassword()));
-
 
     return authService.getDatabaseClient();
   }
@@ -179,49 +176,21 @@ class MarkLogicControllerTest {
     session.setAttribute(SESSION_SERVICE, authService.getService());
   }
 
-  /**
-   * Tests execution of a minimal graph (Input-Output) for a specific document URI in the staging DB
-   *
-   * @throws Exception
-   */
-//  @Test
-//  void ExecuteMinimalGraphTest() throws Exception {
-//    try {
-//
-//      addCustomerSourceDocument("GraphTests/" + argument + "/input.json");
-//
-//      InputStreamHandle graphHndle = getInputStreamHandle(ExecuteMinimalGraphTest+"graph.json");
-//
-//      InputStreamHandle expectedResponseHandle = getInputStreamHandle(ExecuteMinimalGraphTest+"expectedResponse.json");
-//
-//      InputStreamHandle requestHandle=getInputStreamHandle(ExecuteMinimalGraphTest+"request.txt");
-//      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(requestHandle.toString()).content(graphHndle.toString())
-//        .session(session);
-//
-//      this.mockMvc.perform(builder)
-//        .andExpect(status().isOk())
-//        .andExpect(content().string(equalToCompressingWhiteSpace(expectedResponseHandle.toString())));
-//    } finally {
-//      removeCustomerSource();
-//    }
-//
-//  }
 
-  @ParameterizedTest
+  @ParameterizedTest(name = "#{index} : {0}")
   @MethodSource("getDirectoryNames")
   void genericGraphTests(String argument) throws Exception {
     try {
 
-      addCustomerSourceDocument("GraphTests/"+argument+"/input.json");
-      
-      InputStreamHandle graphHndle = getInputStreamHandle("GraphTests/"+argument+"/graph.json");
+      addCustomerSourceDocument("ExecuteGraphTests/"+argument+"/input.json");
 
-      InputStreamHandle expectedResponseHandle = getInputStreamHandle("GraphTests/"+argument+"/expectedResponse.json");
+      InputStreamHandle graphHandle = getInputStreamHandle("ExecuteGraphTests/"+argument+"/graph.json");
 
-      InputStreamHandle requestHandle=getInputStreamHandle("GraphTests/"+argument+"/request.txt");
+      InputStreamHandle expectedResponseHandle = getInputStreamHandle("ExecuteGraphTests/"+argument+"/expectedResponse.json");
 
-      // TO-DO: remove the need for database ID
-      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(requestHandle.toString()).content(graphHndle.toString())
+      String request="/v1/resources/vppBackendServices?rs:action=ExecuteGraph&rs:database="+clientConfig.getMlTestDatabase();
+
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(request).content(graphHandle.toString())
         .session(session);
 
       this.mockMvc.perform(builder)
@@ -233,7 +202,7 @@ class MarkLogicControllerTest {
   }
 
   private static Stream<String> getDirectoryNames() {
-    InputStreamHandle ism= getInputStreamHandle("GraphTests");
+    InputStreamHandle ism= getInputStreamHandle("ExecuteGraphTests");
 
     String dirs[]=ism.toString().split("\n");
     return Arrays.stream(dirs);
