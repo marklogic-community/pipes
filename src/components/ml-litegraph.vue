@@ -9,9 +9,9 @@
       width='1800'
     ></canvas>
 
-    <BlockPropertyEditDialog/>
-    <BlockMappingEditDialog/>
-    <GraphExecutePreview/>
+    <BlockPropertyEditDialog />
+    <BlockMappingEditDialog />
+    <GraphExecutePreview />
 
     <q-dialog
       :content-css="{minWidth: '60vw', minHeight: '80vh'}"
@@ -371,7 +371,7 @@ export default {
   ],
   data () {
     return {
-      loggedIn : false,
+      loggedIn: false,
       dhfSteps: [],
       dhfStepSelectOptions: [],
       selectedStep: null,
@@ -413,13 +413,13 @@ export default {
     blockModels: function () {
       return this.$store.getters.models
     },
-    availableDB: function() {
+    availableDB: function () {
       return this.$store.getters.availableDatabases
     }
   },
   methods: {
     // Open the Preview Graph Dialog. Pass graph details
-    openGraphPreviewDialog() {
+    openGraphPreviewDialog () {
       this.$root.$emit("openExecutionPreview", this.graph, this.graphMetadata, this.blockModels, this.dhfSteps, this.dhfStepSelectOptions)
     },
     createBlock (blockDef) {
@@ -504,25 +504,25 @@ export default {
       if (graph.metadata && graph.metadata.description != null) this.graphMetadata.description = graph.description; else this.graphMetadata.description = ""
       this.$root.$emit("initGraphMetadata", this.graphMetadata)
 
-	  if ( notifyLoaded ) this.notifyPositive(self, "Loaded graph " + this.graphMetadata.title)
-	  this.$root.$emit("resetGraphTitle") // reset the titlebar to top graph (remove all subgraph history)
-    this.showUploadGraph = false
+      if (notifyLoaded) this.notifyPositive(self, "Loaded graph " + this.graphMetadata.title)
+      this.$root.$emit("resetGraphTitle") // reset the titlebar to top graph (remove all subgraph history)
+      this.showUploadGraph = false
     },
     getSavedGraph (uri, graphName) {
       //if(uri!=null)
-	  console.log("Reloading saved graph " + graphName)
+      console.log("Reloading saved graph " + graphName)
       var self = this; // keep reference for notifications called from catch block
       this.$axios.get('/v1/resources/vppBackendServices?rs:action=GetSavedGraph&rs:uri=' + encodeURI(uri))
         .then((response) => {
           let graph = response.data;
           this.loadGraphFromJson(graph, true)
           //self.notifyPositive(this, "Loaded graph '" + graphName + "'")
-           this.$q.notify({
-              color: 'positive',
-              position: 'top',
-              message: "Loaded graph '" + graphName + "'",
-              icon: 'code'
-            })
+          this.$q.notify({
+            color: 'positive',
+            position: 'top',
+            message: "Loaded graph '" + graphName + "'",
+            icon: 'code'
+          })
           this.loadPopUpOpened = false
         })
         .catch((error) => {
@@ -741,15 +741,15 @@ export default {
           self.notifyError("Deleting Graph", error, self);
         })
     },
-    createGraphDef() {
+    createGraphDef () {
       const jsonGraph = this.graph.serialize()
       return {
-            pipesFileVersion : 1,
-            models: this.blockModels,
-            executionGraph: jsonGraph,
-            name: this.graphMetadata.title,
-            metadata: this.graphMetadata
-          }
+        pipesFileVersion: 1,
+        models: this.blockModels,
+        executionGraph: jsonGraph,
+        name: this.graphMetadata.title,
+        metadata: this.graphMetadata
+      }
     },
     downloadGraph () {
       const graphDef = this.createGraphDef();
@@ -762,7 +762,7 @@ export default {
       if (this.graphMetadata && this.graphMetadata.version != null && this.graphMetadata.version != "") name += "-" + this.graphMetadata.version
       saveAs(blob, name + ".json");
     },
-    exportDHFModule() {
+    exportDHFModule () {
       this.showCodeGenConfig = true
     },
     saveCurrentGraph () {
@@ -798,7 +798,7 @@ export default {
     },
     saveGraph (event) {
       this.savePopUpOpened = true;
-    },loadGraph (event) {
+    }, loadGraph (event) {
       this.listSavedGraphs()
       this.loadPopUpOpened = true;
     },
@@ -840,22 +840,22 @@ export default {
         event.preventDefault()
         event.returnValue = ""
       }
-	},
+    },
     selectNode (block) {
 
-      if ( this.isNotEmpty(block.properties) && block.properties.hoverText) {
+      if (this.isNotEmpty(block.properties) && block.properties.hoverText) {
 
-      let message = this.isNotEmpty(block.properties) && block.properties.hoverText ? block.properties.hoverText : ""
-      if ( this.isNotEmpty(message) ) {
-        this.$q.notify({
-          color: 'secondary',
-          position: 'center',
-          message: message,
-          icon: 'info',
-          timeout: 500
-        })
+        let message = this.isNotEmpty(block.properties) && block.properties.hoverText ? block.properties.hoverText : ""
+        if (this.isNotEmpty(message)) {
+          this.$q.notify({
+            color: 'secondary',
+            position: 'center',
+            message: message,
+            icon: 'info',
+            timeout: 500
+          })
+        }
       }
-    }
     },
     discoverDhfSteps () {
       var self = this;
@@ -866,7 +866,7 @@ export default {
           return map;
         }, {});
 
-       this.dhfStepSelectOptions = response.data.customSteps.map(item => { return { "label": item.name, "value": item.name } })
+        this.dhfStepSelectOptions = response.data.customSteps.map(item => { return { "label": item.name, "value": item.name } })
 
       })
         .catch((error) => {
@@ -878,8 +878,8 @@ export default {
       this.$axios.get('/v1/resources/vppBackendServices?rs:action=databasesDetails')
         .then((response) => {
 
-          this.$store.commit('availableDatabases',this.filterDatabases(response.data))
-         // this.availableDB = this.filterDatabases(response.data)
+          this.$store.commit('availableDatabases', this.filterDatabases(response.data))
+          // this.availableDB = this.filterDatabases(response.data)
 
           this.$axios.get('/statics/library/core.json')
             .then((response) => {
@@ -893,7 +893,7 @@ export default {
 
           this.$root.$emit("initGraphMetadata", this.graphMetadata)
 
-       //   this.discoverCollections()
+          //   this.discoverCollections()
         })
         .catch((error) => {
           if (showError) self.notifyError("databasesDetails", error, self)
@@ -904,29 +904,29 @@ export default {
       this.listTheGraphBlocks(this.graph, this.blockModels)
     },
     // Double click on nodes
-    nodeDoubleClick(block) {
-	    if ( block.node_over && block.node_over.properties ) {
+    nodeDoubleClick (block) {
+      if (block.node_over && block.node_over.properties) {
 
-	    // Mapping edit (string/Mapvalues block)
-      if (block.node_over.properties.mapping) {
-        this.$root.$emit("openMappingEdit",block.node_over.properties.mapping)
-      } else {
+        // Mapping edit (string/Mapvalues block)
+        if (block.node_over.properties.mapping) {
+          this.$root.$emit("openMappingEdit", block.node_over.properties.mapping)
+        } else {
 
-      if (block.node_over.properties.mappingRange) {
-        this.$root.$emit("openMappingEdit",block.node_over.properties.mappingRange, true)
-      } else {
+          if (block.node_over.properties.mappingRange) {
+            this.$root.$emit("openMappingEdit", block.node_over.properties.mappingRange, true)
+          } else {
 
-		// Property edit. selectCase, Lookup, EvalJavaScript, & generic edit window hook
-        if ( this.isNotEmpty(block.node_over.properties.pipesDblClickProp) && block.node_over.properties.editProp  ) {
-         this.$root.$emit("openPropertyEdit",block.node_over)
-      }
+            // Property edit. selectCase, Lookup, EvalJavaScript, & generic edit window hook
+            if (this.isNotEmpty(block.node_over.properties.pipesDblClickProp) && block.node_over.properties.editProp) {
+              this.$root.$emit("openPropertyEdit", block.node_over)
+            }
 
-      }
+          }
 
-      }
+        }
       }
     },
-    isNotEmpty(prop) {
+    isNotEmpty (prop) {
       return (prop !== null && prop != '')
     },
     registerBlocksByConf (configs, LiteGraph) {
@@ -937,7 +937,7 @@ export default {
 
       for (let config of configs) {
 
-      var blockCode = ''
+        var blockCode = ''
 
         blockCode += "function " + config.functionName + "(){"
         blockCode += config.inputs.map((input) => {
@@ -950,36 +950,36 @@ export default {
           return "this.addProperty('" + property.name + ((property.type) ? "'," + JSON.stringify(property.type) + ");" : "');")
         }).join("") : ""
         blockCode += (config.widgets != null) ? config.widgets.map((widget) => {
-          if (widget.default =="#DATABASES#") widget.values = availableDatabases.map(item => item.label)
-          return "this.addWidget('" + widget.type + "','" + widget.name + "'," + ((typeof(widget.default)=="boolean")?widget.default:"'" + widget.default+"'") + ", function(v){" + (widget.callback ? widget.callback : "") + "}.bind(this), { values:" + JSON.stringify(widget.values) + "} );"
+          if (widget.default == "#DATABASES#") widget.values = availableDatabases.map(item => item.label)
+          return "this.addWidget('" + widget.type + "','" + widget.name + "'," + ((typeof (widget.default) == "boolean") ? widget.default : "'" + widget.default + "'") + ", function(v){" + (widget.callback ? widget.callback : "") + "}.bind(this), { values:" + JSON.stringify(widget.values) + "} );"
         }).join("") : "";
 
         if (config.width)
-        blockCode += "    this.size = [" + config.width + "," + config.height + "];\n"
+          blockCode += "    this.size = [" + config.width + "," + config.height + "];\n"
         blockCode += "    this.serialize_widgets = true;"
 
         //blockCode += (config.properties)?"config.properties = " +  config.properties +";":"";
         blockCode += "};"
 
-        if(config.title_color) blockCode += config.functionName + ".title_color = \""+config.title_color+"\";"
+        if (config.title_color) blockCode += config.functionName + ".title_color = \"" + config.title_color + "\";"
         blockCode += config.functionName + ".title = '" + config.blockName + "';";
 
-		// Add event to onConfigure for block when defined
-		// !== undefined is required
-		if ( config.events && config.events != null && config.events != undefined ) {
-			if ( config.events.onDrawForeground !== null && config.events.onDrawForeground != undefined && config.events.onDrawForeground != '' ) {
-				blockCode += config.functionName + ".prototype.onDrawForeground = function(ctx){" + config.events.onDrawForeground + "};"
-			}
-			if ( config.events.onConfigure !== null && config.events.onConfigure != undefined && config.events.onConfigure != '' ) {
-				blockCode += config.functionName + ".prototype.onConfigure = function(node){" + config.events.onConfigure + "};"
-			}
-    }
-    	// beforePropSave event for validating block property editing
-    if ( config.events && config.events.beforePropSave && config.events.beforePropSave != undefined ) {
-				blockCode += config.functionName + ".prototype.beforePropSave = function(v,validation,ctx){" + config.events.beforePropSave + "};"
-      }
+        // Add event to onConfigure for block when defined
+        // !== undefined is required
+        if (config.events && config.events != null && config.events != undefined) {
+          if (config.events.onDrawForeground !== null && config.events.onDrawForeground != undefined && config.events.onDrawForeground != '') {
+            blockCode += config.functionName + ".prototype.onDrawForeground = function(ctx){" + config.events.onDrawForeground + "};"
+          }
+          if (config.events.onConfigure !== null && config.events.onConfigure != undefined && config.events.onConfigure != '') {
+            blockCode += config.functionName + ".prototype.onConfigure = function(node){" + config.events.onConfigure + "};"
+          }
+        }
+        // beforePropSave event for validating block property editing
+        if (config.events && config.events.beforePropSave && config.events.beforePropSave != undefined) {
+          blockCode += config.functionName + ".prototype.beforePropSave = function(v,validation,ctx){" + config.events.beforePropSave + "};"
+        }
 
-		    blockCode += config.functionName + ".prototype.notify = function(node){this.$root.$emit(\"nodeSelected\",node)}.bind(this);";
+        blockCode += config.functionName + ".prototype.notify = function(node){this.$root.$emit(\"nodeSelected\",node)}.bind(this);";
         blockCode += config.functionName + ".prototype.onSelected = function(){this.notify(this) };"
         blockCode += config.functionName + ".prototype.onDblClick = function(e,pos,object){this.$root.$emit(\"nodeDblClicked\",object) }.bind(this);"
         blockCode += config.functionName + ".prototype.onExecute = function(){  ";
@@ -997,30 +997,30 @@ export default {
         //register in the syst em
         blockCode += "LiteGraph.registerNodeType('" + config.library + "/" + config.blockName + "', " + config.functionName + " );"
 
-		// DEBUGGING
-		// console.log("==CONFIGURING BLOCK: " + config.blockName)
-		// console.log(JSON.stringify(config))
-		// console.log(JSON.stringify(blockCode))
+        // DEBUGGING
+        // console.log("==CONFIGURING BLOCK: " + config.blockName)
+        // console.log(JSON.stringify(config))
+        // console.log(JSON.stringify(blockCode))
 
-		allBlockCode += blockCode
+        allBlockCode += blockCode
       }
       //xdmp.log(code)
       eval(allBlockCode)
     },
-    checkLoggedIn() {
+    checkLoggedIn () {
 
-    console.log("Checking session login status:")
+      console.log("Checking session login status:")
 
-    this.$axios.get('/status').then(response => {
+      this.$axios.get('/status').then(response => {
 
-    if (response.data && response.data.authenticated) {
-        console.log("Logged in")
-        this.$store.commit('authenticated',true)
-      } else {
-      console.log("Not logged in. Redirecting to login page")
-       this.$router.push({ path: "/" })
-      }
-    })
+        if (response.data && response.data.authenticated) {
+          console.log("Logged in")
+          this.$store.commit('authenticated', true)
+        } else {
+          console.log("Not logged in. Redirecting to login page")
+          this.$router.push({ path: "/" })
+        }
+      })
     }
   },
   mounted: function () {
@@ -1045,20 +1045,20 @@ export default {
     this.$root.$on("loadDHFDefaultGraphCall", this.resetDhfDefaultGraph);
     this.$root.$on("listGraphBlocks", this.listGraphBlocks);
     this.$root.$on("checkGraphBlockDelete", this.checkGraphBlockDelete);
-	  this.$root.$on('blockRequested', this.createBlock);
+    this.$root.$on('blockRequested', this.createBlock);
 
     this.discoverDatabases(false)
     this.discoverDhfSteps()
 
     this.graph = new LiteGraph.LGraph();
-	  this.graph_canvas = new LiteGraph.LGraphCanvas(this.$refs["mycanvas"], this.graph);
+    this.graph_canvas = new LiteGraph.LGraphCanvas(this.$refs["mycanvas"], this.graph);
 
-	// catch just in case problems. shouldn't stop tool working
-	try {
-		LiteGraph.registerPipesListener(this) // register any component so LiteGraph can emit events
-	} catch (e) {
-		console.log("Error calling registerPipesListener: " +  e)
-	}
+    // catch just in case problems. shouldn't stop tool working
+    try {
+      LiteGraph.registerPipesListener(this) // register any component so LiteGraph can emit events
+    } catch (e) {
+      console.log("Error calling registerPipesListener: " + e)
+    }
 
     this.$store.commit('clearBlocks')
 
@@ -1096,7 +1096,7 @@ export default {
     this.$root.$off("nodeSelected", this.selectNode);
     this.$root.$off("loadDHFDefaultGraphCall", this.resetDhfDefaultGraph);
     this.$root.$off("listGraphBlocks", this.listGraphBlocks);
-	  this.$root.$off("checkGraphBlockDelete", this.checkGraphBlockDelete);
+    this.$root.$off("checkGraphBlockDelete", this.checkGraphBlockDelete);
   }
 
 }

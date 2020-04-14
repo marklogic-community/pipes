@@ -23,6 +23,7 @@ yarn-error.log*
 *.sln
 yarn.lock
 package-lock.json
+src/store/store-flag.d.ts
 
 #DHF stuff
 dhf/
@@ -61,4 +62,3 @@ docker/.env
 docker/jar/
 docker/data/
 docker/volumes/
-
