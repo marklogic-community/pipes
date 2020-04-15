@@ -963,7 +963,13 @@ export default {
         blockCode += "};"
 
         if (config.title_color) blockCode += config.functionName + ".title_color = \"" + config.title_color + "\";"
-        blockCode += config.functionName + ".title = '" + config.blockName + "';";
+
+        // Use title property, otherwise blockname for block title bar
+        if ( config.title !== null && config.title != undefined ) {
+          blockCode += config.functionName + ".title = '" + config.title + "';";
+        } else {
+          blockCode += config.functionName + ".title = '" + config.blockName + "';";
+        }
 
         // Add event to onConfigure for block when defined
         // !== undefined is required
