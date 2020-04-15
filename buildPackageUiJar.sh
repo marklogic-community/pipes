@@ -27,16 +27,24 @@ cp -r ml-backend/src/* java-middle-tier/src/main/resources/dhf/src/.
 echo "Deleting existing builds in java-middle-tier/build/libs..."
 rm -f java-middle-tier/build/libs/*
 
+echo "Adding version"
+version=$(git describe --tags)
+build=$(git rev-parse --verify --short HEAD)
+
+echo "Pipes version:" $version >java-middle-tier/src/main/resources/version.txt
+echo "Build:" $build >>java-middle-tier/src/main/resources/version.txt
+
 echo "Building the jar..."
 java-middle-tier/gradlew clean bootJar -p java-middle-tier --warn
 
+new_file_name=java-middle-tier/build/libs/marklogic-pipes-$version.jar
+mv java-middle-tier/build/libs/marklogic-pipes.jar $new_file_name
 
-if [[ $1 !=  "release" ]]
-  then
-    echo "Assuming nightly build, will add timestamp..."
+if [[ $1 != "release" ]]; then
+  echo "Will add build version..."
 
-    for file in java-middle-tier/build/libs/marklogic-pipes*.jar; do
-    mv "$file" "${file%.jar}.$(date +%s).jar"
-    
-done 
+  for file in java-middle-tier/build/libs/marklogic-pipes*.jar; do
+    mv "$file" "${file%.jar}.$build.jar"
+
+  done
 fi
