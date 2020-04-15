@@ -298,7 +298,6 @@
 
         <q-list
           dense
-
           padding
           class="rounded-borders"
         >
@@ -318,7 +317,7 @@
         </q-list>
 
       <div class="row" style="white-space: nowrap;">
-        <div class="col-11" style="overflow: hidden;text-overflow: ellipsis">{{ jsonFromPreview.uri }}</div>
+        <div class="col-11" v-bind:class="{ error : errorOccured }" style="overflow: hidden;text-overflow: ellipsis">{{ jsonFromPreview.uri }}</div>
         <div class="col-1">
           <q-btn style="font-size:0.7em"
             @click="copyResultToClipboard(jsonFromPreview.uri)"
@@ -336,7 +335,12 @@
       <q-separator></q-separator>
 
       <div class="row" style="white-space: nowrap;">
-        <div class="col-11" style="font-weight:bold">Result from graph execution:</div>
+      <div class="col-1">
+      <q-icon :color="executionStatus" name="fas fa-check-circle">
+		    <q-tooltip content-class="pipes-tooltip">{{statusPopup}}</q-tooltip>
+	    </q-icon>
+      </div>
+        <div class="col-10" style="font-weight:bold">Result from graph execution:</div>
         <div class="col-1">
           <q-btn style="font-size:0.7em"
             @click="copyResultToClipboard(jsonFromPreview.result)"
@@ -349,6 +353,8 @@
           </q-btn>
         </div>
       </div>
+
+       <div class="q-py-xs" style='color: red' v-if="this.errorMessage !== null && this.errorMessage.length > 0">{{this.errorMessage}}</div>
 
          <q-scroll-area style="height: 600px; padding: 0px;">
 
@@ -393,6 +399,10 @@ export default {
       randomDocPreview: false,
       previewWizard: 1,
       docUri: null,
+      errorOccured: false,
+      executionRun: false,
+      errorMessage: '',
+      statusHoverText: '',
       previewSource: null,
       collectionForPreview: "",
       jsonFromPreview: {},
@@ -524,6 +534,8 @@ export default {
 
       this.validationInfos = []
       this.jsonFromPreview = {};
+      this.errorOccured = false
+      this.errorMessage = ''
 
       const graphDef  = this.createGraphDef()
       const graphDetail = this.graph.serialize();
@@ -531,6 +543,8 @@ export default {
       this.validationInfos = this.checkConfiguration(graphDetail, this.validationConfigs)
 
      if (this.validationInfos.filter(item => item.type == "error").length == 0) {
+
+        this.executionRun = true
 
         var self = this; // keep reference for notifications called from catch block
         let dbOption = ""
@@ -555,8 +569,23 @@ export default {
         this.$axios.post('/v1/resources/vppBackendServices?rs:action=ExecuteGraph' + dbOption, request)
           .then((response) => {
             this.jsonFromPreview = response.data
-            if(response.data.error)
-              self.notifyError("ExecuteGraph", {message : response.data.error}, self);
+            if (response.data.error) {
+
+              if ( response.data.error.stack ) {
+              console.log("Error executing graph")
+              this.errorOccured = true
+              var error = JSON.stringify(response.data.error.stack);
+              //console.log(error)
+              error = (error.split("in "))[0]
+              if ( error.length > 50) error = error.substring(0,50) // if we don't capture message correctly truncate
+              this.errorMessage = error
+            } else {
+              this.errorOccured = true
+              this.errorMessage = response.data.error
+            }
+
+            }
+
           })
           .catch((error) => {
             self.notifyError("ExecuteGraph", error, self);
@@ -617,6 +646,26 @@ watch: {
     }
 },
  computed: {
+    statusPopup: function() {
+     return this.statusHoverText.length > 0 ? this.statusHoverText : ''
+    },
+    executionStatus: function() {
+      var statusColor = ''
+        if ( this.executionRun ) {
+          if ( this.errorOccured ) {
+            statusColor = 'red'
+            this.statusHoverText = 'Error in graph execution'
+
+          }
+          else {
+            statusColor = 'green'
+            this.statusHoverText = 'Graph execution ran without error'
+          }
+        } else {
+          statusColor = 'grey'
+        }
+      return statusColor
+    },
     jsonPreview: function() {
       return (this.jsonFromPreview !== null && this.jsonFromPreview.result == undefined)  ? {} : this.jsonFromPreview.result
     },
@@ -689,5 +738,9 @@ watch: {
 
 .tooltip-square {
   max-width: 200px
+}
+
+.error {
+  color: red;
 }
 </style>

@@ -323,6 +323,7 @@ function InvokeExecuteGraph(input) {
 
   return {
     execute: function execute() {
+      var previewUri = ''
       var result = null
       let gHelper = require("/custom-modules/pipes/graphHelper")
       let execContext = JSON.parse(input)
@@ -334,8 +335,10 @@ function InvokeExecuteGraph(input) {
       } else {
         if (execContext.previewUri == null || execContext.previewUri == "")
           doc = fn.head(fn.collection(execContext.collection))
-        else
+        else {
+          previewUri = execContext.previewUri
           doc = cts.doc(execContext.previewUri)
+        }
       }
 
       if (doc != null) {
@@ -349,19 +352,33 @@ function InvokeExecuteGraph(input) {
         console.log("input.collection=", input.collection)
         console.log("uri=", uri);
 
-        var graphResult = gHelper.executeGraphFromJson(execContext.jsonGraph, uri, doc, {collections: xdmp.documentGetCollections(uri)})
+        var graphResult = []
+
+        try {
+
+        graphResult = gHelper.executeGraphFromJson(execContext.jsonGraph, uri, doc, {collections: xdmp.documentGetCollections(uri)})
 
         result = {
           uri: uri,
           result: graphResult
         }
 
+        } catch (e) {
+
+          result = {
+            uri: uri,
+            result: graphResult,
+            error: e
+          }
+
+        }
+
       } else {
 
         result = {
 
-          uri: '',
-          error: "No source document, nothing to preview for the given context",
+          uri: previewUri,
+          error: "No source document found. Nothing to preview for the given context",
           result: []
 
         }
