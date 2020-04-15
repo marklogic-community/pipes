@@ -572,10 +572,10 @@ export default {
             if (response.data.error) {
 
               if ( response.data.error.stack ) {
-              console.log("Error executing graph: ")
+              console.log("Error executing graph")
               this.errorOccured = true
               var error = JSON.stringify(response.data.error.stack);
-               console.log(error)
+              //console.log(error)
               error = (error.split("in "))[0]
               if ( error.length > 50) error = error.substring(0,50) // if we don't capture message correctly truncate
               this.errorMessage = error
