@@ -1155,6 +1155,7 @@
               break;
               default:
                 this.blockSourceOption = 'none'
+                this.restoreFields(block, false) // restore fields from block
               break;
           }
 
