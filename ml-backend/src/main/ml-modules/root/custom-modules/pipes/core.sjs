@@ -13,11 +13,9 @@ const coreFunctions = require("/custom-modules/pipes/coreFunctions.sjs")
 const DataHub = require("/data-hub/5/datahub.sjs");
 const datahub = new DataHub();
 
-
 function init(LiteGraph){
 
-
-//Constant
+//Time
   function Time()
   {
     this.addOutput("in ms","number");
@@ -33,11 +31,7 @@ function init(LiteGraph){
     this.setOutputData(1, this.graph.globaltime  );
   }
 
-  LiteGraph.registerNodeType("basic/time", Time);
-
-
-
-
+  LiteGraph.registerNodeType("Generate/time", Time);
 
   //Input for a subgraph
   function GraphInputDHF() {
@@ -48,7 +42,6 @@ function init(LiteGraph){
     this.name_in_graph = "";
     this.properties = {};
     var that = this;
-
 
     this.widgets_up = true;
     this.size = [180, 60];
@@ -92,7 +85,6 @@ function init(LiteGraph){
     var uri = this.graph.inputs["uri"];
     var collections = this.graph.inputs["collections"];
 
-
     //put through output
     this.setOutputData(0, input.value);
     this.setOutputData(1, uri.value);
@@ -106,8 +98,7 @@ function init(LiteGraph){
   };
 
   LiteGraph.GraphInput = GraphInputDHF;
-  LiteGraph.registerNodeType("dhf/input", GraphInputDHF);
-
+  LiteGraph.registerNodeType("DHF/input", GraphInputDHF);
 
   //Output for a subgraph
   function GraphOutputObjectDHF() {
@@ -179,9 +170,6 @@ function init(LiteGraph){
 
   GraphOutputObjectDHF.prototype.onExecute = function() {
 
-
-
-
     //let result = {'envelope' : {}} ;
     // if(this.getInputData(0)==undefined) {
     let headers = (this.getInputData(0))?this.getInputData(0):{};
@@ -195,7 +183,6 @@ function init(LiteGraph){
     if (xdmp.type(instance)!="object")  instance ={"value" : instance}
     if (xdmp.type(attachments)!="object")  attachments ={"value" : attachments}
 
-
     if(this.format.value=="json") {
       if(instance) {
         if (instance.toObject) instance = instance.toObject()
@@ -205,14 +192,11 @@ function init(LiteGraph){
   else{
       instance={}
       instance["$attachments"] = attachments
-
     }
 
     }
-
 
     let result = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, this.format.value)
-
 
     let defaultCollections = (this.graph.inputs["collections"]!=null)?this.graph.inputs["collections"].value:null
     let defaultUri = (this.graph.inputs["uri"]!=null)?this.graph.inputs["uri"].value:sem.uuidString()
@@ -231,8 +215,6 @@ function init(LiteGraph){
 
     this.setOutputData(0,content)
   };
-
-
 
   GraphOutputObjectDHF.prototype.onAction = function(action, param) {
     if (this.properties.type == LiteGraph.ACTION) {
@@ -253,27 +235,19 @@ function init(LiteGraph){
     return this.title;
   };
 
-
-  LiteGraph.registerNodeType("dhf/envelope", GraphOutputObjectDHF);
-
+  LiteGraph.registerNodeType("DHF/envelope", GraphOutputObjectDHF);
 
 //Output for a subgraph
   function GraphOutputDHF() {
     this.addInput("output", null );
-
-
     this.name_in_graph = "";
     this.properties = {};
     var that = this;
-
-
-
     this.size = [180, 60];
   }
 
   GraphOutputDHF.title = "Output";
   GraphOutputDHF.desc = "Output of the graph";
-
 
   GraphOutputDHF.prototype.onExecute = function() {
 
@@ -328,7 +302,7 @@ function init(LiteGraph){
   };
 
   LiteGraph.GraphOutput = GraphOutputDHF;
-  LiteGraph.registerNodeType("dhf/output", GraphOutputDHF);
+  LiteGraph.registerNodeType("DHF/output", GraphOutputDHF);
 
 //Constant
   function Constant()
@@ -360,70 +334,46 @@ function init(LiteGraph){
     this.outputs[0].label = this.properties["value"].toFixed(3);
   }
 
-  LiteGraph.registerNodeType("basic/const", Constant);
+  LiteGraph.registerNodeType("Generate/const", Constant);
 
+/*
+ String Case
+*/
 
-//Watch a value in the editor
-  function Watch()
-  {
-    this.size = [60,20];
-    this.addInput("value",0,{label:""});
-    this.value = 0;
+ function stringCaseBlock() {
+  this.addInput("value","xs:string");
+  this.addOutput("nsValue","xs:string");
+  this.stringOperation = this.addWidget("combo","lowercase", "stringOperation", function(v){}, { values:["lowercase","uppercase","Capitalise"]} );
+}
+
+stringCaseBlock.title = "String Case";
+
+stringCaseBlock.prototype.onExecute = function()
+{
+  let input = this.getInputData(0);
+  let newVal = ''
+  if ( input ) {
+      let inputVal = String(input)
+      switch (this.stringOperation.value) {
+       case 'lowercase':
+       newVal = inputVal.toLowerCase()
+       break;
+       case 'UPPERCASE':
+       newVal = inputVal.toUpperCase()
+       break;
+       case 'Capitalise':
+       newVal = inputVal.split(' ').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ')
+       break;
+       default:
+       newVal = inputVal
+     }
+      this.setOutputData(0, newVal);
+  } else {
+    this.setOutputData(0,"")
   }
-
-  Watch.title = "Watch";
-  Watch.desc = "Show value of input";
-
-  Watch.prototype.onExecute = function()
-  {
-    if( this.inputs[0] )
-      this.value = this.getInputData(0);
-  }
-
-  Watch.toString = function( o )
-  {
-    if( o == null )
-      return "null";
-    else if (o.constructor === Number )
-      return o.toFixed(3);
-    else if (o.constructor === Array )
-    {
-      var str = "[";
-      for(var i = 0; i < o.length; ++i)
-        str += Watch.toString(o[i]) + ((i+1) != o.length ? "," : "");
-      str += "]";
-      return str;
-    }
-    else
-      return String(o);
-  }
-
-  Watch.prototype.onDrawBackground = function(ctx)
-  {
-    //show the current value
-    this.inputs[0].label = Watch.toString(this.value);
-  }
-
-  LiteGraph.registerNodeType("basic/watch", Watch);
-
-//Watch a value in the editor
-  function Pass()
-  {
-    this.addInput("in",0);
-    this.addOutput("out",0);
-    this.size = [40,20];
-  }
-
-  Pass.title = "Pass";
-  Pass.desc = "Allows to connect different types";
-
-  Pass.prototype.onExecute = function()
-  {
-    this.setOutputData( 0, this.getInputData(0) );
-  }
-
-  LiteGraph.registerNodeType("basic/pass", Pass);
-
+  console.log("Returned: " + newVal)
+}
+LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
 
 //Show value inside the debug console
   function Console()
@@ -462,7 +412,6 @@ function init(LiteGraph){
   }
 
   LiteGraph.registerNodeType("basic/console", Console );
-
 
 
 //Show value inside the debug console
@@ -520,15 +469,11 @@ function init(LiteGraph){
 
   LiteGraph.registerNodeType("basic/script", NodeScript );
 
-
-
-
-
   let configs = [
     {
       "functionName" : "fn_doc",
       "blockName" : "doc",
-      "library" : "fn",
+      "library" : "Query",
       "inputs":[
         {
           name:"uri",
@@ -550,7 +495,7 @@ function init(LiteGraph){
     {
       "functionName" : "fn_collection",
       "blockName" : "collection",
-      "library" : "fn",
+      "library" : "Query",
       "inputs":[
         {
           name:"collectionName",
@@ -614,51 +559,6 @@ function init(LiteGraph){
 
     },
     {
-      "functionName" : "fn_upperCase",
-      "blockName" : "UpperCase",
-      "library" : "string",
-      "inputs":[
-        {
-          name:"string",
-          type:"xs:string"}
-      ],
-      "outputs":[
-        {
-          "name": "STRING",
-          "type":"xs:string"
-        }
-      ],
-      "function":{
-        "ref":"fn.upperCase",
-        "code" :null
-      }
-
-
-    },
-    {
-      "functionName" : "fn_lowerCase",
-      "blockName" : "LowerCase",
-      "library" : "string",
-      "inputs":[
-        {
-          name:"STRING",
-          type:"xs:string"}
-      ],
-      "outputs":[
-        {
-          "name": "string",
-          "type":"xs:string"
-        }
-      ],
-      "function":{
-        "ref":"fn.lowerCase",
-        "code" :null
-      }
-
-
-    }
-    ,
-    {
       "functionName" : "fn_count",
       "blockName" : "count",
       "library" : "fn",
@@ -683,7 +583,7 @@ function init(LiteGraph){
     {
       "functionName" : "cts_andQuery",
       "blockName" : "andQuery",
-      "library" : "cts",
+      "library" : "Query",
       "inputs":[
         {
           name:"query1",
@@ -719,7 +619,7 @@ function init(LiteGraph){
     {
       "functionName" : "cts_orQuery",
       "blockName" : "orQuery",
-      "library" : "cts",
+      "library" : "Query",
       "inputs":[
         {
           name:"query1",
@@ -755,7 +655,7 @@ function init(LiteGraph){
     {
       "functionName" : "cts_search",
       "blockName" : "search",
-      "library" : "cts",
+      "library" : "Query",
       "inputs":[
         {
           name:"query",
@@ -803,7 +703,7 @@ function init(LiteGraph){
     {
       "functionName" : "cts_collectionQuery",
       "blockName" : "collectionQuery",
-      "library" : "cts",
+      "library" : "Query",
       "inputs":[
         {
           name:"collectionName",
@@ -820,31 +720,6 @@ function init(LiteGraph){
         "code" :null
       }
 
-
-    },
-
-    {
-      "functionName": "ctsDoc",
-      "blockName": "Doc",
-      "library": "cts",
-      "inputs": [
-        {
-          "name": "uri",
-          "type": null
-        }
-
-      ],
-      "outputs": [
-
-        {
-          "name": "doc",
-          "type": "node"
-        }
-      ],
-      "function": {
-        "ref": "cts.doc",
-        "code": ""
-      }
 
     },
 
@@ -888,7 +763,7 @@ function init(LiteGraph){
     {
       "functionName" : "addProperty",
       "blockName" : "Add property",
-      "library" : "transform",
+      "library" : "Enrich",
       "inputs":[
         {
           "name": "doc",
@@ -1069,7 +944,7 @@ function init(LiteGraph){
     this.graph.setGlobalOutputData( this.properties.uri, uri );
   }
 
-  LiteGraph.registerNodeType("dhf/StepEnvelopeOutput", GlobalEnvelopeOutput);
+  LiteGraph.registerNodeType("DHF/StepEnvelopeOutput", GlobalEnvelopeOutput);
 
 
 
@@ -1102,7 +977,7 @@ function init(LiteGraph){
     return code;
   }
 
-    LiteGraph.registerNodeType("string/constant", StringConstant);
+    LiteGraph.registerNodeType("Generate/constant", StringConstant);
 
   function featureLookupBlock() {
     this.addInput("var1");
@@ -1131,7 +1006,7 @@ function init(LiteGraph){
   }
 
 //register in the system
-  LiteGraph.registerNodeType("feature/Lookup", featureLookupBlock );
+  LiteGraph.registerNodeType("Query/Lookup", featureLookupBlock );
 
   function featureLookupCollectionPropertyValueBlock()
   {
@@ -1163,7 +1038,7 @@ function init(LiteGraph){
   }
 
 //register in the system
-  LiteGraph.registerNodeType("feature/LookupCollectionPropertyValue", featureLookupCollectionPropertyValueBlock );
+  LiteGraph.registerNodeType("Query/LookupCollectionPropertyValue", featureLookupCollectionPropertyValueBlock );
 
   function featureQueryBuilderBlock()
   {
@@ -1197,7 +1072,7 @@ function init(LiteGraph){
   }
 
 //register in the system
-  LiteGraph.registerNodeType("cts/ExpertQueryBuilder", featureQueryBuilderBlock );
+  LiteGraph.registerNodeType("Query/ExpertQueryBuilder", featureQueryBuilderBlock );
 
   function mapValueBlock()
   {
@@ -1294,7 +1169,7 @@ function init(LiteGraph){
   }
 
 //register in the system
-  LiteGraph.registerNodeType("string/Map values", mapValueBlock );
+  LiteGraph.registerNodeType("Mapping/Map values", mapValueBlock );
 
 
   function mapRangeValueBlock()
@@ -1342,7 +1217,7 @@ function init(LiteGraph){
   }
 
 //register in the system
-  LiteGraph.registerNodeType("feature/mapRangeValues", mapRangeValueBlock );
+  LiteGraph.registerNodeType("Mapping/mapRangeValues", mapRangeValueBlock );
 
   function EvalJavaScriptBlock()
   {
@@ -1522,13 +1397,13 @@ function init(LiteGraph){
 
   }
 
-  LiteGraph.registerNodeType("date/Current Date", currentDate );
+  LiteGraph.registerNodeType("Generate/Current Date", currentDate );
 
   function EpochToDateTime(epoch)
   {
     return (new Date(Number(epoch))).toISOString()
   }
-  LiteGraph.wrapFunctionAsNode('date/EpochToDateTime',EpochToDateTime,
+  LiteGraph.wrapFunctionAsNode('Format/EpochToDateTime',EpochToDateTime,
     ['xs:string'],'xs:string');
 
   function formatDateTimeAuto(srcDate)
@@ -1539,7 +1414,7 @@ function init(LiteGraph){
     else
       return result
   }
-  LiteGraph.wrapFunctionAsNode('date/FormatDateTimeAuto',formatDateTimeAuto,
+  LiteGraph.wrapFunctionAsNode('Format/FormatDateTimeAuto',formatDateTimeAuto,
     ['xs:string'],'xs:string')
 
   function formatDateAuto(srcDate)
@@ -1552,10 +1427,8 @@ function init(LiteGraph){
       return result
 
   }
-  LiteGraph.wrapFunctionAsNode('date/FormatDateAuto',formatDateAuto,
+  LiteGraph.wrapFunctionAsNode('Format/FormatDateAuto',formatDateAuto,
     ['xs:string'],'xs:string')
-
-
 
   function hashNode()
   {
@@ -1593,137 +1466,9 @@ function init(LiteGraph){
 
   }
 
-  LiteGraph.registerNodeType("feature/hashNode", hashNode );
-
-//node constructor class
-  function countrySrc()
-  {
-
-    this.addOutput("name","xs:string");
-    this.addOutput("country","xs:string");
-    this.addOutput("population","xs:string");
-    this.addOutput("metro-population","xs:string");
-    this.addOutput("language","xs:string");
-
-  }
-
-//name to show
-  countrySrc.title = "CountrySrc";
-
-//function to call when the node is executed
-  countrySrc.prototype.onExecute = function()
-  {
-    this.setOutputData( 0, "@'name'" );
-    this.setOutputData( 1, "@'country'" );
-    this.setOutputData( 2, "@'population'" );
-    this.setOutputData( 3, "@'metro-population'" );
-    this.setOutputData( 4, "@'language'" );
-
-  }
-
-//register in the system
-  LiteGraph.registerNodeType("dm/CountrySrc", countrySrc );
-
-
-//node constructor class
-  function lookupBlock()
-  {
-    this.addInput("lookupMap","uri");
-    this.addInput("Key1","xs:string");
-    this.addInput("Key2","xs:string");
-    this.addOutput("value");
-
-  }
-
-//name to show
-  lookupBlock.title = "lookup";
-
-//function to call when the node is executed
-  lookupBlock.prototype.onExecute = function()
-  {
-    let output = "lookup(" + this.getInputData(0) + "," + this.getInputData(1) + "," + this.getInputData(2) + ")"
-    this.setOutputData( 0, output );
-
-
-  }
-
-//register in the system
-  LiteGraph.registerNodeType("dm/lookup", lookupBlock );
-
-
-//node constructor class
-  function lookupMapsBlock()
-  {
-
-    this.addOutput("countries","uri");
-    this.addOutput("titles","uri");
-    this.addOutput("orgs","uri");
-
-  }
-
-//name to show
-  lookupMapsBlock.title = "lookupMaps";
-
-//function to call when the node is executed
-  lookupMapsBlock.prototype.onExecute = function()
-  {
-    this.setOutputData( 0, "'/countries.json'" );
-    this.setOutputData( 1, "'/titles.json'" );
-    this.setOutputData( 2, "'/orgs.json'" );
-
-  }
-
-//register in the system
-  LiteGraph.registerNodeType("dm/lookupMaps", lookupMapsBlock );
+  LiteGraph.registerNodeType("Generate/hashNode", hashNode );
 
 //End of Added
-
-
-
-
-//node constructor class
-  function countryBlock()
-  {
-
-    this.addInput("name","xs:string");
-    this.addInput("output-language","xs:string");
-    this.addInput("country","date");
-    this.addInput("population","xs:string");
-    this.addInput("metro-population","xs:string");
-    this.addInput("dense","xs:string");
-    this.addOutput("Object","object");
-
-  }
-
-//name to show
-  countryBlock.title = "Country";
-
-//function to call when the node is executed
-  countryBlock.prototype.onExecute = function()
-  {
-
-    let output= {
-
-      "name" : "[[" + this.getInputData(0) + "]]",
-      "output-language" : "[[" +this.getInputData(1)+ "]]",
-      "country" : "[[" +this.getInputData(2)+ "]]",
-      "population" : "[[" +this.getInputData(3)+ "]]",
-      "metro-population" : "[[" +this.getInputData(4)+ "]]",
-      "dense" : "[[" +this.getInputData(5)+ "]]"
-
-    }
-
-    this.setOutputData( 0, output);
-
-
-  }
-
-//register in the system
-  LiteGraph.registerNodeType("dm/Country", countryBlock );
-
-//End of Added
-
-
 
 //node constructor class
   function normalizeSpaceBlock() {
@@ -1781,219 +1526,6 @@ function init(LiteGraph){
 //register in the system
   LiteGraph.registerNodeType("string/RegExReplace", RegExReplaceBlock );
 
-  function lowercaseBlock()
-  {
-
-    this.addInput("value","xs:string");
-    this.addOutput("lcValue","xs:string");
-
-  }
-
-//name to show
-  lowercaseBlock.title = "lowerCase";
-
-//function to call when the node is executed
-  lowercaseBlock.prototype.onExecute = function()
-  {
-
-    let output= this.getInputData(0) + " => lowerCase()"
-
-
-    this.setOutputData( 0, output);
-
-
-  }
-
-//register in the system
-  LiteGraph.registerNodeType("dm/lowerCase", lowercaseBlock );
-
-
-//node constructor class
-  function multiplyBlock()
-  {
-
-    this.addInput("value1");
-    this.addInput("value2");
-    this.addOutput("result");
-
-  }
-
-//name to show
-  multiplyBlock.title = "multiply";
-
-//function to call when the node is executed
-  multiplyBlock.prototype.onExecute = function()
-  {
-
-    let output= this.getInputData(0) + " * " + this.getInputData(1)
-
-
-    this.setOutputData( 0, output);
-
-
-  }
-
-//register in the system
-  LiteGraph.registerNodeType("dm/multiply", multiplyBlock );
-
-
-//node constructor class
-  function gateBlock()
-  {
-
-    this.addInput("value1");
-    this.addInput("value2");
-    this.addInput("condition");
-    this.addInput("trueValue");
-    this.addInput("falseValue");
-    this.addOutput("result");
-
-  }
-
-//name to show
-  gateBlock.title = "gate";
-
-//function to call when the node is executed
-  gateBlock.prototype.onExecute = function()
-  {
-
-    let output= "if("+this.getInputData(0) + " " + this.getInputData(2) + " "+ this.getInputData(1) +"), " + this.getInputData(3) +"," +  this.getInputData(4)+")"
-
-
-    this.setOutputData( 0, output);
-
-
-  }
-
-//register in the system
-  LiteGraph.registerNodeType("dm/gate", gateBlock );
-
-
-
-  function MathOperationDM()
-  {
-    this.addInput("A");
-    this.addInput("B");
-    this.addOutput("=");
-    this.addProperty( "A", 1 );
-    this.addProperty( "B", 1 );
-    this.addProperty( "OP", "+", "enum", { values: MathOperationDM.values } );
-  }
-
-  MathOperationDM.values = ["+","-","*","/","%","^"];
-
-  MathOperationDM.title = "Operation";
-  MathOperationDM.desc = "Easy math operators";
-  MathOperationDM["@OP"] = { type:"enum", title: "operation", values: MathOperationDM.values };
-
-  MathOperationDM.prototype.getTitle = function()
-  {
-    return "A " + this.properties.OP + " B";
-  }
-
-  MathOperationDM.prototype.setValue = function(v)
-  {
-    //if( typeof(v) == "string") v = parseFloat(v);
-    this.properties["value"] = v;
-  }
-
-  MathOperationDM.prototype.onExecute = function()
-  {
-    var A = this.getInputData(0);
-    var B = this.getInputData(1);
-    if(A!=null)
-      this.properties["A"] = A;
-    else
-      A = this.properties["A"];
-
-    if(B!=null)
-      this.properties["B"] = B;
-    else
-      B = this.properties["B"];
-
-    // var result = 0;
-    switch(this.properties.OP)
-    {
-      case '+': result = A + " + " + B; break;
-      case '-': result =  A + " - " + B; break;
-      case 'x':
-      case 'X':
-      case '*': result =  A + " * " + B; break;
-      case '/': result =  A + " / " + B;; break;
-      case '%': result =  A + "/" + B; break;
-      case '^': result = "Math.pow("+A+","+B+")"; break;
-      default:
-        console.warn("Unknown operation: " + this.properties.OP);
-    }
-    this.setOutputData(0, result );
-  }
-
-  MathOperationDM.prototype.onDrawBackground = function(ctx)
-  {
-    if(this.flags.collapsed)
-      return;
-
-    ctx.font = "40px Arial";
-    ctx.fillStyle = "#CCC";
-    ctx.textAlign = "center";
-    ctx.fillText(this.properties.OP, this.size[0] * 0.5, this.size[1] * 0.35 + LiteGraph.NODE_TITLE_HEIGHT );
-    ctx.textAlign = "left";
-  }
-
-  LiteGraph.registerNodeType("dm/operation", MathOperationDM );
-
-
-  function coalesce(value1,value2)
-  {
-    if(value1!=null)
-      return value1
-    else {if(value2!=null)
-      return value2;
-    else return null}
-  }
-  LiteGraph.wrapFunctionAsNode('dm/coalesce',fn_head,
-    ['xs:string','xs:string'],'xs:string')
-  /*
-        "name": "[[extract('name') => lowerCase()]]",
-            "output-language": "[[$outputLang]]",
-            "country": "[[$outputName]]",
-            "population": "[[extract('population') * 1000 ]]",
-            "metro-population": "[[extract('metro-population') * 1000 ]]",
-            "dense": "[[if((@'population' / @'metro-population') > 0.75, 'dense', 'sparse')]]"
-            */
-
-  function StringConstantDM()
-  {
-    this.addOutput("value","xs:string");
-    this.addProperty( "value", "String Value" );
-    this.editable = { property:"value", type:"xs:string" };
-  }
-
-  StringConstantDM.title = "String Const";
-  StringConstantDM.desc = "Constant value";
-
-
-  StringConstantDM.prototype.setValue = function(v)
-  {
-    //if( typeof(v) == "string") v = parseFloat(v);
-    this.properties["value"] = v;
-    this.setDirtyCanvas(true);
-  };
-
-  StringConstantDM.prototype.onExecute = function()
-  {
-    this.setOutputData(0, "'" + this.properties["value"] + "'"  );
-  }
-
-  StringConstantDM.prototype.onDrawBackground = function(ctx)
-  {
-    //show the current value
-    this.outputs[0].label = "'" + this.properties["value"] + "'"//.toFixed(3);
-  }
-
-  LiteGraph.registerNodeType("dm/constStr", StringConstantDM);
-
-
   function stringTemplate()
   {
     this.addInput("v1");
@@ -2009,12 +1541,8 @@ function init(LiteGraph){
 
   }
 
-
-
   stringTemplate.title = "String Templating";
   stringTemplate.desc = "Apply string template on inputs";
-
-
 
   stringTemplate.prototype.onExecute = function()
   {
@@ -2053,9 +1581,7 @@ function init(LiteGraph){
   };
 
 
-  LiteGraph.registerNodeType("string/Templating",
-      stringTemplate
-    );
+  LiteGraph.registerNodeType("Generate/Templating",stringTemplate);
 
 
   function FormatDate()
@@ -2111,8 +1637,6 @@ function init(LiteGraph){
   CreateTriple.title = "Create Triple";
   CreateTriple.desc = "Create Triple";
 
-
-
   CreateTriple.prototype.onExecute = function()
   {
 
@@ -2166,7 +1690,7 @@ function init(LiteGraph){
     return code;
   }
 
-  LiteGraph.registerNodeType("string/uuid", uuidString );
+  LiteGraph.registerNodeType("Generate/uuid", uuidString );
 
 
   function multicast()
@@ -2221,7 +1745,7 @@ function init(LiteGraph){
     }
 
   }
-  LiteGraph.registerNodeType("basic/multicast", multicast );
+  LiteGraph.registerNodeType("Transform/multicast", multicast );
 
 
 
@@ -2292,7 +1816,7 @@ function init(LiteGraph){
     this.setOutputData(0, result )
 
   }
-  LiteGraph.registerNodeType("geo/GeoReproject", GeoReproject );
+  LiteGraph.registerNodeType("Transform/GeoReproject", GeoReproject );
 
 
   function Array()
@@ -2320,7 +1844,7 @@ function init(LiteGraph){
     this.setOutputData(0, result )
 
   }
-  LiteGraph.registerNodeType("basic/Array", Array );
+  LiteGraph.registerNodeType("Merge/Array", Array );
 
 
 
@@ -2445,8 +1969,7 @@ function init(LiteGraph){
     this.setOutputData(0, r );
   }
 
-  LiteGraph.registerNodeType("feature/selectCase", selectCase );
-
+  LiteGraph.registerNodeType("Mapping/selectCase", selectCase );
 
   function xmlValidate()
   {
@@ -2468,7 +1991,7 @@ function init(LiteGraph){
 
 
   }
-  LiteGraph.registerNodeType("controls/XMLValidate", xmlValidate );
+  LiteGraph.registerNodeType("Validate/XMLValidate", xmlValidate );
 
   function jsonValidate()
   {
@@ -2497,7 +2020,7 @@ function init(LiteGraph){
     }
   }
 
-  LiteGraph.registerNodeType("controls/JsonValidate", jsonValidate );
+  LiteGraph.registerNodeType("Validate/JsonValidate", jsonValidate );
 
 
   function provo()
@@ -2509,9 +2032,7 @@ function init(LiteGraph){
     this.addInput("GeneratedBy",null);
     this.addInput("createdOn",null);
     this.addOutput("PROV-O",null);
-
     this.size = this.computeSize();
-
   }
 
   provo.title = "PROV-O";
@@ -2537,7 +2058,7 @@ function init(LiteGraph){
     this.setOutputData(0, triples)
   }
 
-  LiteGraph.registerNodeType("provenance/PROV-O structure", provo );
+  LiteGraph.registerNodeType("Enrich/PROV-O structure", provo );
 
   function xslBlock()
   {
@@ -2570,7 +2091,7 @@ function init(LiteGraph){
     }
 
   }
-  LiteGraph.registerNodeType("transform/ApplyXSLT", xslBlock );
+  LiteGraph.registerNodeType("Transform/ApplyXSLT", xslBlock );
 
 
   function DistinctValues()
@@ -2598,7 +2119,7 @@ function init(LiteGraph){
 
 
   }
-  LiteGraph.registerNodeType("feature/DistinctValues", DistinctValues );
+  LiteGraph.registerNodeType("Filter/DistinctValues", DistinctValues );
 
   function Highlight()
   {
@@ -2636,7 +2157,7 @@ function init(LiteGraph){
 
 
   }
-  LiteGraph.registerNodeType("string/Highlight", Highlight );
+  LiteGraph.registerNodeType("Enrich/Highlight", Highlight );
 
   function enrichEntity()
   {
@@ -2671,9 +2192,7 @@ function init(LiteGraph){
 
 
   }
-  LiteGraph.registerNodeType("string/EntityEnrichment", enrichEntity );
-
-
+  LiteGraph.registerNodeType("Enrich/EntityEnrichment", enrichEntity );
 
   function declarativeMapper()
   {
@@ -2683,7 +2202,6 @@ function init(LiteGraph){
     this.WithInstanceRoot = this.addWidget("toggle","WithInstanceRoot", true, function(v){});
 
     this.addOutput("mappedNode",null);
-
     this.serialize_widgets = true;
   }
 
@@ -2708,9 +2226,6 @@ function init(LiteGraph){
 
     let oOutput ={}
     Object.keys(result.properties).map(item => {oOutput[item]= result.properties[item].output})
-
-
-
     let out = {};
     if(this["WithInstanceRoot"].value == true){
       out[entityType[0]] = oOutput
@@ -2725,13 +2240,9 @@ function init(LiteGraph){
       out= oOutput
     }
 
-
     this.setOutputData(0, out)
-
-
   }
-  LiteGraph.registerNodeType("dhf/declarativeMapper", declarativeMapper );
-
+  LiteGraph.registerNodeType("DHF/declarativeMapper", declarativeMapper );
 
   function checkPhoneNumber()
   {
@@ -2742,8 +2253,6 @@ function init(LiteGraph){
     this.addOutput("countryCode",null);
     this.addOutput("numberType",null);
     this.addOutput("qualityResult",null);
-
-
     this.outputFormat = this.addWidget("combo","outputFormat", "INTERNATIONAL", function(v){}, {values: ["NATIONAL","INTERNATIONAL","E164"] } );
     this.defaultCountry = this.addWidget("string","defaultCountry", "UK", function(v){});
     this.ifInvalid = this.addWidget("toggle","Output if invalid ?", true, function(v){});
@@ -2770,13 +2279,9 @@ function init(LiteGraph){
       "UNKNOWN"
     ]
 
-
-
-
     let pn = this.getInputData(0)
     let cc = this.getInputData(1)
     if(cc==null || cc==undefined) cc= this.defaultCountry.value
-
 
     const number = phoneUtil.parseAndKeepRawInput(pn, cc);
     if(phoneUtil.isValidNumber(number)){
@@ -2801,12 +2306,9 @@ function init(LiteGraph){
 
     }
 
-
-
   }
 
-  LiteGraph.registerNodeType("controls/CheckPhoneNumber", checkPhoneNumber );
-
+  LiteGraph.registerNodeType("Validate/CheckPhoneNumber", checkPhoneNumber );
 
   function xpathBlock()
   {
@@ -2854,8 +2356,7 @@ function init(LiteGraph){
     return code;
   };
 
-  LiteGraph.registerNodeType("transform/xpath", xpathBlock );
-
+  LiteGraph.registerNodeType("Transform/xpath", xpathBlock );
 
   function NullConstantBlock()  {
     this.addOutput("value");
@@ -2869,11 +2370,9 @@ function init(LiteGraph){
     this.setOutputData(0,null);
   }
 
-  LiteGraph.registerNodeType("basic/NullConst", NullConstantBlock);
+  LiteGraph.registerNodeType("Generate/NullConst", NullConstantBlock);
 
 }
-
-
 
 module.exports = {
   init:init

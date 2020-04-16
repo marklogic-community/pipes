@@ -410,7 +410,7 @@ export default {
       graphPreviewExecuting: false,
       validationConfigs: [
         {
-          block: "dhf/output",
+          block: "DHF/output",
           mandatoryInputs: [
             {
               name: "output",
@@ -431,7 +431,7 @@ export default {
 
         },
         {
-          block: "dhf/envelope",
+          block: "DHF/envelope",
           mandatoryInputs: [
             {
               name: "instance",
