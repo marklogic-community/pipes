@@ -942,13 +942,7 @@ export default {
     },
     // process blocks from old version of pipes and update
     updateGraph(graph) {
-
-     //console.log("Updating graph: " + JSON.stringify(graph.executionGraph) )
-
      graph.executionGraph = this.remapBlocks(LiteGraph,graph)
-
-    // console.log("New graph is : " + graph.executionGraph )
-
     },
     registerBlocksByConf (configs, LiteGraph) {
 
@@ -1028,7 +1022,7 @@ export default {
         blockCode += "LiteGraph.registerNodeType('" + config.library + "/" + config.blockName + "', " + config.functionName + " );"
 
         // DEBUGGING
-         console.log("==CONFIGURING BLOCK: " + config.blockName)
+        // console.log("==CONFIGURING BLOCK: " + config.blockName)
         // console.log(JSON.stringify(config))
         // console.log(JSON.stringify(blockCode))
         try { eval(blockCode) } catch (e) {
@@ -1103,8 +1097,7 @@ export default {
       this.advancedSettings.confirmBrowserRefresh = storedSettings.confirmBrowserRefresh != null ? storedSettings.confirmBrowserRefresh : true
     }
 
-    console.log("Registered blocks : " + JSON.stringify(LiteGraph.getRegisteredNodes()))
-
+    //console.log("Registered blocks : " + JSON.stringify(LiteGraph.getRegisteredNodes()))
 
     this.resetDhfDefaultGraph()
   },

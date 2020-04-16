@@ -31,7 +31,7 @@ const LiteGraphHelper = {
     remapBlocks: function(litegraph, graph) {
 
       var originalGraph = JSON.stringify(graph.executionGraph)
-      var updatedGraph = graph
+      var updatedGraph = JSON.stringify(graph.executionGraph)
 
       var thisGraphBlocks = this.graphStatistics(graph.executionGraph)
       var liteGraphRegisteredBlocks = litegraph.getRegisteredNodes()
