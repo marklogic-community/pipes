@@ -8,7 +8,7 @@ import java.io.InputStream;
 @Component
 public class Service {
 
-  final String VERSIONFILE="version.txt";
+  final String VERSIONFILE="/version.txt";
   public String get() {
 
     final InputStream is = Application.class.getResourceAsStream(VERSIONFILE);

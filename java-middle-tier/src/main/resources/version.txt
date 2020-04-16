@@ -1,2 +1,2 @@
-Pipes version: 1.0.1-dev-build
-Build: 202e92a
+Pipes version: 1.0.1-dev-build-1-g5620a6a
+Build: 5620a6a
