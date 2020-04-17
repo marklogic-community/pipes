@@ -1201,6 +1201,10 @@
 
                 var fieldName = block.label
 
+              if ( this.$refs.selectionTree.getNodeByKey(fieldName) !== null ) {
+                // if field has been discovered from current model, we don't want to duplicate from the field from the block
+              } else {
+
                 this.collectionModel[0].children.push({
                   [BLOCK_LABEL]: fieldName,
                   [BLOCK_FIELD] : block.field,
@@ -1211,15 +1215,17 @@
                   parent: block.parent
                 })
 
+              }
+
             }
-            // add all field regardless of type to "selected" so check boxes in tree are filled in
-            console.log("Adding field back to tree:" + reloadedBlock.fields[i].label)
+            // Add all field regardless of type to "selected" so check boxes in tree are filled in
             this.selectedFields.push(reloadedBlock.fields[i].label)
          }
 
             if ( this.collectionModel[1].children.length > 0  && expandTree)
             this.$refs["selectionTree"].setExpanded("Custom Fields",true)
           }
+
      },
 	 // Discover fields and populate the tree view
 
@@ -1239,8 +1245,6 @@
 
         if(custURIs !== null && custURIs != '')
           dbOption += "&rs:customURI=" + custURIs
-
-        console.log("discoverModel with: " + dbOption)
 
         this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionModel' + dbOption)
           .then((response) => {
