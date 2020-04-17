@@ -724,6 +724,7 @@ export default {
       }
 
       block.title = blockDef.collection;
+      if ( blockDef.metadata && blockDef.metadata.description != '' ) block.description = blockDef.metadata.description
       block.nodeType = blockDef.collection;
       return block
 
