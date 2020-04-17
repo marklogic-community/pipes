@@ -14,8 +14,7 @@
     <GraphExecutePreview />
 
     <q-dialog
-      :content-css="{minWidth: '60vw', minHeight: '80vh'}"
-      v-model="savePopUpOpened"
+      :content-css="{minWidth: '60vw', minHeight: '80vh'}" v-model="savePopUpOpened"
     >
       <q-card>
         <q-card-section class="row items-center">
@@ -26,7 +25,7 @@
           <div style="min-width: 250px; max-width: 300px">
             <q-input
               label="Graph name"
-              v-model="graphMetadata.title"
+              v-model="graphTitle"
             />
           </div>
         </q-card-section>
@@ -36,7 +35,7 @@
             @click="saveCurrentGraph()"
             color="primary"
             label="Save"
-            :disabled="(graphMetadata.title === null || graphMetadata.title === '' || graphMetadata.title.trim() === '')"
+            :disabled="(graphTitle === null || graphTitle.trim() == '')"
           />
           <q-btn
             @click="savePopUpOpened = false"
@@ -390,7 +389,6 @@ export default {
       },
       dbEntities: [],
       graphMetadata: {
-        title: "My Graph",
         version: "00.01",
         author: "",
         description: ""
@@ -415,6 +413,14 @@ export default {
     },
     availableDB: function () {
       return this.$store.getters.availableDatabases
+    },
+    graphTitle: {
+      get() {
+       return this.$store.getters.graphTitle
+      },
+      set(t) {
+      this.$store.commit('graphTitle', t)
+      }
     }
   },
   methods: {
@@ -498,13 +504,13 @@ export default {
         console.log("Caught warning during litegraph.configure: " + e)
       }
 
-      if (graph.metadata && graph.metadata.title != null) this.graphMetadata.title = graph.metadata.title; else this.graphMetadata.title = ""
+      if (graph.metadata && graph.metadata.title != null) this.graphTitle = graph.metadata.title; else this.graphTitle = ""
       if (graph.metadata && graph.metadata.author != null) this.graphMetadata.author = graph.metadata.author; else this.graphMetadata.author = ""
       if (graph.metadata && graph.metadata.version != null) this.graphMetadata.version = graph.metadata.version; else this.graphMetadata.version = ""
       if (graph.metadata && graph.metadata.description != null) this.graphMetadata.description = graph.description; else this.graphMetadata.description = ""
       this.$root.$emit("initGraphMetadata", this.graphMetadata)
 
-      if (notifyLoaded) this.notifyPositive(self, "Loaded graph " + this.graphMetadata.title)
+      if (notifyLoaded) this.notifyPositive(self, "Loaded graph " + this.graphTitle)
       this.$root.$emit("resetGraphTitle") // reset the titlebar to top graph (remove all subgraph history)
       this.showUploadGraph = false
     },
@@ -743,11 +749,14 @@ export default {
     },
     createGraphDef () {
       const jsonGraph = this.graph.serialize()
+      var meta = this.graphMetadata
+      meta.title = this.graphTitle
+      meta.dateExported = (new Date()).toLocaleString()
       return {
         pipesFileVersion: 1,
         models: this.blockModels,
         executionGraph: jsonGraph,
-        name: this.graphMetadata.title,
+        name: this.graphTitle,
         metadata: this.graphMetadata
       }
 
@@ -759,7 +768,7 @@ export default {
         endings: "transparent"
       });
       let name = ""
-      if (this.graphMetadata && this.graphMetadata.title != null && this.graphMetadata.title != "") name += this.graphMetadata.title; else name += "currentGraph"
+      if (this.graphMetadata && this.graphTitle !== null && this.graphTitle != "") name += this.graphTitle; else name += "currentGraph"
       if (this.graphMetadata && this.graphMetadata.version != null && this.graphMetadata.version != "") name += "-" + this.graphMetadata.version
       saveAs(blob, name + ".json");
     },
@@ -769,7 +778,7 @@ export default {
     saveCurrentGraph () {
 
       var self = this; // keep reference for notifications called from catch block
-      var graphName = this.graphMetadata.title.replace(/[&#]/g, "_"); // & # causes error at download time
+      var graphName = this.graphTitle.replace(/[&#]/g, "_"); // & # causes error at download time
       const blocks = this.blockModels
       const graphDef = this.createGraphDef();
 
@@ -786,8 +795,6 @@ export default {
         .catch((error) => {
           self.notifyError("SaveGraph", error, self);
         })
-
-
     },
     resetDhfDefaultGraph () {
       this.$axios.get('/statics/graph/dhfDefaultGraph.json')

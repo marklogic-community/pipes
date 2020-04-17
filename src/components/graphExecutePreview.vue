@@ -375,6 +375,7 @@ import VueJsonPretty from 'vue-json-pretty';
 import Notifications from '../components/notificationHandler.js';
 import CollectionFilter from '../components/collectionFilter.js';
 import { LocalStorage, copyToClipboard } from 'quasar';
+import { Vuex } from "vuex";
 export default {
   components: {
     VueJsonPretty
@@ -598,7 +599,7 @@ export default {
             pipesFileVersion : 1,
             models: this.blocks,
             executionGraph: jsonGraph.serialize(),
-            name: this.graphMetadata.title,
+            name: this.$store.getters.graphTitle,
             metadata: this.graphMetadata
           }
     },

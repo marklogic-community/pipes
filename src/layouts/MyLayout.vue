@@ -25,7 +25,7 @@
         </q-toolbar-title>
 
 		<q-toolbar-title align="left">
-			{{ this.currentGraphTitle }}
+			{{ this.headerGraphTitle }}
 		</q-toolbar-title>
 
         <q-btn-group v-if="loggedIn">
@@ -194,10 +194,9 @@
               style="max-width: 300px"
             >
               <q-input
-                v-model="graphMetadata.title"
+                v-model="titleEdit"
                 filled
                 label="Graph Name"
-				@blur="updateTitle()"
               />
               <q-input
                 filled
@@ -269,10 +268,8 @@ export default {
       leftDrawerOpen: false,
 	  rightDrawerOpen: this.$q.platform.is.desktop,
       tab: "metadata",
-	  currentGraphTitle: "My graph",
-	  graphStack: ["TOP"], // list of graphs to track title going in/out of subgraphs
+	  graphStack: [], // list of graphs to track title going in/out of subgraphs
       graphMetadata: {
-        title: "My graph",
         version: "00.01",
         author: "",
         description: "",
@@ -284,30 +281,28 @@ export default {
     loggedIn: function() {
       console.log('LoggedIn returning ' + this.$store.getters.authenticated)
       return this.$store.getters.authenticated
-  }
+  },
+    headerGraphTitle: function(){
+      return (this.graphStack.length == 0 ) ? this.$store.getters.graphTitle : "Subgraph: " + this.graphStack[this.graphStack.length  - 1]
+  },
+    titleEdit: {
+      get() {
+       return this.$store.getters.graphTitle
+      },
+      set(t) {
+      this.$store.commit('graphTitle', t)
+      }
+    }
   },
   methods: {
-    updateTitle() {
-	// update title if edited and user in main graph / not subgraph
-	 if ( this.graphStack.length == 1 ) {
-		this.currentGraphTitle = this.graphMetadata.title
-	 }
-	},
     enteredSubGraph(graphName) {
-		this.graphStack.push(graphName)
-		this.currentGraphTitle = "Subgraph: " + graphName
+		  this.graphStack.push(graphName)
 	},
 	exitedSubGraph() {
 		var graphName = this.graphStack.pop();
-		if ( this.graphStack.length == 1 )  {
-			this.currentGraphTitle = this.graphMetadata.title
-		} else {
-			this.currentGraphTitle = "Subgraph: " + this.graphStack[this.graphStack.length-1]
-		}
 	},
 	resetGraphTitle(graphName) {
-		this.graphStack = ["TOP"]
-		this.currentGraphTitle = this.graphMetadata.title
+		this.graphStack = []
 	},
     executeGraph () {
       this.$root.$emit("openGraphPreview");

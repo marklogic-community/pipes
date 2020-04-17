@@ -3,8 +3,6 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
-console.log("initialising Vuex")
-
 export default function () {
 
   const store =  new Vuex.Store({
@@ -14,19 +12,13 @@ export default function () {
       authenticated: false,
       databases: [],
       databasesMap: {},
-      GraphMetadata: {
-        title: "My graph",
-        version: "00.01",
-        author: "",
-        description: "",
-        dateCreated: "",
-        dateUpdated: ""
-      }
+      graphTitle: 'My Graph'
     },
     getters: {
     availableDatabases: state => { return state.databases },
     authenticated: state => { return state.authenticated },
     models: state => { return state.models },
+    graphTitle: state => { return state.graphTitle },
     helpMode: state => { return state.helpMode },
     sourceBlocks: state => {
       return this.$store.state.models.filter(function (block) {
@@ -40,6 +32,9 @@ export default function () {
     },
     authenticated( state, auth ) {
       state.authenticated = auth
+    },
+    graphTitle(state, title) {
+      state.graphTitle = title
     },
     helpMode(state, mode) {
       state.helpMode = mode
