@@ -1007,7 +1007,6 @@
         return this.blockName.trim().replace(/  +/g, ' ');
       },
       addCustomField(){
-
         if ( this.cleanCustomFieldName() !== '' ) {
 
         var fieldName = this.cleanCustomFieldName()
@@ -1114,11 +1113,12 @@
         console.log("Restoring source block to form: " + JSON.stringify(block))
 
             this.resetBlockFormFields()
+            this.collectionModel[0].children=[] // clear model and selected fields
+            this.collectionModel[1].children=[]
+            this.selectedFields=[]
+            this.blockName = block.label
 
-              this.collectionModel[0].children=[] // clear model and selected fields
-              this.collectionModel[1].children=[]
-              this.selectedFields=[]
-              this.blockName = block.label
+           this.createBlockStep = 3
 
         if ( block.metadata ) {
 
@@ -1132,12 +1132,22 @@
             switch (block.metadata.blockCreatedFrom) {
               case 'custom_step':
                 var dhfStep = ''
-                if (block.metadata.sourceDHFStep && block.metadata.sourceDHFStep != '')
+                 var blockSourceDatabase, blockSourceCollection
+                  var blockSourceDatabase, blockSourceCollection
+                if (block.metadata.sourceDatabase && block.metadata.sourceDatabase != '')
+                  blockSourceDatabase = block.metadata.sourceDatabase
+                if (block.metadata.sourceCollection && block.metadata.sourceCollection != '')
+                  blockSourceCollection = block.metadata.sourceCollection
+                if ((blockSourceDatabase === null || blockSourceDatabase == '') ||
+                  (blockSourceCollection === null || blockSourceCollection == '') ) {
+                } else {
+                  this.setDatabaseCollectionsDropdowns(blockSourceDatabase,blockSourceCollection,block)
+                }
+                  if (block.metadata.sourceDHFStep && block.metadata.sourceDHFStep != '')
                   dhfStep = block.metadata.sourceDHFStep
                   this.setDHFStep(dhfStep)
                   this.blockOptions = block.options;
                   this.blockSourceOption = 'custom_step'
-                  this.restoreFields(block, false) // restore fields from block
               break;
               case 'db_collection':
                 var blockSourceDatabase, blockSourceCollection
@@ -1201,7 +1211,8 @@
 
                 var fieldName = block.label
 
-              if ( this.$refs.selectionTree.getNodeByKey(fieldName) !== null ) {
+              console.log("Document field: " + fieldName)
+              if ( JSON.stringify(this.collectionModel[0].children).indexOf("\"" + fieldName + "\"") > -1 ) {
                 // if field has been discovered from current model, we don't want to duplicate from the field from the block
               } else {
 
@@ -1221,7 +1232,6 @@
             // Add all field regardless of type to "selected" so check boxes in tree are filled in
             this.selectedFields.push(reloadedBlock.fields[i].label)
          }
-
             if ( this.collectionModel[1].children.length > 0  && expandTree)
             this.$refs["selectionTree"].setExpanded("Custom Fields",true)
           }
