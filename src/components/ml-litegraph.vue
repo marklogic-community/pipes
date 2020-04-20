@@ -9,9 +9,9 @@
       width='1800'
     ></canvas>
 
-    <BlockPropertyEditDialog />
-    <BlockMappingEditDialog />
-    <GraphExecutePreview />
+    <BlockPropertyEditDialog/>
+    <BlockMappingEditDialog/>
+    <GraphExecutePreview/>
 
     <q-dialog
       :content-css="{minWidth: '60vw', minHeight: '80vh'}" v-model="savePopUpOpened"
@@ -388,11 +388,6 @@ export default {
         delBlockName: ""
       },
       dbEntities: [],
-      graphMetadata: {
-        version: "00.01",
-        author: "",
-        description: ""
-      },
       isExported: false,
       graph: null,                // LiteGraphObject
       showCodeGenConfig: false,
@@ -415,13 +410,37 @@ export default {
       return this.$store.getters.availableDatabases
     },
     graphTitle: {
-      get() {
+      get: function() {
        return this.$store.getters.graphTitle
       },
-      set(t) {
+      set: function(t) {
       this.$store.commit('graphTitle', t)
       }
-    }
+    },
+    graphVersion: {
+      get: function() {
+       return this.$store.getters.graphVersion
+      },
+      set: function(v) {
+      this.$store.commit('graphVersion', v)
+      }
+      },
+    graphDescription: {
+      get: function() {
+       return this.$store.getters.graphDescription
+      },
+      set: function(d) {
+      this.$store.commit('graphDescription', d)
+      }
+      },
+     graphAuthor: {
+      get: function() {
+       return this.$store.getters.graphAuthor
+      },
+      set: function(a) {
+      this.$store.commit('graphAuthor', a)
+      }
+     }
   },
   methods: {
     // Open the Preview Graph Dialog. Pass graph details
@@ -505,14 +524,16 @@ export default {
       }
 
       if (graph.metadata && graph.metadata.title != null) this.graphTitle = graph.metadata.title; else this.graphTitle = ""
-      if (graph.metadata && graph.metadata.author != null) this.graphMetadata.author = graph.metadata.author; else this.graphMetadata.author = ""
-      if (graph.metadata && graph.metadata.version != null) this.graphMetadata.version = graph.metadata.version; else this.graphMetadata.version = ""
-      if (graph.metadata && graph.metadata.description != null) this.graphMetadata.description = graph.description; else this.graphMetadata.description = ""
+      if (graph.metadata && graph.metadata.author != null) this.graphAuthor = graph.metadata.author; else this.graphAuthor = ""
+      if (graph.metadata && graph.metadata.version != null) this.graphVersion = graph.metadata.version; else this.graphVersion = ""
+      if (graph.metadata && graph.metadata.description != null) this.graphDescription = graph.metadata.description; else this.graphDescription = ""
       this.$root.$emit("initGraphMetadata", this.graphMetadata)
 
       if (notifyLoaded) this.notifyPositive(self, "Loaded graph " + this.graphTitle)
       this.$root.$emit("resetGraphTitle") // reset the titlebar to top graph (remove all subgraph history)
       this.showUploadGraph = false
+
+      this.resetView() // reset view to 100%
     },
     getSavedGraph (uri, graphName) {
       //if(uri!=null)
@@ -749,15 +770,19 @@ export default {
     },
     createGraphDef () {
       const jsonGraph = this.graph.serialize()
-      var meta = this.graphMetadata
-      meta.title = this.graphTitle
-      meta.dateExported = (new Date()).toLocaleString()
+      var meta = {
+          "version": this.graphVersion,
+          "author": this.graphAuthor,
+          "title": this.graphTitle,
+          "description" : this.graphDescription,
+          "dateExported": (new Date()).toLocaleString()
+      }
       return {
         pipesFileVersion: 1,
         models: this.blockModels,
         executionGraph: jsonGraph,
         name: this.graphTitle,
-        metadata: this.graphMetadata
+        metadata: meta
       }
 
     },
@@ -930,9 +955,17 @@ export default {
             }
 
           }
-
         }
       }
+    },
+    // Re-center and re-zoom graph
+    resetView() {
+      this.graph_canvas.ds.reset()
+    },
+    // Re-center
+    recenterView() {
+      this.graph_canvas.ds.offset[0] = 0;
+      this.graph_canvas.ds.offset[1] = 0;
     },
     isNotEmpty (prop) {
       return (prop !== null && prop != '')
