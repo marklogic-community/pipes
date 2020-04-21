@@ -158,7 +158,7 @@ function init(LiteGraph){
     let triples = (this.getInputData(1)) ? this.getInputData(1) : [];
     let instance = (this.getInputData(2)) ? this.getInputData(2) : {};
     let attachments = (this.getInputData(3)) ? this.getInputData(3) : {};
-
+    let hasAttachments = (attachments!=null)
 
     if (xdmp.type(headers) != "object") headers = { "value": headers }
     if (xdmp.type(triples) != "array" && triples.triple) triples = [triples]
@@ -166,25 +166,16 @@ function init(LiteGraph){
     if (xdmp.type(attachments) != "object") attachments = { "value": attachments }
 
 
-    if (this.format.value == "json") {
+    if (this.format.value == "json" && attachments) {
       if (instance) {
-    if(this.format.value=="json") {
-      if(instance) {
         if (instance.toObject) instance = instance.toObject()
         instance["$attachments"] = attachments
-      }
-
-      else {
+      } else {
         instance = {}
         instance["$attachments"] = attachments
-
       }
-  else{
-      instance={}
-      instance["$attachments"] = attachments
     }
 
-    }
 
     let result = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, this.format.value)
 
