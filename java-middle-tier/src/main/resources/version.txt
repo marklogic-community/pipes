@@ -1,2 +1,0 @@
-Pipes version: 1.0.1-dev-build-1-g5620a6a
-Build: 5620a6a

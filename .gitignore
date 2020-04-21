@@ -46,6 +46,7 @@ java-middle-tier/src/test/resources/application.properties
 java-middle-tier/lib/
 ml-backend/.classpath
 java-middle-tier/application.properties
+java-middle-tier/src/main/resources/version.txt
 
 #windows stuff
 gradle/
