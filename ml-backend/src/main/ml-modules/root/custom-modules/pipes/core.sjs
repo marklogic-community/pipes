@@ -1613,7 +1613,7 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
     this.setOutputData(0, result )
 
   }
-  LiteGraph.registerNodeType("Merge/Array", Array );
+  LiteGraph.registerNodeType("Join/Array", Array );
 
   function split()
   {

@@ -1369,7 +1369,7 @@
     "functionName": "array",
     "blockName": "Array",
     "title": "Generate Array",
-    "library": "Merge",
+    "library": "Join",
     "description" : "Creates an array from individual inputs. If one of the inputs is itself an array then it will be flattened first",
     "inputs": [
       {

@@ -69,7 +69,7 @@ export default {
 <style>
 .block-tooltip {
   min-width: 200px;
-  background-color: blue;
+  background-color: grey;
   color: white;
   font-size: 1em;
 }
