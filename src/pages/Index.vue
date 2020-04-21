@@ -46,7 +46,7 @@ export default {
     return {
       val: "",
       startup: true,
-      showTime: 5
+      showTime: 7
     }
   },
   computed: {
@@ -76,7 +76,7 @@ export default {
   },
   mounted: function () {
       this.getVersion()
-      if (this.val === null || this.val.trim() == '' ) this.val = "Pipes version: 1.0-beta.4-201-g7462703 Build: 7462703"
+    //  if (this.val === null || this.val.trim() == '' ) this.val = "Pipes version: Development\nBuild: xxxxxxx"
       this.countDownTimer()
   }
 }
