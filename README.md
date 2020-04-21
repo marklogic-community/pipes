@@ -88,7 +88,7 @@ This will start the Pipes UI, as well as copy the modules to the appropriate loc
 
 
 You probably care about security. If you don't want to put your username and password into a plain text file, you can remove them from the properties file and instead pass them as a parameter to the Pipes jar. Example:  
-```java -jar marklogic-pipes-1.0-beta-3.jar --mlUsername=MYUSER --Password=MYPASSWORD```
+```java -jar marklogic-pipes-1.0.1.jar --mlUsername=MYUSER --Password=MYPASSWORD```
 
 Pipes UI is now running on localhost and the port that you've specified in the application.properties under value server.port. Example: [localhost:8081](http://localhost:8081)
 
