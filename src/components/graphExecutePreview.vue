@@ -599,8 +599,8 @@ export default {
             pipesFileVersion : 1,
             models: this.blocks,
             executionGraph: jsonGraph.serialize(),
-            name: this.$store.getters.graphTitle,
-            metadata: this.graphMetadata
+            name: this.$store.getters.graphTitle
+           // metadata: this.graphMetadata
           }
     },
         dbChanged () {

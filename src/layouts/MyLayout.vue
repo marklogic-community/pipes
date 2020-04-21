@@ -200,25 +200,19 @@
               />
               <q-input
                 filled
-                v-model="graphMetadata.version"
+                v-model="graphVersion"
                 label="Version"
                 mask="##.##"
                 fill-mask
                 hint="Mask: major.minor"
               />
               <q-input
-                filled
-                disable
-                v-model="graphMetadata.dateCreated"
-                label="Date Created"
-              />
-              <q-input
-                v-model="graphMetadata.author"
+                v-model="graphAuthor"
                 filled
                 label="Author"
               />
               <q-input
-                v-model="graphMetadata.description"
+                v-model="graphDescription"
                 filled
                 type="textarea"
                 label="Description"
@@ -266,33 +260,50 @@ export default {
   data () {
     return {
       leftDrawerOpen: false,
-	  rightDrawerOpen: this.$q.platform.is.desktop,
+	    rightDrawerOpen: this.$q.platform.is.desktop,
       tab: "metadata",
-	  graphStack: [], // list of graphs to track title going in/out of subgraphs
-      graphMetadata: {
-        version: "00.01",
-        author: "",
-        description: "",
-        dateCreated: new Date().toISOString()
-      }
+	    graphStack: [], // list of graphs to track title going in/out of subgraphs
     }
   },
   computed: {
     loggedIn: function() {
-      console.log('LoggedIn returning ' + this.$store.getters.authenticated)
       return this.$store.getters.authenticated
   },
     headerGraphTitle: function(){
       return (this.graphStack.length == 0 ) ? this.$store.getters.graphTitle : "Subgraph: " + this.graphStack[this.graphStack.length  - 1]
   },
     titleEdit: {
-      get() {
+      get: function() {
        return this.$store.getters.graphTitle
       },
-      set(t) {
+      set: function(t) {
       this.$store.commit('graphTitle', t)
       }
-    }
+    },
+    graphVersion: {
+      get: function() {
+       return this.$store.getters.graphVersion
+      },
+      set: function(v) {
+      this.$store.commit('graphVersion', v)
+      }
+      },
+    graphDescription: {
+      get: function() {
+       return this.$store.getters.graphDescription
+      },
+      set: function(d) {
+      this.$store.commit('graphDescription', d)
+      }
+      },
+     graphAuthor: {
+      get: function() {
+       return this.$store.getters.graphAuthor
+      },
+      set: function(t) {
+      this.$store.commit('graphAuthor', t)
+      }
+      },
   },
   methods: {
     enteredSubGraph(graphName) {
@@ -397,6 +408,3 @@ export default {
   }
 }
 </script>
-
-<style>
-</style>
