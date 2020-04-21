@@ -36,10 +36,13 @@ public class BackendModulesAppRunner extends AbstractLoggingClass implements App
   AuthService authService;
 
   @Autowired
-  Service serviceProvider;
+  Service versionService;
 
   @Override
   public void run(ApplicationArguments args) throws Exception {
+
+
+
 
     boolean deployBackend = args.containsOption("deployBackend");
     boolean undeployBackend = args.containsOption("undeployBackend");
@@ -88,10 +91,13 @@ public class BackendModulesAppRunner extends AbstractLoggingClass implements App
       backendModulesManager.copyAndDeployPipesBackend();
     }
 
-    System.out.println(serviceProvider.get());
-    System.out.println("blablah");
     logger.info(
       String.format("Pipes running on port: "+ environment.getProperty("local.server.port")));
+
+
+    // version information
+    System.out.println("--------------------\n"+ versionService.get()+"--------------------");
+
   }
 
 

@@ -195,7 +195,7 @@ class MarkLogicControllerTest {
 
       this.mockMvc.perform(builder)
         .andExpect(status().isOk())
-        .andExpect(content().string(equalToCompresapsingWhiteSpace(expectedResponseHandle.toString())));
+        .andExpect(content().string(equalToCompressingWhiteSpace(expectedResponseHandle.toString())));
     } finally {
       removeCustomerSource();
     }

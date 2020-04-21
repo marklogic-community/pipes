@@ -25,12 +25,13 @@
           Any contribution or feedback is welcomed to make the tool better.<br />
           <b>Pipes Team</b>
           <br />
-          <br />
-          Version 1.0.1 / What's new :
+          <pre>{{version}}</pre>
+
+          <!-- / What's new :
           <ul>
             <li>Preview wizard</li>
             <li>Improved notifications</li>
-          </ul>
+          </ul> -->
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -43,7 +44,24 @@ export default {
   // name: 'ComponentName',
   data () {
     return {
+      val: "",
       startup: true
+    }
+  },
+  computed: {
+    version: function () {
+
+      var self = this;
+      var val = ""
+      this.$axios.get('/version').then((response) => {
+
+        this.val = response.data;
+      })
+        .catch((error) => {
+          self.notifyError("databasesDetails", error, self);
+        })
+      console.log("this.val=", this.val)
+      return this.val;
     }
   },
   components: {
