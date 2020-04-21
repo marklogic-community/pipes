@@ -365,6 +365,8 @@ function InvokeExecuteGraph(input) {
 
         } catch (e) {
 
+          console.log("Exception occured during graph execution: " + e)
+
           result = {
             uri: uri,
             result: graphResult,
@@ -375,12 +377,12 @@ function InvokeExecuteGraph(input) {
 
       } else {
 
-        result = {
+        console.log("No source document found. Nothing to preview for the given context")
 
+        result = {
           uri: previewUri,
           error: "No source document found. Nothing to preview for the given context",
           result: []
-
         }
 
       }

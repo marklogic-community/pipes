@@ -9,9 +9,10 @@
       width='1800'
     ></canvas>
 
-    <BlockPropertyEditDialog/>
-    <BlockMappingEditDialog/>
-    <GraphExecutePreview/>
+    <BlockPropertyEditDialog />
+    <BlockMappingEditDialog />
+    <GraphExecutePreview />
+    <BlockDescription/>
 
     <q-dialog
       :content-css="{minWidth: '60vw', minHeight: '80vh'}" v-model="savePopUpOpened"
@@ -343,6 +344,7 @@ import LiteGraphHelper from '../components/liteGraphHelper.js';
 import BlockPropertyEditDialog from '../components/propertyEditDialog.vue';
 import BlockMappingEditDialog from '../components/mappingEditDialog.vue';
 import GraphExecutePreview from '../components/graphExecutePreview.vue';
+import BlockDescription from '../components/blockDescription.vue';
 import { LocalStorage } from 'quasar';
 import Vue from 'vue';
 Vue.use(require('vue-shortkey'))
@@ -357,7 +359,8 @@ export default {
     CSVLoader,
     BlockPropertyEditDialog,
     BlockMappingEditDialog,
-    GraphExecutePreview
+    GraphExecutePreview,
+    BlockDescription
   },
   name: 'PageIndex',
   mixins: [
@@ -498,8 +501,10 @@ export default {
     // Reload a graph
     loadGraphFromJson (graph, notifyLoaded) {
 
+      this.updateGraph(graph)
+
       this.checkEntityBlocks(graph)
-      this.graphStatistics(graph.executionGraph)
+     // this.graphStatistics(graph.executionGraph)
       this.$store.commit('clearBlocks')
 
       // Filter blocks to remove any duplicates from graph (take latest. legacy bug?)
@@ -746,6 +751,7 @@ export default {
       }
 
       block.title = blockDef.collection;
+      if ( blockDef.metadata && blockDef.metadata.description != '' ) block.description = blockDef.metadata.description
       block.nodeType = blockDef.collection;
       return block
 
@@ -778,7 +784,7 @@ export default {
           "dateExported": (new Date()).toLocaleString()
       }
       return {
-        pipesFileVersion: 1,
+        pipesFileVersion: 2,
         models: this.blockModels,
         executionGraph: jsonGraph,
         name: this.graphTitle,
@@ -970,6 +976,15 @@ export default {
     isNotEmpty (prop) {
       return (prop !== null && prop != '')
     },
+    showBlockDetails(block) {
+        console.log("Pipes received request to show block " + JSON.stringify(block))
+         if ( block.description && block.description != '')
+         this.$root.$emit('showBlockDescription',block)
+    },
+    // process blocks from old version of pipes and update
+    updateGraph(graph) {
+     graph.executionGraph = this.remapBlocks(LiteGraph,graph)
+    },
     registerBlocksByConf (configs, LiteGraph) {
 
       let allBlockCode = ""
@@ -1003,7 +1018,16 @@ export default {
         blockCode += "};"
 
         if (config.title_color) blockCode += config.functionName + ".title_color = \"" + config.title_color + "\";"
-        blockCode += config.functionName + ".title = '" + config.blockName + "';";
+
+        // Use title property, otherwise blockname for block title bar
+        if ( config.title !== null && config.title != undefined ) {
+          blockCode += config.functionName + ".title = '" + config.title + "';";
+        } else {
+          blockCode += config.functionName + ".title = '" + config.blockName + "';";
+        }
+
+
+        if (config.description && config.description != undefined) blockCode += config.functionName + ".description = '" + config.description + "';";
 
         // Add event to onConfigure for block when defined
         // !== undefined is required
@@ -1042,11 +1066,14 @@ export default {
         // console.log("==CONFIGURING BLOCK: " + config.blockName)
         // console.log(JSON.stringify(config))
         // console.log(JSON.stringify(blockCode))
+        try { eval(blockCode) } catch (e) {
+          console.log("Error occured registering block " + config.blockName + ": " + e)
+        }
 
         allBlockCode += blockCode
       }
       //xdmp.log(code)
-      eval(allBlockCode)
+      //eval(allBlockCode)
     },
     checkLoggedIn () {
 
@@ -1087,6 +1114,7 @@ export default {
     this.$root.$on("listGraphBlocks", this.listGraphBlocks);
     this.$root.$on("checkGraphBlockDelete", this.checkGraphBlockDelete);
     this.$root.$on('blockRequested', this.createBlock);
+    this.$root.$on('blockDetails', this.showBlockDetails);
 
     this.discoverDatabases(false)
     this.discoverDhfSteps()
@@ -1109,6 +1137,9 @@ export default {
       var storedSettings = this.$q.localStorage.getItem(ADVANCED_SETTINGS_KEY)
       this.advancedSettings.confirmBrowserRefresh = storedSettings.confirmBrowserRefresh != null ? storedSettings.confirmBrowserRefresh : true
     }
+
+    //console.log("Registered blocks : " + JSON.stringify(LiteGraph.getRegisteredNodes()))
+
     this.resetDhfDefaultGraph()
   },
   beforeMount () {
@@ -1138,6 +1169,7 @@ export default {
     this.$root.$off("loadDHFDefaultGraphCall", this.resetDhfDefaultGraph);
     this.$root.$off("listGraphBlocks", this.listGraphBlocks);
     this.$root.$off("checkGraphBlockDelete", this.checkGraphBlockDelete);
+    this.$root.$off('blockDetails', this.showBlockDetails,node);
   }
 
 }
