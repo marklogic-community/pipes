@@ -799,8 +799,8 @@ export default {
         endings: "transparent"
       });
       let name = ""
-      if (this.graphMetadata && this.graphTitle !== null && this.graphTitle != "") name += this.graphTitle; else name += "currentGraph"
-      if (this.graphMetadata && this.graphMetadata.version != null && this.graphMetadata.version != "") name += "-" + this.graphMetadata.version
+      if (this.graphTitle !== null && this.graphTitle != "") name += this.graphTitle; else name += "currentGraph"
+      if (this.graphVersion !== null && this.graphVersion != "") name += "-" + this.graphVersion
       saveAs(blob, name + ".json");
     },
     exportDHFModule () {
