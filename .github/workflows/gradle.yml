@@ -1,7 +1,7 @@
-# This workflow will build a Java project with Gradle
+# This workflow will build a Java project with a shell script
 # For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
 
-name: Java CI with Gradle
+name: Java CI with a shell script
 
 on:
   push:
@@ -20,7 +20,7 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
-    - name: Grant execute permission for gradlew
-      run: chmod +x java-middle-tier/gradlew
-    - name: Build with Gradle
-      run: java-middle-tier/gradlew buildPipes -p java-middle-tier
+    - name: Grant execute permission for Script
+      run: git update-index --chmod +x ./buildPackageUiJar.sh
+    - name: Build with Script
+      run: ./buildPackageUiJar.sh
