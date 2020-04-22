@@ -46,12 +46,6 @@ java-middle-tier/lib/
 ml-backend/.classpath
 java-middle-tier/application.properties
 
-#windows stuff
-/
-java-middle-tier/gradle/wrapper/gradle-wrapper.properties
-java-middle-tier/gradle
-java-middle-tier/.gradle
-
 #gren stuff
 .grenrc.yml
 CHANGELOG.md
