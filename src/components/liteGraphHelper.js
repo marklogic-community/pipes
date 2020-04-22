@@ -103,7 +103,6 @@ const LiteGraphHelper = {
         ["fn/doc",FIND + "/doc"],
         ["feature/hashNode", GENERATE + "/hashNode"],
         ["feature/selectCase", "Mapping/selectCase"],
-      //  ["basic/const", GENERATE + "/constNumber"],
         ["feature/Doc By Key", FIND + "/Doc By Key"],
         ["string/RegExReplace","Transform/RegExReplace"],
         ["date/FormatDateAuto","Format/FormatDateAuto"],
