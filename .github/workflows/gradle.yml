@@ -21,6 +21,6 @@ jobs:
       with:
         java-version: 1.8
     - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
+      run: chmod +x java-middle-tier/gradlew
     - name: Build with Gradle
       run: java-middle-tier/gradlew buildPipes -p java-middle-tier

@@ -47,7 +47,7 @@ ml-backend/.classpath
 java-middle-tier/application.properties
 
 #windows stuff
-gradle/
+/
 java-middle-tier/gradle/wrapper/gradle-wrapper.properties
 java-middle-tier/gradle
 java-middle-tier/.gradle
@@ -61,4 +61,3 @@ docker/.env
 docker/jar/
 docker/data/
 docker/volumes/
-
