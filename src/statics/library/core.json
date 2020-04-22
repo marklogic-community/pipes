@@ -1,35 +1,5 @@
 [
   {
-    "functionName": "constant",
-    "blockName": "constant",
-    "library": "Generate",
-    "title": "Constant",
-    "description" : "Generates a string value",
-    "inputs": [],
-    "outputs": [
-      {
-        "name": "value",
-        "type": null,
-        "mandatory" : true,
-        "description" : ""
-      }
-    ],
-    "widgets": [
-      {
-        "type": "text",
-        "name": "string",
-        "default": "Your string",
-        "values": null
-      }
-    ],
-    "properties": [
-    ],
-    "function": {
-      "ref": "fn.doc",
-      "code": null
-    }
-  },
-  {
     "functionName": "hashNode",
     "blockName": "hashNode",
     "library": "Generate",
