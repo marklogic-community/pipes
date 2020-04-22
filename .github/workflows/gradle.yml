@@ -23,4 +23,4 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
-      run: ./gradlew buildPipes
+      run: java-middle-tier/gradlew buildPipes -p java-middle-tier
