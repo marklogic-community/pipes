@@ -10695,6 +10695,7 @@ LGraphNode.prototype.executeAction = function(action)
   }
 
   Subgraph.prototype.onExecute = function() {
+
     this.enabled = this.getInputOrProperty("enabled");
 
     //reset all outputs
@@ -10705,7 +10706,7 @@ LGraphNode.prototype.executeAction = function(action)
     if (!this.enabled) {
       return;
     }
-
+   
     //send inputs to subgraph global inputs
     if (this.inputs) {
 
@@ -10916,7 +10917,7 @@ LGraphNode.prototype.executeAction = function(action)
   };
 
   LiteGraph.Subgraph = Subgraph;
-  LiteGraph.registerNodeType("graph/subgraph", Subgraph);
+  LiteGraph.registerNodeType("Graph/subgraph", Subgraph);
 
 
   //Input for a subgraph
@@ -11060,7 +11061,7 @@ LGraphNode.prototype.executeAction = function(action)
   };
 
   LiteGraph.GraphInput = GraphInput;
-  LiteGraph.registerNodeType("graph/input", GraphInput);
+  LiteGraph.registerNodeType("Graph/input", GraphInput);
 
   //Output for a subgraph
   function GraphOutput() {
@@ -11165,7 +11166,7 @@ LGraphNode.prototype.executeAction = function(action)
   };
 
   LiteGraph.GraphOutput = GraphOutput;
-  LiteGraph.registerNodeType("graph/output", GraphOutput);
+  LiteGraph.registerNodeType("Graph/output", GraphOutput);
 
 })(this);
 
