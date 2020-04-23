@@ -199,8 +199,8 @@
     }
   ],
   "executionGraph": {
-    "last_node_id": 20,
-    "last_link_id": 40,
+    "last_node_id": 25,
+    "last_link_id": 50,
     "nodes": [
       {
         "id": 3,
@@ -214,7 +214,7 @@
           268
         ],
         "flags": {},
-        "order": 7,
+        "order": 6,
         "mode": 0,
         "inputs": [
           {
@@ -302,7 +302,7 @@
           "1": 26
         },
         "flags": {},
-        "order": 9,
+        "order": 8,
         "mode": 0,
         "inputs": [
           {
@@ -334,7 +334,7 @@
           "1": 58
         },
         "flags": {},
-        "order": 10,
+        "order": 9,
         "mode": 0,
         "inputs": [
           {
@@ -395,7 +395,7 @@
           160
         ],
         "flags": {},
-        "order": 16,
+        "order": 15,
         "mode": 0,
         "inputs": [
           {
@@ -418,7 +418,7 @@
           "1": 106
         },
         "flags": {},
-        "order": 15,
+        "order": 14,
         "mode": 0,
         "inputs": [
           {
@@ -469,7 +469,7 @@
           188
         ],
         "flags": {},
-        "order": 11,
+        "order": 10,
         "mode": 0,
         "inputs": [
           {
@@ -490,7 +490,7 @@
           {
             "name": "id",
             "type": 0,
-            "link": 23
+            "link": 47
           },
           {
             "name": "postalCode",
@@ -523,279 +523,6 @@
         ]
       },
       {
-        "id": 8,
-        "type": "Generate/uuid",
-        "pos": [
-          317,
-          795
-        ],
-        "size": {
-          "0": 255,
-          "1": 58
-        },
-        "flags": {},
-        "order": 0,
-        "mode": 0,
-        "outputs": [
-          {
-            "name": "uuid",
-            "links": [
-              13,
-              22,
-              29
-            ]
-          }
-        ],
-        "title": "Customer Id",
-        "properties": {},
-        "widgets_values": [
-          ""
-        ]
-      },
-      {
-        "id": 11,
-        "type": "DHF/envelope",
-        "pos": [
-          1286,
-          170
-        ],
-        "size": [
-          180,
-          160
-        ],
-        "flags": {},
-        "order": 13,
-        "mode": 0,
-        "inputs": [
-          {
-            "name": "headers",
-            "type": 0,
-            "link": null
-          },
-          {
-            "name": "triples",
-            "type": 0,
-            "link": 35
-          },
-          {
-            "name": "instance",
-            "type": 0,
-            "link": 21
-          },
-          {
-            "name": "attachments",
-            "type": 0,
-            "link": null
-          },
-          {
-            "name": "uri",
-            "type": 0,
-            "link": 32
-          },
-          {
-            "name": "collections",
-            "type": 0,
-            "link": 27
-          }
-        ],
-        "outputs": [
-          {
-            "name": "output",
-            "type": null,
-            "links": [
-              25
-            ]
-          }
-        ],
-        "properties": {},
-        "widgets_values": [
-          "json"
-        ]
-      },
-      {
-        "id": 14,
-        "type": "string/constant",
-        "pos": [
-          1033,
-          316
-        ],
-        "size": [
-          180,
-          60
-        ],
-        "flags": {},
-        "order": 2,
-        "mode": 0,
-        "outputs": [
-          {
-            "name": "value",
-            "type": "xs:string",
-            "links": [
-              27
-            ]
-          }
-        ],
-        "properties": {},
-        "widgets_values": [
-          "pipes-address"
-        ]
-      },
-      {
-        "id": 12,
-        "type": "string/uuid",
-        "pos": [
-          182,
-          168
-        ],
-        "size": {
-          "0": 255,
-          "1": 58
-        },
-        "flags": {},
-        "order": 3,
-        "mode": 0,
-        "outputs": [
-          {
-            "name": "uuid",
-            "links": [
-              23,
-              31
-            ]
-          }
-        ],
-        "title": "Address Id",
-        "properties": {},
-        "widgets_values": [
-          ""
-        ]
-      },
-      {
-        "id": 17,
-        "type": "string/Templating",
-        "pos": [
-          637,
-          -23
-        ],
-        "size": [
-          230,
-          160
-        ],
-        "flags": {},
-        "order": 6,
-        "mode": 0,
-        "inputs": [
-          {
-            "name": "v1",
-            "type": 0,
-            "link": 31
-          },
-          {
-            "name": "v2",
-            "type": 0,
-            "link": null
-          },
-          {
-            "name": "v3",
-            "type": 0,
-            "link": null
-          }
-        ],
-        "outputs": [
-          {
-            "name": "newString",
-            "type": "xs:string",
-            "links": [
-              32,
-              33
-            ]
-          }
-        ],
-        "properties": {},
-        "widgets_values": [
-          "v4",
-          "v5",
-          "/address/${v1}.json"
-        ]
-      },
-      {
-        "id": 1,
-        "type": "DHF/input",
-        "pos": [
-          -244,
-          439
-        ],
-        "size": [
-          180,
-          60
-        ],
-        "flags": {},
-        "order": 3,
-        "mode": 0,
-        "outputs": [
-          {
-            "name": "input",
-            "type": "",
-            "links": [
-              1
-            ]
-          },
-          {
-            "name": "uri",
-            "type": "",
-            "links": [
-              34
-            ]
-          },
-          {
-            "name": "collections",
-            "type": "",
-            "links": null
-          }
-        ],
-        "properties": {}
-      },
-      {
-        "id": 18,
-        "type": "triples/CreateTriple",
-        "pos": [
-          888,
-          -222
-        ],
-        "size": {
-          "0": 255,
-          "1": 126
-        },
-        "flags": {},
-        "order": 8,
-        "mode": 0,
-        "inputs": [
-          {
-            "name": "subject",
-            "type": 0,
-            "link": 33
-          },
-          {
-            "name": "object",
-            "type": 0,
-            "link": 34
-          }
-        ],
-        "outputs": [
-          {
-            "name": "triple",
-            "links": [
-              35
-            ]
-          }
-        ],
-        "properties": {},
-        "widgets_values": [
-          true,
-          "createdFrom",
-          true
-        ]
-      },
-      {
         "id": 4,
         "type": "Entities/Customer",
         "pos": [
@@ -807,7 +534,7 @@
           228
         ],
         "flags": {},
-        "order": 12,
+        "order": 11,
         "mode": 0,
         "inputs": [
           {
@@ -871,6 +598,182 @@
         ]
       },
       {
+        "id": 19,
+        "type": "DHF/envelope",
+        "pos": [
+          1466,
+          534
+        ],
+        "size": [
+          180,
+          160
+        ],
+        "flags": {},
+        "order": 13,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "headers",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "triples",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "instance",
+            "type": 0,
+            "link": 36
+          },
+          {
+            "name": "attachments",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "uri",
+            "type": 0,
+            "link": 37
+          },
+          {
+            "name": "collections",
+            "type": 0,
+            "link": 39
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output",
+            "type": null,
+            "links": [
+              40
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "json"
+        ]
+      },
+      {
+        "id": 20,
+        "type": "Generate/multiConstant",
+        "pos": [
+          1179,
+          875
+        ],
+        "size": {
+          "0": 255,
+          "1": 82
+        },
+        "flags": {},
+        "order": 0,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "output",
+            "links": [
+              39
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "string",
+          "Customer360-pipes"
+        ]
+      },
+      {
+        "id": 11,
+        "type": "DHF/envelope",
+        "pos": [
+          1377,
+          132
+        ],
+        "size": [
+          180,
+          160
+        ],
+        "flags": {},
+        "order": 12,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "headers",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "triples",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "instance",
+            "type": 0,
+            "link": 21
+          },
+          {
+            "name": "attachments",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "uri",
+            "type": 0,
+            "link": 43
+          },
+          {
+            "name": "collections",
+            "type": 0,
+            "link": 41
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output",
+            "type": null,
+            "links": [
+              25
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "json"
+        ]
+      },
+      {
+        "id": 21,
+        "type": "Generate/multiConstant",
+        "pos": [
+          1043,
+          306
+        ],
+        "size": {
+          "0": 255,
+          "1": 82
+        },
+        "flags": {},
+        "order": 1,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "output",
+            "links": [
+              41
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "string",
+          "Address360-pipes"
+        ]
+      },
+      {
         "id": 16,
         "type": "Generate/Templating",
         "pos": [
@@ -918,91 +821,144 @@
         ]
       },
       {
-        "id": 20,
-        "type": "Generate/multiConstant",
+        "id": 8,
+        "type": "Generate/uuid",
         "pos": [
-          1179,
-          875
+          317,
+          795
         ],
         "size": {
           "0": 255,
-          "1": 82
+          "1": 58
+        },
+        "flags": {},
+        "order": 2,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "uuid",
+            "links": [
+              13,
+              22,
+              29
+            ]
+          }
+        ],
+        "title": "Customer Id",
+        "properties": {},
+        "widgets_values": [
+          ""
+        ]
+      },
+      {
+        "id": 1,
+        "type": "DHF/input",
+        "pos": [
+          -244,
+          439
+        ],
+        "size": [
+          180,
+          60
+        ],
+        "flags": {},
+        "order": 3,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "input",
+            "type": "",
+            "links": [
+              1
+            ]
+          },
+          {
+            "name": "uri",
+            "type": "",
+            "links": []
+          },
+          {
+            "name": "collections",
+            "type": "",
+            "links": null
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 22,
+        "type": "Generate/Templating",
+        "pos": [
+          319,
+          -133
+        ],
+        "size": {
+          "0": 230,
+          "1": 160
+        },
+        "flags": {},
+        "order": 7,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "v1",
+            "type": 0,
+            "link": 42
+          },
+          {
+            "name": "v2",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "v3",
+            "type": 0,
+            "link": null
+          }
+        ],
+        "outputs": [
+          {
+            "name": "newString",
+            "type": "xs:string",
+            "links": [
+              43
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "v4",
+          "v5",
+          "/address/${v1}.json"
+        ]
+      },
+      {
+        "id": 23,
+        "type": "Generate/uuid",
+        "pos": [
+          -124,
+          161
+        ],
+        "size": {
+          "0": 255,
+          "1": 58
         },
         "flags": {},
         "order": 4,
         "mode": 0,
         "outputs": [
           {
-            "name": "output",
+            "name": "uuid",
             "links": [
-              39
+              42,
+              47
             ]
           }
         ],
+        "title": "Address ID",
         "properties": {},
         "widgets_values": [
-          "string",
-          "Customer360-pipes"
-        ]
-      },
-      {
-        "id": 19,
-        "type": "DHF/envelope",
-        "pos": [
-          1466,
-          534
-        ],
-        "size": [
-          180,
-          160
-        ],
-        "flags": {},
-        "order": 14,
-        "mode": 0,
-        "inputs": [
-          {
-            "name": "headers",
-            "type": 0,
-            "link": null
-          },
-          {
-            "name": "triples",
-            "type": 0,
-            "link": null
-          },
-          {
-            "name": "instance",
-            "type": 0,
-            "link": 36
-          },
-          {
-            "name": "attachments",
-            "type": 0,
-            "link": null
-          },
-          {
-            "name": "uri",
-            "type": 0,
-            "link": 37
-          },
-          {
-            "name": "collections",
-            "type": 0,
-            "link": 39
-          }
-        ],
-        "outputs": [
-          {
-            "name": "output",
-            "type": null,
-            "links": [
-              40
-            ]
-          }
-        ],
-        "properties": {},
-        "widgets_values": [
-          "json"
+          ""
         ]
       }
     ],
@@ -1136,14 +1092,6 @@
         0
       ],
       [
-        23,
-        12,
-        0,
-        10,
-        3,
-        0
-      ],
-      [
         25,
         11,
         0,
@@ -1160,59 +1108,11 @@
         0
       ],
       [
-        27,
-        14,
-        0,
-        11,
-        5,
-        0
-      ],
-      [
         29,
         8,
         0,
         16,
         0,
-        0
-      ],
-      [
-        31,
-        12,
-        0,
-        17,
-        0,
-        0
-      ],
-      [
-        32,
-        17,
-        0,
-        11,
-        4,
-        0
-      ],
-      [
-        33,
-        17,
-        0,
-        18,
-        0,
-        0
-      ],
-      [
-        34,
-        1,
-        1,
-        18,
-        1,
-        0
-      ],
-      [
-        35,
-        18,
-        0,
-        11,
-        1,
         0
       ],
       [
@@ -1246,6 +1146,38 @@
         13,
         1,
         0
+      ],
+      [
+        41,
+        21,
+        0,
+        11,
+        5,
+        0
+      ],
+      [
+        42,
+        23,
+        0,
+        22,
+        0,
+        0
+      ],
+      [
+        43,
+        22,
+        0,
+        11,
+        4,
+        0
+      ],
+      [
+        47,
+        23,
+        0,
+        10,
+        3,
+        0
       ]
     ],
     "groups": [],
@@ -1254,10 +1186,10 @@
   },
   "name": "Customer360-demo-graph",
   "metadata": {
-    "version": "01.2_",
+    "version": "01.3_",
     "author": "Sasha Mitrovich",
     "title": "Customer360-demo-graph",
     "description": "",
-    "dateExported": "23/04/2020, 08:58:42"
+    "dateExported": "23/04/2020, 12:01:03"
   }
 }

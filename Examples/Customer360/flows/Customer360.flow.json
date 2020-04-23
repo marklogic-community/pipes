@@ -44,13 +44,13 @@
       }
     },
     "2" : {
-      "name" : "harmonize-customer",
+      "name" : "harmonize-customer360",
       "description" : "",
       "options" : {
         "additionalCollections" : [ ],
         "sourceQuery" : "cts.collectionQuery([\"customer-source\"])",
         "targetEntity" : "Customer",
-        "collections" : [ "harmonize-customer", "Customer" ],
+        "collections" : [ "harmonize-customer360", "Customer" ],
         "sourceDatabase" : "customer360-data-hub-STAGING",
         "permissions" : "data-hub-operator,read,data-hub-operator,update",
         "sourceCollection" : "customer-source",
@@ -66,7 +66,7 @@
       "retryLimit" : null,
       "batchSize" : 100,
       "threadCount" : 4,
-      "stepDefinitionName" : "harmonize-customer",
+      "stepDefinitionName" : "harmonize-customer360",
       "stepDefinitionType" : "CUSTOM"
     }
   }
