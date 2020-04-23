@@ -53,6 +53,7 @@ gradle/
 java-middle-tier/gradle/wrapper/gradle-wrapper.properties
 java-middle-tier/gradle
 java-middle-tier/.gradle
+.tmp
 
 #gren stuff
 .grenrc.yml
