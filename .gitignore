@@ -49,9 +49,6 @@ java-middle-tier/application.properties
 java-middle-tier/src/main/resources/version.txt
 
 #windows stuff
-gradle/
-java-middle-tier/gradle/wrapper/gradle-wrapper.properties
-java-middle-tier/gradle
 java-middle-tier/.gradle
 .tmp
 

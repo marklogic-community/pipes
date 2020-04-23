@@ -1,0 +1,1263 @@
+{
+  "pipesFileVersion": 2,
+  "models": [
+    {
+      "label": "my-customer-source",
+      "collection": "my-customer-source",
+      "source": "Sources",
+      "fields": [
+        {
+          "label": "city [id16]",
+          "field": "city",
+          "value": "city",
+          "path": "/envelope/instance/text('city')",
+          "type": 3,
+          "children": [],
+          "parent": "/envelope/instance"
+        },
+        {
+          "label": "country [id18]",
+          "field": "country",
+          "value": "country",
+          "path": "/envelope/instance/text('country')",
+          "type": 3,
+          "children": [],
+          "parent": "/envelope/instance"
+        },
+        {
+          "label": "dob [id14]",
+          "field": "dob",
+          "value": "dob",
+          "path": "/envelope/instance/text('dob')",
+          "type": 3,
+          "children": [],
+          "parent": "/envelope/instance"
+        },
+        {
+          "label": "email [id11]",
+          "field": "email",
+          "value": "email",
+          "path": "/envelope/instance/text('email')",
+          "type": 3,
+          "children": [],
+          "parent": "/envelope/instance"
+        },
+        {
+          "label": "first_name [id9]",
+          "field": "first_name",
+          "value": "first_name",
+          "path": "/envelope/instance/text('first_name')",
+          "type": 3,
+          "children": [],
+          "parent": "/envelope/instance"
+        },
+        {
+          "label": "id [id8]",
+          "field": "id",
+          "value": "id",
+          "path": "/envelope/instance/text('id')",
+          "type": 3,
+          "children": [],
+          "parent": "/envelope/instance"
+        },
+        {
+          "label": "gender [id12]",
+          "field": "gender",
+          "value": "gender",
+          "path": "/envelope/instance/text('gender')",
+          "type": 3,
+          "children": [],
+          "parent": "/envelope/instance"
+        },
+        {
+          "label": "last_name [id10]",
+          "field": "last_name",
+          "value": "last_name",
+          "path": "/envelope/instance/text('last_name')",
+          "type": 3,
+          "children": [],
+          "parent": "/envelope/instance"
+        },
+        {
+          "label": "street [id15]",
+          "field": "street",
+          "value": "street",
+          "path": "/envelope/instance/text('street')",
+          "type": 3,
+          "children": [],
+          "parent": "/envelope/instance"
+        },
+        {
+          "label": "zipcode [id17]",
+          "field": "zipcode",
+          "value": "zipcode",
+          "path": "/envelope/instance/text('zipcode')",
+          "type": 3,
+          "children": [],
+          "parent": "/envelope/instance"
+        }
+      ],
+      "options": [
+        "nodeInput",
+        "fieldsOutputs"
+      ],
+      "metadata": {
+        "dateCreated": "2020-01-24T13:19:25.061Z"
+      }
+    },
+    {
+      "label": "Customer",
+      "collection": "Customer",
+      "source": "Entities",
+      "fields": [
+        {
+          "label": "address",
+          "field": "address",
+          "path": "//address"
+        },
+        {
+          "label": "dateOfBirth",
+          "field": "dateOfBirth",
+          "path": "//dateOfBirth"
+        },
+        {
+          "label": "email",
+          "field": "email",
+          "path": "//email"
+        },
+        {
+          "label": "externalId",
+          "field": "externalId",
+          "path": "//externalId"
+        },
+        {
+          "label": "firstName",
+          "field": "firstName",
+          "path": "//firstName"
+        },
+        {
+          "label": "gender",
+          "field": "gender",
+          "path": "//gender"
+        },
+        {
+          "label": "id",
+          "field": "id",
+          "path": "//id"
+        },
+        {
+          "label": "lastName",
+          "field": "lastName",
+          "path": "//lastName"
+        }
+      ],
+      "options": [
+        "fieldsInputs",
+        "nodeOutput"
+      ]
+    },
+    {
+      "label": "Address",
+      "collection": "Address",
+      "source": "Entities",
+      "fields": [
+        {
+          "label": "city",
+          "field": "city",
+          "path": "//city"
+        },
+        {
+          "label": "country",
+          "field": "country",
+          "path": "//country"
+        },
+        {
+          "label": "customerId",
+          "field": "customerId",
+          "path": "//customerId"
+        },
+        {
+          "label": "id",
+          "field": "id",
+          "path": "//id"
+        },
+        {
+          "label": "postalCode",
+          "field": "postalCode",
+          "path": "//postalCode"
+        },
+        {
+          "label": "street",
+          "field": "street",
+          "path": "//street"
+        }
+      ],
+      "options": [
+        "fieldsInputs",
+        "nodeOutput"
+      ]
+    }
+  ],
+  "executionGraph": {
+    "last_node_id": 20,
+    "last_link_id": 40,
+    "nodes": [
+      {
+        "id": 3,
+        "type": "Sources/my-customer-source",
+        "pos": [
+          -2,
+          432
+        ],
+        "size": [
+          305,
+          268
+        ],
+        "flags": {},
+        "order": 7,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "Node",
+            "type": 0,
+            "link": 1
+          }
+        ],
+        "outputs": [
+          {
+            "name": "city",
+            "links": [
+              16
+            ]
+          },
+          {
+            "name": "country",
+            "links": [
+              17
+            ]
+          },
+          {
+            "name": "dob",
+            "links": [
+              14
+            ]
+          },
+          {
+            "name": "email",
+            "links": [
+              3
+            ]
+          },
+          {
+            "name": "first_name",
+            "links": [
+              4
+            ]
+          },
+          {
+            "name": "id",
+            "links": [
+              5
+            ]
+          },
+          {
+            "name": "gender",
+            "links": [
+              10
+            ]
+          },
+          {
+            "name": "last_name",
+            "links": [
+              7
+            ]
+          },
+          {
+            "name": "street",
+            "links": [
+              18
+            ]
+          },
+          {
+            "name": "zipcode",
+            "links": [
+              19
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          true
+        ]
+      },
+      {
+        "id": 9,
+        "type": "Format/FormatDateAuto",
+        "pos": [
+          416,
+          460
+        ],
+        "size": {
+          "0": 170,
+          "1": 26
+        },
+        "flags": {},
+        "order": 9,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "inputDate",
+            "type": 0,
+            "link": 14
+          }
+        ],
+        "outputs": [
+          {
+            "name": "IsoDate",
+            "links": [
+              15
+            ]
+          }
+        ],
+        "title": "Normalize DoB",
+        "properties": {}
+      },
+      {
+        "id": 7,
+        "type": "Mapping/Map values",
+        "pos": [
+          363,
+          631
+        ],
+        "size": {
+          "0": 255,
+          "1": 58
+        },
+        "flags": {},
+        "order": 10,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "value",
+            "type": 0,
+            "link": 10
+          },
+          {
+            "name": "default",
+            "type": 0,
+            "link": null
+          }
+        ],
+        "outputs": [
+          {
+            "name": "mappedValue",
+            "links": [
+              12
+            ]
+          }
+        ],
+        "title": "Map gender",
+        "properties": {
+          "mapping": [
+            {
+              "source": "#NULL#",
+              "target": "#NULL#"
+            },
+            {
+              "source": "#EMPTY#",
+              "target": "#EMPTY#"
+            },
+            {
+              "source": "Female",
+              "target": "F"
+            },
+            {
+              "source": "Male",
+              "target": "M"
+            }
+          ],
+          "hoverText": "Double click block to edit the mapping rules"
+        },
+        "widgets_values": [
+          "string",
+          false
+        ]
+      },
+      {
+        "id": 2,
+        "type": "DHF/output",
+        "pos": [
+          2005,
+          448
+        ],
+        "size": [
+          180,
+          160
+        ],
+        "flags": {},
+        "order": 16,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "output",
+            "type": 0,
+            "link": 26
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 13,
+        "type": "Join/Array",
+        "pos": [
+          1719,
+          337
+        ],
+        "size": {
+          "0": 170,
+          "1": 106
+        },
+        "flags": {},
+        "order": 15,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "item1",
+            "type": 0,
+            "link": 25
+          },
+          {
+            "name": "item2",
+            "type": 0,
+            "link": 40
+          },
+          {
+            "name": "item3",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "item4",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "item5",
+            "type": 0,
+            "link": null
+          }
+        ],
+        "outputs": [
+          {
+            "name": "array",
+            "links": [
+              26
+            ]
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 10,
+        "type": "Entities/Address",
+        "pos": [
+          661,
+          233
+        ],
+        "size": [
+          305,
+          188
+        ],
+        "flags": {},
+        "order": 11,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "city",
+            "type": 0,
+            "link": 16
+          },
+          {
+            "name": "country",
+            "type": 0,
+            "link": 17
+          },
+          {
+            "name": "customerId",
+            "type": 0,
+            "link": 22
+          },
+          {
+            "name": "id",
+            "type": 0,
+            "link": 23
+          },
+          {
+            "name": "postalCode",
+            "type": 0,
+            "link": 19
+          },
+          {
+            "name": "street",
+            "type": 0,
+            "link": 18
+          }
+        ],
+        "outputs": [
+          {
+            "name": "Node",
+            "type": "Node",
+            "links": [
+              21
+            ]
+          },
+          {
+            "name": "Prov",
+            "type": null,
+            "links": null
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          true
+        ]
+      },
+      {
+        "id": 8,
+        "type": "Generate/uuid",
+        "pos": [
+          317,
+          795
+        ],
+        "size": {
+          "0": 255,
+          "1": 58
+        },
+        "flags": {},
+        "order": 0,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "uuid",
+            "links": [
+              13,
+              22,
+              29
+            ]
+          }
+        ],
+        "title": "Customer Id",
+        "properties": {},
+        "widgets_values": [
+          ""
+        ]
+      },
+      {
+        "id": 11,
+        "type": "DHF/envelope",
+        "pos": [
+          1286,
+          170
+        ],
+        "size": [
+          180,
+          160
+        ],
+        "flags": {},
+        "order": 13,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "headers",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "triples",
+            "type": 0,
+            "link": 35
+          },
+          {
+            "name": "instance",
+            "type": 0,
+            "link": 21
+          },
+          {
+            "name": "attachments",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "uri",
+            "type": 0,
+            "link": 32
+          },
+          {
+            "name": "collections",
+            "type": 0,
+            "link": 27
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output",
+            "type": null,
+            "links": [
+              25
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "json"
+        ]
+      },
+      {
+        "id": 14,
+        "type": "string/constant",
+        "pos": [
+          1033,
+          316
+        ],
+        "size": [
+          180,
+          60
+        ],
+        "flags": {},
+        "order": 2,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "value",
+            "type": "xs:string",
+            "links": [
+              27
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "pipes-address"
+        ]
+      },
+      {
+        "id": 12,
+        "type": "string/uuid",
+        "pos": [
+          182,
+          168
+        ],
+        "size": {
+          "0": 255,
+          "1": 58
+        },
+        "flags": {},
+        "order": 3,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "uuid",
+            "links": [
+              23,
+              31
+            ]
+          }
+        ],
+        "title": "Address Id",
+        "properties": {},
+        "widgets_values": [
+          ""
+        ]
+      },
+      {
+        "id": 17,
+        "type": "string/Templating",
+        "pos": [
+          637,
+          -23
+        ],
+        "size": [
+          230,
+          160
+        ],
+        "flags": {},
+        "order": 6,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "v1",
+            "type": 0,
+            "link": 31
+          },
+          {
+            "name": "v2",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "v3",
+            "type": 0,
+            "link": null
+          }
+        ],
+        "outputs": [
+          {
+            "name": "newString",
+            "type": "xs:string",
+            "links": [
+              32,
+              33
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "v4",
+          "v5",
+          "/address/${v1}.json"
+        ]
+      },
+      {
+        "id": 1,
+        "type": "DHF/input",
+        "pos": [
+          -244,
+          439
+        ],
+        "size": [
+          180,
+          60
+        ],
+        "flags": {},
+        "order": 3,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "input",
+            "type": "",
+            "links": [
+              1
+            ]
+          },
+          {
+            "name": "uri",
+            "type": "",
+            "links": [
+              34
+            ]
+          },
+          {
+            "name": "collections",
+            "type": "",
+            "links": null
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 18,
+        "type": "triples/CreateTriple",
+        "pos": [
+          888,
+          -222
+        ],
+        "size": {
+          "0": 255,
+          "1": 126
+        },
+        "flags": {},
+        "order": 8,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "subject",
+            "type": 0,
+            "link": 33
+          },
+          {
+            "name": "object",
+            "type": 0,
+            "link": 34
+          }
+        ],
+        "outputs": [
+          {
+            "name": "triple",
+            "links": [
+              35
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          true,
+          "createdFrom",
+          true
+        ]
+      },
+      {
+        "id": 4,
+        "type": "Entities/Customer",
+        "pos": [
+          1025,
+          439
+        ],
+        "size": [
+          305,
+          228
+        ],
+        "flags": {},
+        "order": 12,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "address",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "dateOfBirth",
+            "type": 0,
+            "link": 15
+          },
+          {
+            "name": "email",
+            "type": 0,
+            "link": 3
+          },
+          {
+            "name": "externalId",
+            "type": 0,
+            "link": 5
+          },
+          {
+            "name": "firstName",
+            "type": 0,
+            "link": 4
+          },
+          {
+            "name": "gender",
+            "type": 0,
+            "link": 12
+          },
+          {
+            "name": "id",
+            "type": 0,
+            "link": 13
+          },
+          {
+            "name": "lastName",
+            "type": 0,
+            "link": 7
+          }
+        ],
+        "outputs": [
+          {
+            "name": "Node",
+            "type": "Node",
+            "links": [
+              36
+            ]
+          },
+          {
+            "name": "Prov",
+            "type": null,
+            "links": null
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          true
+        ]
+      },
+      {
+        "id": 16,
+        "type": "Generate/Templating",
+        "pos": [
+          858,
+          803
+        ],
+        "size": {
+          "0": 230,
+          "1": 160
+        },
+        "flags": {},
+        "order": 5,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "v1",
+            "type": 0,
+            "link": 29
+          },
+          {
+            "name": "v2",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "v3",
+            "type": 0,
+            "link": null
+          }
+        ],
+        "outputs": [
+          {
+            "name": "newString",
+            "type": "xs:string",
+            "links": [
+              37
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "v4",
+          "v5",
+          "/customer/${v1}.json"
+        ]
+      },
+      {
+        "id": 20,
+        "type": "Generate/multiConstant",
+        "pos": [
+          1179,
+          875
+        ],
+        "size": {
+          "0": 255,
+          "1": 82
+        },
+        "flags": {},
+        "order": 4,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "output",
+            "links": [
+              39
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "string",
+          "Customer360-pipes"
+        ]
+      },
+      {
+        "id": 19,
+        "type": "DHF/envelope",
+        "pos": [
+          1466,
+          534
+        ],
+        "size": [
+          180,
+          160
+        ],
+        "flags": {},
+        "order": 14,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "headers",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "triples",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "instance",
+            "type": 0,
+            "link": 36
+          },
+          {
+            "name": "attachments",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "uri",
+            "type": 0,
+            "link": 37
+          },
+          {
+            "name": "collections",
+            "type": 0,
+            "link": 39
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output",
+            "type": null,
+            "links": [
+              40
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "json"
+        ]
+      }
+    ],
+    "links": [
+      [
+        1,
+        1,
+        0,
+        3,
+        0,
+        0
+      ],
+      [
+        3,
+        3,
+        3,
+        4,
+        2,
+        0
+      ],
+      [
+        4,
+        3,
+        4,
+        4,
+        4,
+        0
+      ],
+      [
+        5,
+        3,
+        5,
+        4,
+        3,
+        0
+      ],
+      [
+        7,
+        3,
+        7,
+        4,
+        7,
+        0
+      ],
+      [
+        10,
+        3,
+        6,
+        7,
+        0,
+        0
+      ],
+      [
+        12,
+        7,
+        0,
+        4,
+        5,
+        0
+      ],
+      [
+        13,
+        8,
+        0,
+        4,
+        6,
+        0
+      ],
+      [
+        14,
+        3,
+        2,
+        9,
+        0,
+        0
+      ],
+      [
+        15,
+        9,
+        0,
+        4,
+        1,
+        0
+      ],
+      [
+        16,
+        3,
+        0,
+        10,
+        0,
+        0
+      ],
+      [
+        17,
+        3,
+        1,
+        10,
+        1,
+        0
+      ],
+      [
+        18,
+        3,
+        8,
+        10,
+        5,
+        0
+      ],
+      [
+        19,
+        3,
+        9,
+        10,
+        4,
+        0
+      ],
+      [
+        21,
+        10,
+        0,
+        11,
+        2,
+        0
+      ],
+      [
+        22,
+        8,
+        0,
+        10,
+        2,
+        0
+      ],
+      [
+        23,
+        12,
+        0,
+        10,
+        3,
+        0
+      ],
+      [
+        25,
+        11,
+        0,
+        13,
+        0,
+        0
+      ],
+      [
+        26,
+        13,
+        0,
+        2,
+        0,
+        0
+      ],
+      [
+        27,
+        14,
+        0,
+        11,
+        5,
+        0
+      ],
+      [
+        29,
+        8,
+        0,
+        16,
+        0,
+        0
+      ],
+      [
+        31,
+        12,
+        0,
+        17,
+        0,
+        0
+      ],
+      [
+        32,
+        17,
+        0,
+        11,
+        4,
+        0
+      ],
+      [
+        33,
+        17,
+        0,
+        18,
+        0,
+        0
+      ],
+      [
+        34,
+        1,
+        1,
+        18,
+        1,
+        0
+      ],
+      [
+        35,
+        18,
+        0,
+        11,
+        1,
+        0
+      ],
+      [
+        36,
+        4,
+        0,
+        19,
+        2,
+        0
+      ],
+      [
+        37,
+        16,
+        0,
+        19,
+        4,
+        0
+      ],
+      [
+        39,
+        20,
+        0,
+        19,
+        5,
+        0
+      ],
+      [
+        40,
+        19,
+        0,
+        13,
+        1,
+        0
+      ]
+    ],
+    "groups": [],
+    "config": {},
+    "version": 0.4
+  },
+  "name": "Customer360-demo-graph",
+  "metadata": {
+    "version": "01.2_",
+    "author": "Sasha Mitrovich",
+    "title": "Customer360-demo-graph",
+    "description": "",
+    "dateExported": "23/04/2020, 08:58:42"
+  }
+}
