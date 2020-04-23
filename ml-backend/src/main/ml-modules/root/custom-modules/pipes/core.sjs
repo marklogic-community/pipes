@@ -1423,7 +1423,7 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
   }
 
 
-  LiteGraph.registerNodeType("triples/CreateTriple", CreateTriple);
+  LiteGraph.registerNodeType("Enrich/CreateTriple", CreateTriple);
 
   function uuidString () {
 
