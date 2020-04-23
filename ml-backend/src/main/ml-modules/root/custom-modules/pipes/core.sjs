@@ -161,12 +161,12 @@ function init(LiteGraph){
     let hasAttachments = (attachments!=null)
 
     if (xdmp.type(headers) != "object") headers = { "value": headers }
-    if (xdmp.type(triples) != "array" && triples.triple) triples = [triples]
+    if (xdmp.type(triples) != "array" ) triples = [triples]
     if (xdmp.type(instance) != "object") instance = { "value": instance }
     if (xdmp.type(attachments) != "object") attachments = { "value": attachments }
 
-
-    if (this.format.value == "json" && attachments) {
+xdmp.log(triples)
+    if (this.format.value == "json" && hasAttachments) {
       if (instance) {
         if (instance.toObject) instance = instance.toObject()
         instance["$attachments"] = attachments
