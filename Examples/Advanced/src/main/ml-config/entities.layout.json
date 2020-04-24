@@ -1,0 +1,23 @@
+{
+  "SafetyReport" : {
+    "x" : 96,
+    "y" : 13,
+    "width" : 424,
+    "height" : 243,
+    "vertices" : { }
+  },
+  "Reaction" : {
+    "x" : 131,
+    "y" : 559,
+    "width" : 350,
+    "height" : 232,
+    "vertices" : { }
+  },
+  "Drug" : {
+    "x" : 137,
+    "y" : 300,
+    "width" : 350,
+    "height" : 210,
+    "vertices" : { }
+  }
+}

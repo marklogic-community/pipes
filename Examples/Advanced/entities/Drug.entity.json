@@ -1,0 +1,40 @@
+{
+  "info" : {
+    "title" : "Drug",
+    "version" : "0.0.1",
+    "baseUri" : "http://example.org/",
+    "description" : "Drug that a patient with AE used in the Safety Report"
+  },
+  "definitions" : {
+    "Drug" : {
+      "primaryKey" : "id",
+      "required" : [ "id", "safetyReportId" ],
+      "pii" : [ ],
+      "elementRangeIndex" : [ ],
+      "rangeIndex" : [ ],
+      "wordLexicon" : [ ],
+      "properties" : {
+        "id" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "medicinalProduct" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "drugIndication" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "activeSubstance" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "safetyReportId" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        }
+      }
+    }
+  }
+}
