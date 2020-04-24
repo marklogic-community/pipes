@@ -976,8 +976,9 @@ export default {
     isNotEmpty (prop) {
       return (prop !== null && prop != '')
     },
+    // Block description popup
     showBlockDetails(block) {
-        console.log("Pipes received request to show block " + JSON.stringify(block))
+      //  console.log("Pipes received request to show block " + JSON.stringify(block))
          if ( block.description && block.description != '')
          this.$root.$emit('showBlockDescription',block)
     },

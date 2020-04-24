@@ -69,6 +69,7 @@ const LiteGraphHelper = {
     const GENERATE = "Generate"
     const VALIDATE = "Validate"
     const FIND = "Query"
+    const FORMAT = "Format"
     const TRANSFORM = "Transform"
 
     const blockMapping =  new Map  ([
@@ -104,11 +105,10 @@ const LiteGraphHelper = {
         ["feature/hashNode", GENERATE + "/hashNode"],
         ["feature/selectCase", "Mapping/selectCase"],
         ["feature/Doc By Key", FIND + "/Doc By Key"],
-        ["string/RegExReplace","Transform/RegExReplace"],
-        ["date/FormatDateAuto","Format/FormatDateAuto"],
-        ["date/FormatDate","Format/FormatDate"],
-        ["date/FormatDateTimeAuto","Format/FormatDateTimeAuto"],
-
+        ["string/RegExReplace",TRANSFORM + "/RegExReplace"],
+        ["date/FormatDateAuto",FORMAT + "/FormatDateAuto"],
+        ["date/FormatDate",FORMAT + "/FormatDate"],
+        ["date/FormatDateTimeAuto",FORMAT + "/FormatDateTimeAuto"],
         ["feature/LookupCollectionPropertyValue",FIND +"/LookupCollectionPropertyValue"],
         ["feature/Lookup",FIND +"/Lookup"]
       ]);
@@ -120,9 +120,10 @@ const LiteGraphHelper = {
 
      if ( newBlockKey != undefined && newBlockKey !== null ) {
      console.log( "New mapping for " + oldBlockKey + " is " + newBlockKey )
-     graph = graph.replace(oldBlockKey, newBlockKey )
+     var re = new RegExp(oldBlockKey,"g");
+     graph = graph.replace(re, newBlockKey);
      } else {
-      console.log( "WARNING: No mapping found for block " + oldBlockKey + " graph will not run");
+      console.log( "WARNING: No mapping found for block " + oldBlockKey + " - Graph will not run");
      }
     }
 
