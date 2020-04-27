@@ -31,7 +31,7 @@
         "user" : "",
         "runBefore" : false
       },
-      "retryLimit" : null,
+      "retryLimit" : 0,
       "batchSize" : 100,
       "threadCount" : 4,
       "stepDefinitionName" : "default-ingestion",
@@ -44,42 +44,6 @@
       }
     },
     "2" : {
-      "name" : "ban-info-source",
-      "description" : "",
-      "options" : {
-        "additionalCollections" : [ ],
-        "headers" : {
-          "sources" : [ {
-            "name" : "Contractor360"
-          } ],
-          "createdOn" : "currentDateTime",
-          "createdBy" : "currentUser"
-        },
-        "sourceQuery" : "cts.collectionQuery([])",
-        "collections" : [ "ban-info-source" ],
-        "permissions" : "data-hub-operator,read,data-hub-operator,update",
-        "outputFormat" : "json",
-        "targetDatabase" : "advanced-data-hub-STAGING"
-      },
-      "customHook" : {
-        "module" : "",
-        "parameters" : { },
-        "user" : "",
-        "runBefore" : false
-      },
-      "retryLimit" : 0,
-      "batchSize" : 100,
-      "threadCount" : 4,
-      "stepDefinitionName" : "default-ingestion",
-      "stepDefinitionType" : "INGESTION",
-      "fileLocations" : {
-        "inputFilePath" : "/Users/smitrovi/MarkLogic/dev/pipes/Examples/Advanced/data/Bussineses/Debarred",
-        "inputFileType" : "csv",
-        "outputURIReplacement" : "",
-        "separator" : ","
-      }
-    },
-    "3" : {
       "name" : "business-person-source",
       "description" : "",
       "options" : {
@@ -115,7 +79,7 @@
         "separator" : ","
       }
     },
-    "4" : {
+    "3" : {
       "name" : "harmonize-contractor360",
       "description" : "",
       "options" : {
