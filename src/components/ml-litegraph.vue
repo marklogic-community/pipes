@@ -900,7 +900,16 @@ export default {
       var self = this;
       this.$axios.get('/customSteps').then((response) => {
 
-        this.dhfSteps = response.data.customSteps.reduce(function (map, obj) {
+        function alphabeticalOrder(a, b) {
+          if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
+          if (b.name.toLowerCase() > a.name.toLowerCase()) return -1;
+          return 0;
+        }
+
+        var steps = response.data.customSteps
+        steps.sort(alphabeticalOrder);
+
+        this.dhfSteps = steps.reduce(function (map, obj) {
           map[obj.name] = { "database": obj.database, "collection": obj.collection };
           return map;
         }, {});
