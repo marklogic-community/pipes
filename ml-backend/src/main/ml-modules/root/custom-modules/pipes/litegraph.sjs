@@ -10706,7 +10706,7 @@ LGraphNode.prototype.executeAction = function(action)
     if (!this.enabled) {
       return;
     }
-   
+
     //send inputs to subgraph global inputs
     if (this.inputs) {
 
@@ -10715,7 +10715,7 @@ LGraphNode.prototype.executeAction = function(action)
       // objArray = (objArray!= null && objArray.toObject) ? objArray.toObject() : objArray;
       var arrayInput = this.inputs[0];
 
-      if (objArray.toArray || Array.isArray(objArray)) {
+      if (objArray || objArray.toArray || Array.isArray(objArray)) {
 
 
 
