@@ -1,0 +1,28 @@
+{
+  "lang" : "zxx",
+  "name" : "harmonize-contractor360",
+  "description" : "",
+  "type" : "CUSTOM",
+  "version" : 1,
+  "options" : {
+    "additionalCollections" : [ ],
+    "sourceQuery" : "cts.collectionQuery([\"contractor-source\"])",
+    "targetEntity" : "Contractor",
+    "collections" : [ "harmonize-contractor360", "Contractor" ],
+    "sourceDatabase" : "advanced-data-hub-STAGING",
+    "permissions" : "data-hub-operator,read,data-hub-operator,update",
+    "sourceCollection" : "contractor-source",
+    "outputFormat" : "json",
+    "targetDatabase" : "advanced-data-hub-FINAL"
+  },
+  "customHook" : {
+    "module" : "",
+    "parameters" : { },
+    "user" : "",
+    "runBefore" : false
+  },
+  "modulePath" : "/custom-modules/custom/harmonize-contractor360/main.sjs",
+  "retryLimit" : 0,
+  "batchSize" : 100,
+  "threadCount" : 4
+}
