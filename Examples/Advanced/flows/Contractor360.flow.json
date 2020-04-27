@@ -31,13 +31,13 @@
         "user" : "",
         "runBefore" : false
       },
-      "retryLimit" : 0,
+      "retryLimit" : null,
       "batchSize" : 100,
       "threadCount" : 4,
       "stepDefinitionName" : "default-ingestion",
       "stepDefinitionType" : "INGESTION",
       "fileLocations" : {
-        "inputFilePath" : "/Users/smitrovi/MarkLogic/dev/pipes/Examples/Advanced/data/Bussineses/Conctractors",
+        "inputFilePath" : "/Users/smitrovi/MarkLogic/dev/pipes/Examples/Advanced/data/Bussineses/Contractors",
         "inputFileType" : "csv",
         "outputURIReplacement" : "",
         "separator" : ","
@@ -103,7 +103,7 @@
         "user" : "",
         "runBefore" : false
       },
-      "retryLimit" : null,
+      "retryLimit" : 0,
       "batchSize" : 100,
       "threadCount" : 4,
       "stepDefinitionName" : "default-ingestion",
