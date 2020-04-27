@@ -19,5 +19,26 @@
     "width" : 350,
     "height" : 210,
     "vertices" : { }
+  },
+  "Contractor" : {
+    "x" : 626,
+    "y" : 21,
+    "width" : 440,
+    "height" : 295,
+    "vertices" : { }
+  },
+  "BusinessPerson" : {
+    "x" : 630,
+    "y" : 371,
+    "width" : 350,
+    "height" : 276,
+    "vertices" : { }
+  },
+  "BanInformation" : {
+    "x" : 999,
+    "y" : 374,
+    "width" : 350,
+    "height" : 342,
+    "vertices" : { }
   }
 }
