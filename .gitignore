@@ -61,3 +61,10 @@ docker/.env
 docker/jar/
 docker/data/
 docker/volumes/
+
+#Examples
+Examples/Advanced/src/main/ml-modules/root/custom-modules/pipes/
+Examples/Advanced/src/main/ml-modules/services/vppBackendServices.sjs
+
+Examples/Customer360/src/main/ml-modules/root/custom-modules/pipes/
+Examples/Customer360/src/main/ml-modules/services/vppBackendServices.sjs

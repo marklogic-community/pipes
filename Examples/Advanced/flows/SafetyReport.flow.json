@@ -44,42 +44,6 @@
       }
     },
     "2" : {
-      "name" : "sr-source",
-      "description" : "",
-      "options" : {
-        "additionalCollections" : [ ],
-        "headers" : {
-          "sources" : [ {
-            "name" : "SafetyReport"
-          } ],
-          "createdOn" : "currentDateTime",
-          "createdBy" : "currentUser"
-        },
-        "sourceQuery" : "cts.collectionQuery([])",
-        "collections" : [ "sr-source" ],
-        "permissions" : "data-hub-operator,read,data-hub-operator,update",
-        "outputFormat" : "json",
-        "targetDatabase" : "advanced-data-hub-STAGING"
-      },
-      "customHook" : {
-        "module" : "",
-        "parameters" : { },
-        "user" : "",
-        "runBefore" : false
-      },
-      "retryLimit" : null,
-      "batchSize" : 100,
-      "threadCount" : 4,
-      "stepDefinitionName" : "default-ingestion",
-      "stepDefinitionType" : "INGESTION",
-      "fileLocations" : {
-        "inputFilePath" : "/Users/smitrovi/MarkLogic/dev/pipes/Examples/Advanced/data/SafetyReports",
-        "inputFileType" : "xml",
-        "outputURIReplacement" : "",
-        "separator" : ""
-      }
-    },
-    "3" : {
       "name" : "transform-safety-reports",
       "description" : "",
       "options" : {
