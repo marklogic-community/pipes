@@ -828,6 +828,7 @@ export default {
         })
     },
     resetDhfDefaultGraph () {
+      this.$store.commit('clearBlocks')
       this.$axios.get('/statics/graph/dhfDefaultGraph.json')
         .then((response) => {
           let defaultGraph = response.data
