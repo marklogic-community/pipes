@@ -36,7 +36,7 @@ There is one flow defined with two steps:
 - **Ingestion**: safety-report-source
 - **Custom**: transform-safety-reports
 
-The ingestion step will ingest several XML documents from: https://github.com/marklogic-community/pipes/tree/master/Examples/Advanced/data/SafetyReports/
+The ingestion step will ingest several XML documents from (here)[data/SafetyReports/]
 
 Each document contains one safety report with patient data, one or more adverse effects (reactions) and more or more drugs that the patient took.
 
