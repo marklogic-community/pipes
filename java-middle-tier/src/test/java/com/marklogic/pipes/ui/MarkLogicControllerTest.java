@@ -5,6 +5,7 @@ Copyright ©2020 MarkLogic Corporation.
 package com.marklogic.pipes.ui;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.extensions.ResourceServices;
@@ -31,6 +32,7 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -185,17 +187,37 @@ class MarkLogicControllerTest {
       addCustomerSourceDocument("ExecuteGraphTests/"+argument+"/input.json");
 
       InputStreamHandle graphHandle = getInputStreamHandle("ExecuteGraphTests/"+argument+"/graph.json");
+      JSONObject graphJO = new JSONObject(graphHandle.toString()
+      );
+
+      JSONObject payloadJO= new JSONObject();
+      payloadJO.put("jsonGraph", graphJO);
+      payloadJO.put("collectionRandom", false);
+      payloadJO.put("previewUri",TEST_INPUT_JSON);
+
 
       InputStreamHandle expectedResponseHandle = getInputStreamHandle("ExecuteGraphTests/"+argument+"/expectedResponse.json");
 
+      JSONObject expectedJO=new JSONObject();
+      expectedJO.put("result", new JSONObject(expectedResponseHandle.toString()));
+      expectedJO.put("uri",TEST_INPUT_JSON);
+
       String request="/v1/resources/vppBackendServices?rs:action=ExecuteGraph&rs:database="+clientConfig.getMlTestDatabase();
 
-      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(request).content(graphHandle.toString())
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(request).content(payloadJO.toString())
         .session(session);
 
-      this.mockMvc.perform(builder)
-        .andExpect(status().isOk())
-        .andExpect(content().string(equalToCompressingWhiteSpace(expectedResponseHandle.toString())));
+      ResultActions resultActions = this.mockMvc.perform(builder)
+        .andExpect(status().isOk());
+
+      MvcResult result = resultActions.andReturn();
+      String responseAsString = result.getResponse().getContentAsString();
+
+      // compare strings as JSON objects using Jackson ObjectMapper
+      ObjectMapper mapper = new ObjectMapper();
+      assertEquals("Response doesn't match expected",mapper.readTree(expectedJO.toString()), mapper.readTree(responseAsString));
+
+
     } finally {
       removeCustomerSource();
     }

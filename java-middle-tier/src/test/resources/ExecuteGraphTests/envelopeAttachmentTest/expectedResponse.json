@@ -1,1 +1,21 @@
-{"uri":"/test/input.json", "result":{"value":{"envelope":{"headers":{}, "triples":[], "instance":{"a":5, "b":6}, "attachments":{"value":"/test/input.json"}}}, "uri":"/test/input.json", "context":{"collections":["ingest-unit-test"]}}}
+{
+  "value": {
+    "envelope": {
+      "headers": {},
+      "triples": [],
+      "instance": {
+        "value": "test-value"
+      },
+      "attachments": {
+        "a": 5,
+        "b": 6
+      }
+    }
+  },
+  "uri": "/test/input.json",
+  "context": {
+    "collections": [
+      "ingest-unit-test"
+    ]
+  }
+}

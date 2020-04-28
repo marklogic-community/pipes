@@ -5,16 +5,14 @@
         "headers": {},
         "triples": [],
         "instance": {
-          "value": "LOW"
+          "value": "5"
         },
         "attachments": {}
       }
     },
-    "uri": "/test/LOW.json",
+    "uri": "5",
     "context": {
-      "collections": [
-        "ingest-unit-test"
-      ]
+      "collections": null
     }
   },
   {
@@ -23,16 +21,14 @@
         "headers": {},
         "triples": [],
         "instance": {
-          "value": "HIGH"
+          "value": "6"
         },
         "attachments": {}
       }
     },
-    "uri": "/test/HIGH.json",
+    "uri": "6",
     "context": {
-      "collections": [
-        "ingest-unit-test"
-      ]
+      "collections": null
     }
   }
 ]
