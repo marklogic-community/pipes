@@ -24,9 +24,9 @@
           <div slot="subtitle">Draw your ideas</div>
         </q-toolbar-title>
 
-		<q-toolbar-title align="left">
-			{{ this.currentGraphTitle }}
-		</q-toolbar-title>
+        <q-toolbar-title align="left">
+          {{ this.headerGraphTitle }}
+        </q-toolbar-title>
 
         <q-btn-group v-if="loggedIn">
 
@@ -128,7 +128,7 @@
             @click.stop="openHelp()"
           >
             <q-tooltip content-class="pipes-tooltip">
-              Help
+              About Pipes
             </q-tooltip>
           </q-btn>
 
@@ -194,32 +194,25 @@
               style="max-width: 300px"
             >
               <q-input
-                v-model="graphMetadata.title"
+                v-model="titleEdit"
                 filled
                 label="Graph Name"
-				@blur="updateTitle()"
               />
               <q-input
                 filled
-                v-model="graphMetadata.version"
+                v-model="graphVersion"
                 label="Version"
                 mask="##.##"
                 fill-mask
                 hint="Mask: major.minor"
               />
               <q-input
-                filled
-                disable
-                v-model="graphMetadata.dateCreated"
-                label="Date Created"
-              />
-              <q-input
-                v-model="graphMetadata.author"
+                v-model="graphAuthor"
                 filled
                 label="Author"
               />
               <q-input
-                v-model="graphMetadata.description"
+                v-model="graphDescription"
                 filled
                 type="textarea"
                 label="Description"
@@ -262,53 +255,66 @@ import { Vuex } from "vuex";
 export default {
   name: 'MyLayout',
   components: {
-	LiteGraph
+    LiteGraph
   },
   data () {
     return {
       leftDrawerOpen: false,
-	  rightDrawerOpen: this.$q.platform.is.desktop,
+      rightDrawerOpen: this.$q.platform.is.desktop,
       tab: "metadata",
-	  currentGraphTitle: "My graph",
-	  graphStack: ["TOP"], // list of graphs to track title going in/out of subgraphs
-      graphMetadata: {
-        title: "My graph",
-        version: "00.01",
-        author: "",
-        description: "",
-        dateCreated: new Date().toISOString()
-      }
+      graphStack: [], // list of graphs to track title going in/out of subgraphs
     }
   },
   computed: {
-    loggedIn: function() {
-      console.log('LoggedIn returning ' + this.$store.getters.authenticated)
+    loggedIn: function () {
       return this.$store.getters.authenticated
-  }
+    },
+    headerGraphTitle: function () {
+      return (this.graphStack.length == 0) ? this.$store.getters.graphTitle : "Subgraph: " + this.graphStack[this.graphStack.length - 1]
+    },
+    titleEdit: {
+      get: function () {
+        return this.$store.getters.graphTitle
+      },
+      set: function (t) {
+        this.$store.commit('graphTitle', t)
+      }
+    },
+    graphVersion: {
+      get: function () {
+        return this.$store.getters.graphVersion
+      },
+      set: function (v) {
+        this.$store.commit('graphVersion', v)
+      }
+    },
+    graphDescription: {
+      get: function () {
+        return this.$store.getters.graphDescription
+      },
+      set: function (d) {
+        this.$store.commit('graphDescription', d)
+      }
+    },
+    graphAuthor: {
+      get: function () {
+        return this.$store.getters.graphAuthor
+      },
+      set: function (t) {
+        this.$store.commit('graphAuthor', t)
+      }
+    },
   },
   methods: {
-    updateTitle() {
-	// update title if edited and user in main graph / not subgraph
-	 if ( this.graphStack.length == 1 ) {
-		this.currentGraphTitle = this.graphMetadata.title
-	 }
-	},
-    enteredSubGraph(graphName) {
-		this.graphStack.push(graphName)
-		this.currentGraphTitle = "Subgraph: " + graphName
-	},
-	exitedSubGraph() {
-		var graphName = this.graphStack.pop();
-		if ( this.graphStack.length == 1 )  {
-			this.currentGraphTitle = this.graphMetadata.title
-		} else {
-			this.currentGraphTitle = "Subgraph: " + this.graphStack[this.graphStack.length-1]
-		}
-	},
-	resetGraphTitle(graphName) {
-		this.graphStack = ["TOP"]
-		this.currentGraphTitle = this.graphMetadata.title
-	},
+    enteredSubGraph (graphName) {
+      this.graphStack.push(graphName)
+    },
+    exitedSubGraph () {
+      var graphName = this.graphStack.pop();
+    },
+    resetGraphTitle (graphName) {
+      this.graphStack = []
+    },
     executeGraph () {
       this.$root.$emit("openGraphPreview");
     },
@@ -348,7 +354,7 @@ export default {
       this.graphMetadata = meta
     },
     openHelp () {
-      window.open("https://github.com/marklogic-community/pipes/wiki", "_pipesHelp");
+      this.$root.$emit("showSplashScreen", null);
     },
     logOut () {
       this.$q.dialog({
@@ -360,7 +366,7 @@ export default {
 
       }).onOk(() => {
         this.$axios.post('/logout').then(response => {
-          this.$store.commit('authenticated',false)
+          this.$store.commit('authenticated', false)
           this.$q.notify({
             color: 'positive',
             position: 'center',
@@ -387,21 +393,18 @@ export default {
   beforeMount: function () {
 
     this.$root.$on("initGraphMetadata", this.setGraphMetadata);
-  //  this.$root.$on("logIn", this.logIn);
-  //  this.$root.$on("logOut", this.logOut);
+    //  this.$root.$on("logIn", this.logIn);
+    //  this.$root.$on("logOut", this.logOut);
   },
-  mounted: function() {
-	  this.$root.$on('enteredSubGraph', this.enteredSubGraph);
-	  this.$root.$on('exitedSubGraph', this.exitedSubGraph);
-	  this.$root.$on('resetGraphTitle', this.resetGraphTitle);
+  mounted: function () {
+    this.$root.$on('enteredSubGraph', this.enteredSubGraph);
+    this.$root.$on('exitedSubGraph', this.exitedSubGraph);
+    this.$root.$on('resetGraphTitle', this.resetGraphTitle);
   },
-  beforeDestroy: function() {
-	  this.$root.$off('enteredSubGraph', this.enteredSubGraph);
-	  this.$root.$off('exitedSubGraph', this.exitedSubGraph);
-	  this.$root.$off('resetGraphTitle', this.resetGraphTitle);
+  beforeDestroy: function () {
+    this.$root.$off('enteredSubGraph', this.enteredSubGraph);
+    this.$root.$off('exitedSubGraph', this.exitedSubGraph);
+    this.$root.$off('resetGraphTitle', this.resetGraphTitle);
   }
 }
 </script>
-
-<style>
-</style>

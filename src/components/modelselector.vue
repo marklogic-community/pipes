@@ -1007,7 +1007,6 @@
         return this.blockName.trim().replace(/  +/g, ' ');
       },
       addCustomField(){
-
         if ( this.cleanCustomFieldName() !== '' ) {
 
         var fieldName = this.cleanCustomFieldName()
@@ -1098,6 +1097,15 @@
       var self = this;
       this.$axios.get('/customSteps').then((response) => {
 
+         function alphabeticalOrder(a, b) {
+          if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
+          if (b.name.toLowerCase() > a.name.toLowerCase()) return -1;
+          return 0;
+        }
+
+        var steps = response.data.customSteps
+        steps.sort(alphabeticalOrder);
+
         this.dhfSteps = response.data.customSteps.reduce(function (map, obj) {
           map[obj.name] = { "database": obj.database, "collection": obj.collection };
           return map;
@@ -1114,11 +1122,12 @@
         console.log("Restoring source block to form: " + JSON.stringify(block))
 
             this.resetBlockFormFields()
+            this.collectionModel[0].children=[] // clear model and selected fields
+            this.collectionModel[1].children=[]
+            this.selectedFields=[]
+            this.blockName = block.label
 
-              this.collectionModel[0].children=[] // clear model and selected fields
-              this.collectionModel[1].children=[]
-              this.selectedFields=[]
-              this.blockName = block.label
+           this.createBlockStep = 3
 
         if ( block.metadata ) {
 
@@ -1132,12 +1141,22 @@
             switch (block.metadata.blockCreatedFrom) {
               case 'custom_step':
                 var dhfStep = ''
-                if (block.metadata.sourceDHFStep && block.metadata.sourceDHFStep != '')
+                 var blockSourceDatabase, blockSourceCollection
+                  var blockSourceDatabase, blockSourceCollection
+                if (block.metadata.sourceDatabase && block.metadata.sourceDatabase != '')
+                  blockSourceDatabase = block.metadata.sourceDatabase
+                if (block.metadata.sourceCollection && block.metadata.sourceCollection != '')
+                  blockSourceCollection = block.metadata.sourceCollection
+                if ((blockSourceDatabase === null || blockSourceDatabase == '') ||
+                  (blockSourceCollection === null || blockSourceCollection == '') ) {
+                } else {
+                  this.setDatabaseCollectionsDropdowns(blockSourceDatabase,blockSourceCollection,block)
+                }
+                  if (block.metadata.sourceDHFStep && block.metadata.sourceDHFStep != '')
                   dhfStep = block.metadata.sourceDHFStep
                   this.setDHFStep(dhfStep)
                   this.blockOptions = block.options;
                   this.blockSourceOption = 'custom_step'
-                  this.restoreFields(block, false) // restore fields from block
               break;
               case 'db_collection':
                 var blockSourceDatabase, blockSourceCollection
@@ -1155,6 +1174,7 @@
               break;
               default:
                 this.blockSourceOption = 'none'
+                this.restoreFields(block, false) // restore fields from block
               break;
           }
 
@@ -1200,6 +1220,11 @@
 
                 var fieldName = block.label
 
+              console.log("Document field: " + fieldName)
+              if ( JSON.stringify(this.collectionModel[0].children).indexOf("\"" + fieldName + "\"") > -1 ) {
+                // if field has been discovered from current model, we don't want to duplicate from the field from the block
+              } else {
+
                 this.collectionModel[0].children.push({
                   [BLOCK_LABEL]: fieldName,
                   [BLOCK_FIELD] : block.field,
@@ -1210,15 +1235,16 @@
                   parent: block.parent
                 })
 
+              }
+
             }
-            // add all field regardless of type to "selected" so check boxes in tree are filled in
-            console.log("Adding field back to tree:" + reloadedBlock.fields[i].label)
+            // Add all field regardless of type to "selected" so check boxes in tree are filled in
             this.selectedFields.push(reloadedBlock.fields[i].label)
          }
-
             if ( this.collectionModel[1].children.length > 0  && expandTree)
             this.$refs["selectionTree"].setExpanded("Custom Fields",true)
           }
+
      },
 	 // Discover fields and populate the tree view
 
@@ -1238,8 +1264,6 @@
 
         if(custURIs !== null && custURIs != '')
           dbOption += "&rs:customURI=" + custURIs
-
-        console.log("discoverModel with: " + dbOption)
 
         this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionModel' + dbOption)
           .then((response) => {

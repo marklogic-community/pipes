@@ -1,0 +1,73 @@
+{
+  "name" : "SafetyReport",
+  "description" : "",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stopOnError" : false,
+  "options" : { },
+  "version" : 0,
+  "steps" : {
+    "1" : {
+      "name" : "safety-report-source",
+      "description" : "",
+      "options" : {
+        "additionalCollections" : [ ],
+        "headers" : {
+          "sources" : [ {
+            "name" : "SafetyReport"
+          } ],
+          "createdOn" : "currentDateTime",
+          "createdBy" : "currentUser"
+        },
+        "sourceQuery" : "cts.collectionQuery([])",
+        "collections" : [ "safety-report-source" ],
+        "permissions" : "data-hub-operator,read,data-hub-operator,update",
+        "outputFormat" : "json",
+        "targetDatabase" : "advanced-data-hub-STAGING"
+      },
+      "customHook" : {
+        "module" : "",
+        "parameters" : { },
+        "user" : "",
+        "runBefore" : false
+      },
+      "retryLimit" : 0,
+      "batchSize" : 100,
+      "threadCount" : 4,
+      "stepDefinitionName" : "default-ingestion",
+      "stepDefinitionType" : "INGESTION",
+      "fileLocations" : {
+        "inputFilePath" : "/Users/smitrovi/MarkLogic/dev/pipes/Examples/Advanced/data/SafetyReports",
+        "inputFileType" : "xml",
+        "outputURIReplacement" : "",
+        "separator" : ""
+      }
+    },
+    "2" : {
+      "name" : "transform-safety-reports",
+      "description" : "",
+      "options" : {
+        "additionalCollections" : [ ],
+        "sourceQuery" : "cts.collectionQuery([\"safety-report-source\"])",
+        "targetEntity" : "SafetyReport",
+        "collections" : [ "transform-safety-reports", "SafetyReport" ],
+        "sourceDatabase" : "advanced-data-hub-STAGING",
+        "permissions" : "data-hub-operator,read,data-hub-operator,update",
+        "sourceCollection" : "safety-report-source",
+        "outputFormat" : "json",
+        "targetDatabase" : "advanced-data-hub-FINAL"
+      },
+      "customHook" : {
+        "module" : "",
+        "parameters" : { },
+        "user" : "",
+        "runBefore" : false
+      },
+      "retryLimit" : 0,
+      "batchSize" : 100,
+      "threadCount" : 4,
+      "stepDefinitionName" : "transform-safety-reports",
+      "stepDefinitionType" : "CUSTOM"
+    }
+  }
+}

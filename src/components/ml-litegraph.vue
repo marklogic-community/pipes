@@ -12,10 +12,10 @@
     <BlockPropertyEditDialog />
     <BlockMappingEditDialog />
     <GraphExecutePreview />
+    <BlockDescription/>
 
     <q-dialog
-      :content-css="{minWidth: '60vw', minHeight: '80vh'}"
-      v-model="savePopUpOpened"
+      :content-css="{minWidth: '60vw', minHeight: '80vh'}" v-model="savePopUpOpened"
     >
       <q-card>
         <q-card-section class="row items-center">
@@ -26,7 +26,7 @@
           <div style="min-width: 250px; max-width: 300px">
             <q-input
               label="Graph name"
-              v-model="graphMetadata.title"
+              v-model="graphTitle"
             />
           </div>
         </q-card-section>
@@ -36,7 +36,7 @@
             @click="saveCurrentGraph()"
             color="primary"
             label="Save"
-            :disabled="(graphMetadata.title === null || graphMetadata.title === '' || graphMetadata.title.trim() === '')"
+            :disabled="(graphTitle === null || graphTitle.trim() == '')"
           />
           <q-btn
             @click="savePopUpOpened = false"
@@ -344,6 +344,7 @@ import LiteGraphHelper from '../components/liteGraphHelper.js';
 import BlockPropertyEditDialog from '../components/propertyEditDialog.vue';
 import BlockMappingEditDialog from '../components/mappingEditDialog.vue';
 import GraphExecutePreview from '../components/graphExecutePreview.vue';
+import BlockDescription from '../components/blockDescription.vue';
 import { LocalStorage } from 'quasar';
 import Vue from 'vue';
 Vue.use(require('vue-shortkey'))
@@ -358,7 +359,8 @@ export default {
     CSVLoader,
     BlockPropertyEditDialog,
     BlockMappingEditDialog,
-    GraphExecutePreview
+    GraphExecutePreview,
+    BlockDescription
   },
   name: 'PageIndex',
   mixins: [
@@ -389,12 +391,6 @@ export default {
         delBlockName: ""
       },
       dbEntities: [],
-      graphMetadata: {
-        title: "My Graph",
-        version: "00.01",
-        author: "",
-        description: ""
-      },
       isExported: false,
       graph: null,                // LiteGraphObject
       showCodeGenConfig: false,
@@ -415,7 +411,39 @@ export default {
     },
     availableDB: function () {
       return this.$store.getters.availableDatabases
-    }
+    },
+    graphTitle: {
+      get: function() {
+       return this.$store.getters.graphTitle
+      },
+      set: function(t) {
+      this.$store.commit('graphTitle', t)
+      }
+    },
+    graphVersion: {
+      get: function() {
+       return this.$store.getters.graphVersion
+      },
+      set: function(v) {
+      this.$store.commit('graphVersion', v)
+      }
+      },
+    graphDescription: {
+      get: function() {
+       return this.$store.getters.graphDescription
+      },
+      set: function(d) {
+      this.$store.commit('graphDescription', d)
+      }
+      },
+     graphAuthor: {
+      get: function() {
+       return this.$store.getters.graphAuthor
+      },
+      set: function(a) {
+      this.$store.commit('graphAuthor', a)
+      }
+     }
   },
   methods: {
     // Open the Preview Graph Dialog. Pass graph details
@@ -473,8 +501,10 @@ export default {
     // Reload a graph
     loadGraphFromJson (graph, notifyLoaded) {
 
+      this.updateGraph(graph)
+
       this.checkEntityBlocks(graph)
-      this.graphStatistics(graph.executionGraph)
+     // this.graphStatistics(graph.executionGraph)
       this.$store.commit('clearBlocks')
 
       // Filter blocks to remove any duplicates from graph (take latest. legacy bug?)
@@ -498,15 +528,17 @@ export default {
         console.log("Caught warning during litegraph.configure: " + e)
       }
 
-      if (graph.metadata && graph.metadata.title != null) this.graphMetadata.title = graph.metadata.title; else this.graphMetadata.title = ""
-      if (graph.metadata && graph.metadata.author != null) this.graphMetadata.author = graph.metadata.author; else this.graphMetadata.author = ""
-      if (graph.metadata && graph.metadata.version != null) this.graphMetadata.version = graph.metadata.version; else this.graphMetadata.version = ""
-      if (graph.metadata && graph.metadata.description != null) this.graphMetadata.description = graph.description; else this.graphMetadata.description = ""
+      if (graph.metadata && graph.metadata.title != null) this.graphTitle = graph.metadata.title; else this.graphTitle = ""
+      if (graph.metadata && graph.metadata.author != null) this.graphAuthor = graph.metadata.author; else this.graphAuthor = ""
+      if (graph.metadata && graph.metadata.version != null) this.graphVersion = graph.metadata.version; else this.graphVersion = ""
+      if (graph.metadata && graph.metadata.description != null) this.graphDescription = graph.metadata.description; else this.graphDescription = ""
       this.$root.$emit("initGraphMetadata", this.graphMetadata)
 
-      if (notifyLoaded) this.notifyPositive(self, "Loaded graph " + this.graphMetadata.title)
+      if (notifyLoaded) this.notifyPositive(self, "Loaded graph " + this.graphTitle)
       this.$root.$emit("resetGraphTitle") // reset the titlebar to top graph (remove all subgraph history)
       this.showUploadGraph = false
+
+      this.resetView() // reset view to 100%
     },
     getSavedGraph (uri, graphName) {
       //if(uri!=null)
@@ -719,6 +751,7 @@ export default {
       }
 
       block.title = blockDef.collection;
+      if ( blockDef.metadata && blockDef.metadata.description != '' ) block.description = blockDef.metadata.description
       block.nodeType = blockDef.collection;
       return block
 
@@ -743,12 +776,19 @@ export default {
     },
     createGraphDef () {
       const jsonGraph = this.graph.serialize()
+      var meta = {
+          "version": this.graphVersion,
+          "author": this.graphAuthor,
+          "title": this.graphTitle,
+          "description" : this.graphDescription,
+          "dateExported": (new Date()).toLocaleString()
+      }
       return {
-        pipesFileVersion: 1,
+        pipesFileVersion: 2,
         models: this.blockModels,
         executionGraph: jsonGraph,
-        name: this.graphMetadata.title,
-        metadata: this.graphMetadata
+        name: this.graphTitle,
+        metadata: meta
       }
 
     },
@@ -759,8 +799,8 @@ export default {
         endings: "transparent"
       });
       let name = ""
-      if (this.graphMetadata && this.graphMetadata.title != null && this.graphMetadata.title != "") name += this.graphMetadata.title; else name += "currentGraph"
-      if (this.graphMetadata && this.graphMetadata.version != null && this.graphMetadata.version != "") name += "-" + this.graphMetadata.version
+      if (this.graphTitle !== null && this.graphTitle != "") name += this.graphTitle; else name += "currentGraph"
+      if (this.graphVersion !== null && this.graphVersion != "") name += "-" + this.graphVersion
       saveAs(blob, name + ".json");
     },
     exportDHFModule () {
@@ -769,7 +809,7 @@ export default {
     saveCurrentGraph () {
 
       var self = this; // keep reference for notifications called from catch block
-      var graphName = this.graphMetadata.title.replace(/[&#]/g, "_"); // & # causes error at download time
+      var graphName = this.graphTitle.replace(/[&#]/g, "_"); // & # causes error at download time
       const blocks = this.blockModels
       const graphDef = this.createGraphDef();
 
@@ -786,10 +826,9 @@ export default {
         .catch((error) => {
           self.notifyError("SaveGraph", error, self);
         })
-
-
     },
     resetDhfDefaultGraph () {
+      this.$store.commit('clearBlocks')
       this.$axios.get('/statics/graph/dhfDefaultGraph.json')
         .then((response) => {
           let defaultGraph = response.data
@@ -862,7 +901,16 @@ export default {
       var self = this;
       this.$axios.get('/customSteps').then((response) => {
 
-        this.dhfSteps = response.data.customSteps.reduce(function (map, obj) {
+        function alphabeticalOrder(a, b) {
+          if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
+          if (b.name.toLowerCase() > a.name.toLowerCase()) return -1;
+          return 0;
+        }
+
+        var steps = response.data.customSteps
+        steps.sort(alphabeticalOrder);
+
+        this.dhfSteps = steps.reduce(function (map, obj) {
           map[obj.name] = { "database": obj.database, "collection": obj.collection };
           return map;
         }, {});
@@ -923,12 +971,30 @@ export default {
             }
 
           }
-
         }
       }
     },
+    // Re-center and re-zoom graph
+    resetView() {
+      this.graph_canvas.ds.reset()
+    },
+    // Re-center
+    recenterView() {
+      this.graph_canvas.ds.offset[0] = 0;
+      this.graph_canvas.ds.offset[1] = 0;
+    },
     isNotEmpty (prop) {
       return (prop !== null && prop != '')
+    },
+    // Block description popup
+    showBlockDetails(block) {
+      //  console.log("Pipes received request to show block " + JSON.stringify(block))
+         if ( block.description && block.description != '')
+         this.$root.$emit('showBlockDescription',block)
+    },
+    // process blocks from old version of pipes and update
+    updateGraph(graph) {
+     graph.executionGraph = this.remapBlocks(LiteGraph,graph)
     },
     registerBlocksByConf (configs, LiteGraph) {
 
@@ -963,7 +1029,16 @@ export default {
         blockCode += "};"
 
         if (config.title_color) blockCode += config.functionName + ".title_color = \"" + config.title_color + "\";"
-        blockCode += config.functionName + ".title = '" + config.blockName + "';";
+
+        // Use title property, otherwise blockname for block title bar
+        if ( config.title !== null && config.title != undefined ) {
+          blockCode += config.functionName + ".title = '" + config.title + "';";
+        } else {
+          blockCode += config.functionName + ".title = '" + config.blockName + "';";
+        }
+
+
+        if (config.description && config.description != undefined) blockCode += config.functionName + ".description = '" + config.description + "';";
 
         // Add event to onConfigure for block when defined
         // !== undefined is required
@@ -1002,11 +1077,14 @@ export default {
         // console.log("==CONFIGURING BLOCK: " + config.blockName)
         // console.log(JSON.stringify(config))
         // console.log(JSON.stringify(blockCode))
+        try { eval(blockCode) } catch (e) {
+          console.log("Error occured registering block " + config.blockName + ": " + e)
+        }
 
         allBlockCode += blockCode
       }
       //xdmp.log(code)
-      eval(allBlockCode)
+      //eval(allBlockCode)
     },
     checkLoggedIn () {
 
@@ -1047,6 +1125,7 @@ export default {
     this.$root.$on("listGraphBlocks", this.listGraphBlocks);
     this.$root.$on("checkGraphBlockDelete", this.checkGraphBlockDelete);
     this.$root.$on('blockRequested', this.createBlock);
+    this.$root.$on('blockDetails', this.showBlockDetails);
 
     this.discoverDatabases(false)
     this.discoverDhfSteps()
@@ -1069,6 +1148,9 @@ export default {
       var storedSettings = this.$q.localStorage.getItem(ADVANCED_SETTINGS_KEY)
       this.advancedSettings.confirmBrowserRefresh = storedSettings.confirmBrowserRefresh != null ? storedSettings.confirmBrowserRefresh : true
     }
+
+    //console.log("Registered blocks : " + JSON.stringify(LiteGraph.getRegisteredNodes()))
+
     this.resetDhfDefaultGraph()
   },
   beforeMount () {
@@ -1098,6 +1180,7 @@ export default {
     this.$root.$off("loadDHFDefaultGraphCall", this.resetDhfDefaultGraph);
     this.$root.$off("listGraphBlocks", this.listGraphBlocks);
     this.$root.$off("checkGraphBlockDelete", this.checkGraphBlockDelete);
+    this.$root.$off('blockDetails', this.showBlockDetails,node);
   }
 
 }

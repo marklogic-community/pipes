@@ -1,0 +1,28 @@
+{
+  "lang" : "zxx",
+  "name" : "harmonize-customer360",
+  "description" : "",
+  "type" : "CUSTOM",
+  "version" : 1,
+  "options" : {
+    "additionalCollections" : [ ],
+    "sourceQuery" : "cts.collectionQuery([\"customer-source\"])",
+    "targetEntity" : "Customer",
+    "collections" : [ "harmonize-customer360", "Customer" ],
+    "sourceDatabase" : "customer360-data-hub-STAGING",
+    "permissions" : "data-hub-operator,read,data-hub-operator,update",
+    "sourceCollection" : "customer-source",
+    "outputFormat" : "json",
+    "targetDatabase" : "customer360-data-hub-FINAL"
+  },
+  "customHook" : {
+    "module" : "",
+    "parameters" : { },
+    "user" : "",
+    "runBefore" : false
+  },
+  "modulePath" : "/custom-modules/custom/harmonize-customer360/main.sjs",
+  "retryLimit" : 0,
+  "batchSize" : 100,
+  "threadCount" : 4
+}

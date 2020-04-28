@@ -375,6 +375,7 @@ import VueJsonPretty from 'vue-json-pretty';
 import Notifications from '../components/notificationHandler.js';
 import CollectionFilter from '../components/collectionFilter.js';
 import { LocalStorage, copyToClipboard } from 'quasar';
+import { Vuex } from "vuex";
 export default {
   components: {
     VueJsonPretty
@@ -410,7 +411,7 @@ export default {
       graphPreviewExecuting: false,
       validationConfigs: [
         {
-          block: "dhf/output",
+          block: "DHF/output",
           mandatoryInputs: [
             {
               name: "output",
@@ -431,7 +432,7 @@ export default {
 
         },
         {
-          block: "dhf/envelope",
+          block: "DHF/envelope",
           mandatoryInputs: [
             {
               name: "instance",
@@ -598,8 +599,8 @@ export default {
             pipesFileVersion : 1,
             models: this.blocks,
             executionGraph: jsonGraph.serialize(),
-            name: this.graphMetadata.title,
-            metadata: this.graphMetadata
+            name: this.$store.getters.graphTitle
+           // metadata: this.graphMetadata
           }
     },
         dbChanged () {

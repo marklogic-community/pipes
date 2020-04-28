@@ -1,1 +1,203 @@
-{"jsonGraph":{"pipesFileVersion":1,"models":[{"label":"ab","collection":"ab","source":"Sources","fields":[{"label":"a [id0]","field":"a","value":"a","path":"/a","originalPath":"/number-node('a')","type":16,"children":[],"parent":"/"},{"label":"b [id1]","field":"b","value":"b","path":"/b","originalPath":"/number-node('b')","type":16,"children":[],"parent":"/"}],"options":["nodeInput","fieldsOutputs"],"metadata":{"description":"","dateCreated":"2020-04-14T12:09:54.237Z","blockCreatedFrom":"db_collection","sourceDHFStep":null,"sourceDatabase":"data-hub-STAGING","sourceCollection":"ingest-unit-test","customURIs":""}}],"executionGraph":{"last_node_id":3,"last_link_id":3,"nodes":[{"id":2,"type":"dhf/output","pos":[1308,434],"size":[180,160],"flags":{},"order":2,"mode":0,"inputs":[{"name":"output","type":0,"link":3}],"properties":{}},{"id":1,"type":"dhf/input","pos":[248,489],"size":[180,60],"flags":{},"order":0,"mode":0,"outputs":[{"name":"input","type":"","links":[2]},{"name":"uri","type":"","links":[1]},{"name":"collections","type":"","links":null}],"properties":{}},{"id":3,"type":"dhf/envelope","pos":[948,411],"size":[180,160],"flags":{},"order":1,"mode":0,"inputs":[{"name":"headers","type":0,"link":null},{"name":"triples","type":0,"link":null},{"name":"instance","type":0,"link":2},{"name":"attachments","type":0,"link":1},{"name":"uri","type":0,"link":null},{"name":"collections","type":0,"link":null}],"outputs":[{"name":"output","type":null,"links":[3]}],"properties":{},"widgets_values":["json"]}],"links":[[1,1,1,3,3,0],[2,1,0,3,2,0],[3,3,0,2,0,0]],"groups":[],"config":{},"version":0.4},"name":"My Graph","metadata":{"title":"My Graph","version":"00.01","author":"","description":""}},"collectionRandom":false,"previewUri":"/test/input.json"}
+{
+  "pipesFileVersion": 2,
+  "models": [],
+  "executionGraph": {
+    "last_node_id": 4,
+    "last_link_id": 5,
+    "nodes": [
+      {
+        "id": 2,
+        "type": "DHF/output",
+        "pos": [
+          1308,
+          434
+        ],
+        "size": [
+          180,
+          160
+        ],
+        "flags": {},
+        "order": 3,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "output",
+            "type": 0,
+            "link": 1
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 3,
+        "type": "DHF/envelope",
+        "pos": [
+          977,
+          272
+        ],
+        "size": [
+          180,
+          160
+        ],
+        "flags": {},
+        "order": 2,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "headers",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "triples",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "instance",
+            "type": 0,
+            "link": 5
+          },
+          {
+            "name": "attachments",
+            "type": 0,
+            "link": 3
+          },
+          {
+            "name": "uri",
+            "type": 0,
+            "link": 4
+          },
+          {
+            "name": "collections",
+            "type": 0,
+            "link": null
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output",
+            "type": null,
+            "links": [
+              1
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "json"
+        ]
+      },
+      {
+        "id": 1,
+        "type": "DHF/input",
+        "pos": [
+          248,
+          489
+        ],
+        "size": [
+          180,
+          60
+        ],
+        "flags": {},
+        "order": 0,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "input",
+            "type": "",
+            "links": [
+              3
+            ]
+          },
+          {
+            "name": "uri",
+            "type": "",
+            "links": [
+              4
+            ]
+          },
+          {
+            "name": "collections",
+            "type": "",
+            "links": null
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 4,
+        "type": "Generate/multiConstant",
+        "pos": [
+          418.5,
+          219
+        ],
+        "size": {
+          "0": 255,
+          "1": 82
+        },
+        "flags": {},
+        "order": 1,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "output",
+            "links": [
+              5
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "string",
+          "test-value"
+        ]
+      }
+    ],
+    "links": [
+      [
+        1,
+        3,
+        0,
+        2,
+        0,
+        0
+      ],
+      [
+        3,
+        1,
+        0,
+        3,
+        3,
+        0
+      ],
+      [
+        4,
+        1,
+        1,
+        3,
+        4,
+        0
+      ],
+      [
+        5,
+        4,
+        0,
+        3,
+        2,
+        0
+      ]
+    ],
+    "groups": [],
+    "config": {},
+    "version": 0.4
+  },
+  "name": "envelopeAttachment",
+  "metadata": {
+    "version": "00.01",
+    "author": "",
+    "title": "envelopeAttachment",
+    "description": "",
+    "dateExported": "28/04/2020, 10:12:07"
+  }
+}

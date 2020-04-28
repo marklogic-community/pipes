@@ -1,1 +1,186 @@
-{"jsonGraph":{"pipesFileVersion":1,"models":[],"executionGraph":{"last_node_id":3,"last_link_id":2,"nodes":[{"id":2,"type":"dhf/output","pos":[1308,434],"size":[180,160],"flags":{},"order":2,"mode":0,"inputs":[{"name":"output","type":0,"link":1}],"properties":{}},{"id":3,"type":"dhf/envelope","pos":[956,342],"size":[180,160],"flags":{},"order":1,"mode":0,"inputs":[{"name":"headers","type":0,"link":null},{"name":"triples","type":0,"link":null},{"name":"instance","type":0,"link":2},{"name":"attachments","type":0,"link":null},{"name":"uri","type":0,"link":null},{"name":"collections","type":0,"link":null}],"outputs":[{"name":"output","type":null,"links":[1]}],"properties":{},"widgets_values":["json"]},{"id":1,"type":"dhf/input","pos":[248,489],"size":[180,60],"flags":{},"order":0,"mode":0,"outputs":[{"name":"input","type":"","links":[2]},{"name":"uri","type":"","links":null},{"name":"collections","type":"","links":null}],"properties":{}}],"links":[[1,3,0,2,0,0],[2,1,0,3,2,0]],"groups":[],"config":{},"version":0.4},"name":"EnvelopeTest","metadata":{"title":"EnvelopeTest","version":"00.01","author":""}},"collectionRandom":false,"previewUri":"/test/input.json"}
+{
+  "pipesFileVersion": 2,
+  "models": [],
+  "executionGraph": {
+    "last_node_id": 3,
+    "last_link_id": 5,
+    "nodes": [
+      {
+        "id": 2,
+        "type": "DHF/output",
+        "pos": [
+          1308,
+          434
+        ],
+        "size": [
+          180,
+          160
+        ],
+        "flags": {},
+        "order": 2,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "output",
+            "type": 0,
+            "link": 2
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 3,
+        "type": "DHF/envelope",
+        "pos": [
+          938.5,
+          318.5
+        ],
+        "size": [
+          180,
+          160
+        ],
+        "flags": {},
+        "order": 1,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "headers",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "triples",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "instance",
+            "type": 0,
+            "link": 1
+          },
+          {
+            "name": "attachments",
+            "type": 0,
+            "link": 3
+          },
+          {
+            "name": "uri",
+            "type": 0,
+            "link": 4
+          },
+          {
+            "name": "collections",
+            "type": 0,
+            "link": 5
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output",
+            "type": null,
+            "links": [
+              2
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "json"
+        ]
+      },
+      {
+        "id": 1,
+        "type": "DHF/input",
+        "pos": [
+          248,
+          489
+        ],
+        "size": [
+          180,
+          60
+        ],
+        "flags": {},
+        "order": 0,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "input",
+            "type": "",
+            "links": [
+              1,
+              3
+            ]
+          },
+          {
+            "name": "uri",
+            "type": "",
+            "links": [
+              4
+            ]
+          },
+          {
+            "name": "collections",
+            "type": "",
+            "links": [
+              5
+            ]
+          }
+        ],
+        "properties": {}
+      }
+    ],
+    "links": [
+      [
+        1,
+        1,
+        0,
+        3,
+        2,
+        0
+      ],
+      [
+        2,
+        3,
+        0,
+        2,
+        0,
+        0
+      ],
+      [
+        3,
+        1,
+        0,
+        3,
+        3,
+        0
+      ],
+      [
+        4,
+        1,
+        1,
+        3,
+        4,
+        0
+      ],
+      [
+        5,
+        1,
+        2,
+        3,
+        5,
+        0
+      ]
+    ],
+    "groups": [],
+    "config": {},
+    "version": 0.4
+  },
+  "name": "envelopeTest",
+  "metadata": {
+    "version": "00.01",
+    "author": "",
+    "title": "envelopeTest",
+    "description": "",
+    "dateExported": "28/04/2020, 09:08:56"
+  }
+}

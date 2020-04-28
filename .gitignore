@@ -49,10 +49,8 @@ java-middle-tier/application.properties
 java-middle-tier/src/main/resources/version.txt
 
 #windows stuff
-gradle/
-java-middle-tier/gradle/wrapper/gradle-wrapper.properties
-java-middle-tier/gradle
 java-middle-tier/.gradle
+.tmp
 
 #gren stuff
 .grenrc.yml
@@ -63,3 +61,10 @@ docker/.env
 docker/jar/
 docker/data/
 docker/volumes/
+
+#Examples
+Examples/Advanced/src/main/ml-modules/root/custom-modules/pipes/
+Examples/Advanced/src/main/ml-modules/services/vppBackendServices.sjs
+
+Examples/Customer360/src/main/ml-modules/root/custom-modules/pipes/
+Examples/Customer360/src/main/ml-modules/services/vppBackendServices.sjs

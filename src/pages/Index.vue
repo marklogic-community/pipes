@@ -4,34 +4,52 @@
 
     <mllitegraph></mllitegraph>
     <q-dialog v-model="startup">
-      <q-card>
-        <q-toolbar>
 
-          <q-toolbar-title><span class="text-weight-bold">Disclaimer</span> Pipes for MarkLogic Data Hub</q-toolbar-title>
+      <q-card style="padding: 10px; max-width: 500px">
 
-          <q-btn
-            flat
-            round
-            dense
-            icon="close"
-            v-close-popup
-          />
-        </q-toolbar>
+        <div class="row">
+          <div
+            class="col-11"
+            align="center"
+          >
+            <img
+              style="max-width: 300px; padding-top:20px"
+              src="../statics/pipes_splash_logo.png"
+            ></img>
+          </div>
+          <div
+            class="col-1"
+            align="right"
+          >
+            <q-btn
+              flat
+              round
+              dense
+              icon="close"
+              v-close-popup
+            />
+          </div>
+        </div>
 
         <q-card-section>
-          Pipes for MarkLogic DataHub is a community tool.<br />
-          Pipes is designed to create the logic of a DHF Custom step with a "no code" approach.<br />
-          As such, <b>Pipes for MarkLogic DataHub is not supported by MarkLogic Corporation</b> and is only updated and corrected based on best effort approach.
-          Any contribution or feedback is welcomed to make the tool better.<br />
-          <b>Pipes Team</b>
-          <br />
           <pre>{{version}}</pre>
 
-          <!-- / What's new :
-          <ul>
-            <li>Preview wizard</li>
-            <li>Improved notifications</li>
-          </ul> -->
+          Learn how to use Pipes: <a
+            href="https://github.com/marklogic-community/pipes/wiki"
+            target="_blank"
+          >Pipes documentation</a>
+          <br />
+          Found a bug? <a
+            href="https://github.com/marklogic-community/pipes/issues"
+            target="_blank"
+          >Report it here</a>
+          <br /><br />
+          <span class="
+            text-weight-bold">About Pipes</span><br />
+          Pipes for MarkLogic Data Hub is a community tool<br />
+          As such, <b>Pipes for MarkLogic Data Hub is not supported by MarkLogic Corporation</b> and is updated and corrected on a best-effort basis.<br />
+          Any contribution or feedback is welcomed to make the tool better<br />
+
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -39,38 +57,51 @@
 </template>
 <script>
 import mllitegraph from '../components/ml-litegraph.vue'
-import VueJsonPretty from 'vue-json-pretty';
 export default {
-  // name: 'ComponentName',
+  components: {
+    mllitegraph
+  },
   data () {
     return {
       val: "",
-      startup: true
+      startup: true,
+      showTime: 7
     }
   },
   computed: {
     version: function () {
-
-      var self = this;
-      var val = ""
+      return this.val
+    }
+  },
+  methods: {
+    showSplashScreen: function () {
+      this.showTime = 0;
+      this.startup = true;
+    },
+    getVersion: function () {
       this.$axios.get('/version').then((response) => {
-
         this.val = response.data;
       })
         .catch((error) => {
-          self.notifyError("databasesDetails", error, self);
+          console.log("Warning: Couldn't get version information")
         })
-      console.log("this.val=", this.val)
-      return this.val;
+    },
+    countDownTimer () {
+      if (this.showTime > 0) {
+        setTimeout(() => {
+          this.showTime -= 1
+          this.countDownTimer()
+        }, 1000)
+      } else {
+        this.startup = false
+      }
     }
   },
-  components: {
-    mllitegraph,
-    'vue-json-pretty': VueJsonPretty
-
+  mounted: function () {
+    this.$root.$on("showSplashScreen", this.showSplashScreen)
+    this.getVersion()
+    //  if (this.val === null || this.val.trim() == '' ) this.val = "Pipes version: Development\nBuild: xxxxxxx"
+    this.countDownTimer()
   }
 }
 </script>
-<style>
-</style>
-
