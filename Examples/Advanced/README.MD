@@ -36,7 +36,7 @@ There is one flow defined with two steps:
 - **Ingestion**: safety-report-source
 - **Custom**: transform-safety-reports
 
-The ingestion step will ingest several XML documents from (here)[data/SafetyReports/]
+The ingestion step will ingest several XML documents from here: [data/SafetyReports](data/SafetyReports/)
 
 Each document contains one safety report with patient data, one or more adverse effects (reactions) and more or more drugs that the patient took.
 
@@ -55,7 +55,7 @@ It uses one source and produces multiple documents on the output. There is alway
 
 - Go to Pipes on http://localhost:8081
 - In the top bar click on the "Upload graph..." button (2nd from the left)
-- Drag and drop the graph which can be found here: https://github.com/marklogic-community/pipes/tree/master/Examples/Advanced/pipes-graphs/SafetyReport-00.01.json
+- Drag and drop the graph which can be found here: [SafetyReport-00.01.json](pipes-graphs/SafetyReport-00.01.json)
 - You can run a preview for this graph if you click on the "Preview..." button (4th from the right):
     - select the Custom Step option in the radio
     - from the drop-down select "transform-safety-reports"
@@ -85,8 +85,8 @@ There is one flow defined with two steps:
 - **Custom**: harmonize-contractor360
 
 The ingestion steps will each ingest CSV files from:
-- https://github.com/marklogic-community/pipes/tree/master/Examples/Advanced/data/Businesses/Contractors
-- https://github.com/marklogic-community/pipes/tree/master/Examples/Advanced/data/Businesses/Owners
+- [data/Businesses/Contractors](data/Bussineses/Contractors/)
+- [data/Businesses/Owners](data/Bussineses/Owners/)
 
 
 The data model (entities) are defined on the tab "Entities" in the QuickStart UI.
@@ -103,7 +103,7 @@ It joins documents from different collections and packages the results into 1 re
 
 - Go to Pipes on http://localhost:8081
 - In the top bar click on the "Upload graph..." button (2nd from the left)
-- Drag and drop the  graph which can be found here: https://github.com/marklogic-community/pipes/tree/master/Examples/Advanced/pipes-graphs/Contractors360-00.01.json
+- Drag and drop the  graph which can be found here: [pipes-graphs/Contractors360-00.01.json](pipes-graphs/Contractors360-00.01.json)
 - You can run a preview for this graph if you click on the "Preview..." button (4th from the right):
     - select the Custom Step option in the radio
     - from the drop-down select "harmonize-contractor360"
