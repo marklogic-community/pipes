@@ -27,7 +27,7 @@ There is one flow defined with two steps:
 - **Ingestion**: customer-source
 - **Custom**: harmonize-customer360
 
-The ingestion step will ingest a CSV with synthetic customer data: https://github.com/marklogic-community/pipes/tree/master/Examples/Customer360/data/MOCK_DATA.csv
+The ingestion step will ingest a CSV with synthetic customer data: [data/MOCK_DATA.csv](data/MOCK_DATA.csv)
 
 The Custom step has been implemented using Pipes and it will process JSON documents created in the ingest step to produce documents in final for the Customer and Address entities. 
 
@@ -39,7 +39,7 @@ Run the flow (both steps) and, as a result, you should see 1000 Customer and 100
 
 - Go to Pipes on http://localhost:8081
 - In the top bar click on the "Upload graph..." button (2nd from the left)
-- Drag and drop the Customer360 graph which can be found here: https://github.com/marklogic-community/pipes/tree/master/Examples/Customer360/pipes-graphs/Customer360-demo-graph-01.3_.json
+- Drag and drop the Customer360 graph which can be found here: [pipes-graphs/Customer360-demo-graph-01.3_.json](pipes-graphs/Customer360-demo-graph-01.3_.json)
 - You can run a preview for this graph if you click on the "Preview..." button (4th from the right):
     - select the Custom Step option in the radio
     - from the drop-down select "harmonize-customer360"
