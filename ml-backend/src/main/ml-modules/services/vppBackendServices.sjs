@@ -323,22 +323,27 @@ function InvokeExecuteGraph(input) {
 
   return {
     execute: function execute() {
+      var previewUri = ''
+      var result = null
       let gHelper = require("/custom-modules/pipes/graphHelper")
       let execContext = JSON.parse(input)
       let doc = null
+      let uri = ''
       if (execContext.collectionRandom) {
         let nbDocs = cts.estimate(cts.collectionQuery(execContext.collection))
         if(nbDocs>0) doc = cts.doc(fn.head(fn.subsequence(cts.uris(null, null, cts.collectionQuery(execContext.collection)), xdmp.random(nbDocs - 1) + 1)))
-
       } else {
         if (execContext.previewUri == null || execContext.previewUri == "")
           doc = fn.head(fn.collection(execContext.collection))
-        else
+        else {
+          previewUri = execContext.previewUri
           doc = cts.doc(execContext.previewUri)
+        }
       }
 
       if (doc != null) {
-        let uri = fn.baseUri(doc)
+
+        uri = fn.baseUri(doc)
 
         console.log("input=", input)
         console.log("execContext=", execContext)
@@ -347,18 +352,42 @@ function InvokeExecuteGraph(input) {
         console.log("input.collection=", input.collection)
         console.log("uri=", uri);
 
-        return gHelper.executeGraphFromJson(execContext.jsonGraph, uri, doc, {collections: xdmp.documentGetCollections(uri)})
+        var graphResult = []
+
+        try {
+
+        graphResult = gHelper.executeGraphFromJson(execContext.jsonGraph, uri, doc, {collections: xdmp.documentGetCollections(uri)})
+
+        result = {
+          uri: uri,
+          result: graphResult
+        }
+
+        } catch (e) {
+
+          console.log("Exception occured during graph execution: " + e)
+
+          result = {
+            uri: uri,
+            result: graphResult,
+            error: e
+          }
+
+        }
 
       } else {
 
-        let result = {
+        console.log("No source document found. Nothing to preview for the given context")
 
-          error: "No source document, nothing to preview for the given context"
-
+        result = {
+          uri: previewUri,
+          error: "No source document found. Nothing to preview for the given context",
+          result: []
         }
-        return result
 
       }
+
+      return result
 
     }
   }
@@ -367,8 +396,8 @@ function InvokeExecuteGraph(input) {
 function executeGraph(input, params) {
 
   const invokeExecuteGraph = InvokeExecuteGraph(input)
-  let db = (params.database != null) ? params.database : xdmp.database()
-  let targetDb = (params.toDatabase != null) ? params.toDatabase : xdmp.database()
+  let db = (params.database != null) ? xdmp.database(params.database) : xdmp.database()
+  let targetDb = (params.toDatabase != null) ? xdmp.database(params.toDatabase) : xdmp.database()
   let result = xdmp.invokeFunction(invokeExecuteGraph.execute, {database: db})
   let jsonResults = result
   if (params.save == "true") {
@@ -431,56 +460,60 @@ function getFieldsByCollection(collection, customURI) {
       }
 
       docs.map(doc => doc.xpath(".//*").toArray().map(node => {
+        let allnodes =[node]
+        node.xpath("./@*").toArray().map(item => allnodes.push(item))
+        allnodes.map(node => {
 
-        let name = fn.name(node)
-        let originalPath = String(xdmp.path(node))
+          let name = fn.name(node)
+          let originalPath = String(xdmp.path(node))
 
-        //let path = originalPath.replace(/[A-z]+-node\('([\s]*)'\)/g, "$1").replace(/text\('([\s]+)'\)/g, "$1").replace(/text\('([\s\w]+)'\)/g, "node('$1')").replace(/[A-z]+-node\('([\s]*)'\)/g, "node('$1')")
-        pathTokens = originalPath.replace(/(\/object-node\(\))/g,"").replace(/(\[\d+\])/g,"").split("/")
+          //let path = originalPath.replace(/[A-z]+-node\('([\s]*)'\)/g, "$1").replace(/text\('([\s]+)'\)/g, "$1").replace(/text\('([\s\w]+)'\)/g, "node('$1')").replace(/[A-z]+-node\('([\s]*)'\)/g, "node('$1')")
+          let pathTokens = originalPath.replace(/(\/object-node\(\))/g,"").replace(/(\[\d+\])/g,"").split("/")
 
-        pathTokens = pathTokens.map((item,index)=>{
-          if(item=="") return null
-          if(item.includes("array-node") && item.includes(" "))
-            if(index==pathTokens.length-1)
-              return item + "/*"
-            else return item + "/"
+          pathTokens = pathTokens.map((item,index)=>{
+            if(item=="") return null
+            if(item.includes("array-node") && item.includes(" "))
+              if(index==pathTokens.length-1)
+                return item + "/*"
+              else return item + "/"
 
-          if(item.includes(" ") || item.includes("@"))
-            return item.replace(/[A-z]+-node\('([\s\w@]*)'\)/g, "node('$1')").replace(/text\('([\s\w@]+)'\)/g, "node('$1')")
-          else
-            return item.replace(/[A-z]+-node\('([\s\w@]*)'\)/g, "$1").replace(/text\('([\s\w@]+)'\)/g, "$1")
-        })
+            if(item.includes(" ") || item.includes("@"))
+              return item.replace(/[A-z]+-node\('([\s\w@]*)'\)/g, "node('$1')").replace(/text\('([\s\w@]+)'\)/g, "node('$1')")
+            else
+              return item.replace(/[A-z]+-node\('([\s\w@]*)'\)/g, "$1").replace(/text\('([\s\w@]+)'\)/g, "$1")
+          })
 
-        let lastSlash = originalPath.replace(/(\/object-node\(\))/g,"").lastIndexOf("/")
-        let nodeLastPath = originalPath.substring(lastSlash + 1)
-        //if(nodeLastPath.includes("array-node") && path[path.length-1].includes(" "))
-        //path[path.length-1]=nodeLastPath
+          let lastSlash = originalPath.replace(/(\/object-node\(\))/g,"").lastIndexOf("/")
+          let nodeLastPath = originalPath.substring(lastSlash + 1)
+          //if(nodeLastPath.includes("array-node") && path[path.length-1].includes(" "))
+          //path[path.length-1]=nodeLastPath
 
-        path = pathTokens.join("/")
-        let parentPath =path.replace(/(\/object-node\(\))/g,"").replace(/\/\*/g,"")
-        parentPath = parentPath.substring(0, parentPath.lastIndexOf("/"))
-        path = path.replace(/(\/object-node\(\))/g,"")
-        let newParentPath = parentPath//.replace(/array-node\('([\s\w]*)'\)/g, "$1")
+          let path = pathTokens.join("/")
+          let parentPath =path.replace(/(\/object-node\(\))/g,"").replace(/\/\*/g,"")
+          parentPath = parentPath.substring(0, parentPath.lastIndexOf("/"))
+          path = path.replace(/(\/object-node\(\))/g,"")
+          let newParentPath = parentPath//.replace(/array-node\('([\s\w]*)'\)/g, "$1")
 
-        pathTokens = path.split("/")
-        let pathKey = pathTokens.splice(0,pathTokens.length-1).join("/")
+          pathTokens = path.split("/")
+          let pathKey = pathTokens.splice(0,pathTokens.length-1).join("/")
 
-        newParentPath=newParentPath.replace("/*", "").replace(/\/\//,"/").replace(/\/$/,"")
-        if (newParentPath == "") newParentPath = "/"
+          newParentPath=newParentPath.replace("/*", "").replace(/\/\//,"/").replace(/\/$/,"")
+          if (newParentPath == "") newParentPath = "/"
 
-        if (fields[path.replace("/*", "").replace(/\/\//,"/")] == null)
-          fields[path.replace("/*", "").replace(/\/\//,"/")] = {
-            label: name + " [id" + i++ + "]",
-            field: node.xpath("name(.)"),
-            value: node.xpath("name(.)"),
-            path: path,
-            originalPath: originalPath,
-            type: node.nodeType,
-            children: [],
-            parent: newParentPath
-          }
+          let prefix =(path.includes("@"))?"@":""
+          if (fields[path.replace("/*", "").replace(/\/\//,"/")] == null)
+            fields[path.replace("/*", "").replace(/\/\//,"/")] = {
+              label: name + " [id" + i++ + "]",
+              field: prefix + node.xpath("name(.)"),
+              value: prefix + node.xpath("name(.)"),
+              path: path,
+              originalPath: originalPath,
+              type: node.nodeType,
+              children: [],
+              parent: newParentPath
+            }
 
-      }))
+        })}))
       // return fields
       let results = []
       Object.keys(fields).map(item => {

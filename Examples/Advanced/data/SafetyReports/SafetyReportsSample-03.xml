@@ -1,0 +1,830 @@
+<?xml version="1.0" encoding="UTF-8"?><safetyreport>
+		<safetyreportversion>1</safetyreportversion>
+		<safetyreportid>JP-MLMSERVICE-TESTCASE-20150427-37</safetyreportid>
+		<primarysourcecountry>JP</primarysourcecountry>
+		<occurcountry>JP</occurcountry>
+		<transmissiondateformat>102</transmissiondateformat>
+		<transmissiondate>20150226</transmissiondate>
+		<reporttype>1</reporttype>
+		<serious>1</serious>
+		<seriousnessdeath>2</seriousnessdeath>
+		<seriousnesslifethreatening>2</seriousnesslifethreatening>
+		<seriousnesshospitalization>1</seriousnesshospitalization>
+		<seriousnessdisabling>2</seriousnessdisabling>
+		<seriousnesscongenitalanomali>2</seriousnesscongenitalanomali>
+		<seriousnessother>1</seriousnessother>
+		<receivedateformat>102</receivedateformat>
+		<receivedate>20150202</receivedate>
+		<receiptdateformat>102</receiptdateformat>
+		<receiptdate>20150202</receiptdate>
+		<additionaldocument>1</additionaldocument>
+		<documentlist>02Feb2015- Nanishi E et al. EJ License. 451.</documentlist>
+		<fulfillexpeditecriteria>1</fulfillexpeditecriteria>
+		<authoritynumb/>
+		<companynumb>JP-MLMSERVICE-TESTCASE-20150427-37</companynumb>
+		<duplicate/>
+		<casenullification/>
+		<nullificationreason/>
+		<medicallyconfirm>1</medicallyconfirm>
+		<primarysource>
+			<reportertitle>Dr</reportertitle>
+			<reportergivename>E</reportergivename>
+			<reportermiddlename/>
+			<reporterfamilyname>Nanishi</reporterfamilyname>
+			<reporterorganization/>
+			<reporterdepartment/>
+			<reporterstreet/>
+			<reportercity/>
+			<reporterstate/>
+			<reporterpostcode>812-8582</reporterpostcode>
+			<reportercountry>JP</reportercountry>
+			<qualification>1</qualification>
+			<literaturereference>Nanishi E, Hoshina T, Ohga S, Nishio H, Hara T. Drug reaction with eosinophilia and systemic symptoms during primary EpsteineBarr virus infection. Journal of Microbiology, Immunology and Infection. 2015;48:109-112</literaturereference>
+			<studyname/>
+			<sponsorstudynumb/>
+			<observestudytype/>
+		</primarysource>
+		<sender>
+			<sendertype>6</sendertype>
+			<senderorganization>MLMSERVICE</senderorganization>
+			<senderdepartment>test</senderdepartment>
+			<sendertitle>dr</sendertitle>
+			<sendergivename>mlmtest</sendergivename>
+			<sendermiddlename/>
+			<senderfamilyname>test</senderfamilyname>
+			<senderstreetaddress>test</senderstreetaddress>
+			<sendercity>test</sendercity>
+			<senderstate/>
+			<senderpostcode>1</senderpostcode>
+			<sendercountrycode>GB</sendercountrycode>
+			<sendertel>12345</sendertel>
+			<sendertelextension>3456</sendertelextension>
+			<sendertelcountrycode>44</sendertelcountrycode>
+			<senderfax>12345</senderfax>
+			<senderfaxextension>3456</senderfaxextension>
+			<senderfaxcountrycode>44</senderfaxcountrycode>
+			<senderemailaddress>1@MLMSERVICE.com</senderemailaddress>
+		</sender>
+		<receiver>
+			<receivertype/>
+			<receiverorganization>EVTEST</receiverorganization>
+			<receiverdepartment/>
+			<receivertitle/>
+			<receivergivename/>
+			<receivermiddlename/>
+			<receiverfamilyname/>
+			<receiverstreetaddress/>
+			<receivercity/>
+			<receiverstate/>
+			<receiverpostcode/>
+			<receivercountrycode/>
+			<receivertel/>
+			<receivertelextension/>
+			<receivertelcountrycode/>
+			<receiverfax/>
+			<receiverfaxextension/>
+			<receiverfaxcountrycode/>
+			<receiveremailaddress/>
+		</receiver>
+		<patient>
+			<patientinitial/>
+			<patientgpmedicalrecordnumb/>
+			<patientspecialistrecordnumb/>
+			<patienthospitalrecordnumb/>
+			<patientinvestigationnumb/>
+			<patientbirthdateformat/>
+			<patientbirthdate/>
+			<patientonsetage>4</patientonsetage>
+			<patientonsetageunit>801</patientonsetageunit>
+			<gestationperiod/>
+			<gestationperiodunit/>
+			<patientagegroup/>
+			<patientweight/>
+			<patientheight/>
+			<patientsex>1</patientsex>
+			<lastmenstrualdateformat/>
+			<patientlastmenstrualdate/>
+			<patientmedicalhistorytext/>
+			<resultstestsprocedures>Skin and bulbar conjunctiva were icteric. Pruritic maculopapular eruption spread confluently on the trunk, extremities, palms, and soles. Positive antiviral capsid antigen immunoglobulin M with negative anti-EBV nuclear antigen antibody indicated primary EBV infection. Immunoglobulin levels and coagulation studies were unremarkable.</resultstestsprocedures>
+			<medicalhistoryepisode>
+				<patientepisodenamemeddraversion>17.1</patientepisodenamemeddraversion>
+				<patientepisodename>10015108</patientepisodename>
+				<patientmedicalstartdateformat/>
+				<patientmedicalstartdate/>
+				<patientmedicalcontinue/>
+				<patientmedicalenddateformat/>
+				<patientmedicalenddate/>
+				<patientmedicalcomment/>
+			</medicalhistoryepisode>
+			<reaction>
+				<primarysourcereaction>Drug reaction with eosinophilia and systemic symptoms</primarysourcereaction>
+				<reactionmeddraversionllt>17.1</reactionmeddraversionllt>
+				<reactionmeddrallt>10073508</reactionmeddrallt>
+				<reactionmeddraversionpt/>
+				<reactionmeddrapt/>
+				<termhighlighted/>
+				<reactionstartdateformat/>
+				<reactionstartdate/>
+				<reactionenddateformat/>
+				<reactionenddate/>
+				<reactionduration/>
+				<reactiondurationunit/>
+				<reactionfirsttime>7</reactionfirsttime>
+				<reactionfirsttimeunit>804</reactionfirsttimeunit>
+				<reactionlasttime/>
+				<reactionlasttimeunit/>
+				<reactionoutcome>1</reactionoutcome>
+			</reaction>
+			<reaction>
+				<primarysourcereaction>jaundice</primarysourcereaction>
+				<reactionmeddraversionllt>17.1</reactionmeddraversionllt>
+				<reactionmeddrallt>10023126</reactionmeddrallt>
+				<reactionmeddraversionpt/>
+				<reactionmeddrapt/>
+				<termhighlighted/>
+				<reactionstartdateformat/>
+				<reactionstartdate/>
+				<reactionenddateformat/>
+				<reactionenddate/>
+				<reactionduration/>
+				<reactiondurationunit/>
+				<reactionfirsttime>5</reactionfirsttime>
+				<reactionfirsttimeunit>804</reactionfirsttimeunit>
+				<reactionlasttime/>
+				<reactionlasttimeunit/>
+				<reactionoutcome>6</reactionoutcome>
+			</reaction>
+			<reaction>
+				<primarysourcereaction>abdominal pain</primarysourcereaction>
+				<reactionmeddraversionllt>17.1</reactionmeddraversionllt>
+				<reactionmeddrallt>10000081</reactionmeddrallt>
+				<reactionmeddraversionpt/>
+				<reactionmeddrapt/>
+				<termhighlighted/>
+				<reactionstartdateformat/>
+				<reactionstartdate/>
+				<reactionenddateformat/>
+				<reactionenddate/>
+				<reactionduration/>
+				<reactiondurationunit/>
+				<reactionfirsttime>5</reactionfirsttime>
+				<reactionfirsttimeunit>804</reactionfirsttimeunit>
+				<reactionlasttime/>
+				<reactionlasttimeunit/>
+				<reactionoutcome>6</reactionoutcome>
+			</reaction>
+			<reaction>
+				<primarysourcereaction>generalized skin rash</primarysourcereaction>
+				<reactionmeddraversionllt>17.1</reactionmeddraversionllt>
+				<reactionmeddrallt>10049201</reactionmeddrallt>
+				<reactionmeddraversionpt/>
+				<reactionmeddrapt/>
+				<termhighlighted/>
+				<reactionstartdateformat/>
+				<reactionstartdate/>
+				<reactionenddateformat/>
+				<reactionenddate/>
+				<reactionduration/>
+				<reactiondurationunit/>
+				<reactionfirsttime>7</reactionfirsttime>
+				<reactionfirsttimeunit>804</reactionfirsttimeunit>
+				<reactionlasttime/>
+				<reactionlasttimeunit/>
+				<reactionoutcome>1</reactionoutcome>
+			</reaction>
+			<reaction>
+				<primarysourcereaction>neutropenia</primarysourcereaction>
+				<reactionmeddraversionllt>17.1</reactionmeddraversionllt>
+				<reactionmeddrallt>10029354</reactionmeddrallt>
+				<reactionmeddraversionpt/>
+				<reactionmeddrapt/>
+				<termhighlighted/>
+				<reactionstartdateformat/>
+				<reactionstartdate/>
+				<reactionenddateformat/>
+				<reactionenddate/>
+				<reactionduration/>
+				<reactiondurationunit/>
+				<reactionfirsttime>7</reactionfirsttime>
+				<reactionfirsttimeunit>804</reactionfirsttimeunit>
+				<reactionlasttime/>
+				<reactionlasttimeunit/>
+				<reactionoutcome>1</reactionoutcome>
+			</reaction>
+			<reaction>
+				<primarysourcereaction>thrombocytopenia</primarysourcereaction>
+				<reactionmeddraversionllt>17.1</reactionmeddraversionllt>
+				<reactionmeddrallt>10043554</reactionmeddrallt>
+				<reactionmeddraversionpt/>
+				<reactionmeddrapt/>
+				<termhighlighted/>
+				<reactionstartdateformat/>
+				<reactionstartdate/>
+				<reactionenddateformat/>
+				<reactionenddate/>
+				<reactionduration/>
+				<reactiondurationunit/>
+				<reactionfirsttime/>
+				<reactionfirsttimeunit/>
+				<reactionlasttime/>
+				<reactionlasttimeunit/>
+				<reactionoutcome>1</reactionoutcome>
+			</reaction>
+			<reaction>
+				<primarysourcereaction>interleukin-2 receptor increased</primarysourcereaction>
+				<reactionmeddraversionllt>17.1</reactionmeddraversionllt>
+				<reactionmeddrallt>10066315</reactionmeddrallt>
+				<reactionmeddraversionpt/>
+				<reactionmeddrapt/>
+				<termhighlighted/>
+				<reactionstartdateformat/>
+				<reactionstartdate/>
+				<reactionenddateformat/>
+				<reactionenddate/>
+				<reactionduration/>
+				<reactiondurationunit/>
+				<reactionfirsttime/>
+				<reactionfirsttimeunit/>
+				<reactionlasttime/>
+				<reactionlasttimeunit/>
+				<reactionoutcome>1</reactionoutcome>
+			</reaction>
+			<reaction>
+				<primarysourcereaction>ferritin increased</primarysourcereaction>
+				<reactionmeddraversionllt>17.1</reactionmeddraversionllt>
+				<reactionmeddrallt>10016459</reactionmeddrallt>
+				<reactionmeddraversionpt/>
+				<reactionmeddrapt/>
+				<termhighlighted/>
+				<reactionstartdateformat/>
+				<reactionstartdate/>
+				<reactionenddateformat/>
+				<reactionenddate/>
+				<reactionduration/>
+				<reactiondurationunit/>
+				<reactionfirsttime/>
+				<reactionfirsttimeunit/>
+				<reactionlasttime/>
+				<reactionlasttimeunit/>
+				<reactionoutcome>1</reactionoutcome>
+			</reaction>
+			<reaction>
+				<primarysourcereaction>hemophagocytic syndrome</primarysourcereaction>
+				<reactionmeddraversionllt>17.1</reactionmeddraversionllt>
+				<reactionmeddrallt>10058139</reactionmeddrallt>
+				<reactionmeddraversionpt/>
+				<reactionmeddrapt/>
+				<termhighlighted/>
+				<reactionstartdateformat/>
+				<reactionstartdate/>
+				<reactionenddateformat/>
+				<reactionenddate/>
+				<reactionduration/>
+				<reactiondurationunit/>
+				<reactionfirsttime/>
+				<reactionfirsttimeunit/>
+				<reactionlasttime/>
+				<reactionlasttimeunit/>
+				<reactionoutcome>1</reactionoutcome>
+			</reaction>
+			<test>
+				<testdateformat/>
+				<testdate/>
+				<testname>Alanine aminotransferase</testname>
+				<testresult>894</testresult>
+				<testunit>u/L</testunit>
+				<lowtestrange/>
+				<hightestrange/>
+				<moreinformation>2</moreinformation>
+			</test>
+			<test>
+				<testdateformat/>
+				<testdate/>
+				<testname>Aspartate aminotransferase</testname>
+				<testresult>570</testresult>
+				<testunit>u/L</testunit>
+				<lowtestrange/>
+				<hightestrange/>
+				<moreinformation>2</moreinformation>
+			</test>
+			<test>
+				<testdateformat/>
+				<testdate/>
+				<testname>Bilirubin conjugated</testname>
+				<testresult>5.6</testresult>
+				<testunit>mg/dL</testunit>
+				<lowtestrange/>
+				<hightestrange/>
+				<moreinformation>2</moreinformation>
+			</test>
+			<test>
+				<testdateformat/>
+				<testdate/>
+				<testname>Blood bilirubin</testname>
+				<testresult>7.8</testresult>
+				<testunit>mg/dL</testunit>
+				<lowtestrange/>
+				<hightestrange/>
+				<moreinformation>2</moreinformation>
+			</test>
+			<test>
+				<testdateformat/>
+				<testdate/>
+				<testname>Blood immunoglobulin E</testname>
+				<testresult>less than 10000</testresult>
+				<testunit>u/L</testunit>
+				<lowtestrange/>
+				<hightestrange/>
+				<moreinformation>2</moreinformation>
+			</test>
+			<test>
+				<testdateformat/>
+				<testdate/>
+				<testname>Blood lactate dehydrogenase</testname>
+				<testresult>637</testresult>
+				<testunit>u/L</testunit>
+				<lowtestrange/>
+				<hightestrange/>
+				<moreinformation>2</moreinformation>
+			</test>
+			<test>
+				<testdateformat/>
+				<testdate/>
+				<testname>Body temperature</testname>
+				<testresult>38</testresult>
+				<testunit>degree C</testunit>
+				<lowtestrange/>
+				<hightestrange/>
+				<moreinformation>2</moreinformation>
+			</test>
+			<test>
+				<testdateformat/>
+				<testdate/>
+				<testname>CD8 lymphocytes</testname>
+				<testresult>activated 72.2%</testresult>
+				<testunit>%</testunit>
+				<lowtestrange/>
+				<hightestrange/>
+				<moreinformation>2</moreinformation>
+			</test>
+			<test>
+				<testdateformat/>
+				<testdate/>
+				<testname>C-reactive protein</testname>
+				<testresult>0.09</testresult>
+				<testunit>mg/dL</testunit>
+				<lowtestrange/>
+				<hightestrange/>
+				<moreinformation>2</moreinformation>
+			</test>
+			<test>
+				<testdateformat/>
+				<testdate/>
+				<testname>Eosinophil count</testname>
+				<testresult>4</testresult>
+				<testunit>%</testunit>
+				<lowtestrange/>
+				<hightestrange/>
+				<moreinformation>2</moreinformation>
+			</test>
+			<test>
+				<testdateformat/>
+				<testdate/>
+				<testname>Gamma-glutamyltransferase</testname>
+				<testresult>348</testresult>
+				<testunit>u/L</testunit>
+				<lowtestrange/>
+				<hightestrange/>
+				<moreinformation>2</moreinformation>
+			</test>
+			<test>
+				<testdateformat/>
+				<testdate/>
+				<testname>Hemoglobin</testname>
+				<testresult>11.7</testresult>
+				<testunit>g/dL</testunit>
+				<lowtestrange/>
+				<hightestrange/>
+				<moreinformation>2</moreinformation>
+			</test>
+			<test>
+				<testdateformat/>
+				<testdate/>
+				<testname>Interleukin-2 receptor assay</testname>
+				<testresult>6061000</testresult>
+				<testunit>u/L</testunit>
+				<lowtestrange/>
+				<hightestrange/>
+				<moreinformation>2</moreinformation>
+			</test>
+			<test>
+				<testdateformat/>
+				<testdate/>
+				<testname>Lymphocyte count</testname>
+				<testresult>55</testresult>
+				<testunit>%</testunit>
+				<lowtestrange/>
+				<hightestrange/>
+				<moreinformation>2</moreinformation>
+			</test>
+			<test>
+				<testdateformat/>
+				<testdate/>
+				<testname>Lymphocyte morphology abnormal</testname>
+				<testresult>5</testresult>
+				<testunit>%</testunit>
+				<lowtestrange/>
+				<hightestrange/>
+				<moreinformation>2</moreinformation>
+			</test>
+			<test>
+				<testdateformat/>
+				<testdate/>
+				<testname>Monocyte count</testname>
+				<testresult>10</testresult>
+				<testunit>%</testunit>
+				<lowtestrange/>
+				<hightestrange/>
+				<moreinformation>2</moreinformation>
+			</test>
+			<test>
+				<testdateformat/>
+				<testdate/>
+				<testname>Neutrophil count</testname>
+				<testresult>26</testresult>
+				<testunit>%</testunit>
+				<lowtestrange/>
+				<hightestrange/>
+				<moreinformation>2</moreinformation>
+			</test>
+			<test>
+				<testdateformat/>
+				<testdate/>
+				<testname>Platelet count</testname>
+				<testresult>143 X 10^9</testresult>
+				<testunit>/L</testunit>
+				<lowtestrange/>
+				<hightestrange/>
+				<moreinformation>2</moreinformation>
+			</test>
+			<test>
+				<testdateformat/>
+				<testdate/>
+				<testname>Serum ferritin</testname>
+				<testresult>1492</testresult>
+				<testunit>mg/dL</testunit>
+				<lowtestrange/>
+				<hightestrange/>
+				<moreinformation>2</moreinformation>
+			</test>
+			<test>
+				<testdateformat/>
+				<testdate/>
+				<testname>White blood cell count</testname>
+				<testresult>3.99 X 10^9</testresult>
+				<testunit>/L</testunit>
+				<lowtestrange/>
+				<hightestrange/>
+				<moreinformation>2</moreinformation>
+			</test>
+			<drug>
+				<drugcharacterization>1</drugcharacterization>
+				<medicinalproduct>Acetaminophen</medicinalproduct>
+				<obtaindrugcountry>JP</obtaindrugcountry>
+				<drugbatchnumb/>
+				<drugauthorizationnumb/>
+				<drugauthorizationcountry>JP</drugauthorizationcountry>
+				<drugauthorizationholder>GSK</drugauthorizationholder>
+				<drugstructuredosagenumb/>
+				<drugstructuredosageunit/>
+				<drugseparatedosagenumb/>
+				<drugintervaldosageunitnumb/>
+				<drugintervaldosagedefinition/>
+				<drugcumulativedosagenumb/>
+				<drugcumulativedosageunit/>
+				<drugdosagetext/>
+				<drugdosageform/>
+				<drugadministrationroute/>
+				<drugparadministration/>
+				<reactiongestationperiod/>
+				<reactiongestationperiodunit/>
+				<drugindicationmeddraversion>17.1</drugindicationmeddraversion>
+				<drugindication>10057097</drugindication>
+				<drugstartdateformat/>
+				<drugstartdate/>
+				<drugstartperiod>7</drugstartperiod>
+				<drugstartperiodunit>804</drugstartperiodunit>
+				<druglastperiod/>
+				<druglastperiodunit/>
+				<drugenddateformat/>
+				<drugenddate/>
+				<drugtreatmentduration/>
+				<drugtreatmentdurationunit/>
+				<actiondrug>5</actiondrug>
+				<drugrecurreadministration/>
+				<drugadditional/>
+				<activesubstance>
+					<activesubstancename>PARACETAMOL</activesubstancename>
+				</activesubstance>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10000081</drugreactionasses>
+					<drugassessmentsource>PHARMACEUTICAL COMPANY</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Unknown</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10000081</drugreactionasses>
+					<drugassessmentsource>PRIMARY SOURCE REPORTER</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Unknown</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10016459</drugreactionasses>
+					<drugassessmentsource>PHARMACEUTICAL COMPANY</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Yes</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10016459</drugreactionasses>
+					<drugassessmentsource>PRIMARY SOURCE REPORTER</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Yes</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10023126</drugreactionasses>
+					<drugassessmentsource>PHARMACEUTICAL COMPANY</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Unknown</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10023126</drugreactionasses>
+					<drugassessmentsource>PRIMARY SOURCE REPORTER</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Unknown</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10029354</drugreactionasses>
+					<drugassessmentsource>PHARMACEUTICAL COMPANY</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Unknown</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10029354</drugreactionasses>
+					<drugassessmentsource>PRIMARY SOURCE REPORTER</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Unknown</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10043554</drugreactionasses>
+					<drugassessmentsource>PHARMACEUTICAL COMPANY</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Yes</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10043554</drugreactionasses>
+					<drugassessmentsource>PRIMARY SOURCE REPORTER</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Yes</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10049201</drugreactionasses>
+					<drugassessmentsource>PHARMACEUTICAL COMPANY</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Yes</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10049201</drugreactionasses>
+					<drugassessmentsource>PRIMARY SOURCE REPORTER</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Yes</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10058139</drugreactionasses>
+					<drugassessmentsource>PHARMACEUTICAL COMPANY</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Yes</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10058139</drugreactionasses>
+					<drugassessmentsource>PRIMARY SOURCE REPORTER</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Yes</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10066315</drugreactionasses>
+					<drugassessmentsource>PHARMACEUTICAL COMPANY</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Yes</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10066315</drugreactionasses>
+					<drugassessmentsource>PRIMARY SOURCE REPORTER</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Yes</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10073508</drugreactionasses>
+					<drugassessmentsource>PHARMACEUTICAL COMPANY</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Yes</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10073508</drugreactionasses>
+					<drugassessmentsource>PRIMARY SOURCE REPORTER</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Yes</drugresult>
+				</drugreactionrelatedness>
+			</drug>
+			<drug>
+				<drugcharacterization>1</drugcharacterization>
+				<medicinalproduct>Cefditoren pivoxil</medicinalproduct>
+				<obtaindrugcountry>JP</obtaindrugcountry>
+				<drugbatchnumb/>
+				<drugauthorizationnumb/>
+				<drugauthorizationcountry>JP</drugauthorizationcountry>
+				<drugauthorizationholder>GSK</drugauthorizationholder>
+				<drugstructuredosagenumb/>
+				<drugstructuredosageunit/>
+				<drugseparatedosagenumb/>
+				<drugintervaldosageunitnumb/>
+				<drugintervaldosagedefinition/>
+				<drugcumulativedosagenumb/>
+				<drugcumulativedosageunit/>
+				<drugdosagetext/>
+				<drugdosageform/>
+				<drugadministrationroute/>
+				<drugparadministration/>
+				<reactiongestationperiod/>
+				<reactiongestationperiodunit/>
+				<drugindicationmeddraversion>17.1</drugindicationmeddraversion>
+				<drugindication>10057097</drugindication>
+				<drugstartdateformat/>
+				<drugstartdate/>
+				<drugstartperiod>7</drugstartperiod>
+				<drugstartperiodunit>804</drugstartperiodunit>
+				<druglastperiod/>
+				<druglastperiodunit/>
+				<drugenddateformat/>
+				<drugenddate/>
+				<drugtreatmentduration/>
+				<drugtreatmentdurationunit/>
+				<actiondrug>5</actiondrug>
+				<drugrecurreadministration/>
+				<drugadditional/>
+				<activesubstance>
+					<activesubstancename>CEFDITOREN PIVOXIL</activesubstancename>
+				</activesubstance>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10000081</drugreactionasses>
+					<drugassessmentsource>PHARMACEUTICAL COMPANY</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Unknown</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10000081</drugreactionasses>
+					<drugassessmentsource>PRIMARY SOURCE REPORTER</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Unknown</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10016459</drugreactionasses>
+					<drugassessmentsource>PHARMACEUTICAL COMPANY</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Yes</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10016459</drugreactionasses>
+					<drugassessmentsource>PRIMARY SOURCE REPORTER</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Yes</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10023126</drugreactionasses>
+					<drugassessmentsource>PHARMACEUTICAL COMPANY</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Unknown</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10023126</drugreactionasses>
+					<drugassessmentsource>PRIMARY SOURCE REPORTER</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Unknown</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10029354</drugreactionasses>
+					<drugassessmentsource>PHARMACEUTICAL COMPANY</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Unknown</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10029354</drugreactionasses>
+					<drugassessmentsource>PRIMARY SOURCE REPORTER</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Unknown</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10043554</drugreactionasses>
+					<drugassessmentsource>PHARMACEUTICAL COMPANY</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Yes</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10043554</drugreactionasses>
+					<drugassessmentsource>PRIMARY SOURCE REPORTER</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Yes</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10049201</drugreactionasses>
+					<drugassessmentsource>PHARMACEUTICAL COMPANY</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Yes</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10049201</drugreactionasses>
+					<drugassessmentsource>PRIMARY SOURCE REPORTER</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Yes</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10058139</drugreactionasses>
+					<drugassessmentsource>PHARMACEUTICAL COMPANY</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Yes</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10058139</drugreactionasses>
+					<drugassessmentsource>PRIMARY SOURCE REPORTER</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Yes</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10066315</drugreactionasses>
+					<drugassessmentsource>PHARMACEUTICAL COMPANY</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Yes</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10066315</drugreactionasses>
+					<drugassessmentsource>PRIMARY SOURCE REPORTER</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Yes</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10073508</drugreactionasses>
+					<drugassessmentsource>PHARMACEUTICAL COMPANY</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Yes</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10073508</drugreactionasses>
+					<drugassessmentsource>PRIMARY SOURCE REPORTER</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Yes</drugresult>
+				</drugreactionrelatedness>
+			</drug>
+			<summary>
+				<narrativeincludeclinical>This case was reported in a literature article and described the occurrence of drug reaction with eosinophilia and systemic symptoms in a 4-year-old male patient who received paracetamol (Acetaminophen) unknown for drug use for unknown indication. (Nanishi E, Hoshina T, Ohga S, Nishio H, Hara T. Drug reaction with eosinophilia and systemic symptoms during primary EpsteineBarr virus infection. Journal of Microbiology, Immunology and Infection 2015; 48: 109-112.)Co-suspect products included cefditoren pivoxil unknown for drug use for unknown indication.On an unknown date, the patient started Acetaminophen at an unknown dose and frequency and cefditoren pivoxil at an unknown dose and frequency. On an unknown date, 7 days after starting Acetaminophen and cefditoren pivoxil, the patient experienced drug reaction with eosinophilia and systemic symptoms (serious criteria hospitalization and GSK medically significant), jaundice, abdominal pain, generalized rash, neutropenia (serious criteria GSK medically significant), thrombocytopenia, interleukin-2 receptor increased, ferritin increased and hemophagocytic syndrome (serious criteria GSK medically significant). The patient was treated with dexchlorpheniramine and glycyrrhizinate dipotassium. The action taken with Acetaminophen was unknown. The action taken with cefditoren pivoxil was unknown. On an unknown date, the outcome of the drug reaction with eosinophilia and systemic symptoms, generalized rash, neutropenia, thrombocytopenia, interleukin-2 receptor increased, ferritin increased and hemophagocytic syndrome were recovered/resolved and the outcome of the jaundice and abdominal pain were unknown.The reporter considered the drug reaction with eosinophilia and systemic symptoms, generalized rash, thrombocytopenia, interleukin-2 receptor increased, ferritin increased and hemophagocytic syndrome to be related to Acetaminophen and cefditoren pivoxil. It was unknown if the reporter considered the jaundice, abdominal pain and neutropenia to be related to Acetaminophen and cefditoren pivoxil.Additional details,A previously healthy 4-year-old boy was admitted to our hospital on the 14th day of illness because of prolonged fever, jaundice, and generalized skin eruption. The patient had received oral cefditorenepivoxil (CDTR-PI) and acetaminophen suppository from the 6th day to the 12th day of illness. Despite the defervescence on the 11th day of illness, jaundice and abdominal pain emerged. On the 13th day of illness, he presented to a practitioner again because of developing generalized skin rash. The laboratory findings showed increased levels of: aspartate aminotransferase, 1821 U/L; alanine aminotransferase, 1777 U/L; total bilirubin, 6.8 mg/dL; and direct bilirubin, 5.1 mg/dL. He was then referred to us for further management.On admission, his body temperature was 38.0_C. Skin and bulbar conjunctiva were icteric. Pruritic maculopapular eruption spread confluently on the trunk, extremities, palms, and soles. Mucous membranes and conjunctivas were spared. There was cervical lymphadenopathy, hepatomegaly, but no splenomegaly. Complete blood counts showed a leukocyte count of 3.99 X 10^9/L with 26% segmented neutrophils, 55% lymphocytes, 10% monocytes, 4% eosinophils, and 5% atypical lymphocytes, a hemoglobin concentration of 11.7 g/dL and a platelet count of 143 X 10^9/L. Blood chemistry showed: total bilirubin, 7.8 mg/dL; direct bilirubin, 5.6 mg/dL; aspartate aminotransferase, 570 U/L; alanine aminotransferase, 894 U/L; lactate dehydrogenase, 637 U/L; and gamma-glutamyl transpeptidase, 348 U/L. C-reactive protein concentration was 0.09 mg/dL. Serum levels of ferritin (1492 mg/dL) and soluble interleukin-2 receptor (6061 U/mL) were both high. Immunoglobulin levels and coagulation studies were unremarkable (immunoglobulin E &lt; 10 U/mL). Surface maker analysis of the peripheral blood lymphocytes showed a reversed CD4/CD8 ratio (0.45) and a prominently increased proportion of activated CD8?T cells (72.2%). There were past inactive infections, but no reactivations of cytomegalovirus or HHV-6. Positive antiviral capsid antigen immunoglobulin M with negative anti-EBV nuclear antigen antibody indicated primary EBV infection. A high copy number of EBV-DNA (3 X 10^6 copies/L of peripheral blood) was detected by real-time polymerase chain reaction. LTT for acetaminophen [stimulation index (SI) 555%] or CDTR-PI (SI 314%) was highly positive. The diagnosis of DRESS was made because the patient fulfilled all but one criteria of eosinophilia. Dexchlorpheniramine and glycyrrhizinate were started with no use of the other drugs including antipyretics. All symptoms resolved until the cessation of therapy on the 19th day of illness. Negative LTT for acetaminophen (SI 81%) or CDTR-PI (SI 71%) was confirmed 2 months later. Thereafter, skin eruption did not appear when acetaminophen was administered at the chance of fever.</narrativeincludeclinical>
+				<reportercomment/>
+				<senderdiagnosismeddraversion/>
+				<senderdiagnosis/>
+				<sendercomment/>
+			</summary>
+		</patient>
+	</safetyreport>

@@ -10695,6 +10695,7 @@ LGraphNode.prototype.executeAction = function(action)
   }
 
   Subgraph.prototype.onExecute = function() {
+
     this.enabled = this.getInputOrProperty("enabled");
 
     //reset all outputs
@@ -10713,18 +10714,49 @@ LGraphNode.prototype.executeAction = function(action)
       let outputs = {}
       // objArray = (objArray!= null && objArray.toObject) ? objArray.toObject() : objArray;
       var arrayInput = this.inputs[0];
-
-      if (objArray.toArray || Array.isArray(objArray)) {
-
-
-
-        // for (var j = 0; j < objArray.length; j++) {
-        for (let obj of objArray) {
-
-          this.subgraph.setInputData(arrayInput.name, obj);
+      if (objArray) {
+        if (objArray || objArray.toArray || Array.isArray(objArray)) {
 
 
-          for (var i = 1; i < this.inputs.length; i++) {
+          // for (var j = 0; j < objArray.length; j++) {
+          for (let obj of objArray) {
+
+            this.subgraph.setInputData(arrayInput.name, obj);
+
+
+            for (var i = 1; i < this.inputs.length; i++) {
+              var input = this.inputs[i];
+              var value = this.getInputData(i);
+              this.subgraph.setInputData(input.name, value);
+            }
+
+
+            //execute
+            this.subgraph.start();
+
+            //send subgraph global outputs to outputs
+            if (this.outputs) {
+              for (var i = 0; i < this.outputs.length; i++) {
+                let output = this.outputs[i];
+                let value = this.subgraph.getOutputData(output.name);
+
+                if (value != null && typeof (value) == "object" && !value.toObject)
+                  value = JSON.parse(JSON.stringify(value))
+                if (outputs[i] == null) outputs[i] = [];
+                outputs[i].push(value)
+              }
+            }
+            this.subgraph.clearTriggeredSlots()
+            this.subgraph.stop()
+          }
+          Object.keys(outputs).map(item => {
+              this.setOutputData(item, outputs[item])
+            }
+          )
+          ;
+        } else {
+
+          for (var i = 0; i < this.inputs.length; i++) {
             var input = this.inputs[i];
             var value = this.getInputData(i);
             this.subgraph.setInputData(input.name, value);
@@ -10740,51 +10772,22 @@ LGraphNode.prototype.executeAction = function(action)
               let output = this.outputs[i];
               let value = this.subgraph.getOutputData(output.name);
 
-              if (value != null && typeof (value) == "object" && !value.toObject)
+              if (typeof (value) == "object" && !value.toObject)
                 value = JSON.parse(JSON.stringify(value))
-              if (outputs[i] == null) outputs[i] = [];
-              outputs[i].push(value)
+
+              outputs[i] = value
             }
           }
+
+          Object.keys(outputs).map(item => {
+            this.setOutputData(item, outputs[item])
+          })
           this.subgraph.clearTriggeredSlots()
           this.subgraph.stop()
+
+
         }
-        Object.keys(outputs).map(item => {this.setOutputData(item, outputs[item])}
-        )
-        ;
       }
-      else{
-
-        for (var i = 0; i < this.inputs.length; i++) {
-          var input = this.inputs[i];
-          var value = this.getInputData(i);
-          this.subgraph.setInputData(input.name, value);
-        }
-
-
-        //execute
-        this.subgraph.start();
-
-        //send subgraph global outputs to outputs
-        if (this.outputs) {
-          for (var i = 0; i < this.outputs.length; i++) {
-            let output = this.outputs[i];
-            let value = this.subgraph.getOutputData(output.name);
-
-            if (typeof (value) == "object" && !value.toObject)
-              value = JSON.parse(JSON.stringify(value))
-
-            outputs[i]=value
-          }
-        }
-
-        Object.keys(outputs).map(item => {this.setOutputData(item, outputs[item])})
-        this.subgraph.clearTriggeredSlots()
-        this.subgraph.stop()
-
-
-      }
-
     }
 
 
@@ -10916,7 +10919,7 @@ LGraphNode.prototype.executeAction = function(action)
   };
 
   LiteGraph.Subgraph = Subgraph;
-  LiteGraph.registerNodeType("graph/subgraph", Subgraph);
+  LiteGraph.registerNodeType("Graph/subgraph", Subgraph);
 
 
   //Input for a subgraph
@@ -11060,7 +11063,7 @@ LGraphNode.prototype.executeAction = function(action)
   };
 
   LiteGraph.GraphInput = GraphInput;
-  LiteGraph.registerNodeType("graph/input", GraphInput);
+  LiteGraph.registerNodeType("Graph/input", GraphInput);
 
   //Output for a subgraph
   function GraphOutput() {
@@ -11165,7 +11168,7 @@ LGraphNode.prototype.executeAction = function(action)
   };
 
   LiteGraph.GraphOutput = GraphOutput;
-  LiteGraph.registerNodeType("graph/output", GraphOutput);
+  LiteGraph.registerNodeType("Graph/output", GraphOutput);
 
 })(this);
 

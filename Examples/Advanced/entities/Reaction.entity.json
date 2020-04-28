@@ -1,0 +1,44 @@
+{
+  "info" : {
+    "title" : "Reaction",
+    "version" : "0.0.1",
+    "baseUri" : "http://example.org/",
+    "description" : "Adverse Event (reaction) of a patient to a certain medication as part of the Safety Report"
+  },
+  "definitions" : {
+    "Reaction" : {
+      "primaryKey" : "id",
+      "required" : [ "id", "safetyReportId" ],
+      "pii" : [ ],
+      "elementRangeIndex" : [ ],
+      "rangeIndex" : [ ],
+      "wordLexicon" : [ ],
+      "properties" : {
+        "id" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "medrapt" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "outcomeText" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "outcome" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "raveVersion" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "safetyReportId" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        }
+      }
+    }
+  }
+}

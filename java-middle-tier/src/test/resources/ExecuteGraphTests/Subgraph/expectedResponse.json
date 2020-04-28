@@ -1,0 +1,34 @@
+[
+  {
+    "value": {
+      "envelope": {
+        "headers": {},
+        "triples": [],
+        "instance": {
+          "value": "5"
+        },
+        "attachments": {}
+      }
+    },
+    "uri": "5",
+    "context": {
+      "collections": null
+    }
+  },
+  {
+    "value": {
+      "envelope": {
+        "headers": {},
+        "triples": [],
+        "instance": {
+          "value": "6"
+        },
+        "attachments": {}
+      }
+    },
+    "uri": "6",
+    "context": {
+      "collections": null
+    }
+  }
+]

@@ -1,0 +1,21 @@
+{
+  "value": {
+    "envelope": {
+      "headers": {},
+      "triples": [],
+      "instance": {
+        "value": "test-value"
+      },
+      "attachments": {
+        "a": 5,
+        "b": 6
+      }
+    }
+  },
+  "uri": "/test/input.json",
+  "context": {
+    "collections": [
+      "ingest-unit-test"
+    ]
+  }
+}

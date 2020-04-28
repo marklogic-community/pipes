@@ -1,0 +1,629 @@
+{
+  "pipesFileVersion": 2,
+  "models": [
+    {
+      "label": "ab",
+      "collection": "ab",
+      "source": "Sources",
+      "fields": [
+        {
+          "label": "a [id0]",
+          "field": "a",
+          "value": "a",
+          "path": "/a",
+          "originalPath": "/number-node('a')",
+          "type": 16,
+          "children": [],
+          "parent": "/"
+        },
+        {
+          "label": "b [id1]",
+          "field": "b",
+          "value": "b",
+          "path": "/b",
+          "originalPath": "/number-node('b')",
+          "type": 16,
+          "children": [],
+          "parent": "/"
+        }
+      ],
+      "options": [
+        "nodeInput",
+        "fieldsOutputs"
+      ],
+      "metadata": {
+        "description": "",
+        "dateCreated": "2020-04-28T08:14:11.848Z",
+        "blockCreatedFrom": "db_collection",
+        "sourceDHFStep": null,
+        "sourceDatabase": "Documents",
+        "sourceCollection": "ingest-unit-test",
+        "customURIs": ""
+      }
+    }
+  ],
+  "executionGraph": {
+    "last_node_id": 10,
+    "last_link_id": 12,
+    "nodes": [
+      {
+        "id": 1,
+        "type": "DHF/input",
+        "pos": [
+          152,
+          520
+        ],
+        "size": [
+          180,
+          60
+        ],
+        "flags": {},
+        "order": 0,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "input",
+            "type": "",
+            "links": [
+              2
+            ]
+          },
+          {
+            "name": "uri",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "collections",
+            "type": "",
+            "links": null
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 4,
+        "type": "Sources/ab",
+        "pos": [
+          428,
+          415
+        ],
+        "size": [
+          305,
+          108
+        ],
+        "flags": {},
+        "order": 1,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "Node",
+            "type": 0,
+            "link": 2
+          }
+        ],
+        "outputs": [
+          {
+            "name": "a",
+            "links": [
+              1
+            ]
+          },
+          {
+            "name": "b",
+            "links": [
+              4
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          true
+        ]
+      },
+      {
+        "id": 2,
+        "type": "DHF/output",
+        "pos": [
+          1825,
+          436
+        ],
+        "size": [
+          180,
+          160
+        ],
+        "flags": {},
+        "order": 9,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "output",
+            "type": 0,
+            "link": 8
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 5,
+        "type": "DHF/envelope",
+        "pos": [
+          1269,
+          373
+        ],
+        "size": [
+          180,
+          160
+        ],
+        "flags": {},
+        "order": 6,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "headers",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "triples",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "instance",
+            "type": 0,
+            "link": 3
+          },
+          {
+            "name": "attachments",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "uri",
+            "type": 0,
+            "link": 10
+          },
+          {
+            "name": "collections",
+            "type": 0,
+            "link": null
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output",
+            "type": null,
+            "links": [
+              6
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "json"
+        ]
+      },
+      {
+        "id": 6,
+        "type": "DHF/envelope",
+        "pos": [
+          1249,
+          634
+        ],
+        "size": [
+          180,
+          160
+        ],
+        "flags": {},
+        "order": 7,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "headers",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "triples",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "instance",
+            "type": 0,
+            "link": 5
+          },
+          {
+            "name": "attachments",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "uri",
+            "type": 0,
+            "link": 12
+          },
+          {
+            "name": "collections",
+            "type": 0,
+            "link": null
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output",
+            "type": null,
+            "links": [
+              7
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "json"
+        ]
+      },
+      {
+        "id": 8,
+        "type": "Join/Array",
+        "pos": [
+          1592.5,
+          383.5
+        ],
+        "size": {
+          "0": 170,
+          "1": 106
+        },
+        "flags": {},
+        "order": 8,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "item1",
+            "type": 0,
+            "link": 6
+          },
+          {
+            "name": "item2",
+            "type": 0,
+            "link": 7
+          },
+          {
+            "name": "item3",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "item4",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "item5",
+            "type": 0,
+            "link": null
+          }
+        ],
+        "outputs": [
+          {
+            "name": "array",
+            "links": [
+              8
+            ]
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 3,
+        "type": "Mapping/mapRangeValues",
+        "pos": [
+          848,
+          259
+        ],
+        "size": {
+          "0": 255,
+          "1": 78
+        },
+        "flags": {},
+        "order": 2,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "value",
+            "type": 0,
+            "link": 1
+          },
+          {
+            "name": "default",
+            "type": 0,
+            "link": null
+          }
+        ],
+        "outputs": [
+          {
+            "name": "mappedValue",
+            "links": [
+              3,
+              9
+            ]
+          }
+        ],
+        "properties": {
+          "mappingRange": [
+            {
+              "from": "1",
+              "to": "5",
+              "target": "LOW"
+            },
+            {
+              "from": "6",
+              "to": "10",
+              "target": "HIGH"
+            }
+          ],
+          "hoverText": "Double click block to edit the mapping rules"
+        },
+        "widgets_values": [
+          "string"
+        ]
+      },
+      {
+        "id": 9,
+        "type": "Generate/Templating",
+        "pos": [
+          925,
+          436
+        ],
+        "size": {
+          "0": 255,
+          "1": 146
+        },
+        "flags": {},
+        "order": 4,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "v1",
+            "type": 0,
+            "link": 9
+          },
+          {
+            "name": "v2",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "v3",
+            "type": 0,
+            "link": null
+          }
+        ],
+        "outputs": [
+          {
+            "name": "newString",
+            "links": [
+              10
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "",
+          "",
+          "/test/${v1}.json"
+        ]
+      },
+      {
+        "id": 7,
+        "type": "Mapping/mapRangeValues",
+        "pos": [
+          888,
+          680
+        ],
+        "size": {
+          "0": 255,
+          "1": 78
+        },
+        "flags": {},
+        "order": 3,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "value",
+            "type": 0,
+            "link": 4
+          },
+          {
+            "name": "default",
+            "type": 0,
+            "link": null
+          }
+        ],
+        "outputs": [
+          {
+            "name": "mappedValue",
+            "links": [
+              5,
+              11
+            ]
+          }
+        ],
+        "properties": {
+          "mappingRange": [
+            {
+              "from": "1",
+              "to": "5",
+              "target": "LOW"
+            },
+            {
+              "from": "6",
+              "to": "10",
+              "target": "HIGH"
+            }
+          ],
+          "hoverText": "Double click block to edit the mapping rules"
+        },
+        "widgets_values": [
+          "string"
+        ]
+      },
+      {
+        "id": 10,
+        "type": "Generate/Templating",
+        "pos": [
+          891,
+          824
+        ],
+        "size": {
+          "0": 255,
+          "1": 146
+        },
+        "flags": {},
+        "order": 5,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "v1",
+            "type": 0,
+            "link": 11
+          },
+          {
+            "name": "v2",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "v3",
+            "type": 0,
+            "link": null
+          }
+        ],
+        "outputs": [
+          {
+            "name": "newString",
+            "links": [
+              12
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "",
+          "",
+          "/test/${v1}.json"
+        ]
+      }
+    ],
+    "links": [
+      [
+        1,
+        4,
+        0,
+        3,
+        0,
+        0
+      ],
+      [
+        2,
+        1,
+        0,
+        4,
+        0,
+        0
+      ],
+      [
+        3,
+        3,
+        0,
+        5,
+        2,
+        0
+      ],
+      [
+        4,
+        4,
+        1,
+        7,
+        0,
+        0
+      ],
+      [
+        5,
+        7,
+        0,
+        6,
+        2,
+        0
+      ],
+      [
+        6,
+        5,
+        0,
+        8,
+        0,
+        0
+      ],
+      [
+        7,
+        6,
+        0,
+        8,
+        1,
+        0
+      ],
+      [
+        8,
+        8,
+        0,
+        2,
+        0,
+        0
+      ],
+      [
+        9,
+        3,
+        0,
+        9,
+        0,
+        0
+      ],
+      [
+        10,
+        9,
+        0,
+        5,
+        4,
+        0
+      ],
+      [
+        11,
+        7,
+        0,
+        10,
+        0,
+        0
+      ],
+      [
+        12,
+        10,
+        0,
+        6,
+        4,
+        0
+      ]
+    ],
+    "groups": [],
+    "config": {},
+    "version": 0.4
+  },
+  "name": "mapRangeValuesTest",
+  "metadata": {
+    "version": "00.01",
+    "author": "",
+    "title": "mapRangeValuesTest",
+    "description": "",
+    "dateExported": "28/04/2020, 10:16:44"
+  }
+}

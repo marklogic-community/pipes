@@ -23,6 +23,7 @@ yarn-error.log*
 *.sln
 yarn.lock
 package-lock.json
+src/store/store-flag.d.ts
 
 #DHF stuff
 dhf/
@@ -45,6 +46,11 @@ java-middle-tier/src/test/resources/application.properties
 java-middle-tier/lib/
 ml-backend/.classpath
 java-middle-tier/application.properties
+java-middle-tier/src/main/resources/version.txt
+
+#windows stuff
+java-middle-tier/.gradle
+.tmp
 
 #gren stuff
 .grenrc.yml
@@ -55,3 +61,10 @@ docker/.env
 docker/jar/
 docker/data/
 docker/volumes/
+
+#Examples
+Examples/Advanced/src/main/ml-modules/root/custom-modules/pipes/
+Examples/Advanced/src/main/ml-modules/services/vppBackendServices.sjs
+
+Examples/Customer360/src/main/ml-modules/root/custom-modules/pipes/
+Examples/Customer360/src/main/ml-modules/services/vppBackendServices.sjs

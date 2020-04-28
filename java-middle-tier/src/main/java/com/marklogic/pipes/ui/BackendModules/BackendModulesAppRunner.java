@@ -7,6 +7,7 @@ package com.marklogic.pipes.ui.BackendModules;
 import com.marklogic.pipes.ui.auth.AbstractLoggingClass;
 import com.marklogic.pipes.ui.auth.AuthService;
 import com.marklogic.pipes.ui.config.ClientConfig;
+import com.marklogic.pipes.ui.version.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -34,8 +35,14 @@ public class BackendModulesAppRunner extends AbstractLoggingClass implements App
   @Autowired
   AuthService authService;
 
+  @Autowired
+  Service versionService;
+
   @Override
   public void run(ApplicationArguments args) throws Exception {
+
+
+
 
     boolean deployBackend = args.containsOption("deployBackend");
     boolean undeployBackend = args.containsOption("undeployBackend");
@@ -86,6 +93,11 @@ public class BackendModulesAppRunner extends AbstractLoggingClass implements App
 
     logger.info(
       String.format("Pipes running on port: "+ environment.getProperty("local.server.port")));
+
+
+    // version information
+    System.out.println("--------------------\n"+ versionService.get()+"--------------------");
+
   }
 
 

@@ -1,0 +1,28 @@
+{
+  "lang" : "zxx",
+  "name" : "transform-safety-reports",
+  "description" : "",
+  "type" : "CUSTOM",
+  "version" : 1,
+  "options" : {
+    "additionalCollections" : [ ],
+    "sourceQuery" : "cts.collectionQuery([\"safety-report-source\"])",
+    "targetEntity" : "SafetyReport",
+    "collections" : [ "transform-safety-reports", "SafetyReport" ],
+    "sourceDatabase" : "advanced-data-hub-STAGING",
+    "permissions" : "data-hub-operator,read,data-hub-operator,update",
+    "sourceCollection" : "safety-report-source",
+    "outputFormat" : "json",
+    "targetDatabase" : "advanced-data-hub-FINAL"
+  },
+  "customHook" : {
+    "module" : "",
+    "parameters" : { },
+    "user" : "",
+    "runBefore" : false
+  },
+  "modulePath" : "/custom-modules/custom/transform-safety-reports/main.sjs",
+  "retryLimit" : 0,
+  "batchSize" : 100,
+  "threadCount" : 4
+}

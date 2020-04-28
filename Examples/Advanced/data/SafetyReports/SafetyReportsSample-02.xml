@@ -1,0 +1,577 @@
+<?xml version="1.0" encoding="UTF-8"?><safetyreport>
+		<safetyreportversion>1</safetyreportversion>
+		<safetyreportid>JP-MLMSERVICE-TESTCASE-20150427-36</safetyreportid>
+		<primarysourcecountry>JP</primarysourcecountry>
+		<occurcountry>JP</occurcountry>
+		<transmissiondateformat>102</transmissiondateformat>
+		<transmissiondate>20150408</transmissiondate>
+		<reporttype>1</reporttype>
+		<serious>1</serious>
+		<seriousnessdeath>2</seriousnessdeath>
+		<seriousnesslifethreatening>2</seriousnesslifethreatening>
+		<seriousnesshospitalization>1</seriousnesshospitalization>
+		<seriousnessdisabling>2</seriousnessdisabling>
+		<seriousnesscongenitalanomali>2</seriousnesscongenitalanomali>
+		<seriousnessother>1</seriousnessother>
+		<receivedateformat>102</receivedateformat>
+		<receivedate>20150330</receivedate>
+		<receiptdateformat>102</receiptdateformat>
+		<receiptdate>20150330</receiptdate>
+		<additionaldocument>1</additionaldocument>
+		<documentlist>30Mar2015 - Harimoto N et al. EJ license. 7107.</documentlist>
+		<fulfillexpeditecriteria>1</fulfillexpeditecriteria>
+		<authoritynumb/>
+		<companynumb>JP-MLMSERVICE-TESTCASE-20150427-36</companynumb>
+		<duplicate/>
+		<casenullification/>
+		<nullificationreason/>
+		<medicallyconfirm>1</medicallyconfirm>
+		<primarysource>
+			<reportertitle/>
+			<reportergivename/>
+			<reportermiddlename/>
+			<reporterfamilyname>PRIVACY</reporterfamilyname>
+			<reporterorganization/>
+			<reporterdepartment/>
+			<reporterstreet/>
+			<reportercity/>
+			<reporterstate/>
+			<reporterpostcode/>
+			<reportercountry>JP</reportercountry>
+			<qualification>1</qualification>
+			<literaturereference>Harimoto N, Wang H, Ikegami T, Takeishi K, Itoh S, Yamashita Y-I et al. Hepatology: Rare Stevens-Johnson syndrome and vanishing bile duct syndrome induced by acetaminophen, requiring liver transplantation. J Gastroenterology and Hepatology. 2015;30:656</literaturereference>
+			<studyname/>
+			<sponsorstudynumb/>
+			<observestudytype/>
+		</primarysource>
+		<sender>
+			<sendertype>6</sendertype>
+			<senderorganization>MLMSERVICE</senderorganization>
+			<senderdepartment>test</senderdepartment>
+			<sendertitle>dr</sendertitle>
+			<sendergivename>mlmtest</sendergivename>
+			<sendermiddlename/>
+			<senderfamilyname>test</senderfamilyname>
+			<senderstreetaddress>test</senderstreetaddress>
+			<sendercity>test</sendercity>
+			<senderstate/>
+			<senderpostcode>1</senderpostcode>
+			<sendercountrycode>GB</sendercountrycode>
+			<sendertel>12345</sendertel>
+			<sendertelextension>3456</sendertelextension>
+			<sendertelcountrycode>44</sendertelcountrycode>
+			<senderfax>12345</senderfax>
+			<senderfaxextension>3456</senderfaxextension>
+			<senderfaxcountrycode>44</senderfaxcountrycode>
+			<senderemailaddress>1@MLMSERVICE.com</senderemailaddress>
+		</sender>
+		<receiver>
+			<receivertype/>
+			<receiverorganization>EVTEST</receiverorganization>
+			<receiverdepartment/>
+			<receivertitle/>
+			<receivergivename/>
+			<receivermiddlename/>
+			<receiverfamilyname/>
+			<receiverstreetaddress/>
+			<receivercity/>
+			<receiverstate/>
+			<receiverpostcode/>
+			<receivercountrycode/>
+			<receivertel/>
+			<receivertelextension/>
+			<receivertelcountrycode/>
+			<receiverfax/>
+			<receiverfaxextension/>
+			<receiverfaxcountrycode/>
+			<receiveremailaddress/>
+		</receiver>
+		<patient>
+			<patientinitial/>
+			<patientgpmedicalrecordnumb/>
+			<patientspecialistrecordnumb/>
+			<patienthospitalrecordnumb/>
+			<patientinvestigationnumb/>
+			<patientbirthdateformat/>
+			<patientbirthdate/>
+			<patientonsetage>40</patientonsetage>
+			<patientonsetageunit>801</patientonsetageunit>
+			<gestationperiod/>
+			<gestationperiodunit/>
+			<patientagegroup/>
+			<patientweight/>
+			<patientheight/>
+			<patientsex>2</patientsex>
+			<lastmenstrualdateformat/>
+			<patientlastmenstrualdate/>
+			<patientmedicalhistorytext/>
+			<resultstestsprocedures>There was marked intrahepatic biliary dilatation, but normal common bile duct, on comupterized tomogram (CT) scan and MRCP. Her liver and biliary tract was normal on CT scan in the preceding 3 months. MELD score was 18 points and Child-Pugh score was 10. The histological examination of the explanted liver revealed vanishing bile duct syndrome (VBDS), with severe cholestasis and necrosis of hepatocyte. Cytokeratin 19 (the marker of bile duct) stains of resected liver were negative in the portal tract and small bile duct disappeared.</resultstestsprocedures>
+			<reaction>
+				<primarysourcereaction>Stevens-Johnson syndrome</primarysourcereaction>
+				<reactionmeddraversionllt>17.1</reactionmeddraversionllt>
+				<reactionmeddrallt>10042030</reactionmeddrallt>
+				<reactionmeddraversionpt/>
+				<reactionmeddrapt/>
+				<termhighlighted/>
+				<reactionstartdateformat/>
+				<reactionstartdate/>
+				<reactionenddateformat/>
+				<reactionenddate/>
+				<reactionduration/>
+				<reactiondurationunit/>
+				<reactionfirsttime/>
+				<reactionfirsttimeunit/>
+				<reactionlasttime/>
+				<reactionlasttimeunit/>
+				<reactionoutcome>1</reactionoutcome>
+			</reaction>
+			<reaction>
+				<primarysourcereaction>vanishing bile duct syndrome</primarysourcereaction>
+				<reactionmeddraversionllt>17.1</reactionmeddraversionllt>
+				<reactionmeddrallt>10054753</reactionmeddrallt>
+				<reactionmeddraversionpt/>
+				<reactionmeddrapt/>
+				<termhighlighted/>
+				<reactionstartdateformat/>
+				<reactionstartdate/>
+				<reactionenddateformat/>
+				<reactionenddate/>
+				<reactionduration/>
+				<reactiondurationunit/>
+				<reactionfirsttime/>
+				<reactionfirsttimeunit/>
+				<reactionlasttime/>
+				<reactionlasttimeunit/>
+				<reactionoutcome>1</reactionoutcome>
+			</reaction>
+			<reaction>
+				<primarysourcereaction>liver failure</primarysourcereaction>
+				<reactionmeddraversionllt>17.1</reactionmeddraversionllt>
+				<reactionmeddrallt>10024678</reactionmeddrallt>
+				<reactionmeddraversionpt/>
+				<reactionmeddrapt/>
+				<termhighlighted/>
+				<reactionstartdateformat/>
+				<reactionstartdate/>
+				<reactionenddateformat/>
+				<reactionenddate/>
+				<reactionduration/>
+				<reactiondurationunit/>
+				<reactionfirsttime/>
+				<reactionfirsttimeunit/>
+				<reactionlasttime/>
+				<reactionlasttimeunit/>
+				<reactionoutcome>1</reactionoutcome>
+			</reaction>
+			<reaction>
+				<primarysourcereaction>conjunctivitis</primarysourcereaction>
+				<reactionmeddraversionllt>17.1</reactionmeddraversionllt>
+				<reactionmeddrallt>10010741</reactionmeddrallt>
+				<reactionmeddraversionpt/>
+				<reactionmeddrapt/>
+				<termhighlighted/>
+				<reactionstartdateformat/>
+				<reactionstartdate/>
+				<reactionenddateformat/>
+				<reactionenddate/>
+				<reactionduration/>
+				<reactiondurationunit/>
+				<reactionfirsttime/>
+				<reactionfirsttimeunit/>
+				<reactionlasttime/>
+				<reactionlasttimeunit/>
+				<reactionoutcome>1</reactionoutcome>
+			</reaction>
+			<reaction>
+				<primarysourcereaction>maculopapular rash</primarysourcereaction>
+				<reactionmeddraversionllt>17.1</reactionmeddraversionllt>
+				<reactionmeddrallt>10025424</reactionmeddrallt>
+				<reactionmeddraversionpt/>
+				<reactionmeddrapt/>
+				<termhighlighted/>
+				<reactionstartdateformat/>
+				<reactionstartdate/>
+				<reactionenddateformat/>
+				<reactionenddate/>
+				<reactionduration/>
+				<reactiondurationunit/>
+				<reactionfirsttime/>
+				<reactionfirsttimeunit/>
+				<reactionlasttime/>
+				<reactionlasttimeunit/>
+				<reactionoutcome>1</reactionoutcome>
+			</reaction>
+			<reaction>
+				<primarysourcereaction>obstructive jaundice</primarysourcereaction>
+				<reactionmeddraversionllt>17.1</reactionmeddraversionllt>
+				<reactionmeddrallt>10029982</reactionmeddrallt>
+				<reactionmeddraversionpt/>
+				<reactionmeddrapt/>
+				<termhighlighted/>
+				<reactionstartdateformat/>
+				<reactionstartdate/>
+				<reactionenddateformat/>
+				<reactionenddate/>
+				<reactionduration/>
+				<reactiondurationunit/>
+				<reactionfirsttime/>
+				<reactionfirsttimeunit/>
+				<reactionlasttime/>
+				<reactionlasttimeunit/>
+				<reactionoutcome>1</reactionoutcome>
+			</reaction>
+			<reaction>
+				<primarysourcereaction>leucocytosis</primarysourcereaction>
+				<reactionmeddraversionllt>17.1</reactionmeddraversionllt>
+				<reactionmeddrallt>10024378</reactionmeddrallt>
+				<reactionmeddraversionpt/>
+				<reactionmeddrapt/>
+				<termhighlighted/>
+				<reactionstartdateformat/>
+				<reactionstartdate/>
+				<reactionenddateformat/>
+				<reactionenddate/>
+				<reactionduration/>
+				<reactiondurationunit/>
+				<reactionfirsttime/>
+				<reactionfirsttimeunit/>
+				<reactionlasttime/>
+				<reactionlasttimeunit/>
+				<reactionoutcome>6</reactionoutcome>
+			</reaction>
+			<reaction>
+				<primarysourcereaction>intrahepatic biliary dilatation</primarysourcereaction>
+				<reactionmeddraversionllt>17.1</reactionmeddraversionllt>
+				<reactionmeddrallt>10057202</reactionmeddrallt>
+				<reactionmeddraversionpt/>
+				<reactionmeddrapt/>
+				<termhighlighted/>
+				<reactionstartdateformat/>
+				<reactionstartdate/>
+				<reactionenddateformat/>
+				<reactionenddate/>
+				<reactionduration/>
+				<reactiondurationunit/>
+				<reactionfirsttime/>
+				<reactionfirsttimeunit/>
+				<reactionlasttime/>
+				<reactionlasttimeunit/>
+				<reactionoutcome>6</reactionoutcome>
+			</reaction>
+			<reaction>
+				<primarysourcereaction>cholestasis liver</primarysourcereaction>
+				<reactionmeddraversionllt>17.1</reactionmeddraversionllt>
+				<reactionmeddrallt>10024666</reactionmeddrallt>
+				<reactionmeddraversionpt/>
+				<reactionmeddrapt/>
+				<termhighlighted/>
+				<reactionstartdateformat/>
+				<reactionstartdate/>
+				<reactionenddateformat/>
+				<reactionenddate/>
+				<reactionduration/>
+				<reactiondurationunit/>
+				<reactionfirsttime/>
+				<reactionfirsttimeunit/>
+				<reactionlasttime/>
+				<reactionlasttimeunit/>
+				<reactionoutcome>6</reactionoutcome>
+			</reaction>
+			<reaction>
+				<primarysourcereaction>necrosis of hepatocyte</primarysourcereaction>
+				<reactionmeddraversionllt>17.1</reactionmeddraversionllt>
+				<reactionmeddrallt>10019692</reactionmeddrallt>
+				<reactionmeddraversionpt/>
+				<reactionmeddrapt/>
+				<termhighlighted/>
+				<reactionstartdateformat/>
+				<reactionstartdate/>
+				<reactionenddateformat/>
+				<reactionenddate/>
+				<reactionduration/>
+				<reactiondurationunit/>
+				<reactionfirsttime/>
+				<reactionfirsttimeunit/>
+				<reactionlasttime/>
+				<reactionlasttimeunit/>
+				<reactionoutcome>6</reactionoutcome>
+			</reaction>
+			<test>
+				<testdateformat/>
+				<testdate/>
+				<testname>Bilirubin conjugated</testname>
+				<testresult>21</testresult>
+				<testunit>mg/dL</testunit>
+				<lowtestrange/>
+				<hightestrange/>
+				<moreinformation>2</moreinformation>
+			</test>
+			<test>
+				<testdateformat/>
+				<testdate/>
+				<testname>Blood albumin</testname>
+				<testresult>1.8</testresult>
+				<testunit>g/dL</testunit>
+				<lowtestrange/>
+				<hightestrange/>
+				<moreinformation>2</moreinformation>
+			</test>
+			<test>
+				<testdateformat/>
+				<testdate/>
+				<testname>Blood alkaline phosphatase</testname>
+				<testresult>895</testresult>
+				<testunit>u/L</testunit>
+				<lowtestrange/>
+				<hightestrange/>
+				<moreinformation>2</moreinformation>
+			</test>
+			<test>
+				<testdateformat/>
+				<testdate/>
+				<testname>Blood bilirubin</testname>
+				<testresult>27.9</testresult>
+				<testunit>mg/dL</testunit>
+				<lowtestrange/>
+				<hightestrange/>
+				<moreinformation>2</moreinformation>
+			</test>
+			<test>
+				<testdateformat/>
+				<testdate/>
+				<testname>Gamma-glutamyltransferase</testname>
+				<testresult>64</testresult>
+				<testunit>u/L</testunit>
+				<lowtestrange/>
+				<hightestrange/>
+				<moreinformation>2</moreinformation>
+			</test>
+			<test>
+				<testdateformat/>
+				<testdate/>
+				<testname>International normalized ratio</testname>
+				<testresult>1.28</testresult>
+				<testunit>unknown</testunit>
+				<lowtestrange/>
+				<hightestrange/>
+				<moreinformation>2</moreinformation>
+			</test>
+			<test>
+				<testdateformat/>
+				<testdate/>
+				<testname>White blood cell count</testname>
+				<testresult>20580</testresult>
+				<testunit>/mcL</testunit>
+				<lowtestrange/>
+				<hightestrange/>
+				<moreinformation>2</moreinformation>
+			</test>
+			<test>
+				<testdateformat/>
+				<testdate/>
+				<testname>Alanine aminotransferase</testname>
+				<testresult>17</testresult>
+				<testunit>u/L</testunit>
+				<lowtestrange/>
+				<hightestrange/>
+				<moreinformation>2</moreinformation>
+			</test>
+			<test>
+				<testdateformat/>
+				<testdate/>
+				<testname>Aspartate aminotransferase</testname>
+				<testresult>63</testresult>
+				<testunit>u/L</testunit>
+				<lowtestrange/>
+				<hightestrange/>
+				<moreinformation>2</moreinformation>
+			</test>
+			<drug>
+				<drugcharacterization>1</drugcharacterization>
+				<medicinalproduct>Acetaminophen</medicinalproduct>
+				<obtaindrugcountry>JP</obtaindrugcountry>
+				<drugbatchnumb/>
+				<drugauthorizationnumb/>
+				<drugauthorizationcountry>JP</drugauthorizationcountry>
+				<drugauthorizationholder>GSK</drugauthorizationholder>
+				<drugstructuredosagenumb/>
+				<drugstructuredosageunit/>
+				<drugseparatedosagenumb/>
+				<drugintervaldosageunitnumb/>
+				<drugintervaldosagedefinition/>
+				<drugcumulativedosagenumb/>
+				<drugcumulativedosageunit/>
+				<drugdosagetext/>
+				<drugdosageform/>
+				<drugadministrationroute/>
+				<drugparadministration/>
+				<reactiongestationperiod/>
+				<reactiongestationperiodunit/>
+				<drugindicationmeddraversion>17.1</drugindicationmeddraversion>
+				<drugindication>10057097</drugindication>
+				<drugstartdateformat/>
+				<drugstartdate/>
+				<drugstartperiod/>
+				<drugstartperiodunit/>
+				<druglastperiod/>
+				<druglastperiodunit/>
+				<drugenddateformat/>
+				<drugenddate/>
+				<drugtreatmentduration/>
+				<drugtreatmentdurationunit/>
+				<actiondrug>5</actiondrug>
+				<drugrecurreadministration/>
+				<drugadditional/>
+				<activesubstance>
+					<activesubstancename>PARACETAMOL</activesubstancename>
+				</activesubstance>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10010741</drugreactionasses>
+					<drugassessmentsource>PHARMACEUTICAL COMPANY</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Unknown</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10010741</drugreactionasses>
+					<drugassessmentsource>PRIMARY SOURCE REPORTER</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Unknown</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10019692</drugreactionasses>
+					<drugassessmentsource>PHARMACEUTICAL COMPANY</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Unknown</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10019692</drugreactionasses>
+					<drugassessmentsource>PRIMARY SOURCE REPORTER</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Unknown</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10024378</drugreactionasses>
+					<drugassessmentsource>PHARMACEUTICAL COMPANY</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Unknown</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10024378</drugreactionasses>
+					<drugassessmentsource>PRIMARY SOURCE REPORTER</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Unknown</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10024666</drugreactionasses>
+					<drugassessmentsource>PHARMACEUTICAL COMPANY</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Unknown</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10024666</drugreactionasses>
+					<drugassessmentsource>PRIMARY SOURCE REPORTER</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Unknown</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10024678</drugreactionasses>
+					<drugassessmentsource>PHARMACEUTICAL COMPANY</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Yes</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10024678</drugreactionasses>
+					<drugassessmentsource>PRIMARY SOURCE REPORTER</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Yes</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10025424</drugreactionasses>
+					<drugassessmentsource>PHARMACEUTICAL COMPANY</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Unknown</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10025424</drugreactionasses>
+					<drugassessmentsource>PRIMARY SOURCE REPORTER</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Unknown</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10029982</drugreactionasses>
+					<drugassessmentsource>PHARMACEUTICAL COMPANY</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Unknown</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10029982</drugreactionasses>
+					<drugassessmentsource>PRIMARY SOURCE REPORTER</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Unknown</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10042030</drugreactionasses>
+					<drugassessmentsource>PHARMACEUTICAL COMPANY</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Yes</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10042030</drugreactionasses>
+					<drugassessmentsource>PRIMARY SOURCE REPORTER</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Yes</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10054753</drugreactionasses>
+					<drugassessmentsource>PHARMACEUTICAL COMPANY</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Yes</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10054753</drugreactionasses>
+					<drugassessmentsource>PRIMARY SOURCE REPORTER</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Yes</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10057202</drugreactionasses>
+					<drugassessmentsource>PHARMACEUTICAL COMPANY</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Unknown</drugresult>
+				</drugreactionrelatedness>
+				<drugreactionrelatedness>
+					<drugreactionassesmeddraversion>17.1</drugreactionassesmeddraversion>
+					<drugreactionasses>10057202</drugreactionasses>
+					<drugassessmentsource>PRIMARY SOURCE REPORTER</drugassessmentsource>
+					<drugassessmentmethod>Global Introspection</drugassessmentmethod>
+					<drugresult>Unknown</drugresult>
+				</drugreactionrelatedness>
+			</drug>
+			<summary>
+				<narrativeincludeclinical>This case was reported in a literature article and described the occurrence of stevens johnson syndrome in a 40-year-old female patient who received paracetamol (Acetaminophen) unknown for drug use for unknown indication. (Harimoto N, Wang H, Ikegami T, Takeishi K, Itoh S, Yamashita Y-I et al.,. Hepatology: Rare Stevens-Johnson syndrome and vanishing bile duct syndrome induced by acetaminophen, requiring liver transplantation. Journal of Gastroenterology and Hepatology 2015; 30: 656.)On an unknown date, the patient started Acetaminophen at an unknown dose and frequency. On an unknown date, an unknown time after starting Acetaminophen, the patient experienced stevens johnson syndrome (serious criteria hospitalization, GSK medically significant and clinically significant/intervention required), vanishing bile duct syndrome (serious criteria hospitalization, GSK medically significant and clinically significant/intervention required), liver failure (serious criteria GSK medically significant), conjunctivitis, maculopapular rash, obstructive jaundice (serious criteria GSK medically significant), leukocytosis, biliary dilatation (serious criteria GSK medically significant), liver cholestasis (serious criteria GSK medically significant) and hepatic necrosis (serious criteria GSK medically significant). The patient was treated with tacrolimus, mycophenolate mofetil, steroids nos (Steroids) and immunoglobulins nos (Immunoglobulin). The action taken with Acetaminophen was unknown. On an unknown date, the outcome of the stevens johnson syndrome, vanishing bile duct syndrome, liver failure, conjunctivitis, maculopapular rash and obstructive jaundice were recovered/resolved and the outcome of the leukocytosis, biliary dilatation, liver cholestasis and hepatic necrosis were unknown.The reporter considered the stevens johnson syndrome, vanishing bile duct syndrome and liver failure to be related to Acetaminophen. It was unknown if the reporter considered the conjunctivitis, maculopapular rash, obstructive jaundice, leukocytosis, biliary dilatation, liver cholestasis and hepatic necrosis to be related to Acetaminophen.Additional details,The patient with Steven Johnson syndrome (SJS) related to acetaminophen was admitted to a local hospital for steroid pulse and immunoglobulin therapy in November 2013. Although this led to resolution of her conjunctivitis and a maculopapular rash on her neck and arms, she developed progressive obstructive jaundice with signs of liver failure. Laboratory results revealed leucocytosis (WCC = 20,580/?L), alkaline phosphatase = 895 U/L, GGT = 64 U/L, AST = 63 U/L, ALT = 17 U/L, albumin = 1.8 g/dl, total serum bilirubin level = 27.9 mg/dl (direct bilirubin = 21.0 mg/dl), normal IgG4 and INR = 1.28. There was marked intrahepatic biliary dilatation, but normal common bile duct, on CT scan and MRCP. Her liver and biliary tract was normal on CT scan in the preceding 3 months. MELD score was 18 points and Child-Pugh score was 10.The patient was transferred to our university hospital for consideration of living-donor liver transplantation (LDLT), after the case was discussed with the Liver Transplantation Subcommittee. The left lobe was donated from her 53-year-old husband. Given blood type (AB+) of the donor was incompatible, the patient received rituximab treatment to decrease anti-blood-type antibodies. She underwent successful LDLT with duct to duct, left hepatico - common hepaticostomy. She received with tacrolimus with mycophenolate mofetil and steroids for postoperative immunosuppression. The histological examination of the explanted liver revealed vanishing bile duct syndrome (VBDS), with severe cholestasis and necrosis of hepatocyte. Cytokeratin 19 (the marker of bile duct) stains of resected liver were negative in the portal tract and small bile duct disappeared. She discharged home 68 days after LT with no evidence of recurrence of VBDS.The authors stated "Here, we report a rare case of acetaminophen induced SJS, VBDS and liver failure, requiring LDLT".</narrativeincludeclinical>
+				<reportercomment/>
+				<senderdiagnosismeddraversion/>
+				<senderdiagnosis/>
+				<sendercomment/>
+			</summary>
+		</patient>
+	</safetyreport>

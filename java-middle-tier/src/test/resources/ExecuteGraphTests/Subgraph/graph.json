@@ -1,0 +1,443 @@
+{
+  "pipesFileVersion": 2,
+  "models": [
+    {
+      "label": "ab",
+      "collection": "ab",
+      "source": "Sources",
+      "fields": [
+        {
+          "label": "a [id0]",
+          "field": "a",
+          "value": "a",
+          "path": "/a",
+          "originalPath": "/number-node('a')",
+          "type": 16,
+          "children": [],
+          "parent": "/"
+        },
+        {
+          "label": "b [id1]",
+          "field": "b",
+          "value": "b",
+          "path": "/b",
+          "originalPath": "/number-node('b')",
+          "type": 16,
+          "children": [],
+          "parent": "/"
+        }
+      ],
+      "options": [
+        "nodeInput",
+        "fieldsOutputs"
+      ],
+      "metadata": {
+        "description": "",
+        "dateCreated": "2020-04-28T08:14:11.848Z",
+        "blockCreatedFrom": "db_collection",
+        "sourceDHFStep": null,
+        "sourceDatabase": "Documents",
+        "sourceCollection": "ingest-unit-test",
+        "customURIs": ""
+      }
+    }
+  ],
+  "executionGraph": {
+    "last_node_id": 13,
+    "last_link_id": 17,
+    "nodes": [
+      {
+        "id": 1,
+        "type": "DHF/input",
+        "pos": [
+          67,
+          518
+        ],
+        "size": [
+          180,
+          60
+        ],
+        "flags": {},
+        "order": 0,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "input",
+            "type": "",
+            "links": [
+              2
+            ]
+          },
+          {
+            "name": "uri",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "collections",
+            "type": "",
+            "links": null
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 4,
+        "type": "Sources/ab",
+        "pos": [
+          395,
+          440
+        ],
+        "size": [
+          305,
+          108
+        ],
+        "flags": {},
+        "order": 1,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "Node",
+            "type": 0,
+            "link": 2
+          }
+        ],
+        "outputs": [
+          {
+            "name": "a",
+            "links": [
+              13
+            ]
+          },
+          {
+            "name": "b",
+            "links": [
+              14
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          true
+        ]
+      },
+      {
+        "id": 11,
+        "type": "Join/Array",
+        "pos": [
+          797.5,
+          310.5
+        ],
+        "size": {
+          "0": 170,
+          "1": 106
+        },
+        "flags": {},
+        "order": 2,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "item1",
+            "type": 0,
+            "link": 13
+          },
+          {
+            "name": "item2",
+            "type": 0,
+            "link": 14
+          },
+          {
+            "name": "item3",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "item4",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "item5",
+            "type": 0,
+            "link": null
+          }
+        ],
+        "outputs": [
+          {
+            "name": "array",
+            "links": [
+              15
+            ]
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 2,
+        "type": "DHF/output",
+        "pos": [
+          1533,
+          329
+        ],
+        "size": [
+          180,
+          160
+        ],
+        "flags": {},
+        "order": 4,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "output",
+            "type": 0,
+            "link": 17
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 12,
+        "type": "Graph/subgraph",
+        "pos": [
+          1100,
+          303
+        ],
+        "size": {
+          "0": 236.8000030517578,
+          "1": 46
+        },
+        "flags": {},
+        "order": 3,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "item [List]",
+            "type": 0,
+            "link": 15
+          }
+        ],
+        "outputs": [
+          {
+            "name": "result(s) [List]",
+            "type": null,
+            "links": [
+              17
+            ]
+          }
+        ],
+        "properties": {
+          "enabled": true
+        },
+        "subgraph": {
+          "last_node_id": 3,
+          "last_link_id": 4,
+          "nodes": [
+            {
+              "id": 2,
+              "type": "Graph/output",
+              "pos": [
+                1232,
+                398
+              ],
+              "size": [
+                180,
+                60
+              ],
+              "flags": {},
+              "order": 2,
+              "mode": 0,
+              "inputs": [
+                {
+                  "name": "",
+                  "type": 0,
+                  "link": 3
+                }
+              ],
+              "properties": {
+                "name": "result(s) [List]",
+                "isMain": true
+              },
+              "widgets_values": [
+                "result(s)"
+              ]
+            },
+            {
+              "id": 3,
+              "type": "DHF/envelope",
+              "pos": [
+                945.5,
+                261.5
+              ],
+              "size": [
+                180,
+                160
+              ],
+              "flags": {},
+              "order": 1,
+              "mode": 0,
+              "inputs": [
+                {
+                  "name": "headers",
+                  "type": 0,
+                  "link": null
+                },
+                {
+                  "name": "triples",
+                  "type": 0,
+                  "link": null
+                },
+                {
+                  "name": "instance",
+                  "type": 0,
+                  "link": 2
+                },
+                {
+                  "name": "attachments",
+                  "type": 0,
+                  "link": null
+                },
+                {
+                  "name": "uri",
+                  "type": 0,
+                  "link": 4
+                },
+                {
+                  "name": "collections",
+                  "type": 0,
+                  "link": null
+                }
+              ],
+              "outputs": [
+                {
+                  "name": "output",
+                  "type": null,
+                  "links": [
+                    3
+                  ]
+                }
+              ],
+              "properties": {},
+              "widgets_values": [
+                "json"
+              ]
+            },
+            {
+              "id": 1,
+              "type": "Graph/input",
+              "pos": [
+                400,
+                400
+              ],
+              "size": [
+                180,
+                60
+              ],
+              "flags": {},
+              "order": 0,
+              "mode": 0,
+              "outputs": [
+                {
+                  "name": "",
+                  "type": "",
+                  "links": [
+                    2,
+                    4
+                  ]
+                }
+              ],
+              "properties": {
+                "name": "item [List]",
+                "isMain": true
+              },
+              "widgets_values": [
+                "item"
+              ]
+            }
+          ],
+          "links": [
+            [
+              2,
+              1,
+              0,
+              3,
+              2,
+              0
+            ],
+            [
+              3,
+              3,
+              0,
+              2,
+              0,
+              0
+            ],
+            [
+              4,
+              1,
+              0,
+              3,
+              4,
+              0
+            ]
+          ],
+          "groups": [],
+          "config": {},
+          "version": 0.4
+        }
+      }
+    ],
+    "links": [
+      [
+        2,
+        1,
+        0,
+        4,
+        0,
+        0
+      ],
+      [
+        13,
+        4,
+        0,
+        11,
+        0,
+        0
+      ],
+      [
+        14,
+        4,
+        1,
+        11,
+        1,
+        0
+      ],
+      [
+        15,
+        11,
+        0,
+        12,
+        0,
+        0
+      ],
+      [
+        17,
+        12,
+        0,
+        2,
+        0,
+        0
+      ]
+    ],
+    "groups": [],
+    "config": {},
+    "version": 0.4
+  },
+  "name": "subgraphTest",
+  "metadata": {
+    "version": "00.01",
+    "author": "",
+    "title": "subgraphTest",
+    "description": "",
+    "dateExported": "28/04/2020, 10:23:55"
+  }
+}

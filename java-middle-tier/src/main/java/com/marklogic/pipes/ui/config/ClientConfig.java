@@ -87,10 +87,20 @@ public class ClientConfig
   @Value("${customModulesRoot:#{null}}")
   private String customModulesRoot;
 
+
+  @Value("${mlTestDatabase:#{null}}")
+  private String mlTestDatabase;
+
   // getters  / setters
-  /**
-   * @return the mlStagingPort
-   */
+
+  public String getMlTestDatabase() {
+    return mlTestDatabase;
+  }
+
+  public void setMlTestDatabase(String mlTestDatabase) {
+    this.mlTestDatabase = mlTestDatabase;
+  }
+
   public int getMlStagingPort() { return mlStagingPort; }
 
   public String getCustomModulesRoot() {

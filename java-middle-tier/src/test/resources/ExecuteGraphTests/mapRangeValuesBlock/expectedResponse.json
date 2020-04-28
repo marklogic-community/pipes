@@ -1,0 +1,38 @@
+[
+  {
+    "value": {
+      "envelope": {
+        "headers": {},
+        "triples": [],
+        "instance": {
+          "value": "LOW"
+        },
+        "attachments": {}
+      }
+    },
+    "uri": "/test/LOW.json",
+    "context": {
+      "collections": [
+        "ingest-unit-test"
+      ]
+    }
+  },
+  {
+    "value": {
+      "envelope": {
+        "headers": {},
+        "triples": [],
+        "instance": {
+          "value": "HIGH"
+        },
+        "attachments": {}
+      }
+    },
+    "uri": "/test/HIGH.json",
+    "context": {
+      "collections": [
+        "ingest-unit-test"
+      ]
+    }
+  }
+]

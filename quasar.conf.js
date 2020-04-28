@@ -152,6 +152,12 @@ module.exports = function (ctx) {
           // pathRewrite: {
           //   '^/api': ''
           // }
+        },
+        '/version': {
+          target: 'http://localhost:8081/',
+          // pathRewrite: {
+          //   '^/api': ''
+          // }
         }
       }
     },

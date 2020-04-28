@@ -1,0 +1,2651 @@
+{
+  "pipesFileVersion": 2,
+  "models": [
+    {
+      "label": "SafetyReport",
+      "collection": "SafetyReport",
+      "source": "Entities",
+      "fields": [
+        {
+          "label": "countryOfOccurence",
+          "field": "countryOfOccurence",
+          "path": "//countryOfOccurence"
+        },
+        {
+          "label": "id",
+          "field": "id",
+          "path": "//id"
+        },
+        {
+          "label": "patientGender",
+          "field": "patientGender",
+          "path": "//patientGender"
+        },
+        {
+          "label": "patientWeight",
+          "field": "patientWeight",
+          "path": "//patientWeight"
+        },
+        {
+          "label": "primarySourceCountry",
+          "field": "primarySourceCountry",
+          "path": "//primarySourceCountry"
+        },
+        {
+          "label": "transmissionDate",
+          "field": "transmissionDate",
+          "path": "//transmissionDate"
+        }
+      ],
+      "options": [
+        "fieldsInputs",
+        "nodeOutput"
+      ]
+    },
+    {
+      "label": "drug-list",
+      "collection": "drug-list",
+      "source": "Sources",
+      "fields": [
+        {
+          "label": "drug [id139]",
+          "field": "drug",
+          "value": "drug",
+          "path": "/envelope/instance/safetyreport/patient/drug",
+          "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]",
+          "type": 18,
+          "children": [
+            {
+              "label": "actiondrug [id172]",
+              "field": "actiondrug",
+              "value": "actiondrug",
+              "path": "/envelope/instance/safetyreport/patient/drug/actiondrug",
+              "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/text('actiondrug')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/drug"
+            },
+            {
+              "label": "activesubstance [id175]",
+              "field": "activesubstance",
+              "value": "activesubstance",
+              "path": "/envelope/instance/safetyreport/patient/drug/activesubstance",
+              "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/activesubstance",
+              "type": 18,
+              "children": [
+                {
+                  "label": "activesubstancename [id176]",
+                  "field": "activesubstancename",
+                  "value": "activesubstancename",
+                  "path": "/envelope/instance/safetyreport/patient/drug/activesubstance/activesubstancename",
+                  "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/activesubstance/text('activesubstancename')",
+                  "type": 3,
+                  "children": [],
+                  "parent": "/envelope/instance/safetyreport/patient/drug/activesubstance"
+                }
+              ],
+              "parent": "/envelope/instance/safetyreport/patient/drug"
+            },
+            {
+              "label": "drugadditional [id174]",
+              "field": "drugadditional",
+              "value": "drugadditional",
+              "path": "/envelope/instance/safetyreport/patient/drug/drugadditional",
+              "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/text('drugadditional')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/drug"
+            },
+            {
+              "label": "drugadministrationroute [id156]",
+              "field": "drugadministrationroute",
+              "value": "drugadministrationroute",
+              "path": "/envelope/instance/safetyreport/patient/drug/drugadministrationroute",
+              "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/text('drugadministrationroute')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/drug"
+            },
+            {
+              "label": "drugauthorizationcountry [id145]",
+              "field": "drugauthorizationcountry",
+              "value": "drugauthorizationcountry",
+              "path": "/envelope/instance/safetyreport/patient/drug/drugauthorizationcountry",
+              "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/text('drugauthorizationcountry')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/drug"
+            },
+            {
+              "label": "drugauthorizationholder [id146]",
+              "field": "drugauthorizationholder",
+              "value": "drugauthorizationholder",
+              "path": "/envelope/instance/safetyreport/patient/drug/drugauthorizationholder",
+              "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/text('drugauthorizationholder')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/drug"
+            },
+            {
+              "label": "drugauthorizationnumb [id144]",
+              "field": "drugauthorizationnumb",
+              "value": "drugauthorizationnumb",
+              "path": "/envelope/instance/safetyreport/patient/drug/drugauthorizationnumb",
+              "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/text('drugauthorizationnumb')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/drug"
+            },
+            {
+              "label": "drugbatchnumb [id143]",
+              "field": "drugbatchnumb",
+              "value": "drugbatchnumb",
+              "path": "/envelope/instance/safetyreport/patient/drug/drugbatchnumb",
+              "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/text('drugbatchnumb')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/drug"
+            },
+            {
+              "label": "drugcharacterization [id140]",
+              "field": "drugcharacterization",
+              "value": "drugcharacterization",
+              "path": "/envelope/instance/safetyreport/patient/drug/drugcharacterization",
+              "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/text('drugcharacterization')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/drug"
+            },
+            {
+              "label": "drugcumulativedosagenumb [id152]",
+              "field": "drugcumulativedosagenumb",
+              "value": "drugcumulativedosagenumb",
+              "path": "/envelope/instance/safetyreport/patient/drug/drugcumulativedosagenumb",
+              "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/text('drugcumulativedosagenumb')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/drug"
+            },
+            {
+              "label": "drugcumulativedosageunit [id153]",
+              "field": "drugcumulativedosageunit",
+              "value": "drugcumulativedosageunit",
+              "path": "/envelope/instance/safetyreport/patient/drug/drugcumulativedosageunit",
+              "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/text('drugcumulativedosageunit')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/drug"
+            },
+            {
+              "label": "drugdosageform [id155]",
+              "field": "drugdosageform",
+              "value": "drugdosageform",
+              "path": "/envelope/instance/safetyreport/patient/drug/drugdosageform",
+              "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/text('drugdosageform')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/drug"
+            },
+            {
+              "label": "drugdosagetext [id154]",
+              "field": "drugdosagetext",
+              "value": "drugdosagetext",
+              "path": "/envelope/instance/safetyreport/patient/drug/drugdosagetext",
+              "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/text('drugdosagetext')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/drug"
+            },
+            {
+              "label": "drugenddate [id169]",
+              "field": "drugenddate",
+              "value": "drugenddate",
+              "path": "/envelope/instance/safetyreport/patient/drug/drugenddate",
+              "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/text('drugenddate')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/drug"
+            },
+            {
+              "label": "drugenddateformat [id168]",
+              "field": "drugenddateformat",
+              "value": "drugenddateformat",
+              "path": "/envelope/instance/safetyreport/patient/drug/drugenddateformat",
+              "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/text('drugenddateformat')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/drug"
+            },
+            {
+              "label": "drugindication [id161]",
+              "field": "drugindication",
+              "value": "drugindication",
+              "path": "/envelope/instance/safetyreport/patient/drug/drugindication",
+              "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/text('drugindication')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/drug"
+            },
+            {
+              "label": "drugindicationmeddraversion [id160]",
+              "field": "drugindicationmeddraversion",
+              "value": "drugindicationmeddraversion",
+              "path": "/envelope/instance/safetyreport/patient/drug/drugindicationmeddraversion",
+              "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/text('drugindicationmeddraversion')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/drug"
+            },
+            {
+              "label": "drugintervaldosagedefinition [id151]",
+              "field": "drugintervaldosagedefinition",
+              "value": "drugintervaldosagedefinition",
+              "path": "/envelope/instance/safetyreport/patient/drug/drugintervaldosagedefinition",
+              "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/text('drugintervaldosagedefinition')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/drug"
+            },
+            {
+              "label": "drugintervaldosageunitnumb [id150]",
+              "field": "drugintervaldosageunitnumb",
+              "value": "drugintervaldosageunitnumb",
+              "path": "/envelope/instance/safetyreport/patient/drug/drugintervaldosageunitnumb",
+              "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/text('drugintervaldosageunitnumb')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/drug"
+            },
+            {
+              "label": "druglastperiod [id166]",
+              "field": "druglastperiod",
+              "value": "druglastperiod",
+              "path": "/envelope/instance/safetyreport/patient/drug/druglastperiod",
+              "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/text('druglastperiod')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/drug"
+            },
+            {
+              "label": "druglastperiodunit [id167]",
+              "field": "druglastperiodunit",
+              "value": "druglastperiodunit",
+              "path": "/envelope/instance/safetyreport/patient/drug/druglastperiodunit",
+              "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/text('druglastperiodunit')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/drug"
+            },
+            {
+              "label": "drugparadministration [id157]",
+              "field": "drugparadministration",
+              "value": "drugparadministration",
+              "path": "/envelope/instance/safetyreport/patient/drug/drugparadministration",
+              "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/text('drugparadministration')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/drug"
+            },
+            {
+              "label": "drugreactionrelatedness [id177]",
+              "field": "drugreactionrelatedness",
+              "value": "drugreactionrelatedness",
+              "path": "/envelope/instance/safetyreport/patient/drug/drugreactionrelatedness",
+              "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/array-node('drugreactionrelatedness')/object-node()[1]",
+              "type": 18,
+              "children": [
+                {
+                  "label": "drugassessmentmethod [id181]",
+                  "field": "drugassessmentmethod",
+                  "value": "drugassessmentmethod",
+                  "path": "/envelope/instance/safetyreport/patient/drug/drugreactionrelatedness/drugassessmentmethod",
+                  "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/array-node('drugreactionrelatedness')/object-node()[1]/text('drugassessmentmethod')",
+                  "type": 3,
+                  "children": [],
+                  "parent": "/envelope/instance/safetyreport/patient/drug/drugreactionrelatedness"
+                },
+                {
+                  "label": "drugassessmentsource [id180]",
+                  "field": "drugassessmentsource",
+                  "value": "drugassessmentsource",
+                  "path": "/envelope/instance/safetyreport/patient/drug/drugreactionrelatedness/drugassessmentsource",
+                  "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/array-node('drugreactionrelatedness')/object-node()[1]/text('drugassessmentsource')",
+                  "type": 3,
+                  "children": [],
+                  "parent": "/envelope/instance/safetyreport/patient/drug/drugreactionrelatedness"
+                },
+                {
+                  "label": "drugreactionasses [id179]",
+                  "field": "drugreactionasses",
+                  "value": "drugreactionasses",
+                  "path": "/envelope/instance/safetyreport/patient/drug/drugreactionrelatedness/drugreactionasses",
+                  "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/array-node('drugreactionrelatedness')/object-node()[1]/text('drugreactionasses')",
+                  "type": 3,
+                  "children": [],
+                  "parent": "/envelope/instance/safetyreport/patient/drug/drugreactionrelatedness"
+                },
+                {
+                  "label": "drugreactionassesmeddraversion [id178]",
+                  "field": "drugreactionassesmeddraversion",
+                  "value": "drugreactionassesmeddraversion",
+                  "path": "/envelope/instance/safetyreport/patient/drug/drugreactionrelatedness/drugreactionassesmeddraversion",
+                  "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/array-node('drugreactionrelatedness')/object-node()[1]/text('drugreactionassesmeddraversion')",
+                  "type": 3,
+                  "children": [],
+                  "parent": "/envelope/instance/safetyreport/patient/drug/drugreactionrelatedness"
+                },
+                {
+                  "label": "drugresult [id182]",
+                  "field": "drugresult",
+                  "value": "drugresult",
+                  "path": "/envelope/instance/safetyreport/patient/drug/drugreactionrelatedness/drugresult",
+                  "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/array-node('drugreactionrelatedness')/object-node()[1]/text('drugresult')",
+                  "type": 3,
+                  "children": [],
+                  "parent": "/envelope/instance/safetyreport/patient/drug/drugreactionrelatedness"
+                }
+              ],
+              "parent": "/envelope/instance/safetyreport/patient/drug"
+            },
+            {
+              "label": "drugrecurreadministration [id173]",
+              "field": "drugrecurreadministration",
+              "value": "drugrecurreadministration",
+              "path": "/envelope/instance/safetyreport/patient/drug/drugrecurreadministration",
+              "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/text('drugrecurreadministration')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/drug"
+            },
+            {
+              "label": "drugseparatedosagenumb [id149]",
+              "field": "drugseparatedosagenumb",
+              "value": "drugseparatedosagenumb",
+              "path": "/envelope/instance/safetyreport/patient/drug/drugseparatedosagenumb",
+              "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/text('drugseparatedosagenumb')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/drug"
+            },
+            {
+              "label": "drugstartdate [id163]",
+              "field": "drugstartdate",
+              "value": "drugstartdate",
+              "path": "/envelope/instance/safetyreport/patient/drug/drugstartdate",
+              "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/text('drugstartdate')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/drug"
+            },
+            {
+              "label": "drugstartdateformat [id162]",
+              "field": "drugstartdateformat",
+              "value": "drugstartdateformat",
+              "path": "/envelope/instance/safetyreport/patient/drug/drugstartdateformat",
+              "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/text('drugstartdateformat')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/drug"
+            },
+            {
+              "label": "drugstartperiod [id164]",
+              "field": "drugstartperiod",
+              "value": "drugstartperiod",
+              "path": "/envelope/instance/safetyreport/patient/drug/drugstartperiod",
+              "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/text('drugstartperiod')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/drug"
+            },
+            {
+              "label": "drugstartperiodunit [id165]",
+              "field": "drugstartperiodunit",
+              "value": "drugstartperiodunit",
+              "path": "/envelope/instance/safetyreport/patient/drug/drugstartperiodunit",
+              "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/text('drugstartperiodunit')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/drug"
+            },
+            {
+              "label": "drugstructuredosagenumb [id147]",
+              "field": "drugstructuredosagenumb",
+              "value": "drugstructuredosagenumb",
+              "path": "/envelope/instance/safetyreport/patient/drug/drugstructuredosagenumb",
+              "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/text('drugstructuredosagenumb')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/drug"
+            },
+            {
+              "label": "drugstructuredosageunit [id148]",
+              "field": "drugstructuredosageunit",
+              "value": "drugstructuredosageunit",
+              "path": "/envelope/instance/safetyreport/patient/drug/drugstructuredosageunit",
+              "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/text('drugstructuredosageunit')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/drug"
+            },
+            {
+              "label": "drugtreatmentduration [id170]",
+              "field": "drugtreatmentduration",
+              "value": "drugtreatmentduration",
+              "path": "/envelope/instance/safetyreport/patient/drug/drugtreatmentduration",
+              "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/text('drugtreatmentduration')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/drug"
+            },
+            {
+              "label": "drugtreatmentdurationunit [id171]",
+              "field": "drugtreatmentdurationunit",
+              "value": "drugtreatmentdurationunit",
+              "path": "/envelope/instance/safetyreport/patient/drug/drugtreatmentdurationunit",
+              "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/text('drugtreatmentdurationunit')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/drug"
+            },
+            {
+              "label": "medicinalproduct [id141]",
+              "field": "medicinalproduct",
+              "value": "medicinalproduct",
+              "path": "/envelope/instance/safetyreport/patient/drug/medicinalproduct",
+              "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/text('medicinalproduct')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/drug"
+            },
+            {
+              "label": "obtaindrugcountry [id142]",
+              "field": "obtaindrugcountry",
+              "value": "obtaindrugcountry",
+              "path": "/envelope/instance/safetyreport/patient/drug/obtaindrugcountry",
+              "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/text('obtaindrugcountry')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/drug"
+            },
+            {
+              "label": "reactiongestationperiod [id158]",
+              "field": "reactiongestationperiod",
+              "value": "reactiongestationperiod",
+              "path": "/envelope/instance/safetyreport/patient/drug/reactiongestationperiod",
+              "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/text('reactiongestationperiod')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/drug"
+            },
+            {
+              "label": "reactiongestationperiodunit [id159]",
+              "field": "reactiongestationperiodunit",
+              "value": "reactiongestationperiodunit",
+              "path": "/envelope/instance/safetyreport/patient/drug/reactiongestationperiodunit",
+              "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/text('reactiongestationperiodunit')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/drug"
+            }
+          ],
+          "parent": "/envelope/instance/safetyreport/patient"
+        }
+      ],
+      "options": [
+        "nodeInput",
+        "fieldsOutputs"
+      ],
+      "metadata": {
+        "description": "",
+        "dateCreated": "2020-04-27T14:15:34.056Z",
+        "blockCreatedFrom": "custom_step",
+        "sourceDHFStep": {
+          "label": "transform-safety-reports",
+          "value": "transform-safety-reports"
+        },
+        "sourceDatabase": "advanced-data-hub-STAGING",
+        "sourceCollection": "safety-report-source",
+        "customURIs": ""
+      }
+    },
+    {
+      "label": "safety-report-source",
+      "collection": "safety-report-source",
+      "source": "Sources",
+      "fields": [
+        {
+          "label": "occurcountry [id11]",
+          "field": "occurcountry",
+          "value": "occurcountry",
+          "path": "/envelope/instance/safetyreport/occurcountry",
+          "originalPath": "/envelope/instance/safetyreport/text('occurcountry')",
+          "type": 3,
+          "children": [],
+          "parent": "/envelope/instance/safetyreport"
+        },
+        {
+          "label": "patientsex [id107]",
+          "field": "patientsex",
+          "value": "patientsex",
+          "path": "/envelope/instance/safetyreport/patient/patientsex",
+          "originalPath": "/envelope/instance/safetyreport/patient/text('patientsex')",
+          "type": 3,
+          "children": [],
+          "parent": "/envelope/instance/safetyreport/patient"
+        },
+        {
+          "label": "patientweight [id105]",
+          "field": "patientweight",
+          "value": "patientweight",
+          "path": "/envelope/instance/safetyreport/patient/patientweight",
+          "originalPath": "/envelope/instance/safetyreport/patient/text('patientweight')",
+          "type": 3,
+          "children": [],
+          "parent": "/envelope/instance/safetyreport/patient"
+        },
+        {
+          "label": "primarysourcecountry [id10]",
+          "field": "primarysourcecountry",
+          "value": "primarysourcecountry",
+          "path": "/envelope/instance/safetyreport/primarysourcecountry",
+          "originalPath": "/envelope/instance/safetyreport/text('primarysourcecountry')",
+          "type": 3,
+          "children": [],
+          "parent": "/envelope/instance/safetyreport"
+        },
+        {
+          "label": "transmissiondate [id13]",
+          "field": "transmissiondate",
+          "value": "transmissiondate",
+          "path": "/envelope/instance/safetyreport/transmissiondate",
+          "originalPath": "/envelope/instance/safetyreport/text('transmissiondate')",
+          "type": 3,
+          "children": [],
+          "parent": "/envelope/instance/safetyreport"
+        },
+        {
+          "label": "safetyreportid [id9]",
+          "field": "safetyreportid",
+          "value": "safetyreportid",
+          "path": "/envelope/instance/safetyreport/safetyreportid",
+          "originalPath": "/envelope/instance/safetyreport/text('safetyreportid')",
+          "type": 3,
+          "children": [],
+          "parent": "/envelope/instance/safetyreport"
+        }
+      ],
+      "options": [
+        "nodeInput",
+        "fieldsOutputs"
+      ],
+      "metadata": {
+        "description": "",
+        "dateCreated": "2020-04-27T14:18:21.547Z",
+        "blockCreatedFrom": "custom_step",
+        "sourceDHFStep": {
+          "label": "transform-safety-reports",
+          "value": "transform-safety-reports"
+        },
+        "sourceDatabase": "advanced-data-hub-STAGING",
+        "sourceCollection": "safety-report-source",
+        "customURIs": ""
+      }
+    },
+    {
+      "label": "Drug",
+      "collection": "Drug",
+      "source": "Entities",
+      "fields": [
+        {
+          "label": "activeSubstance",
+          "field": "activeSubstance",
+          "path": "//activeSubstance"
+        },
+        {
+          "label": "drugIndication",
+          "field": "drugIndication",
+          "path": "//drugIndication"
+        },
+        {
+          "label": "id",
+          "field": "id",
+          "path": "//id"
+        },
+        {
+          "label": "medicinalProduct",
+          "field": "medicinalProduct",
+          "path": "//medicinalProduct"
+        },
+        {
+          "label": "safetyReportId",
+          "field": "safetyReportId",
+          "path": "//safetyReportId"
+        }
+      ],
+      "options": [
+        "fieldsInputs",
+        "nodeOutput"
+      ]
+    },
+    {
+      "label": "drug-source",
+      "collection": "drug-source",
+      "source": "Sources",
+      "fields": [
+        {
+          "label": "activesubstancename [id185]",
+          "field": "activesubstancename",
+          "value": "activesubstancename",
+          "path": "/envelope/instance/safetyreport/patient/drug/activesubstance/activesubstancename",
+          "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/activesubstance/text('activesubstancename')",
+          "type": 3,
+          "children": [],
+          "parent": "/envelope/instance/safetyreport/patient/drug/activesubstance"
+        },
+        {
+          "label": "drugindication [id170]",
+          "field": "drugindication",
+          "value": "drugindication",
+          "path": "/envelope/instance/safetyreport/patient/drug/drugindication",
+          "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/text('drugindication')",
+          "type": 3,
+          "children": [],
+          "parent": "/envelope/instance/safetyreport/patient/drug"
+        },
+        {
+          "label": "medicinalproduct [id150]",
+          "field": "medicinalproduct",
+          "value": "medicinalproduct",
+          "path": "/envelope/instance/safetyreport/patient/drug/medicinalproduct",
+          "originalPath": "/envelope/instance/safetyreport/patient/array-node('drug')/object-node()[1]/text('medicinalproduct')",
+          "type": 3,
+          "children": [],
+          "parent": "/envelope/instance/safetyreport/patient/drug"
+        }
+      ],
+      "options": [
+        "nodeInput",
+        "fieldsOutputs"
+      ],
+      "metadata": {
+        "description": "",
+        "dateCreated": "2020-04-27T14:23:16.362Z",
+        "blockCreatedFrom": "custom_step",
+        "sourceDHFStep": {
+          "label": "transform-safety-reports",
+          "value": "transform-safety-reports"
+        },
+        "sourceDatabase": "advanced-data-hub-STAGING",
+        "sourceCollection": "safety-report-source",
+        "customURIs": ""
+      }
+    },
+    {
+      "label": "reaction-list",
+      "collection": "reaction-list",
+      "source": "Sources",
+      "fields": [
+        {
+          "label": "reaction [id112]",
+          "field": "reaction",
+          "value": "reaction",
+          "path": "/envelope/instance/safetyreport/patient/reaction",
+          "originalPath": "/envelope/instance/safetyreport/patient/reaction",
+          "type": 18,
+          "children": [
+            {
+              "label": "primarysourcereaction [id113]",
+              "field": "primarysourcereaction",
+              "value": "primarysourcereaction",
+              "path": "/envelope/instance/safetyreport/patient/reaction/primarysourcereaction",
+              "originalPath": "/envelope/instance/safetyreport/patient/reaction/text('primarysourcereaction')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/reaction"
+            },
+            {
+              "label": "reactionduration [id123]",
+              "field": "reactionduration",
+              "value": "reactionduration",
+              "path": "/envelope/instance/safetyreport/patient/reaction/reactionduration",
+              "originalPath": "/envelope/instance/safetyreport/patient/reaction/text('reactionduration')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/reaction"
+            },
+            {
+              "label": "reactiondurationunit [id124]",
+              "field": "reactiondurationunit",
+              "value": "reactiondurationunit",
+              "path": "/envelope/instance/safetyreport/patient/reaction/reactiondurationunit",
+              "originalPath": "/envelope/instance/safetyreport/patient/reaction/text('reactiondurationunit')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/reaction"
+            },
+            {
+              "label": "reactionenddate [id122]",
+              "field": "reactionenddate",
+              "value": "reactionenddate",
+              "path": "/envelope/instance/safetyreport/patient/reaction/reactionenddate",
+              "originalPath": "/envelope/instance/safetyreport/patient/reaction/text('reactionenddate')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/reaction"
+            },
+            {
+              "label": "reactionenddateformat [id121]",
+              "field": "reactionenddateformat",
+              "value": "reactionenddateformat",
+              "path": "/envelope/instance/safetyreport/patient/reaction/reactionenddateformat",
+              "originalPath": "/envelope/instance/safetyreport/patient/reaction/text('reactionenddateformat')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/reaction"
+            },
+            {
+              "label": "reactionfirsttime [id125]",
+              "field": "reactionfirsttime",
+              "value": "reactionfirsttime",
+              "path": "/envelope/instance/safetyreport/patient/reaction/reactionfirsttime",
+              "originalPath": "/envelope/instance/safetyreport/patient/reaction/text('reactionfirsttime')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/reaction"
+            },
+            {
+              "label": "reactionfirsttimeunit [id126]",
+              "field": "reactionfirsttimeunit",
+              "value": "reactionfirsttimeunit",
+              "path": "/envelope/instance/safetyreport/patient/reaction/reactionfirsttimeunit",
+              "originalPath": "/envelope/instance/safetyreport/patient/reaction/text('reactionfirsttimeunit')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/reaction"
+            },
+            {
+              "label": "reactionlasttime [id127]",
+              "field": "reactionlasttime",
+              "value": "reactionlasttime",
+              "path": "/envelope/instance/safetyreport/patient/reaction/reactionlasttime",
+              "originalPath": "/envelope/instance/safetyreport/patient/reaction/text('reactionlasttime')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/reaction"
+            },
+            {
+              "label": "reactionlasttimeunit [id128]",
+              "field": "reactionlasttimeunit",
+              "value": "reactionlasttimeunit",
+              "path": "/envelope/instance/safetyreport/patient/reaction/reactionlasttimeunit",
+              "originalPath": "/envelope/instance/safetyreport/patient/reaction/text('reactionlasttimeunit')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/reaction"
+            },
+            {
+              "label": "reactionmeddrallt [id115]",
+              "field": "reactionmeddrallt",
+              "value": "reactionmeddrallt",
+              "path": "/envelope/instance/safetyreport/patient/reaction/reactionmeddrallt",
+              "originalPath": "/envelope/instance/safetyreport/patient/reaction/text('reactionmeddrallt')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/reaction"
+            },
+            {
+              "label": "reactionmeddrapt [id117]",
+              "field": "reactionmeddrapt",
+              "value": "reactionmeddrapt",
+              "path": "/envelope/instance/safetyreport/patient/reaction/reactionmeddrapt",
+              "originalPath": "/envelope/instance/safetyreport/patient/reaction/text('reactionmeddrapt')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/reaction"
+            },
+            {
+              "label": "reactionmeddraversionllt [id114]",
+              "field": "reactionmeddraversionllt",
+              "value": "reactionmeddraversionllt",
+              "path": "/envelope/instance/safetyreport/patient/reaction/reactionmeddraversionllt",
+              "originalPath": "/envelope/instance/safetyreport/patient/reaction/text('reactionmeddraversionllt')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/reaction"
+            },
+            {
+              "label": "reactionmeddraversionpt [id116]",
+              "field": "reactionmeddraversionpt",
+              "value": "reactionmeddraversionpt",
+              "path": "/envelope/instance/safetyreport/patient/reaction/reactionmeddraversionpt",
+              "originalPath": "/envelope/instance/safetyreport/patient/reaction/text('reactionmeddraversionpt')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/reaction"
+            },
+            {
+              "label": "reactionoutcome [id129]",
+              "field": "reactionoutcome",
+              "value": "reactionoutcome",
+              "path": "/envelope/instance/safetyreport/patient/reaction/reactionoutcome",
+              "originalPath": "/envelope/instance/safetyreport/patient/reaction/text('reactionoutcome')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/reaction"
+            },
+            {
+              "label": "reactionstartdate [id120]",
+              "field": "reactionstartdate",
+              "value": "reactionstartdate",
+              "path": "/envelope/instance/safetyreport/patient/reaction/reactionstartdate",
+              "originalPath": "/envelope/instance/safetyreport/patient/reaction/text('reactionstartdate')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/reaction"
+            },
+            {
+              "label": "reactionstartdateformat [id119]",
+              "field": "reactionstartdateformat",
+              "value": "reactionstartdateformat",
+              "path": "/envelope/instance/safetyreport/patient/reaction/reactionstartdateformat",
+              "originalPath": "/envelope/instance/safetyreport/patient/reaction/text('reactionstartdateformat')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/reaction"
+            },
+            {
+              "label": "termhighlighted [id118]",
+              "field": "termhighlighted",
+              "value": "termhighlighted",
+              "path": "/envelope/instance/safetyreport/patient/reaction/termhighlighted",
+              "originalPath": "/envelope/instance/safetyreport/patient/reaction/text('termhighlighted')",
+              "type": 3,
+              "children": [],
+              "parent": "/envelope/instance/safetyreport/patient/reaction"
+            }
+          ],
+          "parent": "/envelope/instance/safetyreport/patient"
+        }
+      ],
+      "options": [
+        "nodeInput",
+        "fieldsOutputs"
+      ],
+      "metadata": {
+        "description": "",
+        "dateCreated": "2020-04-27T14:26:18.083Z",
+        "blockCreatedFrom": "custom_step",
+        "sourceDHFStep": {
+          "label": "transform-safety-reports",
+          "value": "transform-safety-reports"
+        },
+        "sourceDatabase": "advanced-data-hub-STAGING",
+        "sourceCollection": "safety-report-source",
+        "customURIs": ""
+      }
+    },
+    {
+      "label": "Reaction",
+      "collection": "Reaction",
+      "source": "Entities",
+      "fields": [
+        {
+          "label": "id",
+          "field": "id",
+          "path": "//id"
+        },
+        {
+          "label": "medrapt",
+          "field": "medrapt",
+          "path": "//medrapt"
+        },
+        {
+          "label": "outcome",
+          "field": "outcome",
+          "path": "//outcome"
+        },
+        {
+          "label": "outcomeText",
+          "field": "outcomeText",
+          "path": "//outcomeText"
+        },
+        {
+          "label": "raveVersion",
+          "field": "raveVersion",
+          "path": "//raveVersion"
+        },
+        {
+          "label": "safetyReportId",
+          "field": "safetyReportId",
+          "path": "//safetyReportId"
+        }
+      ],
+      "options": [
+        "fieldsInputs",
+        "nodeOutput"
+      ]
+    },
+    {
+      "label": "reaction-source",
+      "collection": "reaction-source",
+      "source": "Sources",
+      "fields": [
+        {
+          "label": "reactionoutcome [id138]",
+          "field": "reactionoutcome",
+          "value": "reactionoutcome",
+          "path": "/envelope/instance/safetyreport/patient/reaction/reactionoutcome",
+          "originalPath": "/envelope/instance/safetyreport/patient/reaction/text('reactionoutcome')",
+          "type": 3,
+          "children": [],
+          "parent": "/envelope/instance/safetyreport/patient/reaction"
+        },
+        {
+          "label": "reactionmeddrapt [id126]",
+          "field": "reactionmeddrapt",
+          "value": "reactionmeddrapt",
+          "path": "/envelope/instance/safetyreport/patient/reaction/reactionmeddrapt",
+          "originalPath": "/envelope/instance/safetyreport/patient/reaction/text('reactionmeddrapt')",
+          "type": 3,
+          "children": [],
+          "parent": "/envelope/instance/safetyreport/patient/reaction"
+        },
+        {
+          "label": "reactionmeddraversionllt [id123]",
+          "field": "reactionmeddraversionllt",
+          "value": "reactionmeddraversionllt",
+          "path": "/envelope/instance/safetyreport/patient/reaction/reactionmeddraversionllt",
+          "originalPath": "/envelope/instance/safetyreport/patient/reaction/text('reactionmeddraversionllt')",
+          "type": 3,
+          "children": [],
+          "parent": "/envelope/instance/safetyreport/patient/reaction"
+        },
+        {
+          "label": "reactionmeddraversionpt [id125]",
+          "field": "reactionmeddraversionpt",
+          "value": "reactionmeddraversionpt",
+          "path": "/envelope/instance/safetyreport/patient/reaction/reactionmeddraversionpt",
+          "originalPath": "/envelope/instance/safetyreport/patient/reaction/text('reactionmeddraversionpt')",
+          "type": 3,
+          "children": [],
+          "parent": "/envelope/instance/safetyreport/patient/reaction"
+        }
+      ],
+      "options": [
+        "nodeInput",
+        "fieldsOutputs"
+      ],
+      "metadata": {
+        "description": "",
+        "dateCreated": "2020-04-27T14:28:44.862Z",
+        "blockCreatedFrom": "custom_step",
+        "sourceDHFStep": {
+          "label": "transform-safety-reports",
+          "value": "transform-safety-reports"
+        },
+        "sourceDatabase": "advanced-data-hub-STAGING",
+        "sourceCollection": "safety-report-source",
+        "customURIs": ""
+      }
+    }
+  ],
+  "executionGraph": {
+    "last_node_id": 15,
+    "last_link_id": 25,
+    "nodes": [
+      {
+        "id": 5,
+        "type": "DHF/envelope",
+        "pos": [
+          858,
+          538
+        ],
+        "size": [
+          180,
+          160
+        ],
+        "flags": {},
+        "order": 9,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "headers",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "triples",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "instance",
+            "type": 0,
+            "link": 6
+          },
+          {
+            "name": "attachments",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "uri",
+            "type": 0,
+            "link": 22
+          },
+          {
+            "name": "collections",
+            "type": 0,
+            "link": 23
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output",
+            "type": null,
+            "links": [
+              4
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "json"
+        ]
+      },
+      {
+        "id": 9,
+        "type": "Graph/subgraph",
+        "pos": [
+          640,
+          356
+        ],
+        "size": {
+          "0": 262,
+          "1": 66
+        },
+        "flags": {},
+        "order": 6,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "safetyReportId",
+            "type": 0,
+            "link": 19
+          },
+          {
+            "name": "item [List]",
+            "type": 0,
+            "link": 25
+          }
+        ],
+        "outputs": [
+          {
+            "name": "result(s) [List]",
+            "type": null,
+            "links": [
+              15
+            ]
+          }
+        ],
+        "title": "Drug",
+        "properties": {
+          "enabled": true
+        },
+        "subgraph": {
+          "last_node_id": 9,
+          "last_link_id": 14,
+          "nodes": [
+            {
+              "id": 4,
+              "type": "Sources/drug-source",
+              "pos": [
+                172,
+                426
+              ],
+              "size": [
+                305,
+                128
+              ],
+              "flags": {},
+              "order": 4,
+              "mode": 0,
+              "inputs": [
+                {
+                  "name": "Node",
+                  "type": 0,
+                  "link": 7
+                }
+              ],
+              "outputs": [
+                {
+                  "name": "activesubstancename",
+                  "links": [
+                    2
+                  ]
+                },
+                {
+                  "name": "drugindication",
+                  "links": [
+                    3
+                  ]
+                },
+                {
+                  "name": "medicinalproduct",
+                  "links": [
+                    4
+                  ]
+                }
+              ],
+              "properties": {},
+              "widgets_values": [
+                true
+              ]
+            },
+            {
+              "id": 1,
+              "type": "Graph/input",
+              "pos": [
+                -369,
+                446
+              ],
+              "size": [
+                180,
+                60
+              ],
+              "flags": {},
+              "order": 0,
+              "mode": 0,
+              "outputs": [
+                {
+                  "name": "",
+                  "type": "",
+                  "links": [
+                    7
+                  ]
+                }
+              ],
+              "properties": {
+                "name": "item [List]",
+                "isMain": true
+              },
+              "widgets_values": [
+                "item"
+              ]
+            },
+            {
+              "id": 2,
+              "type": "Graph/output",
+              "pos": [
+                1524,
+                426
+              ],
+              "size": [
+                180,
+                60
+              ],
+              "flags": {},
+              "order": 8,
+              "mode": 0,
+              "inputs": [
+                {
+                  "name": "",
+                  "type": 0,
+                  "link": 9
+                }
+              ],
+              "properties": {
+                "name": "result(s) [List]",
+                "isMain": true
+              },
+              "widgets_values": [
+                "result(s)"
+              ]
+            },
+            {
+              "id": 3,
+              "type": "Entities/Drug",
+              "pos": [
+                739,
+                421
+              ],
+              "size": [
+                305,
+                168
+              ],
+              "flags": {},
+              "order": 6,
+              "mode": 0,
+              "inputs": [
+                {
+                  "name": "activeSubstance",
+                  "type": 0,
+                  "link": 2
+                },
+                {
+                  "name": "drugIndication",
+                  "type": 0,
+                  "link": 3
+                },
+                {
+                  "name": "id",
+                  "type": 0,
+                  "link": 5
+                },
+                {
+                  "name": "medicinalProduct",
+                  "type": 0,
+                  "link": 4
+                },
+                {
+                  "name": "safetyReportId",
+                  "type": 0,
+                  "link": 6
+                }
+              ],
+              "outputs": [
+                {
+                  "name": "Node",
+                  "type": "Node",
+                  "links": [
+                    8
+                  ]
+                },
+                {
+                  "name": "Prov",
+                  "type": null,
+                  "links": null
+                }
+              ],
+              "properties": {},
+              "widgets_values": [
+                true
+              ]
+            },
+            {
+              "id": 5,
+              "type": "Generate/uuid",
+              "pos": [
+                408,
+                748
+              ],
+              "size": {
+                "0": 255,
+                "1": 58
+              },
+              "flags": {},
+              "order": 1,
+              "mode": 0,
+              "outputs": [
+                {
+                  "name": "uuid",
+                  "links": [
+                    5,
+                    11
+                  ]
+                }
+              ],
+              "properties": {},
+              "widgets_values": [
+                ""
+              ]
+            },
+            {
+              "id": 6,
+              "type": "Graph/input",
+              "pos": [
+                -261.5,
+                562
+              ],
+              "size": [
+                180,
+                60
+              ],
+              "flags": {},
+              "order": 2,
+              "mode": 0,
+              "outputs": [
+                {
+                  "name": "",
+                  "type": "",
+                  "links": [
+                    6,
+                    12
+                  ]
+                }
+              ],
+              "properties": {
+                "name": "safetyReportId"
+              },
+              "widgets_values": [
+                "safetyReportId"
+              ]
+            },
+            {
+              "id": 7,
+              "type": "DHF/envelope",
+              "pos": [
+                1300.70001220703,
+                586
+              ],
+              "size": [
+                180,
+                160
+              ],
+              "flags": {},
+              "order": 7,
+              "mode": 0,
+              "inputs": [
+                {
+                  "name": "headers",
+                  "type": 0,
+                  "link": null
+                },
+                {
+                  "name": "triples",
+                  "type": 0,
+                  "link": null
+                },
+                {
+                  "name": "instance",
+                  "type": 0,
+                  "link": 8
+                },
+                {
+                  "name": "attachments",
+                  "type": 0,
+                  "link": null
+                },
+                {
+                  "name": "uri",
+                  "type": 0,
+                  "link": 13
+                },
+                {
+                  "name": "collections",
+                  "type": 0,
+                  "link": 14
+                }
+              ],
+              "outputs": [
+                {
+                  "name": "output",
+                  "type": null,
+                  "links": [
+                    9
+                  ]
+                }
+              ],
+              "properties": {},
+              "widgets_values": [
+                "json"
+              ]
+            },
+            {
+              "id": 8,
+              "type": "Generate/Templating",
+              "pos": [
+                912.700012207031,
+                690
+              ],
+              "size": {
+                "0": 255,
+                "1": 146
+              },
+              "flags": {},
+              "order": 5,
+              "mode": 0,
+              "inputs": [
+                {
+                  "name": "v1",
+                  "type": 0,
+                  "link": 12
+                },
+                {
+                  "name": "v2",
+                  "type": 0,
+                  "link": 11
+                },
+                {
+                  "name": "v3",
+                  "type": 0,
+                  "link": null
+                }
+              ],
+              "outputs": [
+                {
+                  "name": "newString",
+                  "links": [
+                    13
+                  ]
+                }
+              ],
+              "properties": {},
+              "widgets_values": [
+                "",
+                "",
+                "/drug/${v1}/${v2}.json"
+              ]
+            },
+            {
+              "id": 9,
+              "type": "Generate/multiConstant",
+              "pos": [
+                908.700012207031,
+                928
+              ],
+              "size": {
+                "0": 255,
+                "1": 82
+              },
+              "flags": {},
+              "order": 3,
+              "mode": 0,
+              "outputs": [
+                {
+                  "name": "output",
+                  "links": [
+                    14
+                  ]
+                }
+              ],
+              "properties": {},
+              "widgets_values": [
+                "string",
+                "drug-pipes"
+              ]
+            }
+          ],
+          "links": [
+            [
+              2,
+              4,
+              0,
+              3,
+              0,
+              0
+            ],
+            [
+              3,
+              4,
+              1,
+              3,
+              1,
+              0
+            ],
+            [
+              4,
+              4,
+              2,
+              3,
+              3,
+              0
+            ],
+            [
+              5,
+              5,
+              0,
+              3,
+              2,
+              0
+            ],
+            [
+              6,
+              6,
+              0,
+              3,
+              4,
+              0
+            ],
+            [
+              7,
+              1,
+              0,
+              4,
+              0,
+              0
+            ],
+            [
+              8,
+              3,
+              0,
+              7,
+              2,
+              0
+            ],
+            [
+              9,
+              7,
+              0,
+              2,
+              0,
+              0
+            ],
+            [
+              11,
+              5,
+              0,
+              8,
+              1,
+              0
+            ],
+            [
+              12,
+              6,
+              0,
+              8,
+              0,
+              0
+            ],
+            [
+              13,
+              8,
+              0,
+              7,
+              4,
+              0
+            ],
+            [
+              14,
+              9,
+              0,
+              7,
+              5,
+              0
+            ]
+          ],
+          "groups": [],
+          "config": {},
+          "version": 0.4
+        }
+      },
+      {
+        "id": 1,
+        "type": "DHF/input",
+        "pos": [
+          -579,
+          527
+        ],
+        "size": [
+          180,
+          60
+        ],
+        "flags": {},
+        "order": 0,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "input",
+            "type": "",
+            "links": [
+              1,
+              7,
+              17
+            ]
+          },
+          {
+            "name": "uri",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "collections",
+            "type": "",
+            "links": null
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 12,
+        "type": "Graph/subgraph",
+        "pos": [
+          644,
+          139
+        ],
+        "size": {
+          "0": 262,
+          "1": 66
+        },
+        "flags": {},
+        "order": 8,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "safetyReportId",
+            "type": 0,
+            "link": 20
+          },
+          {
+            "name": "item [List]",
+            "type": 0,
+            "link": 24
+          }
+        ],
+        "outputs": [
+          {
+            "name": "result(s) [List]",
+            "type": null,
+            "links": [
+              18
+            ]
+          }
+        ],
+        "title": "Reaction",
+        "properties": {
+          "enabled": true
+        },
+        "subgraph": {
+          "last_node_id": 10,
+          "last_link_id": 12,
+          "nodes": [
+            {
+              "id": 2,
+              "type": "Graph/output",
+              "pos": [
+                1649,
+                450
+              ],
+              "size": [
+                180,
+                60
+              ],
+              "flags": {
+                "collapsed": false
+              },
+              "order": 8,
+              "mode": 0,
+              "inputs": [
+                {
+                  "name": "",
+                  "type": 0,
+                  "link": 2
+                }
+              ],
+              "properties": {
+                "name": "result(s) [List]",
+                "isMain": true
+              },
+              "widgets_values": [
+                "result(s)"
+              ]
+            },
+            {
+              "id": 4,
+              "type": "DHF/envelope",
+              "pos": [
+                1315,
+                241
+              ],
+              "size": [
+                180,
+                160
+              ],
+              "flags": {
+                "collapsed": false
+              },
+              "order": 7,
+              "mode": 0,
+              "inputs": [
+                {
+                  "name": "headers",
+                  "type": 0,
+                  "link": null
+                },
+                {
+                  "name": "triples",
+                  "type": 0,
+                  "link": null
+                },
+                {
+                  "name": "instance",
+                  "type": 0,
+                  "link": 1
+                },
+                {
+                  "name": "attachments",
+                  "type": 0,
+                  "link": null
+                },
+                {
+                  "name": "uri",
+                  "type": 0,
+                  "link": 11
+                },
+                {
+                  "name": "collections",
+                  "type": 0,
+                  "link": 12
+                }
+              ],
+              "outputs": [
+                {
+                  "name": "output",
+                  "type": null,
+                  "links": [
+                    2
+                  ]
+                }
+              ],
+              "properties": {},
+              "widgets_values": [
+                "json"
+              ]
+            },
+            {
+              "id": 1,
+              "type": "Graph/input",
+              "pos": [
+                100,
+                403
+              ],
+              "size": [
+                180,
+                60
+              ],
+              "flags": {},
+              "order": 0,
+              "mode": 0,
+              "outputs": [
+                {
+                  "name": "",
+                  "type": "",
+                  "links": [
+                    3
+                  ]
+                }
+              ],
+              "properties": {
+                "name": "item [List]",
+                "isMain": true
+              },
+              "widgets_values": [
+                "item"
+              ]
+            },
+            {
+              "id": 5,
+              "type": "Sources/reaction-source",
+              "pos": [
+                385,
+                208
+              ],
+              "size": [
+                305,
+                148
+              ],
+              "flags": {},
+              "order": 4,
+              "mode": 0,
+              "inputs": [
+                {
+                  "name": "Node",
+                  "type": 0,
+                  "link": 3
+                }
+              ],
+              "outputs": [
+                {
+                  "name": "reactionoutcome",
+                  "links": [
+                    4
+                  ]
+                },
+                {
+                  "name": "reactionmeddrapt",
+                  "links": [
+                    5
+                  ]
+                },
+                {
+                  "name": "reactionmeddraversionllt",
+                  "links": null
+                },
+                {
+                  "name": "reactionmeddraversionpt",
+                  "links": [
+                    6
+                  ]
+                }
+              ],
+              "properties": {},
+              "widgets_values": [
+                true
+              ]
+            },
+            {
+              "id": 3,
+              "type": "Entities/Reaction",
+              "pos": [
+                868,
+                225
+              ],
+              "size": [
+                305,
+                188
+              ],
+              "flags": {
+                "collapsed": false
+              },
+              "order": 6,
+              "mode": 0,
+              "inputs": [
+                {
+                  "name": "id",
+                  "type": 0,
+                  "link": 8
+                },
+                {
+                  "name": "medrapt",
+                  "type": 0,
+                  "link": 5
+                },
+                {
+                  "name": "outcome",
+                  "type": 0,
+                  "link": 4
+                },
+                {
+                  "name": "outcomeText",
+                  "type": 0,
+                  "link": null
+                },
+                {
+                  "name": "raveVersion",
+                  "type": 0,
+                  "link": 6
+                },
+                {
+                  "name": "safetyReportId",
+                  "type": 0,
+                  "link": 7
+                }
+              ],
+              "outputs": [
+                {
+                  "name": "Node",
+                  "type": "Node",
+                  "links": [
+                    1
+                  ]
+                },
+                {
+                  "name": "Prov",
+                  "type": null,
+                  "links": null
+                }
+              ],
+              "properties": {},
+              "widgets_values": [
+                true
+              ]
+            },
+            {
+              "id": 6,
+              "type": "Graph/input",
+              "pos": [
+                85,
+                556
+              ],
+              "size": [
+                180,
+                60
+              ],
+              "flags": {},
+              "order": 1,
+              "mode": 0,
+              "outputs": [
+                {
+                  "name": "",
+                  "type": "",
+                  "links": [
+                    7,
+                    9
+                  ]
+                }
+              ],
+              "properties": {
+                "name": "safetyReportId"
+              },
+              "widgets_values": [
+                "safetyReportId"
+              ]
+            },
+            {
+              "id": 7,
+              "type": "Generate/uuid",
+              "pos": [
+                269,
+                646
+              ],
+              "size": {
+                "0": 255,
+                "1": 58
+              },
+              "flags": {},
+              "order": 2,
+              "mode": 0,
+              "outputs": [
+                {
+                  "name": "uuid",
+                  "links": [
+                    8,
+                    10
+                  ]
+                }
+              ],
+              "properties": {},
+              "widgets_values": [
+                ""
+              ]
+            },
+            {
+              "id": 8,
+              "type": "Generate/Templating",
+              "pos": [
+                698,
+                558
+              ],
+              "size": {
+                "0": 255,
+                "1": 146
+              },
+              "flags": {},
+              "order": 5,
+              "mode": 0,
+              "inputs": [
+                {
+                  "name": "v1",
+                  "type": 0,
+                  "link": 9
+                },
+                {
+                  "name": "v2",
+                  "type": 0,
+                  "link": 10
+                },
+                {
+                  "name": "v3",
+                  "type": 0,
+                  "link": null
+                }
+              ],
+              "outputs": [
+                {
+                  "name": "newString",
+                  "links": [
+                    11
+                  ]
+                }
+              ],
+              "properties": {},
+              "widgets_values": [
+                "",
+                "",
+                "/reaction/${v1} ${v2}.json"
+              ]
+            },
+            {
+              "id": 10,
+              "type": "Generate/multiConstant",
+              "pos": [
+                993,
+                615
+              ],
+              "size": {
+                "0": 255,
+                "1": 82
+              },
+              "flags": {},
+              "order": 3,
+              "mode": 0,
+              "outputs": [
+                {
+                  "name": "output",
+                  "links": [
+                    12
+                  ]
+                }
+              ],
+              "properties": {},
+              "widgets_values": [
+                "string",
+                "reaction-pipes"
+              ]
+            }
+          ],
+          "links": [
+            [
+              1,
+              3,
+              0,
+              4,
+              2,
+              0
+            ],
+            [
+              2,
+              4,
+              0,
+              2,
+              0,
+              0
+            ],
+            [
+              3,
+              1,
+              0,
+              5,
+              0,
+              0
+            ],
+            [
+              4,
+              5,
+              0,
+              3,
+              2,
+              0
+            ],
+            [
+              5,
+              5,
+              1,
+              3,
+              1,
+              0
+            ],
+            [
+              6,
+              5,
+              3,
+              3,
+              4,
+              0
+            ],
+            [
+              7,
+              6,
+              0,
+              3,
+              5,
+              0
+            ],
+            [
+              8,
+              7,
+              0,
+              3,
+              0,
+              0
+            ],
+            [
+              9,
+              6,
+              0,
+              8,
+              0,
+              0
+            ],
+            [
+              10,
+              7,
+              0,
+              8,
+              1,
+              0
+            ],
+            [
+              11,
+              8,
+              0,
+              4,
+              4,
+              0
+            ],
+            [
+              12,
+              10,
+              0,
+              4,
+              5,
+              0
+            ]
+          ],
+          "groups": [],
+          "config": {},
+          "version": 0.4
+        }
+      },
+      {
+        "id": 2,
+        "type": "DHF/output",
+        "pos": [
+          1500,
+          497
+        ],
+        "size": [
+          180,
+          160
+        ],
+        "flags": {},
+        "order": 11,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "output",
+            "type": 0,
+            "link": 5
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 4,
+        "type": "Join/Array",
+        "pos": [
+          1210,
+          495
+        ],
+        "size": {
+          "0": 170,
+          "1": 106
+        },
+        "flags": {},
+        "order": 10,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "item1",
+            "type": 0,
+            "link": 4
+          },
+          {
+            "name": "item2",
+            "type": 0,
+            "link": 15
+          },
+          {
+            "name": "item3",
+            "type": 0,
+            "link": 18
+          },
+          {
+            "name": "item4",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "item5",
+            "type": 0,
+            "link": null
+          }
+        ],
+        "outputs": [
+          {
+            "name": "array",
+            "links": [
+              5
+            ]
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 8,
+        "type": "Sources/safety-report-source",
+        "pos": [
+          -216,
+          623
+        ],
+        "size": [
+          305,
+          188
+        ],
+        "flags": {},
+        "order": 3,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "Node",
+            "type": 0,
+            "link": 7
+          }
+        ],
+        "outputs": [
+          {
+            "name": "occurcountry",
+            "links": [
+              8
+            ]
+          },
+          {
+            "name": "patientsex",
+            "links": [
+              9
+            ]
+          },
+          {
+            "name": "patientweight",
+            "links": [
+              10
+            ]
+          },
+          {
+            "name": "primarysourcecountry",
+            "links": [
+              11
+            ]
+          },
+          {
+            "name": "transmissiondate",
+            "links": [
+              12
+            ]
+          },
+          {
+            "name": "safetyreportid",
+            "links": [
+              13,
+              19,
+              20,
+              21
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          true
+        ]
+      },
+      {
+        "id": 14,
+        "type": "Generate/Templating",
+        "pos": [
+          330,
+          882
+        ],
+        "size": {
+          "0": 255,
+          "1": 146
+        },
+        "flags": {},
+        "order": 7,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "v1",
+            "type": 0,
+            "link": 21
+          },
+          {
+            "name": "v2",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "v3",
+            "type": 0,
+            "link": null
+          }
+        ],
+        "outputs": [
+          {
+            "name": "newString",
+            "links": [
+              22
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "",
+          "",
+          "/safety-report/${v1}.json"
+        ]
+      },
+      {
+        "id": 15,
+        "type": "Generate/multiConstant",
+        "pos": [
+          656,
+          932
+        ],
+        "size": {
+          "0": 255,
+          "1": 82
+        },
+        "flags": {},
+        "order": 1,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "output",
+            "links": [
+              23
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "string",
+          "safetyreport-pipes"
+        ]
+      },
+      {
+        "id": 6,
+        "type": "Entities/SafetyReport",
+        "pos": [
+          355,
+          603
+        ],
+        "size": [
+          305,
+          188
+        ],
+        "flags": {},
+        "order": 5,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "countryOfOccurence",
+            "type": 0,
+            "link": 8
+          },
+          {
+            "name": "id",
+            "type": 0,
+            "link": 13
+          },
+          {
+            "name": "patientGender",
+            "type": 0,
+            "link": 9
+          },
+          {
+            "name": "patientWeight",
+            "type": 0,
+            "link": 10
+          },
+          {
+            "name": "primarySourceCountry",
+            "type": 0,
+            "link": 11
+          },
+          {
+            "name": "transmissionDate",
+            "type": 0,
+            "link": 12
+          }
+        ],
+        "outputs": [
+          {
+            "name": "Node",
+            "type": "Node",
+            "links": [
+              6
+            ]
+          },
+          {
+            "name": "Prov",
+            "type": null,
+            "links": null
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          true
+        ]
+      },
+      {
+        "id": 13,
+        "type": "Sources/reaction-list",
+        "pos": [
+          0,
+          121
+        ],
+        "size": [
+          305,
+          88
+        ],
+        "flags": {},
+        "order": 4,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "Node",
+            "type": 0,
+            "link": 17
+          }
+        ],
+        "outputs": [
+          {
+            "name": "reaction",
+            "links": [
+              24
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          true
+        ]
+      },
+      {
+        "id": 3,
+        "type": "Sources/drug-list",
+        "pos": [
+          -6,
+          359
+        ],
+        "size": [
+          305,
+          88
+        ],
+        "flags": {},
+        "order": 2,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "Node",
+            "type": 0,
+            "link": 1
+          }
+        ],
+        "outputs": [
+          {
+            "name": "drug",
+            "links": [
+              25
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          true
+        ]
+      }
+    ],
+    "links": [
+      [
+        1,
+        1,
+        0,
+        3,
+        0,
+        0
+      ],
+      [
+        4,
+        5,
+        0,
+        4,
+        0,
+        0
+      ],
+      [
+        5,
+        4,
+        0,
+        2,
+        0,
+        0
+      ],
+      [
+        6,
+        6,
+        0,
+        5,
+        2,
+        0
+      ],
+      [
+        7,
+        1,
+        0,
+        8,
+        0,
+        0
+      ],
+      [
+        8,
+        8,
+        0,
+        6,
+        0,
+        0
+      ],
+      [
+        9,
+        8,
+        1,
+        6,
+        2,
+        0
+      ],
+      [
+        10,
+        8,
+        2,
+        6,
+        3,
+        0
+      ],
+      [
+        11,
+        8,
+        3,
+        6,
+        4,
+        0
+      ],
+      [
+        12,
+        8,
+        4,
+        6,
+        5,
+        0
+      ],
+      [
+        13,
+        8,
+        5,
+        6,
+        1,
+        0
+      ],
+      [
+        15,
+        9,
+        0,
+        4,
+        1,
+        0
+      ],
+      [
+        17,
+        1,
+        0,
+        13,
+        0,
+        0
+      ],
+      [
+        18,
+        12,
+        0,
+        4,
+        2,
+        0
+      ],
+      [
+        19,
+        8,
+        5,
+        9,
+        0,
+        0
+      ],
+      [
+        20,
+        8,
+        5,
+        12,
+        0,
+        0
+      ],
+      [
+        21,
+        8,
+        5,
+        14,
+        0,
+        0
+      ],
+      [
+        22,
+        14,
+        0,
+        5,
+        4,
+        0
+      ],
+      [
+        23,
+        15,
+        0,
+        5,
+        5,
+        0
+      ],
+      [
+        24,
+        13,
+        0,
+        12,
+        1,
+        0
+      ],
+      [
+        25,
+        3,
+        0,
+        9,
+        1,
+        0
+      ]
+    ],
+    "groups": [],
+    "config": {},
+    "version": 0.4
+  },
+  "name": "SafetyReport",
+  "metadata": {
+    "version": "00.01",
+    "author": "",
+    "title": "SafetyReport",
+    "description": "",
+    "dateExported": "28/04/2020, 12:46:14"
+  }
+}

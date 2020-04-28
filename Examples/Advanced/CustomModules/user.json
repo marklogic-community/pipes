@@ -1,0 +1,42 @@
+[
+  {
+    "functionName": "myCustomBlock",
+    "blockName": "customBlockName",
+    "title": "My Custom Block",
+    "description": "this is an example custom user block",
+    "title_color": "blue",
+    "library": "User",
+    "height" :180 ,
+    "width" : 230,
+    "inputs": [
+      {
+        "name": "myInput1",
+        "type": "xs:string"
+      }
+    ],
+    "widgets": [
+      {
+        "type": "text",
+        "name" : "widgetName",
+        "default" : "sample widget",
+        "values" : []
+      },
+      {
+        "type": "combo",
+        "name": "blockOption",
+        "default": "option A",
+        "values": ["option A","option B","option C"]
+      }
+    ],
+    "outputs": [
+      {
+        "name": "myOutput1",
+        "type": "xs:string"
+      }
+    ],
+    "function": {
+      "ref": null,
+      "code": null
+    }
+  }
+]

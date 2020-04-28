@@ -1,0 +1,75 @@
+const DataHub = require("/data-hub/5/datahub.sjs");
+var gHelper  = require("/custom-modules/pipes/graphHelper")
+const datahub = new DataHub();
+
+
+function getGraphDefinition() {
+  return {"models":[{"label":"Contractor","collection":"Contractor","source":"Entities","fields":[{"label":"addressLine1","field":"addressLine1","path":"//addressLine1"},{"label":"addressLine2","field":"addressLine2","path":"//addressLine2"},{"label":"banInformation","field":"banInformation","path":"//banInformation"},{"label":"businessPerson","field":"businessPerson","path":"//businessPerson"},{"label":"city","field":"city","path":"//city"},{"label":"id","field":"id","path":"//id"},{"label":"state","field":"state","path":"//state"},{"label":"vendor","field":"vendor","path":"//vendor"},{"label":"vendorId","field":"vendorId","path":"//vendorId"},{"label":"zip","field":"zip","path":"//zip"}],"options":["fieldsInputs","nodeOutput"]},{"label":"contractor-source","collection":"contractor-source","source":"Sources","fields":[{"label":"ADDRESS LINE 1 [id10]","field":"ADDRESS LINE 1","value":"ADDRESS LINE 1","path":"/envelope/instance/node('ADDRESS LINE 1')","originalPath":"/envelope/instance/text('ADDRESS LINE 1')","type":3,"children":[],"parent":"/envelope/instance"},{"label":"ADDRESS LINE 2 [id11]","field":"ADDRESS LINE 2","value":"ADDRESS LINE 2","path":"/envelope/instance/node('ADDRESS LINE 2')","originalPath":"/envelope/instance/text('ADDRESS LINE 2')","type":3,"children":[],"parent":"/envelope/instance"},{"label":"CITY [id12]","field":"CITY","value":"CITY","path":"/envelope/instance/CITY","originalPath":"/envelope/instance/text('CITY')","type":3,"children":[],"parent":"/envelope/instance"},{"label":"STATE [id13]","field":"STATE","value":"STATE","path":"/envelope/instance/STATE","originalPath":"/envelope/instance/text('STATE')","type":3,"children":[],"parent":"/envelope/instance"},{"label":"VENDOR [id9]","field":"VENDOR","value":"VENDOR","path":"/envelope/instance/VENDOR","originalPath":"/envelope/instance/text('VENDOR')","type":3,"children":[],"parent":"/envelope/instance"},{"label":"VENDOR ID [id8]","field":"VENDOR ID","value":"VENDOR ID","path":"/envelope/instance/node('VENDOR ID')","originalPath":"/envelope/instance/text('VENDOR ID')","type":3,"children":[],"parent":"/envelope/instance"},{"label":"ZIP CODE [id14]","field":"ZIP CODE","value":"ZIP CODE","path":"/envelope/instance/node('ZIP CODE')","originalPath":"/envelope/instance/text('ZIP CODE')","type":3,"children":[],"parent":"/envelope/instance"}],"options":["nodeInput","fieldsOutputs"],"metadata":{"description":"","dateCreated":"2020-04-27T11:25:20.939Z","blockCreatedFrom":"custom_step","sourceDHFStep":{"label":"harmonize-contractor360","value":"harmonize-contractor360"},"sourceDatabase":"advanced-data-hub-STAGING","sourceCollection":"contractor-source","customURIs":""}},{"label":"meta-data","collection":"meta-data","source":"Sources","fields":[{"label":"sourceUri","children":[],"field":"sourceUri","path":"//sourceUri","type":"custom"}],"options":["fieldsInputs","nodeOutput"],"metadata":{"description":"","dateCreated":"2020-04-27T11:28:55.963Z","blockCreatedFrom":"custom_step","sourceDHFStep":{"label":"harmonize-contractor360","value":"harmonize-contractor360"},"sourceDatabase":"advanced-data-hub-STAGING","sourceCollection":"contractor-source","customURIs":""}},{"label":"BusinessPerson","collection":"BusinessPerson","source":"Entities","fields":[{"label":"firstName","field":"firstName","path":"//firstName"},{"label":"id","field":"id","path":"//id"},{"label":"lastName","field":"lastName","path":"//lastName"},{"label":"legalEntityOwner","field":"legalEntityOwner","path":"//legalEntityOwner"},{"label":"legalName","field":"legalName","path":"//legalName"},{"label":"middleInitial","field":"middleInitial","path":"//middleInitial"},{"label":"suffix","field":"suffix","path":"//suffix"},{"label":"title","field":"title","path":"//title"}],"options":["fieldsInputs","nodeOutput"]},{"label":"business-person-source","collection":"business-person-source","source":"Sources","fields":[{"label":"Account Number [id8]","field":"Account Number","value":"Account Number","path":"/envelope/instance/node('Account Number')","originalPath":"/envelope/instance/text('Account Number')","type":3,"children":[],"parent":"/envelope/instance"},{"label":"Legal Entity Owner [id14]","field":"Legal Entity Owner","value":"Legal Entity Owner","path":"/envelope/instance/node('Legal Entity Owner')","originalPath":"/envelope/instance/text('Legal Entity Owner')","type":3,"children":[],"parent":"/envelope/instance"},{"label":"Legal Name [id9]","field":"Legal Name","value":"Legal Name","path":"/envelope/instance/node('Legal Name')","originalPath":"/envelope/instance/text('Legal Name')","type":3,"children":[],"parent":"/envelope/instance"},{"label":"Owner First Name [id10]","field":"Owner First Name","value":"Owner First Name","path":"/envelope/instance/node('Owner First Name')","originalPath":"/envelope/instance/text('Owner First Name')","type":3,"children":[],"parent":"/envelope/instance"},{"label":"Owner Last Name [id12]","field":"Owner Last Name","value":"Owner Last Name","path":"/envelope/instance/node('Owner Last Name')","originalPath":"/envelope/instance/text('Owner Last Name')","type":3,"children":[],"parent":"/envelope/instance"},{"label":"Owner Middle Initial [id11]","field":"Owner Middle Initial","value":"Owner Middle Initial","path":"/envelope/instance/node('Owner Middle Initial')","originalPath":"/envelope/instance/text('Owner Middle Initial')","type":3,"children":[],"parent":"/envelope/instance"},{"label":"Suffix [id13]","field":"Suffix","value":"Suffix","path":"/envelope/instance/Suffix","originalPath":"/envelope/instance/text('Suffix')","type":3,"children":[],"parent":"/envelope/instance"},{"label":"Title [id15]","field":"Title","value":"Title","path":"/envelope/instance/Title","originalPath":"/envelope/instance/text('Title')","type":3,"children":[],"parent":"/envelope/instance"}],"options":["nodeInput","fieldsOutputs"],"metadata":{"description":"","dateCreated":"2020-04-27T11:44:39.399Z","blockCreatedFrom":"db_collection","sourceDHFStep":null,"sourceDatabase":"advanced-data-hub-STAGING","sourceCollection":"business-person-source","customURIs":""}}],"executionGraph":{"last_node_id":17,"last_link_id":24,"nodes":[{"id":2,"type":"DHF/output","pos":[1455,428],"size":[180,160],"flags":{},"order":10,"mode":0,"inputs":[{"name":"output","type":0,"link":1}],"properties":{}},{"id":6,"type":"Generate/uuid","pos":[218,838],"size":{"0":255,"1":58},"flags":{},"order":0,"mode":0,"outputs":[{"name":"uuid","links":[11,12]}],"properties":{},"widgets_values":[""]},{"id":7,"type":"Generate/Templating","pos":[648,825],"size":{"0":255,"1":146},"flags":{},"order":3,"mode":0,"inputs":[{"name":"v1","type":0,"link":12},{"name":"v2","type":0,"link":null},{"name":"v3","type":0,"link":null}],"outputs":[{"name":"newString","links":[13]}],"title":"URI","properties":{},"widgets_values":["","","/contractor/${v1}.json"]},{"id":8,"type":"Generate/multiConstant","pos":[1003,862],"size":{"0":255,"1":82},"flags":{},"order":1,"mode":0,"outputs":[{"name":"output","links":[14]}],"properties":{},"widgets_values":["string","contractor360-pipes"]},{"id":4,"type":"Entities/Contractor","pos":[702,465],"size":[305,268],"flags":{},"order":8,"mode":0,"inputs":[{"name":"addressLine1","type":0,"link":4},{"name":"addressLine2","type":0,"link":5},{"name":"banInformation","type":0,"link":null},{"name":"businessPerson","type":0,"link":24},{"name":"city","type":0,"link":6},{"name":"id","type":0,"link":11},{"name":"state","type":0,"link":9},{"name":"vendor","type":0,"link":7},{"name":"vendorId","type":0,"link":8},{"name":"zip","type":0,"link":10}],"outputs":[{"name":"Node","type":"Node","links":[2]},{"name":"Prov","type":null,"links":null}],"properties":{},"widgets_values":[true]},{"id":1,"type":"DHF/input","pos":[-1002,488],"size":[180,60],"flags":{},"order":2,"mode":0,"outputs":[{"name":"input","type":"","links":[3]},{"name":"uri","type":"","links":[17]},{"name":"collections","type":"","links":null}],"properties":{}},{"id":10,"type":"Sources/meta-data","pos":[-634,146],"size":[305,108],"flags":{},"order":5,"mode":0,"inputs":[{"name":"sourceUri","type":0,"link":17}],"outputs":[{"name":"Node","type":"Node","links":[16]},{"name":"Prov","type":null,"links":null}],"properties":{},"widgets_values":[false]},{"id":5,"type":"Sources/contractor-source","pos":[-703,601],"size":[305,208],"flags":{},"order":4,"mode":0,"inputs":[{"name":"Node","type":0,"link":3}],"outputs":[{"name":"ADDRESS LINE 1","links":[4]},{"name":"ADDRESS LINE 2","links":[5]},{"name":"CITY","links":[6]},{"name":"STATE","links":[9]},{"name":"VENDOR","links":[7,23]},{"name":"VENDOR ID","links":[8]},{"name":"ZIP CODE","links":[10]}],"properties":{},"widgets_values":[true]},{"id":16,"type":"Query/LookupCollectionPropertyValue","pos":[-273,331],"size":{"0":334.8999938964844,"1":195},"flags":{},"order":6,"mode":0,"inputs":[{"name":"var1","type":0,"link":23}],"outputs":[{"name":"value0","links":[22]}],"properties":{},"widgets_values":["1","advanced-data-hub-STAGING","business-person-source","Legal Name","string","//instance"]},{"id":3,"type":"DHF/envelope","pos":[1134,424],"size":[180,160],"flags":{},"order":9,"mode":0,"inputs":[{"name":"headers","type":0,"link":16},{"name":"triples","type":0,"link":null},{"name":"instance","type":0,"link":2},{"name":"attachments","type":0,"link":null},{"name":"uri","type":0,"link":13},{"name":"collections","type":0,"link":14}],"outputs":[{"name":"output","type":null,"links":[1]}],"properties":{},"widgets_values":["json"]},{"id":15,"type":"Graph/subgraph","pos":[218,365],"size":{"0":354.3999938964844,"1":46},"flags":{"collapsed":false},"order":7,"mode":0,"inputs":[{"name":"businessPersonList [List]","type":0,"link":22}],"outputs":[{"name":"result(s) [List]","type":null,"links":[24]}],"title":"BusinessPersonsLookup","properties":{"enabled":true},"subgraph":{"last_node_id":13,"last_link_id":20,"nodes":[{"id":2,"type":"Graph/output","pos":[1458,305],"size":[180,60],"flags":{},"order":3,"mode":0,"inputs":[{"name":"","type":0,"link":20}],"properties":{"name":"result(s) [List]","isMain":true},"widgets_values":["result(s)"]},{"id":1,"type":"Graph/input","pos":[-208,343],"size":[180,60],"flags":{},"order":0,"mode":0,"outputs":[{"name":"","type":"","links":[12]}],"properties":{"name":"businessPersonList [List]","isMain":true},"widgets_values":["businessPersonList"]},{"id":13,"type":"Sources/business-person-source","pos":[197,344],"size":[305,228],"flags":{},"order":1,"mode":0,"inputs":[{"name":"Node","type":0,"link":12}],"outputs":[{"name":"Account Number","links":null},{"name":"Legal Entity Owner","links":[13]},{"name":"Legal Name","links":[14]},{"name":"Owner First Name","links":[15]},{"name":"Owner Last Name","links":[16]},{"name":"Owner Middle Initial","links":[19]},{"name":"Suffix","links":[17]},{"name":"Title","links":[18]}],"properties":{},"widgets_values":[true]},{"id":11,"type":"Entities/BusinessPerson","pos":[688,347],"size":[305,228],"flags":{},"order":2,"mode":0,"inputs":[{"name":"firstName","type":0,"link":15},{"name":"id","type":0,"link":null},{"name":"lastName","type":0,"link":16},{"name":"legalEntityOwner","type":0,"link":13},{"name":"legalName","type":0,"link":14},{"name":"middleInitial","type":0,"link":19},{"name":"suffix","type":0,"link":17},{"name":"title","type":0,"link":18}],"outputs":[{"name":"Node","type":"Node","links":[20]},{"name":"Prov","type":null,"links":null}],"properties":{},"widgets_values":[false]}],"links":[[12,1,0,13,0,0],[13,13,1,11,3,0],[14,13,2,11,4,0],[15,13,3,11,0,0],[16,13,4,11,2,0],[17,13,6,11,6,0],[18,13,7,11,7,0],[19,13,5,11,5,0],[20,11,0,2,0,0]],"groups":[],"config":{},"version":0.4}}],"links":[[1,3,0,2,0,0],[2,4,0,3,2,0],[3,1,0,5,0,0],[4,5,0,4,0,0],[5,5,1,4,1,0],[6,5,2,4,4,0],[7,5,4,4,7,0],[8,5,5,4,8,0],[9,5,3,4,6,0],[10,5,6,4,9,0],[11,6,0,4,5,0],[12,6,0,7,0,0],[13,7,0,3,4,0],[14,8,0,3,5,0],[16,10,0,3,0,0],[17,1,1,10,0,0],[22,16,0,15,0,0],[23,5,4,16,0,0],[24,15,0,4,3,0]],"groups":[],"config":{},"version":0.4}}}
+
+function main(content, options) {
+  //grab the doc id/uri
+  let id = content.uri;
+
+  //here we can grab and manipulate the context metadata attached to the document
+  let context = content.context;
+
+  //let's set our output format, so we know what we're exporting
+  let outputFormat = options.outputFormat ? options.outputFormat.toLowerCase() : datahub.flow.consts.DEFAULT_FORMAT;
+
+  //here we check to make sure we're not trying to push out a binary or text document, just xml or json
+  if (outputFormat !== datahub.flow.consts.JSON && outputFormat !== datahub.flow.consts.XML) {
+    datahub.debug.log({
+      message: 'The output format of type ' + outputFormat + ' is invalid. Valid options are ' + datahub.flow.consts.XML + ' or ' + datahub.flow.consts.JSON + '.',
+      type: 'error'
+    });
+    throw Error('The output format of type ' + outputFormat + ' is invalid. Valid options are ' + datahub.flow.consts.XML + ' or ' + datahub.flow.consts.JSON + '.');
+  }
+
+  /*
+  This scaffolding assumes we obtained the document from the database. If you are inserting information, you will
+  have to map data from the content.value appropriately and create an instance (object), headers (object), and triples
+  (array) instead of using the flowUtils functions to grab them from a document that was pulled from MarkLogic.
+  Also you do not have to check if the document exists as in the code below.
+
+  Example code for using data that was sent to MarkLogic server for the document
+  let instance = content.value;
+  let triples = [];
+  let headers = {};
+   */
+
+  //Here we check to make sure it's still there before operating on it
+  if (!fn.docAvailable(id)) {
+    datahub.debug.log({message: 'The document with the uri: ' + id + ' could not be found.', type: 'error'});
+    throw Error('The document with the uri: ' + id + ' could not be found.')
+  }
+
+  //grab the 'doc' from the content value space
+  let doc = content.value;
+
+  // let's just grab the root of the document if its a Document and not a type of Node (ObjectNode or XMLNode)
+  //if (doc && (doc instanceof Document || doc instanceof XMLDocument)) {
+  //  doc = fn.head(doc.root);
+  //}
+
+  /*
+  //get our instance, default shape of envelope is envelope/instance, else it'll return an empty object/array
+  let instance = datahub.flow.flowUtils.getInstance(doc) || {};
+
+  // get triples, return null if empty or cannot be found
+  let triples = datahub.flow.flowUtils.getTriples(doc) || [];
+
+  //gets headers, return null if cannot be found
+  let headers = datahub.flow.flowUtils.getHeaders(doc) || {};
+
+  //If you want to set attachments, uncomment here
+  // instance['$attachments'] = doc;
+  */
+
+  //insert code to manipulate the instance, triples, headers, uri, context metadata, etc.
+  let results = gHelper.executeGraphStep(doc,id,getGraphDefinition(),{collections: xdmp.documentGetCollections(id)})
+return results;
+}
+
+module.exports = {
+  main: main
+};
