@@ -7,7 +7,6 @@ plugins {
 }
 
 group = 'com.marklogic.pipes'
-//version = '1.0.1'
 sourceCompatibility = '1.8'
 
 repositories { jcenter()}
