@@ -862,9 +862,8 @@ export default {
         this.BlockDeletion.delBlockName = '';
         console.log("Deleting block from list: " + blockKey)
         this.$store.commit('removeBlock', blockKey)
-        var block = LiteGraph.getNodeType(blockKey)
-        console.log("LiteGraph has: " + JSON.stringify(LiteGraph.registered_node_types[blockKey]))
-        console.log("Block is: " + JSON.stringify(block))
+       // var block = LiteGraph.getNodeType(blockKey)
+        LiteGraph.deRegisterNode(blockKey)
       } else {
 
         if (this.isblockOnGraph(this.graph, blockKey)) {
