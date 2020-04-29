@@ -146,11 +146,8 @@
 	    <q-checkbox color="blue" v-model="showCustomURIPanel">Add fields from specific document(s) in the database</q-checkbox>
     </div>
     <div class="col-1" align="right">
-	    <q-icon v-if="collectionModelPopulated == true" color="green" name="fas fa-check-circle">
-		    <q-tooltip content-class="pipes-tooltip">Some fields have been sampled and are ready in next step</q-tooltip>
-	    </q-icon>
-	    <q-icon v-if="collectionModelPopulated == false" color="grey" name="fas fa-check-circle">
-		    <q-tooltip content-class="pipes-tooltip">No document fields sampled yet based on current selection</q-tooltip>
+	    <q-icon  :color="collectionSamplingStatus[1]" name="fas fa-check-circle">
+		    <q-tooltip content-class="pipes-tooltip">{{ collectionSamplingStatus[0] }}</q-tooltip>
 	    </q-icon>
     </div>
   </div>
@@ -523,6 +520,7 @@
         blockFieldsWarning : false,
 		    tickedNodes: null,        // selected tree nodes here due to Stepper
 		    collectionModelPopulated: false,
+        emptyCollection: false,
         collectionModel: FIELD_TREE_DEFAULT,
         previousBlockOptions: [BLOCK_OPTION_NODE_INPUT, BLOCK_OPTION_FIELDS_OUTPUT],
         blockOptions: [BLOCK_OPTION_NODE_INPUT, BLOCK_OPTION_FIELDS_OUTPUT],
@@ -567,9 +565,16 @@
 	dataSourceNextOk: function() {
 		return (this.blockSourceOption == "db_collection" && this.selectedCollection !== null) ||
     (this.showCustomURIPanel == true && this.customURIList.length > 0) ||
-    (this.blockSourceOption == "custom_step" && this.selectedStep !== null && this.selectedCollection !== null) ||
+    (this.blockSourceOption == "custom_step" && this.selectedStep !== null && this.selectedCollection !== null && ! this.emptyCollection) ||
     this.blockSourceOption == "none"
 	},
+   collectionSamplingStatus: function() {
+     var status = ''
+     if ( ! this.collectionModelPopulated ) status = ["No document fields sampled yet based on current selection","grey"]
+     if ( this.collectionModelPopulated && this.selectedCollection != null && ! this.emptyCollection ) status = ["Fields have been sampled and are ready in next step","green"]
+     if ( this.collectionModelPopulated && this.selectedCollection != null && this.emptyCollection ) status = ["The collection '" + this.selectedCollection.label + "' for this step currently contains no documents. No fields could be sampled","red"]
+     return status
+   },
       showBlockHelp: function() {
         return (this.userRequestingBlockOptionHelp && this.showBlockOptionTooltip)
       },
@@ -825,20 +830,10 @@
       },
       // When user changes data source options
       sourceOptionChanged(currentOption) {
-       if (currentOption == 'custom_step' ) {
-           this.selectedStep = null
-       } else if (currentOption == 'db_collection' ) {
-          this.selectedStep = null
-          this.selectedDatabase = null
-          this.selectedCollection = null
-          this.collectionChanged()
-       } else if (currentOption == 'none' ) {
-          this.selectedStep = null
-          this.selectedDatabase = null
-          this.selectedCollection = null
-          this.collectionChanged()
-         }
-
+         this.selectedStep = null
+         this.selectedDatabase = null
+         this.selectedCollection = null
+         this.resetFieldSelectionTree()
       },
       // When user clicks on block options
       blockOptionChanged(currentOptions) {
@@ -984,12 +979,14 @@
         this.selectedFields = []
 		    this.resetFieldSelectionTree()
         this.resetBlockOptions()
+        this.emptyCollection = false
         this.createBlockStep = 1
         this.formMode = 'create'
       },
       resetFieldSelectionTree() {
         this.collectionModel = FIELD_TREE_DEFAULT
 		    this.collectionModelPopulated = false
+        this.emptyCollection = false
       },
       resetCustomFieldValidation() {
         this.newCustomFieldName= this.cleanCustomFieldName()
@@ -1251,7 +1248,7 @@
       discoverModel(collection,custURIs, reloadBlock) {
 
         var self = this
-
+        this.emptyCollection = true
 		    this.collectionModelPopulated = false
 
         let dbOption =""
@@ -1270,9 +1267,12 @@
             this.collectionModel[0].children = response.data
             if ( reloadBlock != null) self.restoreFields(reloadBlock, false)
             if ( response.data !== null && response.data.length > 0  ) {
-				  this.collectionModelPopulated = true
+				    this.collectionModelPopulated = true
+            this.emptyCollection = false
             } else {
-				console.log("Warning: No fields returned")
+          this.collectionModelPopulated = true
+          this.emptyCollection = true
+				  console.log("Warning: No fields returned")
 			}
           })
           .catch((e) => {
