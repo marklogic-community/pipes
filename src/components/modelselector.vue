@@ -167,7 +167,7 @@
         <q-item-section avatar>
           <q-icon class="text-green" v-if="item.exists" name="far fa-check-circle"/>
           <q-icon class="text-red" v-if="! item.exists" name="error_outline">
-              <q-tooltip content-class="pipes-tooltip" v-if="!item.exists">No document with this URI exists in the database</q-tooltip>
+              <q-tooltip content-class="pipes-tooltip" v-if="!item.exists">No document with this URI exists in the database so fields will not be available</q-tooltip>
           </q-icon>
         </q-item-section>
         <q-item-section>
@@ -536,7 +536,7 @@
     },
   watch: {
       selectedStep: function (val) {
-      if ( val !== null && val != '') {
+      if ( val !== null ) {
       let availableDbHash = this.availableDatabases.reduce(function (map, obj) {
         map[obj.label] = obj.value;
         return map;
@@ -547,12 +547,12 @@
    } else {
       this.selectedDatabase = null
       this.selectedCollection = null
-      this.collectionChanged() // populate field tree, includes any custom URIs
+      this.resetFieldSelectionTree()
     }
-      }
+    }
   },
   selectedCollection:  function (val) {
-       if ( val !== null && val != '') {
+       if ( val !== null ) {
         this.collectionChanged()
        } else {
         this.selectedDatabase = null
@@ -571,8 +571,8 @@
    collectionSamplingStatus: function() {
      var status = ''
      if ( ! this.collectionModelPopulated ) status = ["No document fields sampled yet based on current selection","grey"]
-     if ( this.collectionModelPopulated && this.selectedCollection != null && ! this.emptyCollection ) status = ["Fields have been sampled and are ready in next step","green"]
-     if ( this.collectionModelPopulated && this.selectedCollection != null && this.emptyCollection ) status = ["The collection '" + this.selectedCollection.label + "' for this step currently contains no documents. No fields could be sampled","red"]
+     if ( this.collectionModelPopulated && this.selectedCollection !== null && ! this.emptyCollection ) status = ["Fields have been sampled and are ready in next step","green"]
+     if ( this.collectionModelPopulated && this.selectedCollection !== null && this.emptyCollection ) status = ["The collection '" + this.selectedCollection.label + "' for this step currently contains no documents. No fields could be sampled","red"]
      return status
    },
       showBlockHelp: function() {
@@ -831,6 +831,7 @@
       // When user changes data source options
       sourceOptionChanged(currentOption) {
          this.selectedStep = null
+         this.emptyCollection = false
          this.selectedDatabase = null
          this.selectedCollection = null
          this.resetFieldSelectionTree()
@@ -986,7 +987,6 @@
       resetFieldSelectionTree() {
         this.collectionModel = FIELD_TREE_DEFAULT
 		    this.collectionModelPopulated = false
-        this.emptyCollection = false
       },
       resetCustomFieldValidation() {
         this.newCustomFieldName= this.cleanCustomFieldName()
