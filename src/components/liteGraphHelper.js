@@ -35,6 +35,7 @@ const blockMapping =  new Map  ([
   ["string/EntityEnrichment", "Enrich/EntityEnrichment"],
   ["feature/EvalJavaScript","Advanced/EvalJavaScript"],
   ["string/Map values","Mapping/Map values"],
+  ["string/Split","Split"],
   ["feature/mapRangeValues","Mapping/mapRangeValues"],
   ["cts/search","Query/search"],
   ["string/NormalizeSpace","Clean/NormalizeSpace"],
