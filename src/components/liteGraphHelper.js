@@ -6,6 +6,57 @@ const BLOCK_OPTION_FIELDS_OUTPUT = "fieldsOutputs"
 const BLOCK_OPTIONS_DOC_BY_URI = 'getByUri'
 // TODO IMPORT THESE INSTEAD FROM constants.js
 
+const DHF = "DHF"
+const GRAPH = "Graph"
+const GENERATE = "Generate"
+const VALIDATE = "Validate"
+const FIND = "Query"
+const FORMAT = "Format"
+const TRANSFORM = "Transform"
+
+const blockMapping =  new Map  ([
+  ["dhf/input", DHF+ "/input"],
+  ["dhf/output", DHF + "/output"],
+  ["dhf/envelope", DHF + "/envelope"],
+  ["dhf/declarativeMapper", DHF + "/declarativeMapper"],
+  ["graph/subgraph", GRAPH + "/subgraph"],
+  ["graph/input", GRAPH + "/input"],
+  ["graph/output", GRAPH + "/output"],
+  ["string/constant", GENERATE + "/constant"],
+  ["controls/CheckPhoneNumber", VALIDATE + "/CheckPhoneNumber"],
+  ["controls/XMLValidate", VALIDATE + "/XMLValidate"],
+  ["controls/JsonValidate", VALIDATE + "/JsonValidate"],
+  ["string/Templating", GENERATE + "/Templating"],
+  ["basic/multicast", TRANSFORM + "/multicast"],
+  ["geo/GeoReproject", TRANSFORM + "/GeoReproject"],
+  ["transform/xpath", TRANSFORM + "/xpath"],
+  ["string/Highlight", "Enrich/Highlight"],
+  ["cts/ExpertQueryBuilder","Query/ExpertQueryBuilder"],
+  ["string/EntityEnrichment", "Enrich/EntityEnrichment"],
+  ["feature/EvalJavaScript","Advanced/EvalJavaScript"],
+  ["string/Map values","Mapping/Map values"],
+  ["feature/mapRangeValues","Mapping/mapRangeValues"],
+  ["cts/search","Query/search"],
+  ["string/NormalizeSpace","Clean/NormalizeSpace"],
+  ["provenance/PROV-O structure", "Enrich/PROV-O structure"],
+  ["date/Current Date","Generate/Current Date"],
+  ["basic/Array","Join/Array"],
+  ["transform/Add property", "Enrich/AddProperty"],
+  ["string/uuid","Generate/uuid"],
+  ["feature/DistinctValues", "Filter/DistinctValues"],
+  ["fn/doc",FIND + "/doc"],
+  ["feature/hashNode", GENERATE + "/hashNode"],
+  ["feature/selectCase", "Mapping/selectCase"],
+  ["feature/Doc By Key", FIND + "/Doc By Key"],
+  ["string/RegExReplace",TRANSFORM + "/RegExReplace"],
+  ["date/FormatDateAuto",FORMAT + "/FormatDateAuto"],
+  ["date/FormatDate",FORMAT + "/FormatDate"],
+  ["date/FormatDateTimeAuto",FORMAT + "/FormatDateTimeAuto"],
+  ["feature/LookupCollectionPropertyValue",FIND +"/LookupCollectionPropertyValue"],
+  ["feature/Lookup",FIND +"/Lookup"]
+]);
+
+
 const LiteGraphHelper = {
 
   data() {},
@@ -44,6 +95,9 @@ const LiteGraphHelper = {
 
       var blocksToReplace = []
 
+      //var blockMapping = this.blockMapping;
+
+      // process blocks from the block list
       for (var b = 0; b < thisGraphBlocks.length; b++) {
 
         var blockMenuType = thisGraphBlocks[b].split("/")[0]
@@ -56,7 +110,13 @@ const LiteGraphHelper = {
         }
       }
 
+      // blocks in subgraph need straight find and replace
+      for (let [k, v] of blockMapping) {
+        if ( originalGraph.includes(k) && ! blocksToReplace.includes(k) ) blocksToReplace.push( k )
+      }
+
       if ( blocksToReplace.length > 0 ) {
+        console.log("Replacing blocks: " + JSON.stringify(blocksToReplace))
         updatedGraph = this.replaceBlocks(blocksToReplace,originalGraph)
       }
 
@@ -69,56 +129,6 @@ const LiteGraphHelper = {
     var graph = origgraph
 
     console.log("Unknown/legacy blocks found. Remapping..")
-
-    const DHF = "DHF"
-    const GRAPH = "Graph"
-    const GENERATE = "Generate"
-    const VALIDATE = "Validate"
-    const FIND = "Query"
-    const FORMAT = "Format"
-    const TRANSFORM = "Transform"
-
-    const blockMapping =  new Map  ([
-        ["dhf/input", DHF+ "/input"],
-        ["dhf/output", DHF + "/output"],
-        ["dhf/envelope", DHF + "/envelope"],
-        ["dhf/declarativeMapper", DHF + "/declarativeMapper"],
-        ["graph/subgraph", GRAPH + "/subgraph"],
-        ["graph/input", GRAPH + "/input"],
-        ["graph/output", GRAPH + "/output"],
-        ["string/constant", GENERATE + "/constant"],
-        ["controls/CheckPhoneNumber", VALIDATE + "/CheckPhoneNumber"],
-        ["controls/XMLValidate", VALIDATE + "/XMLValidate"],
-        ["controls/JsonValidate", VALIDATE + "/JsonValidate"],
-        ["string/Templating", GENERATE + "/Templating"],
-        ["basic/multicast", TRANSFORM + "/multicast"],
-        ["geo/GeoReproject", TRANSFORM + "/GeoReproject"],
-        ["transform/xpath", TRANSFORM + "/xpath"],
-        ["string/Highlight", "Enrich/Highlight"],
-        ["cts/ExpertQueryBuilder","Query/ExpertQueryBuilder"],
-        ["string/EntityEnrichment", "Enrich/EntityEnrichment"],
-        ["feature/EvalJavaScript","Advanced/EvalJavaScript"],
-        ["string/Map values","Mapping/Map values"],
-        ["feature/mapRangeValues","Mapping/mapRangeValues"],
-        ["cts/search","Query/search"],
-        ["string/NormalizeSpace","Clean/NormalizeSpace"],
-        ["provenance/PROV-O structure", "Enrich/PROV-O structure"],
-        ["date/Current Date","Generate/Current Date"],
-        ["basic/Array","Join/Array"],
-        ["transform/Add property", "Enrich/AddProperty"],
-        ["string/uuid","Generate/uuid"],
-        ["feature/DistinctValues", "Filter/DistinctValues"],
-        ["fn/doc",FIND + "/doc"],
-        ["feature/hashNode", GENERATE + "/hashNode"],
-        ["feature/selectCase", "Mapping/selectCase"],
-        ["feature/Doc By Key", FIND + "/Doc By Key"],
-        ["string/RegExReplace",TRANSFORM + "/RegExReplace"],
-        ["date/FormatDateAuto",FORMAT + "/FormatDateAuto"],
-        ["date/FormatDate",FORMAT + "/FormatDate"],
-        ["date/FormatDateTimeAuto",FORMAT + "/FormatDateTimeAuto"],
-        ["feature/LookupCollectionPropertyValue",FIND +"/LookupCollectionPropertyValue"],
-        ["feature/Lookup",FIND +"/Lookup"]
-      ]);
 
     for (var b = 0; b < oldblocks.length; b++ ) {
 
@@ -137,7 +147,7 @@ const LiteGraphHelper = {
     },
 
   listTheGraphBlocks: function(pipesModels) {
-    console.log('Pipes Blocks contains: ' + pipesModels.length + " blocks:")
+    console.log('Pipes Blocks contains ' + pipesModels.length + " blocks:")
     for (var i = 0; i < pipesModels.length; i++) {
       console.log( pipesModels[i].source + "/" + pipesModels[i].label )
       console.log( JSON.stringify(pipesModels[i] ) )
