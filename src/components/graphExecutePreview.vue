@@ -458,10 +458,9 @@ export default {
     }
   },
   methods:{
-    openDialog(graph, graphMetadata, blockList, dhfSteps, dhfStepOptions) {
+    openDialog(graph, blockList, dhfSteps, dhfStepOptions) {
         this.showPreview = true
         this.graph = graph
-        this.graphMetadata = graphMetadata
         this.blocks = blockList
         this.dhfSteps = dhfSteps
         this.dhfStepSelectOptions = dhfStepOptions

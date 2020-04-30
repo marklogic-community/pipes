@@ -448,7 +448,7 @@ export default {
   methods: {
     // Open the Preview Graph Dialog. Pass graph details
     openGraphPreviewDialog () {
-      this.$root.$emit("openExecutionPreview", this.graph, this.graphMetadata, this.blockModels, this.dhfSteps, this.dhfStepSelectOptions)
+      this.$root.$emit("openExecutionPreview", this.graph, this.blockModels, this.dhfSteps, this.dhfStepSelectOptions)
     },
     createBlock (blockDef) {
       var blockInList = false;
@@ -478,8 +478,6 @@ export default {
 
       console.log("Registering block into LiteGraph as " + BLOCK_KEY + ": " + JSON.stringify(liteGraphNode))
       LiteGraph.registerNodeType(BLOCK_KEY, liteGraphNode);
-
-      //console.log("Menu now has: " + JSON.stringify(LiteGraph.getNodeType( BLOCK_KEY )) )
 
       this.$root.$emit("resetBlockFormFields")
 
@@ -528,11 +526,10 @@ export default {
         console.log("Caught warning during litegraph.configure: " + e)
       }
 
-      if (graph.metadata && graph.metadata.title != null) this.graphTitle = graph.metadata.title; else this.graphTitle = ""
-      if (graph.metadata && graph.metadata.author != null) this.graphAuthor = graph.metadata.author; else this.graphAuthor = ""
-      if (graph.metadata && graph.metadata.version != null) this.graphVersion = graph.metadata.version; else this.graphVersion = ""
-      if (graph.metadata && graph.metadata.description != null) this.graphDescription = graph.metadata.description; else this.graphDescription = ""
-      this.$root.$emit("initGraphMetadata", this.graphMetadata)
+      this.graphTitle = (graph.metadata && graph.metadata.title !== null) ? graph.metadata.title : ""
+      this.graphAuthor = (graph.metadata && graph.metadata.author !== null) ? graph.metadata.author : ""
+      this.graphVersion = (graph.metadata && graph.metadata.version !== null) ? graph.metadata.version : ""
+      this.graphDescription = (graph.metadata && graph.metadata.description !== null) ?graph.metadata.description : ""
 
       if (notifyLoaded) this.notifyPositive(self, "Loaded graph " + this.graphTitle)
       this.$root.$emit("resetGraphTitle") // reset the titlebar to top graph (remove all subgraph history)
@@ -621,7 +618,7 @@ export default {
 
       for (let map of mappings) {
 
-        if (map.source != null && blocks[map.source] == null) {
+        if (map.source !== null && blocks[map.source] == null) {
           var block = {
             [BLOCK_LABEL]: map.source,
             [BLOCK_COLLECTION]: map.source,
@@ -633,7 +630,7 @@ export default {
           blocks[map.source] = block
         }
 
-        if (map.target != null && blocks[map.target] == null) {
+        if (map.target !== null && blocks[map.target] == null) {
           var block =
           {
             [BLOCK_LABEL]: map.target,
@@ -691,70 +688,6 @@ export default {
             blockCache[map.target].ioSetup.inputs["//text('" + map.targetField + "')"])
         }
       }
-    },
-    createGraphNodeFromModel (blockDef) {
-
-      let block = function () {
-        this.blockDef = Object.assign({}, blockDef, {})
-        this.doc = {
-          input: null,
-          output: null
-        }
-
-        this.ioSetup = {
-          inputs: {
-            _count: 0
-          },
-          outputs: {
-            _count: 0
-          }
-        }
-
-        if (this.blockDef.options.indexOf("getByUri") > -1) {
-          this.ioSetup.inputs["Uri"] = this.ioSetup.inputs._count++;
-          this.addInput("Uri");
-        }
-
-        if (this.blockDef.options.indexOf("nodeInput") > -1) {
-          this.ioSetup.inputs["Node"] = this.ioSetup.inputs._count++;
-          this.addInput("Node") //, "Node");
-        }
-
-        if (this.blockDef.options.indexOf("nodeOutput") > -1) {
-          this.ioSetup.outputs["Node"] = this.ioSetup.outputs._count++;
-          this.ioSetup.outputs["Prov"] = this.ioSetup.outputs._count++;
-          this.addOutput("Node", "Node");
-          this.addOutput("Prov", null);
-        }
-
-        if (this.blockDef.options.indexOf("fieldsOutputs") > -1) {
-          for (let field of blockDef.fields) {
-            //this.ioSetup.outputs[field] = this.ioSetup.outputs._count++;
-            this.ioSetup.outputs[field.path] = this.ioSetup.outputs._count++;
-            this.addOutput(field.field)
-          }
-        }
-
-        if (blockDef.options.indexOf("fieldsInputs") > -1) {
-          for (let field of blockDef.fields) {
-            this.ioSetup.inputs[field.path] = this.ioSetup.inputs._count++;
-            //this.ioSetup.inputs[field] = this.ioSetup.inputs._count++;
-            this.addInput(field.field);
-          }
-        }
-        this["WithInstanceRoot"] = this.addWidget("toggle", "WithInstanceRoot", true, function (v) {
-        }, { on: "enabled", off: "disabled" });
-        this.serialize_widgets = true;
-        this.computeSize();
-        this.size = [this.size[0] + 50, this.size[1] + 30]
-
-      }
-
-      block.title = blockDef.collection;
-      if ( blockDef.metadata && blockDef.metadata.description != '' ) block.description = blockDef.metadata.description
-      block.nodeType = blockDef.collection;
-      return block
-
     },
     deleteGraph (graphName, graphURI) {
       console.log("Deleting graph " + graphName + " (" + graphURI + ")")
@@ -862,7 +795,6 @@ export default {
         this.BlockDeletion.delBlockName = '';
         console.log("Deleting block from list: " + blockKey)
         this.$store.commit('removeBlock', blockKey)
-       // var block = LiteGraph.getNodeType(blockKey)
         LiteGraph.deregisterNode(blockKey)
       } else {
 
@@ -927,7 +859,6 @@ export default {
         .then((response) => {
 
           this.$store.commit('availableDatabases', this.filterDatabases(response.data))
-          // this.availableDB = this.filterDatabases(response.data)
 
           this.$axios.get('/statics/library/core.json')
             .then((response) => {
@@ -938,10 +869,6 @@ export default {
             .then((response) => {
               this.registerBlocksByConf(response.data, LiteGraph)
             })
-
-          this.$root.$emit("initGraphMetadata", this.graphMetadata)
-
-          //   this.discoverCollections()
         })
         .catch((error) => {
           if (showError) self.notifyError("databasesDetails", error, self)
@@ -987,110 +914,28 @@ export default {
     },
     // Block description popup
     showBlockDetails(block) {
-      //  console.log("Pipes received request to show block " + JSON.stringify(block))
          if ( block.description && block.description != '')
          this.$root.$emit('showBlockDescription',block)
     },
-    // process blocks from old version of pipes and update
+    // Process blocks from old version of pipes and update
     updateGraph(graph) {
      graph.executionGraph = this.remapBlocks(LiteGraph,graph)
     },
     registerBlocksByConf (configs, LiteGraph) {
 
-      let allBlockCode = ""
-
       const availableDatabases = [...this.availableDB]
 
       for (let config of configs) {
 
-        var blockCode = ''
-
-        blockCode += "function " + config.functionName + "(){"
-        blockCode += config.inputs.map((input) => {
-          return "this.addInput('" + input.name + ((input.type == "ee") ? "','" + input.type + "');" : "');")
-        }).join("")
-        blockCode += config.outputs.map((output) => {
-          return "this.addOutput('" + output.name + ((output.type == "ee") ? "','" + output.type + "');" : "');")
-        }).join("")
-        blockCode += (config.properties != null) ? config.properties.map((property) => {
-          return "this.addProperty('" + property.name + ((property.type) ? "'," + JSON.stringify(property.type) + ");" : "');")
-        }).join("") : ""
-        blockCode += (config.widgets != null) ? config.widgets.map((widget) => {
-          if (widget.default == "#DATABASES#") widget.values = availableDatabases.map(item => item.label)
-          return "this.addWidget('" + widget.type + "','" + widget.name + "'," + ((typeof (widget.default) == "boolean") ? widget.default : "'" + widget.default + "'") + ", function(v){" + (widget.callback ? widget.callback : "") + "}.bind(this), { values:" + JSON.stringify(widget.values) + "} );"
-        }).join("") : "";
-
-        if (config.width)
-          blockCode += "    this.size = [" + config.width + "," + config.height + "];\n"
-        blockCode += "    this.serialize_widgets = true;"
-
-        //blockCode += (config.properties)?"config.properties = " +  config.properties +";":"";
-        blockCode += "};"
-
-        if (config.title_color) blockCode += config.functionName + ".title_color = \"" + config.title_color + "\";"
-
-        // Use title property, otherwise blockname for block title bar
-        if ( config.title !== null && config.title != undefined ) {
-          blockCode += config.functionName + ".title = '" + config.title + "';";
-        } else {
-          blockCode += config.functionName + ".title = '" + config.blockName + "';";
-        }
-
-
-        if (config.description && config.description != undefined) blockCode += config.functionName + ".description = '" + config.description + "';";
-
-        // Add event to onConfigure for block when defined
-        // !== undefined is required
-        if (config.events && config.events != null && config.events != undefined) {
-          if (config.events.onDrawForeground !== null && config.events.onDrawForeground != undefined && config.events.onDrawForeground != '') {
-            blockCode += config.functionName + ".prototype.onDrawForeground = function(ctx){" + config.events.onDrawForeground + "};"
-          }
-          if (config.events.onConfigure !== null && config.events.onConfigure != undefined && config.events.onConfigure != '') {
-            blockCode += config.functionName + ".prototype.onConfigure = function(node){" + config.events.onConfigure + "};"
-          }
-        }
-        // beforePropSave event for validating block property editing
-        if (config.events && config.events.beforePropSave && config.events.beforePropSave != undefined) {
-          blockCode += config.functionName + ".prototype.beforePropSave = function(v,validation,ctx){" + config.events.beforePropSave + "};"
-        }
-
-        blockCode += config.functionName + ".prototype.notify = function(node){this.$root.$emit(\"nodeSelected\",node)}.bind(this);";
-        blockCode += config.functionName + ".prototype.onSelected = function(){this.notify(this) };"
-        blockCode += config.functionName + ".prototype.onDblClick = function(e,pos,object){this.$root.$emit(\"nodeDblClicked\",object) }.bind(this);"
-        blockCode += config.functionName + ".prototype.onExecute = function(){  ";
-
-        if (config.function != null && config.function.ref != null) {
-          let i = 0;
-          blockCode += "this.setOutputData( 0, " + config.function.ref + "(" + config.inputs.map((input) => {
-            return "this.getInputData(" + i++ + ")"
-          }).join(",") + "));"
-        } else {
-          blockCode += config.function.code;
-
-        }
-        blockCode += "};"
-        //register in the syst em
-        blockCode += "LiteGraph.registerNodeType('" + config.library + "/" + config.blockName + "', " + config.functionName + " );"
-
-        // DEBUGGING
-        // console.log("==CONFIGURING BLOCK: " + config.blockName)
-        // console.log(JSON.stringify(config))
-        // console.log(JSON.stringify(blockCode))
+        // Generate LiteGraph node from config
+        var blockCode = this.createGraphNodeFromConfig(config,availableDatabases)
         try { eval(blockCode) } catch (e) {
           console.log("Error occured registering block " + config.blockName + ": " + e)
         }
-
-        allBlockCode += blockCode
       }
-      //xdmp.log(code)
-      //eval(allBlockCode)
     },
     checkLoggedIn () {
-
-      console.log("Checking session login status:")
-
       this.$axios.get('/status').then(response => {
-
         if (response.data && response.data.authenticated) {
           console.log("Logged in")
           this.$store.commit('authenticated', true)
@@ -1102,9 +947,6 @@ export default {
     }
   },
   mounted: function () {
-
-    console.log("mounted")
-
     this.checkLoggedIn()
 
     this.$root.$on("csvLoadingRequested", this.createGraphFromMapping)

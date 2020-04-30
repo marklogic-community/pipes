@@ -1,4 +1,11 @@
 // Copyright ©2020 MarkLogic Corporation.
+const BLOCK_OPTION_FIELDS_INPUT = "fieldsInputs"
+const BLOCK_OPTION_NODE_OUTPUT = "nodeOutput"
+const BLOCK_OPTION_NODE_INPUT = "nodeInput"
+const BLOCK_OPTION_FIELDS_OUTPUT = "fieldsOutputs"
+const BLOCK_OPTIONS_DOC_BY_URI = 'getByUri'
+// TODO IMPORT THESE INSTEAD FROM constants.js
+
 const LiteGraphHelper = {
 
   data() {},
@@ -9,7 +16,7 @@ const LiteGraphHelper = {
       console.log("========================")
       var blockArray = []
       var g = liteGraph
-      console.log("Graph contains " + g.nodes.length + " node types:")
+      console.log("Graph contains " + g.nodes.length + " nodes:")
       var blockMap = new Map();
       for (var n = 0; n < g.nodes.length; n++) {
       var val = blockMap.get( g.nodes[n].type )
@@ -26,7 +33,6 @@ const LiteGraphHelper = {
        console.log("========================")
        return blockArray
     },
-
 
     remapBlocks: function(litegraph, graph) {
 
@@ -87,6 +93,7 @@ const LiteGraphHelper = {
         ["string/Templating", GENERATE + "/Templating"],
         ["basic/multicast", TRANSFORM + "/multicast"],
         ["geo/GeoReproject", TRANSFORM + "/GeoReproject"],
+        ["transform/xpath", TRANSFORM + "/xpath"],
         ["string/Highlight", "Enrich/Highlight"],
         ["cts/ExpertQueryBuilder","Query/ExpertQueryBuilder"],
         ["string/EntityEnrichment", "Enrich/EntityEnrichment"],
@@ -126,9 +133,7 @@ const LiteGraphHelper = {
       console.log( "WARNING: No mapping found for block " + oldBlockKey + " - Graph will not run");
      }
     }
-
     return graph
-
     },
 
   listTheGraphBlocks: function(pipesModels) {
@@ -172,24 +177,148 @@ const LiteGraphHelper = {
       return null;
  },
 
-  isblockOnGraph(liteGraph, blockName) {
-    //console.log("blockIsOnGraph " + blockName)
+ // returns true if a block is on the graph
+  isblockOnGraph(liteGraph, blockKey) {
     var isOnGraph = false
     var g = liteGraph.serialize()
-    return JSON.stringify( g ).includes(blockName)
+    return JSON.stringify( g ).includes(blockKey)
   },
 
-/*
-  inspectGraph(nodeList, blockName) {
-    for (var x = 0; x < nodeList.length; x++) {
-      if ( nodeList[x].type == blockName ) {
-        console.log("Block is on graph: " + JSON.stringify(nodeList[x]))
-        return true
+  // Creates a LiteGraph node from a Pipes block definition
+  createGraphNodeFromModel (blockDef) {
+
+    let block = function () {
+      this.blockDef = Object.assign({}, blockDef, {})
+      this.doc = {
+        input: null,
+        output: null
+      }
+
+      this.ioSetup = {
+        inputs: {
+          _count: 0
+        },
+        outputs: {
+          _count: 0
+        }
+      }
+
+      if (this.blockDef.options.indexOf(BLOCK_OPTIONS_DOC_BY_URI) > -1) {
+        this.ioSetup.inputs["Uri"] = this.ioSetup.inputs._count++;
+        this.addInput("Uri");
+      }
+
+      if (this.blockDef.options.indexOf(BLOCK_OPTION_NODE_INPUT) > -1) {
+        this.ioSetup.inputs["Node"] = this.ioSetup.inputs._count++;
+        this.addInput("Node")
+      }
+
+      if (this.blockDef.options.indexOf(BLOCK_OPTION_NODE_OUTPUT) > -1) {
+        this.ioSetup.outputs["Node"] = this.ioSetup.outputs._count++;
+        this.ioSetup.outputs["Prov"] = this.ioSetup.outputs._count++;
+        this.addOutput("Node", "Node");
+        this.addOutput("Prov", null);
+      }
+
+      if (this.blockDef.options.indexOf(BLOCK_OPTION_FIELDS_OUTPUT) > -1) {
+        for (let field of blockDef.fields) {
+          //this.ioSetup.outputs[field] = this.ioSetup.outputs._count++;
+          this.ioSetup.outputs[field.path] = this.ioSetup.outputs._count++;
+          this.addOutput(field.field)
+        }
+      }
+
+      if (blockDef.options.indexOf(BLOCK_OPTION_FIELDS_INPUT) > -1) {
+        for (let field of blockDef.fields) {
+          this.ioSetup.inputs[field.path] = this.ioSetup.inputs._count++;
+          //this.ioSetup.inputs[field] = this.ioSetup.inputs._count++;
+          this.addInput(field.field);
+        }
+      }
+      this["WithInstanceRoot"] = this.addWidget("toggle", "WithInstanceRoot", true, function (v) {
+      }, { on: "enabled", off: "disabled" });
+      this.serialize_widgets = true;
+      this.computeSize();
+      this.size = [this.size[0] + 50, this.size[1] + 30]
+    }
+
+    block.title = blockDef.collection;
+    if ( blockDef.metadata && blockDef.metadata.description != '' ) block.description = blockDef.metadata.description
+    block.nodeType = blockDef.collection;
+    return block
+  },
+  // Returns code block to register a LiteGraph node based on configuration (from core.json or user.json)
+  createGraphNodeFromConfig(config,availableDatabases) {
+
+    var blockCode = ''
+
+    blockCode += "function " + config.functionName + "(){"
+    blockCode += config.inputs.map((input) => {
+      return "this.addInput('" + input.name + ((input.type == "ee") ? "','" + input.type + "');" : "');")
+    }).join("")
+    blockCode += config.outputs.map((output) => {
+      return "this.addOutput('" + output.name + ((output.type == "ee") ? "','" + output.type + "');" : "');")
+    }).join("")
+    blockCode += (config.properties != null) ? config.properties.map((property) => {
+      return "this.addProperty('" + property.name + ((property.type) ? "'," + JSON.stringify(property.type) + ");" : "');")
+    }).join("") : ""
+    blockCode += (config.widgets != null) ? config.widgets.map((widget) => {
+      if (widget.default == "#DATABASES#") widget.values = availableDatabases.map(item => item.label)
+      return "this.addWidget('" + widget.type + "','" + widget.name + "'," + ((typeof (widget.default) == "boolean") ? widget.default : "'" + widget.default + "'") + ", function(v){" + (widget.callback ? widget.callback : "") + "}.bind(this), { values:" + JSON.stringify(widget.values) + "} );"
+    }).join("") : "";
+
+    if (config.width)
+    blockCode += "    this.size = [" + config.width + "," + config.height + "];\n"
+    blockCode += "    this.serialize_widgets = true;"
+
+    //blockCode += (config.properties)?"config.properties = " +  config.properties +";":"";
+    blockCode += "};"
+
+    if (config.title_color) blockCode += config.functionName + ".title_color = \"" + config.title_color + "\";"
+
+    // Use title property, otherwise blockname for block title bar
+    if ( config.title !== null && config.title != undefined ) {
+      blockCode += config.functionName + ".title = '" + config.title + "';";
+    } else {
+      blockCode += config.functionName + ".title = '" + config.blockName + "';";
+    }
+
+    if (config.description && config.description != undefined) blockCode += config.functionName + ".description = '" + config.description + "';";
+
+    // Add event to onConfigure for block when defined
+    // !== undefined is required
+    if (config.events && config.events != null && config.events != undefined) {
+      if (config.events.onDrawForeground !== null && config.events.onDrawForeground != undefined && config.events.onDrawForeground != '') {
+        blockCode += config.functionName + ".prototype.onDrawForeground = function(ctx){" + config.events.onDrawForeground + "};"
+      }
+      if (config.events.onConfigure !== null && config.events.onConfigure != undefined && config.events.onConfigure != '') {
+        blockCode += config.functionName + ".prototype.onConfigure = function(node){" + config.events.onConfigure + "};"
       }
     }
-},
-*/
+    // beforePropSave event for validating block property editing
+    if (config.events && config.events.beforePropSave && config.events.beforePropSave != undefined) {
+      blockCode += config.functionName + ".prototype.beforePropSave = function(v,validation,ctx){" + config.events.beforePropSave + "};"
+    }
 
+    blockCode += config.functionName + ".prototype.notify = function(node){this.$root.$emit(\"nodeSelected\",node)}.bind(this);";
+    blockCode += config.functionName + ".prototype.onSelected = function(){this.notify(this) };"
+    blockCode += config.functionName + ".prototype.onDblClick = function(e,pos,object){this.$root.$emit(\"nodeDblClicked\",object) }.bind(this);"
+    blockCode += config.functionName + ".prototype.onExecute = function(){  ";
+
+    if (config.function != null && config.function.ref != null) {
+      let i = 0;
+      blockCode += "this.setOutputData( 0, " + config.function.ref + "(" + config.inputs.map((input) => {
+        return "this.getInputData(" + i++ + ")"
+      }).join(",") + "));"
+    } else {
+      blockCode += config.function.code;
+
+    }
+    blockCode += "};"
+    blockCode += "LiteGraph.registerNodeType('" + config.library + "/" + config.blockName + "', " + config.functionName + " );"
+
+    return blockCode
+  },
 // Graphs have duplicate blocks - analyse this
 findDuplicateBlocks: function(pipesModels) {
   var checkArray = []
