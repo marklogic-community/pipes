@@ -1675,7 +1675,7 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
   function selectCase () {
     this.addInput("value2Test", null);
     this.addOutput("result", "number");
-    this.addProperty("testCases");
+    this.addProperty("mappingCase");
     var that = this;
     this.slider = this.addWidget("text", "nbInputs", 1, function (v) { }, { min: 0, max: 1000 });
     this.size = this.computeSize();
@@ -1694,15 +1694,17 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
     } else {
       value2test = String(value2test)
     }
-    let map2Output = {};
-    fn.tokenize(this.properties.testCases, "\n").toArray().map(item => {
-      item = fn.tokenize(item, ";").toArray()
-      map2Output[item[0]] = parseInt(item[1])
-    })
-    let o = map2Output[value2test];
+
     let r = null;
+    let o = null;
+    for(let mapCase of this.properties.mappingCase){
+        if(mapCase.value == value2test){
+            o = mapCase.input;
+        }
+    }
+    
     if (o != null) {
-      r = this.getInputData(o + 2);
+      r = this.getInputData(parseInt(o) + 2);
     } else {
       const defaultValue = this.getInputData(1);
       if (defaultValue == null) {

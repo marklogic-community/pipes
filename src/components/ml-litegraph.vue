@@ -958,19 +958,19 @@ export default {
         // Mapping edit (string/Mapvalues block)
         if (block.node_over.properties.mapping) {
           this.$root.$emit("openMappingEdit", block.node_over.properties.mapping)
-        } else {
-
-          if (block.node_over.properties.mappingRange) {
+        } else  if (block.node_over.properties.mappingRange) {
             this.$root.$emit("openMappingEdit", block.node_over.properties.mappingRange, true)
-          } else {
 
-            // Property edit. selectCase, Lookup, EvalJavaScript, & generic edit window hook
-            if (this.isNotEmpty(block.node_over.properties.pipesDblClickProp) && block.node_over.properties.editProp) {
+          } else   if (block.node_over.properties.mappingCase) {
+            this.$root.$emit("openMappingEdit", block.node_over, false, true)
+
+              // Property edit. selectCase, Lookup, EvalJavaScript, & generic edit window hook
+            }else if (this.isNotEmpty(block.node_over.properties.pipesDblClickProp) && block.node_over.properties.editProp) {
               this.$root.$emit("openPropertyEdit", block.node_over)
             }
 
-          }
-        }
+          
+        
       }
     },
     // Re-center and re-zoom graph

@@ -1,6 +1,83 @@
 <!-- Copyright ©2020 MarkLogic Corporation. -->
 <template>
   <div>
+
+<!-- Reusable mapping edit dialog -->
+<q-dialog persistent v-model="showMappingCasesEdit">
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">{{ editPopupTitle }}</div>
+        </q-card-section>
+
+        <q-card-section>
+          <q-table
+            :columns="columnsCases"
+            :data="EditForm.currentProperties"
+            binary-state-sort
+            row-key="name"
+            title="Select Case"
+          >
+            <template v-slot:body="props">
+              <q-tr :props="props">
+                <q-td
+                  :props="props"
+                  key="value"
+                >
+                  {{ props.row.value }}
+                  <q-popup-edit
+                    buttons
+                    title="Update mapping"
+                    v-model="props.row.value"
+                  >
+                    <q-input
+                      autofocus
+                      dense
+                      type="string"
+                      v-model="props.row.value"
+                    />
+                  </q-popup-edit>
+                </q-td>
+                <q-td
+                  :props="props"
+                  key="input"
+                >
+                  {{ props.row.input }}
+                  <q-popup-edit
+                    buttons
+                    title="Update mapping"
+                    v-model="props.row.input"
+                  >
+                    <q-input
+                      autofocus
+                      dense
+                      type="string"
+                      v-model="props.row.input"
+                    />
+                  </q-popup-edit>
+                </q-td>
+
+              </q-tr>
+            </template>
+          </q-table>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn
+            @click="addMappingCase()"
+            color="primary"
+            flat
+            label="Add case"
+          />
+          <q-btn
+            color="primary"
+            flat
+            label="OK"
+            v-close-popup
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
 <!-- Reusable mapping edit dialog -->
 <q-dialog persistent v-model="showMappingEdit">
       <q-card>
@@ -177,6 +254,7 @@ export default {
   ],
   data () {
     return {
+        showMappingCasesEdit: false,
         showMappingEdit: false,
         showMappingRangeEdit: false,
         EditForm: {
@@ -192,6 +270,10 @@ export default {
          { name: 'to', label: 'To (inc)', field: 'to', sortable: true, align: 'left' },
          { name: 'target', label: 'Target', field: 'target', sortable: true, align: 'left' },
         ],
+        columnsCases: [
+        { name: 'value', align: 'left', label: 'Value', field: 'value', sortable: true },
+        { name: 'input', label: 'Input', field: 'input', sortable: true, align: 'left' },
+      ]
     }
   },
   computed: {
@@ -201,21 +283,30 @@ export default {
   },
   methods:{
 
-    openForm( properties , isRange ) {
+    openForm( block , isRange , isCase ) {
 
       console.log("Opening the form: " + isRange)
 
-      this.EditForm.currentProperties = properties
+ 
+      if ( isCase ) {
 
-      if ( isRange ) {
+      this.EditForm.title = "Edit Select Case"
+      this.showMappingCasesEdit = true
+      this.EditForm.currentProperties = block.properties.mappingCase
+      this.EditForm.block = block
+      } else if ( isRange ) {
 
       this.EditForm.title = "Edit Mapping Range"
       this.showMappingRangeEdit = true
+      this.EditForm.currentProperties = block.properties.mappingRange
+
 
       } else {
 
       this.EditForm.title = "Edit Mapping"
       this.showMappingEdit = true
+      this.EditForm.currentProperties = block.properties.mapping
+
     }
     },
     // Close edit dialog and reset everything
@@ -226,6 +317,11 @@ export default {
     },
     addMapping () {
       this.EditForm.currentProperties.push({ source: "val", target: "newVal" })
+    },
+    addMappingCase () {
+      this.EditForm.currentProperties.push({ value: "value", input: "input" })
+      this.EditForm.block.addInput('input' + (this.EditForm.currentProperties.length-1),null)
+      this.EditForm.block.widgets[0].value= this.EditForm.currentProperties.length
     },
     addMappingRange () {
       this.EditForm.currentProperties.push({ from: "0", to: "0", target: "0" })
