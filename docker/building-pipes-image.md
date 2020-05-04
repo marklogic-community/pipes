@@ -6,7 +6,7 @@ First, create a directory to contain the Pipes jar. From the directory that cont
 
 Then, download the Pipes .jar into the directory you just created.
 
-``curl -L -o jar/marklogic-pipes-1.1.jar https://github.com/marklogic-community/pipes/releases/download/1.1/marklogic-pipes-1.1.jar``
+``curl -L -o jar/marklogic-pipes-1.0.2.jar https://github.com/marklogic-community/pipes/releases/download/1.0.2/marklogic-pipes-1.0.2.jar``
 
 Finally, build the image:
 
