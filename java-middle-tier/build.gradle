@@ -10,9 +10,6 @@ plugins {
 group = 'com.marklogic.pipes'
 sourceCompatibility = '1.8'
 
-def String pipesversion = ""
-def String pipesbuild = ""
-
 repositories { jcenter()}
 ext {
 	set('springCloudVersion', "Hoxton.RELEASE")
@@ -109,50 +106,37 @@ task copyDhf(type:Copy) {
 }
 
 task getVersion(type: Exec) {
-     dependsOn copyDhf
-     mustRunAfter copyDhf
-
-     commandLine 'git', 'describe', '--tags'
-
-	doLast {
-      standardOutput = new ByteArrayOutputStream()
-		  ext.loginCommand = standardOutput.toString()
-      pipesversion = standardOutput.toString()
-	}
+    //WARN: This is windows specific see: task runQuasarBuild
+    commandLine 'git', 'describe', '--tags'
+    standardOutput = new ByteArrayOutputStream()
+    ext.value = {standardOutput.toString().replaceAll("\\s", "")}
 }
 
 task getBuild(type: Exec) {
-     dependsOn getVersion
-     mustRunAfter getVersion
-
+    //WARN: This is windows specific see: task runQuasarBuild
     commandLine 'git','rev-parse','--verify','--short','HEAD'
-
-	doLast {
-      standardOutput = new ByteArrayOutputStream()
-		  ext.loginCommand = standardOutput.toString()
-      pipesbuild = standardOutput.toString()
-	}
+    standardOutput = new ByteArrayOutputStream()
+    ext.value = {standardOutput.toString().replaceAll("\\s", "")}
 }
 
 task addVersionToBackend(type:Copy) {
-   dependsOn getBuild
-   mustRunAfter getBuild
-
-   outputs.upToDateWhen { false }
-
-    doFirst {
-      logger.warn('Adding build and version to the backend library: version = ' + pipesversion + ", build = " + pipesbuild)
-
-     from "../ml-backend/src/main/ml-modules/services/vppBackendServices.sjs"
-       into "../java-middle-tier/src/main/resources/dhf/src/main/ml-modules/services/"
-       filter(ReplaceTokens, tokens: [
-        PIPESVERSIONTOKEN: pipesversion,
-        PIPESBUILDTOKEN: pipesbuild
-    ])
+    dependsOn getBuild
+    dependsOn getVersion
+    
+    //NOTE: not aware of this... not sure if this really takes effect
+    outputs.upToDateWhen { false }
+   
+    from "../ml-backend/src/main/ml-modules/services/vppBackendServices.sjs"
+    into "../java-middle-tier/src/main/resources/dhf/src/main/ml-modules/services/"
+    
+    //define filter during execution phase, not config phase.
+    //more info available here: https://docs.gradle.org/current/userguide/build_lifecycle.html
+    eachFile {
+        filter(ReplaceTokens, tokens: [
+            PIPESVERSIONTOKEN: tasks.getVersion.value(),
+            PIPESBUILDTOKEN: tasks.getBuild.value()
+        ])
     }
-
-    logger.warn("Replacing")
-
 }
 
 bootJar {
