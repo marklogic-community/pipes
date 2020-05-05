@@ -1375,7 +1375,7 @@
     "blockName": "declarativeMapper",
     "library": "DHF",
     "title": "Declarative Mapper",
-    "description" : "Applies DHF 5.1 mapping to the input node",
+    "description" : "Applies DHF Custom Mapping step to the input node",
     "inputs": [
 
       {
