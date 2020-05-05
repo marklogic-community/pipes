@@ -1,8 +1,10 @@
 //Copyright ©2020 MarkLogic Corporation.
 
-
 const blocksCollection = "marklogic-pipes/type/savedBlock";
 const graphsCollection = "marklogic-pipes/type/savedGraph";
+
+const PIPESVERSION = "@PIPESVERSIONTOKEN@"
+const PIPESBUILD = "@PIPESBUILDTOKEN@"
 
 function mapper(item, cfg) {
 
@@ -341,7 +343,7 @@ function InvokeExecuteGraph(input) {
         }
       }
 
-      if (doc != null) {
+      if (doc !== null) {
 
         uri = fn.baseUri(doc)
 
@@ -349,18 +351,29 @@ function InvokeExecuteGraph(input) {
         console.log("execContext=", execContext)
         console.log("execContext.collection=", execContext.collection)
         console.log("execContext[\"collection\"]=", execContext["collection"])
-        console.log("input.collection=", input.collection)
+        console.log("input.collection=", execContext.collection)
         console.log("uri=", uri);
 
         var graphResult = []
 
         try {
 
+        console.log("Starting graph execution..")
+
+        var startTime = new Date();
+
         graphResult = gHelper.executeGraphFromJson(execContext.jsonGraph, uri, doc, {collections: xdmp.documentGetCollections(uri)})
+
+        var endTime = new Date();
+        var executionTime = endTime - startTime;
+
+        console.log("Execution completed normally in " + executionTime + "ms")
+        console.log("Result: " + JSON.stringify(graphResult))
 
         result = {
           uri: uri,
-          result: graphResult
+          result: graphResult,
+          execTime: executionTime
         }
 
         } catch (e) {
@@ -381,7 +394,7 @@ function InvokeExecuteGraph(input) {
 
         result = {
           uri: previewUri,
-          error: "No source document found. Nothing to preview for the given context",
+          error: "No source document found. Nothing to preview for given context",
           result: []
         }
 
@@ -631,6 +644,14 @@ function verifyUri(params) {
   return response
 }
 
+// Returns backend version
+function getBackEndVersion() {
+  var info = {}
+  info.Version = PIPESVERSION
+  info.Build = PIPESBUILD
+  return info
+}
+
 function validateCTSQuery(input, params) {
   var query = JSON.parse(input).query
   console.log("Validating ctsquery : " + query)
@@ -679,6 +700,9 @@ function get(context, params) {
       break;
     case "verifyDocumentUri":
       return verifyUri(params)
+      break;
+    case "GetVersion":
+      return getBackEndVersion()
       break;
     default:
   }

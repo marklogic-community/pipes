@@ -1,4 +1,5 @@
 import org.gradle.internal.os.OperatingSystem;
+import org.apache.tools.ant.filters.ReplaceTokens;
 
 plugins {
   id 'org.springframework.boot' version '2.2.2.RELEASE'
@@ -8,6 +9,9 @@ plugins {
 
 group = 'com.marklogic.pipes'
 sourceCompatibility = '1.8'
+
+def String pipesversion = ""
+def String pipesbuild = ""
 
 repositories { jcenter()}
 ext {
@@ -94,22 +98,70 @@ task copyQuasarBuild(type:Copy) {
 
 task copyDhf(type:Copy) {
   doFirst {
-    logger.warn('Copying "dist_user/dhf"')
+    logger.warn('Copying ml-backend/src/')
   }
 
   from "../ml-backend/src/"
   into "src/main/resources/dhf/src/"
   doLast {
-    logger.warn('Done copying "dist_user/dhf"')
+    logger.warn('Done copying ml-backend/src')
   }
+}
+
+task getVersion(type: Exec) {
+     dependsOn copyDhf
+     mustRunAfter copyDhf
+
+     commandLine 'git', 'describe', '--tags'
+
+	doLast {
+      standardOutput = new ByteArrayOutputStream()
+		  ext.loginCommand = standardOutput.toString()
+      pipesversion = standardOutput.toString()
+	}
+}
+
+task getBuild(type: Exec) {
+     dependsOn getVersion
+     mustRunAfter getVersion
+
+    commandLine 'git','rev-parse','--verify','--short','HEAD'
+
+	doLast {
+      standardOutput = new ByteArrayOutputStream()
+		  ext.loginCommand = standardOutput.toString()
+      pipesbuild = standardOutput.toString()
+	}
+}
+
+task addVersionToBackend(type:Copy) {
+   dependsOn getBuild
+   mustRunAfter getBuild
+
+   outputs.upToDateWhen { false }
+
+    doFirst {
+      logger.warn('Adding build and version to the backend library: version = ' + pipesversion + ", build = " + pipesbuild)
+
+     from "../ml-backend/src/main/ml-modules/services/vppBackendServices.sjs"
+       into "../java-middle-tier/src/main/resources/dhf/src/main/ml-modules/services/"
+       filter(ReplaceTokens, tokens: [
+        PIPESVERSIONTOKEN: pipesversion,
+        PIPESBUILDTOKEN: pipesbuild
+    ])
+    }
+
+    logger.warn("Replacing")
+
 }
 
 bootJar {
   baseName = 'marklogic-pipes'
   dependsOn copyQuasarBuild
   dependsOn copyDhf
+  dependsOn addVersionToBackend
   mustRunAfter copyQuasarBuild
-  mustRunAfter copyDhf
+
 }
 
 task runQuasarDev(type:Exec) {
@@ -143,4 +195,3 @@ task runLocal(type: JavaExec) {
 task buildPipes {
   dependsOn bootJar
 }
-

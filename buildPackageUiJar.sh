@@ -20,6 +20,7 @@ mkdir -p java-middle-tier/src/main/resources/static
 echo "Moving the back-end modules to SpringBoot dhf resources folder..."
 # create dhf resource directory first
 mkdir -p java-middle-tier/src/main/resources/dhf/src
+rm -rf  java-middle-tier/src/main/resources/dhf/src/*
 
 # deploy backend modules to be picked up by jar builder
 #cp -r ml-backend/src/* java-middle-tier/src/main/resources/dhf/src/.
@@ -33,6 +34,11 @@ build=$(git rev-parse --verify --short HEAD)
 
 echo "Pipes version:" $version >java-middle-tier/src/main/resources/version.txt
 echo "Build:" $build >>java-middle-tier/src/main/resources/version.txt
+
+# Add build version to VPPBackendservices
+#VPPBACKEND=java-middle-tier/src/main/resources/dhf/src/main/ml-modules/services/vppBackendServices.sjs
+#sed -i -e "s/VPPBACKENDVERSIONTOKEN/$version/" $VPPBACKEND
+#sed -i -e "s/VPPBACKENDBUILDTOKEN/$build/" $VPPBACKEND
 
 echo "Building the jar..."
 java-middle-tier/gradlew clean bootJar -p java-middle-tier --warn
