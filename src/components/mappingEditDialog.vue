@@ -7,6 +7,8 @@
       <q-card>
         <q-card-section>
           <div class="text-h6">{{ editPopupTitle }}</div>
+          <div>The block will recopy the input N to the output based on the value to test. If no configuration is set for a given input to test, the default value will be used.
+          </div>
         </q-card-section>
 
         <q-card-section>
@@ -271,8 +273,8 @@ export default {
          { name: 'target', label: 'Target', field: 'target', sortable: true, align: 'left' },
         ],
         columnsCases: [
-        { name: 'value', align: 'left', label: 'Value', field: 'value', sortable: true },
-        { name: 'input', label: 'Input', field: 'input', sortable: true, align: 'left' },
+        { name: 'value', align: 'left', label: 'Value 2 test', field: 'value', sortable: true },
+        { name: 'input', label: 'Input N', field: 'input', sortable: true, align: 'left' },
       ]
     }
   },
@@ -287,7 +289,7 @@ export default {
 
       console.log("Opening the form: " + isRange)
 
- 
+
       if ( isCase ) {
 
       this.EditForm.title = "Edit Select Case"
