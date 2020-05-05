@@ -106,15 +106,25 @@ task copyDhf(type:Copy) {
 }
 
 task getVersion(type: Exec) {
-    //WARN: This is windows specific see: task runQuasarBuild
+    def env = OperatingSystem.current()
+  if (env.isWindows()) {
     commandLine 'git', 'describe', '--tags'
+  } else {
+    executable "git"
+    args 'describe', '--tags'
+  }
     standardOutput = new ByteArrayOutputStream()
     ext.value = {standardOutput.toString().replaceAll("\\s", "")}
 }
 
 task getBuild(type: Exec) {
-    //WARN: This is windows specific see: task runQuasarBuild
+    def env = OperatingSystem.current()
+     if (env.isWindows()) {
     commandLine 'git','rev-parse','--verify','--short','HEAD'
+  } else {
+    executable "git"
+    args 'rev-parse','--verify','--short','HEAD'
+  }
     standardOutput = new ByteArrayOutputStream()
     ext.value = {standardOutput.toString().replaceAll("\\s", "")}
 }
@@ -122,15 +132,10 @@ task getBuild(type: Exec) {
 task addVersionToBackend(type:Copy) {
     dependsOn getBuild
     dependsOn getVersion
-    
-    //NOTE: not aware of this... not sure if this really takes effect
-    outputs.upToDateWhen { false }
-   
+
     from "../ml-backend/src/main/ml-modules/services/vppBackendServices.sjs"
     into "../java-middle-tier/src/main/resources/dhf/src/main/ml-modules/services/"
-    
-    //define filter during execution phase, not config phase.
-    //more info available here: https://docs.gradle.org/current/userguide/build_lifecycle.html
+
     eachFile {
         filter(ReplaceTokens, tokens: [
             PIPESVERSIONTOKEN: tasks.getVersion.value(),
