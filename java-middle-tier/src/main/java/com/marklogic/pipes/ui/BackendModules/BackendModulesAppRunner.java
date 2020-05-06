@@ -117,14 +117,24 @@ public class BackendModulesAppRunner extends AbstractLoggingClass implements App
 
       // compare and stop the service if not working
 
+      CharSequence version=null;
+      CharSequence build=null;
 
-      JSONObject outputJson=new JSONObject(output.toString());
-      CharSequence version=outputJson.getString("Version");
-      CharSequence build=outputJson.getString("Build");
+
+      if (output.toString() !=null) {
+        JSONObject outputJson=new JSONObject(output.toString());
+         version=outputJson.getString("Version");
+         build=outputJson.getString("Build");
+      }
+      else {
+        version="Not avaiable";
+          build="Not avaiable";
+      }
+
 
       if (!javaVersionInfo.contains(version) || !javaVersionInfo.contains(build)) {
         logger.error(
-          String.format("\nVersion mismatch between Pipes backend modules (Pipes version: %s Build: %s) and \nthe front end (%s). \nDid you forget to deploy modules (--deployBackend=true)? Pipes will not start.",version,build,javaVersionInfo));
+          String.format("\nVersion mismatch between Pipes backend modules (Pipes version: %s, Build: %s) and \nthe front end (%s). \nDid you forget to deploy modules (--deployBackend=true)? Pipes will not start.",version,build,javaVersionInfo));
           System.exit(1);
       }
 
