@@ -964,7 +964,7 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
   {
     this.addInput("value0");
     this.addInput("value1");
-    this.ctsQuery = this.addProperty("ctsQuery" );
+    this.addProperty("queryBuilder");
   }
   featureQueryBuilderBlock.title = "ExpertQueryBuilder";
 
@@ -979,7 +979,7 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
     let v5 = this.getInputData(4)
     let v6 = this.getInputData(5)
     let v7 = this.getInputData(6)
-    let template = "`" + this.properties.ctsQuery + "`"
+    let template = "`" + this.properties.queryBuilder + "`"
     let result = eval(eval(template))
     this.setOutputData(0, result);
   }

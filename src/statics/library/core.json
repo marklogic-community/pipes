@@ -736,8 +736,12 @@
     ],
     "properties": [
       {
-        "name": "ctsQuery",
-        "type": "cts.collectionQuery(\"${v0}\")"
+        "name": "queryBuilder",
+        "type":  {"logicalOperator": "all", "children" :[]}
+      },
+      {
+        "name" : "hoverText",
+        "type" : "Double click block to use the query builder"
       }
     ],
     "widgets": [
