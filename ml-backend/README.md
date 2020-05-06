@@ -5,7 +5,7 @@ myBintrayKey=
 
 # Version
 
-Specified in build.gradle, example: ```version = "1.0.2"```
+Specified in build.gradle, example: ```version = "1.1"```
 
 # Publish the mlBundle to bintray
 
