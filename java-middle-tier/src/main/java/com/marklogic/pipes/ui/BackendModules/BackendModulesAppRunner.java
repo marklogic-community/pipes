@@ -73,7 +73,8 @@ public class BackendModulesAppRunner extends AbstractLoggingClass implements App
     // if credentials are supplied, let's log in the user
     if (credentialsSupplied) {
       if (!authService.tryAuthorize(clientConfig, clientConfig.getMlUsername(), clientConfig.getMlPassword())){
-        logger.error("Wrong credentials provided, can't log in user. Pipes will not start.");
+        logger.error("Wrong credentials provided and can't log in user " +
+          "or MarkLogic not reachable. Pipes will not start.");
         System.exit(1);
       }
     }
@@ -134,7 +135,9 @@ public class BackendModulesAppRunner extends AbstractLoggingClass implements App
 
       if (!javaVersionInfo.contains(version) || !javaVersionInfo.contains(build)) {
         logger.error(
-          String.format("\nVersion mismatch between Pipes backend modules (Pipes version: %s, Build: %s) and \nthe front end (%s). \nDid you forget to deploy modules (--deployBackend=true)? Pipes will not start.",version,build,javaVersionInfo));
+          String.format("\nVersion mismatch between Pipes backend modules (Pipes version: %s, Build: %s) and \nthe front end (%s). \n" +
+            "Did you forget to deploy lastest version of modules (--deployBackend=true)? \n" +
+            "Pipes will not start.",version,build,javaVersionInfo));
           System.exit(1);
       }
 
