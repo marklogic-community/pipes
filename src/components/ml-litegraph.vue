@@ -896,8 +896,8 @@ export default {
               this.$root.$emit("openPropertyEdit", block.node_over)
             }
 
-          
-        
+
+
       }
     },
     // Re-center and re-zoom graph
@@ -968,11 +968,13 @@ export default {
     this.$root.$on('blockRequested', this.createBlock);
     this.$root.$on('blockDetails', this.showBlockDetails);
 
-    this.discoverDatabases(false)
-    this.discoverDhfSteps()
+
 
     this.graph = new LiteGraph.LGraph();
     this.graph_canvas = new LiteGraph.LGraphCanvas(this.$refs["mycanvas"], this.graph);
+
+    this.discoverDatabases(false)
+    this.discoverDhfSteps()
 
     // catch just in case problems. shouldn't stop tool working
     try {
