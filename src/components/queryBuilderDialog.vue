@@ -150,7 +150,12 @@ export default {
     selectDatabase() {
       this.$axios.get('http://localhost:8085/v1/resources/vppBackendServices?rs:action=collectionDetails&rs:database=' + this.selectedDB.value)
         .then((response) => {
-           this.rules[0].choices = response.data ;
+          console.log(response.data)
+          this.rules[0].choices=[]
+          for(let choice of response.data){
+              this.rules[0].choices.push( choice );
+          }
+          
         })
 
     }

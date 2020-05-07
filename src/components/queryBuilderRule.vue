@@ -120,22 +120,29 @@
           </label>
         </div>
       </template>
-
       <!-- Select without groups -->
-      <select
+      <q-select
         v-if="rule.inputType === 'select' && !hasOptionGroups"
         v-model="query.value"
         class="form-control"
         :multiple="rule.type === 'multi-select'"
+        :options="formatOptions(selectOptions)"
+        option-value="value"
       >
-        <option
-          v-for="option in selectOptions"
-          :key="option.value"
-          :value="option.value"
-        >
-          {{ option.label }}
-        </option>
-      </select>
+
+        <template v-slot:option="scope">
+          <q-item
+            v-bind="scope.itemProps"
+            v-on="scope.itemEvents"
+          >
+            <q-item-section>
+              <q-item-label v-html="scope.opt.label" />
+            </q-item-section>
+          </q-item>
+        </template>
+
+ 
+      </q-select>
 
       <!-- Select with groups -->
       <select
@@ -175,6 +182,15 @@
 import QueryBuilderRule from "vue-query-builder/dist/rule/QueryBuilderRule.umd.js";
 
 export default {
-  extends: QueryBuilderRule
+  extends: QueryBuilderRule,
+  methods: {
+    formatOptions(options){
+      let formattedOptions= []
+      for(let option in options){
+        formattedOptions.push(options[option])
+      }
+      return formattedOptions
+    }
+  }
 };
 </script>
