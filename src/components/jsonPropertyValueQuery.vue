@@ -1,8 +1,11 @@
 <!-- Copyright ©2020 MarkLogic Corporation. -->
 <template>
-  <div class="row ">
+  <div class="rule-actions form-inline">
+    <div class="form-group ">
+    
     <q-select
-      name="collectionSelector"
+      name="collectionSelector" class="form-control mr-2"
+      v-if="value"
       v-model="value.selectedCollection"
       :options.sync="availableCollections"
       @input="collectionChanged"
@@ -13,8 +16,9 @@
     >
 
     </q-select>
-    <q-select
+    <q-select class="form-control"
       name="attributeSelector"
+       v-if="value"
       v-model="value.selectedAttribute"
       :options.sync="availableAttributes"
       filled
@@ -24,6 +28,7 @@
     >
 
     </q-select>
+    </div>
   </div>
 </template>
 
@@ -40,7 +45,6 @@ export default {
   },
   watch: {
     query: function (val) {
-      console.log('test')
       this.value = val;
     }
   },
@@ -56,8 +60,7 @@ export default {
       }
     },
     loadCollection () {
-      console.log(this.value)
-      this.$axios.get('http://localhost:8085/v1/resources/vppBackendServices?rs:action=collectionDetails&rs:database=10536821899429496394')
+      this.$axios.get('http://localhost:8085/v1/resources/vppBackendServices?rs:action=collectionDetails&rs:database=' + this.value.selectedDB.value)
         .then((response) => {
           this.availableCollections = response.data
         })
@@ -68,7 +71,7 @@ export default {
     },
     discoverModel (collection) {
 
-      let dbOption = "&rs:database=10536821899429496394"
+      let dbOption = "&rs:database="+ this.value.selectedDB.value
 
 
       if (collection !== null && collection.value != null)
@@ -81,8 +84,6 @@ export default {
           for (let r of response.data) {
             this.getAttributeRecursively(r, this.availableAttributes)
           }
-
-          console.log(this.availableAttributes)
 
         })
     }

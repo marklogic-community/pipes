@@ -722,7 +722,7 @@
     "functionName": "ExpertQueryBuilder",
     "blockName": "ExpertQueryBuilder",
     "title": "Expert Query Builder",
-    "description": "???",
+    "description": "Build your own query using the query builder",
     "library": "Query",
     "inputs": [
       {
