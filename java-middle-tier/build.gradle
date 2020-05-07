@@ -1,4 +1,5 @@
 import org.gradle.internal.os.OperatingSystem;
+import org.apache.tools.ant.filters.ReplaceTokens;
 
 plugins {
   id 'org.springframework.boot' version '2.2.2.RELEASE'
@@ -94,22 +95,62 @@ task copyQuasarBuild(type:Copy) {
 
 task copyDhf(type:Copy) {
   doFirst {
-    logger.warn('Copying "dist_user/dhf"')
+    logger.warn('Copying ml-backend/src/')
   }
 
   from "../ml-backend/src/"
   into "src/main/resources/dhf/src/"
   doLast {
-    logger.warn('Done copying "dist_user/dhf"')
+    logger.warn('Done copying ml-backend/src')
   }
+}
+
+task getVersion(type: Exec) {
+    def env = OperatingSystem.current()
+  if (env.isWindows()) {
+    commandLine 'git', 'describe', '--tags'
+  } else {
+    executable "git"
+    args 'describe', '--tags'
+  }
+    standardOutput = new ByteArrayOutputStream()
+    ext.value = {standardOutput.toString().replaceAll("\\s", "")}
+}
+
+task getBuild(type: Exec) {
+    def env = OperatingSystem.current()
+     if (env.isWindows()) {
+    commandLine 'git','rev-parse','--verify','--short','HEAD'
+  } else {
+    executable "git"
+    args 'rev-parse','--verify','--short','HEAD'
+  }
+    standardOutput = new ByteArrayOutputStream()
+    ext.value = {standardOutput.toString().replaceAll("\\s", "")}
+}
+
+task addVersionToBackend(type:Copy) {
+    dependsOn getBuild
+    dependsOn getVersion
+
+    from "../ml-backend/src/main/ml-modules/services/vppBackendServices.sjs"
+    into "../java-middle-tier/src/main/resources/dhf/src/main/ml-modules/services/"
+
+    eachFile {
+        filter(ReplaceTokens, tokens: [
+            PIPESVERSIONTOKEN: tasks.getVersion.value(),
+            PIPESBUILDTOKEN: tasks.getBuild.value()
+        ])
+    }
 }
 
 bootJar {
   baseName = 'marklogic-pipes'
   dependsOn copyQuasarBuild
   dependsOn copyDhf
+  dependsOn addVersionToBackend
   mustRunAfter copyQuasarBuild
-  mustRunAfter copyDhf
+
 }
 
 task runQuasarDev(type:Exec) {
@@ -143,4 +184,3 @@ task runLocal(type: JavaExec) {
 task buildPipes {
   dependsOn bootJar
 }
-

@@ -4,6 +4,11 @@ Copyright ©2020 MarkLogic Corporation.
 
 package com.marklogic.pipes.ui.BackendModules;
 
+import com.marklogic.client.extensions.ResourceServices;
+import com.marklogic.client.io.Format;
+import com.marklogic.client.io.StringHandle;
+import com.marklogic.client.util.RequestParameters;
+import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.pipes.ui.auth.AbstractLoggingClass;
 import com.marklogic.pipes.ui.auth.AuthService;
 import com.marklogic.pipes.ui.config.ClientConfig;
@@ -89,6 +94,51 @@ public class BackendModulesAppRunner extends AbstractLoggingClass implements App
 
     if (deployBackend) {
       backendModulesManager.copyAndDeployPipesBackend();
+    }
+
+    if (!deployBackend) {
+
+      // since the user is not running with deployBackend=true,
+      // let's check if the user has backend installed and
+      // if the versions in front-end (java) and backe-end (MarkLogic) match
+
+      // get the version from backend
+      ResourceServices pipesBackendService= authService.getService();
+      StringHandle output = new StringHandle();
+
+      RequestParameters params = new RequestParameters();
+      params.add("action","GetVersion");
+
+      output=pipesBackendService.get(params,new StringHandle().withFormat(Format.TEXT));
+
+
+      // get the version info from front end
+      String javaVersionInfo=versionService.get();
+
+      // compare and stop the service if not working
+
+      CharSequence version=null;
+      CharSequence build=null;
+
+
+      if (output.toString() !=null) {
+        JSONObject outputJson=new JSONObject(output.toString());
+         version=outputJson.getString("Version");
+         build=outputJson.getString("Build");
+      }
+      else {
+        version="Not avaiable";
+          build="Not avaiable";
+      }
+
+
+      if (!javaVersionInfo.contains(version) || !javaVersionInfo.contains(build)) {
+        logger.error(
+          String.format("\nVersion mismatch between Pipes backend modules (Pipes version: %s, Build: %s) and \nthe front end (%s). \nDid you forget to deploy modules (--deployBackend=true)? Pipes will not start.",version,build,javaVersionInfo));
+          System.exit(1);
+      }
+
+
     }
 
     logger.info(

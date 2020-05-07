@@ -6,6 +6,7 @@ package com.marklogic.pipes.ui;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.extensions.ResourceServices;
@@ -202,6 +203,9 @@ class MarkLogicControllerTest {
       expectedJO.put("result", new JSONObject(expectedResponseHandle.toString()));
       expectedJO.put("uri",TEST_INPUT_JSON);
 
+      //extract the value part only from the expected returned graph
+      JsonNode expectedResultJson= expectedJO.getNode("result");
+
       String request="/v1/resources/vppBackendServices?rs:action=ExecuteGraph&rs:database="+clientConfig.getMlTestDatabase();
 
       MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(request).content(payloadJO.toString())
@@ -211,11 +215,14 @@ class MarkLogicControllerTest {
         .andExpect(status().isOk());
 
       MvcResult result = resultActions.andReturn();
-      String responseAsString = result.getResponse().getContentAsString();
+
+      JSONObject responseJson=new JSONObject(result.getResponse().getContentAsString());
+      JsonNode actualResponseResultJson= responseJson.getNode("result");
 
       // compare strings as JSON objects using Jackson ObjectMapper
       ObjectMapper mapper = new ObjectMapper();
-      assertEquals("Response doesn't match expected",mapper.readTree(expectedJO.toString()), mapper.readTree(responseAsString));
+      assertEquals("Response doesn't match expected",mapper.readTree(expectedResultJson.toString()), mapper.readTree(actualResponseResultJson.toString()));
+
 
 
     } finally {

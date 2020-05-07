@@ -308,6 +308,7 @@
           >
             <q-item-section avatar>
               <q-icon
+                dense
                 :color="(item.type=='error')?'negative':'primary'"
                 :name="item.type"
               />
@@ -340,7 +341,7 @@
 		    <q-tooltip content-class="pipes-tooltip">{{statusPopup}}</q-tooltip>
 	    </q-icon>
       </div>
-        <div class="col-10" style="font-weight:bold">Result from graph execution:</div>
+        <div class="col-10" style="font-weight:bold">{{executionLabel}}</div>
         <div class="col-1">
           <q-btn style="font-size:0.7em"
             @click="copyResultToClipboard(jsonFromPreview.result)"
@@ -407,6 +408,7 @@ export default {
       previewSource: null,
       collectionForPreview: "",
       jsonFromPreview: {},
+      executionTime: null,
       saveToDB: false,
       graphPreviewExecuting: false,
       validationConfigs: [
@@ -415,13 +417,13 @@ export default {
           mandatoryInputs: [
             {
               name: "output",
-              msg: "The final output of the graph is not connected to Custom Step Output. You won't get any result.",
+              msg: "The final output of the graph is not connected to Custom Step Output. You won't get any result",
               type: "error"
             }],
           mandatoryOutputs: [],
           count: {
             "N": {
-              msg: "You should have only one Custom Step Output block in the graph.",
+              msg: "You should have only one Custom Step Output block in the graph",
               type: "error"
             },
             0: {
@@ -436,19 +438,19 @@ export default {
           mandatoryInputs: [
             {
               name: "instance",
-              msg: "The input '${input.name}' of the ${config.block} block should be connected.",
+              msg: "The input '${input.name}' of the ${config.block} block should be connected",
               type: "error"
             },
             {
               name: "uri",
-              msg: "If the input '${input.name}' of the ${config.block} block is not set, you might have conflicting URIs.",
+              msg: "If the '${input.name}' input of the ${config.block} block is not set, you might get conflicting URIs",
               type: "info"
             }
           ],
           mandatoryOutputs: [],
           count: {
             0: {
-              msg: "Usually there is at least one ${config.block} in the graph.",
+              msg: "There should usually be at least one ${config.block} in a graph.",
               type: "info"
             }
           }
@@ -464,7 +466,6 @@ export default {
         this.blocks = blockList
         this.dhfSteps = dhfSteps
         this.dhfStepSelectOptions = dhfStepOptions
-
     },
      copyResultToClipboard (result) {
       var document;
@@ -566,10 +567,19 @@ export default {
           previewUri: this.docUri
         }
 
+        this.executionTime = null
+
         this.$axios.post('/v1/resources/vppBackendServices?rs:action=ExecuteGraph' + dbOption, request)
           .then((response) => {
             this.jsonFromPreview = response.data
+            if ( response.data.execTime ) {
+              this.executionTime = response.data.execTime
+              console.log("Execution finished normally in " + this.executionTime + "ms" )
+            }
+
             if (response.data.error) {
+
+              this.executionTime = null
 
               if ( response.data.error.stack ) {
               console.log("Error executing graph")
@@ -646,6 +656,10 @@ watch: {
     }
 },
  computed: {
+    executionLabel: function() {
+    if ( this.executionTime === null ) return "Result from graph execution:"
+    else return "Result from graph execution in " + this.executionTime + "ms:"
+    },
     statusPopup: function() {
      return this.statusHoverText.length > 0 ? this.statusHoverText : ''
     },
