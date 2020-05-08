@@ -71,3 +71,5 @@ Examples/Advanced/src/main/ml-modules/services/vppBackendServices.sjs
 
 Examples/Customer360/src/main/ml-modules/root/custom-modules/pipes/
 Examples/Customer360/src/main/ml-modules/services/vppBackendServices.sjs
+
+Examples/Advanced/gradle-local.properties
