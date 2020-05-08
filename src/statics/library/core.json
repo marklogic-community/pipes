@@ -722,7 +722,7 @@
     "functionName": "ExpertQueryBuilder",
     "blockName": "ExpertQueryBuilder",
     "title": "Expert Query Builder",
-    "description": "???",
+    "description": "Loads document from database using an adhoc ctsquery",
     "library": "Query",
     "inputs": [
       {
