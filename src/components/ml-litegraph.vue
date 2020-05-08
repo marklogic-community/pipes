@@ -496,14 +496,23 @@ export default {
         })
     },
 
+    clearGraphBlocks() {
+      // Clears blocks from source block wizard panel and LiteGraph right-click library menu
+      for (var m = 0; m < this.blockModels.length; m++ ) {
+        var model = this.blockModels[m]
+        LiteGraph.deregisterNode( model.source + "/" + model.collection )
+      }
+      this.$store.commit('clearBlocks')
+    },
+
     // Reload a graph
     loadGraphFromJson (graph, notifyLoaded) {
 
       this.updateGraph(graph)
 
       this.checkEntityBlocks(graph)
-     // this.graphStatistics(graph.executionGraph)
-      this.$store.commit('clearBlocks')
+
+      this.clearGraphBlocks()
 
       // Filter blocks to remove any duplicates from graph (take latest. legacy bug?)
       var blockMap = new Map();
@@ -895,8 +904,6 @@ export default {
             }else if (this.isNotEmpty(block.node_over.properties.pipesDblClickProp) && block.node_over.properties.editProp) {
               this.$root.$emit("openPropertyEdit", block.node_over)
             }
-
-
 
       }
     },
