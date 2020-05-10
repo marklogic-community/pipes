@@ -105,9 +105,14 @@
     <q-select
       name="databaseSelector"
       v-model="selectedDatabase"
-      :options.sync="availableDatabases"
+      :options="dropdownDatabaseOptions"
+      @filter="dropdownDynamicDBfilter"
       @input="databaseChanged"
+      use-input
       filled
+      hide-selected
+      input-debounce="0"
+      fill-input
       separator
       label="Source database"
       stack-label
@@ -124,16 +129,20 @@
     <q-select
       name="collectionSelector"
       v-model="selectedCollection"
-      :options.sync="availableCollections"
+      :options="dropdownCollectionOptions"
+      @filter="dropdownDynamicCollectionfilter"
       @input="collectionChanged"
+      input-debounce="0"
+      use-input
       filled
+      hide-selected
+      fill-input
       separator
       label="Source collection"
       stack-label
     >
     <template v-slot:prepend>
-        <q-icon name="fas fa-tags">
-        </q-icon>
+        <q-icon name="fas fa-tags"/>
       </template>
     </q-select>
 
@@ -517,6 +526,8 @@
 		    selectedFields: [],       // Node selected in the collectionModel field tree
         availableCollections: [],
         availableDatabases: [],
+        dropdownDatabaseOptions: [],
+        dropdownCollectionOptions: [],
         blockFieldsWarning : false,
 		    tickedNodes: null,        // selected tree nodes here due to Stepper
 		    collectionModelPopulated: false,
@@ -550,8 +561,10 @@
       this.resetFieldSelectionTree()
     }
     }
-  },
+    },
+/*
   selectedCollection:  function (val) {
+    console.log("watch selectedCollection.." + val)
        if ( val !== null ) {
         this.collectionChanged()
        } else {
@@ -559,8 +572,14 @@
         this.selectedCollection = null
         this.collectionChanged()
     }
+  }
   },
+*/
+
   computed: {
+    dbHasCollections: function() {
+      return this.selectedDatabase == null || (this.selectedDatabase !== null && this.availableCollections.length > 0)
+    },
 // can user proceed from select data source step?
 	dataSourceNextOk: function() {
 		return (this.blockSourceOption == "db_collection" && this.selectedCollection !== null) ||
@@ -808,6 +827,32 @@
     },
 
     methods: {
+     dropdownDynamicDBfilter (val, update, abort) {
+      if (val === '') {
+        update(() => {
+          this.dropdownDatabaseOptions = this.availableDatabases
+        })
+        return
+      }
+
+      update(() => {
+        const needle = val.toLowerCase()
+        this.dropdownDatabaseOptions = this.availableDatabases.filter(v => v.label.toLowerCase().indexOf(needle) > -1)
+      })
+    },
+     dropdownDynamicCollectionfilter (val, update, abort) {
+      if (val === '') {
+        update(() => {
+          this.dropdownCollectionOptions = this.availableCollections
+        })
+        return
+      }
+
+      update(() => {
+        const needle = val.toLowerCase()
+        this.dropdownCollectionOptions = this.availableCollections.filter(v => v.label.toLowerCase().indexOf(needle) > -1)
+      })
+    },
       //
       explainBlockNotReady() {
           return ( ! this.createBlockReady)
@@ -963,6 +1008,7 @@
       },
       collectionChanged() {
         this.selectedFields = [];
+        this.resetFieldSelectionTree()
         this.discoverModel(this.selectedCollection,this.userDocumentURIs,null)
       },
       // Reset block create form to default values
@@ -1285,13 +1331,9 @@
           })
       },
       databaseChanged(){
+        this.resetFieldSelectionTree()
         this.selectedCollection = []
         this.discoverCollections()
-         this.$root.$emit("databaseChanged",
-           {selectedDatabase: this.selectedDatabase,availableDatabases:this.availableDatabases
-           }
-
-          );
       },
 
       discoverCustomSteps() {
