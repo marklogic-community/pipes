@@ -97,7 +97,8 @@ public class BackendModulesAppRunner extends AbstractLoggingClass implements App
       backendModulesManager.copyAndDeployPipesBackend();
     }
 
-    if (!deployBackend) {
+    // only check this if user authenticated
+    if (!deployBackend && authService.getService()!=null) {
 
       // since the user is not running with deployBackend=true,
       // let's check if the user has backend installed and
