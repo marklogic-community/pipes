@@ -12,10 +12,11 @@
     <BlockPropertyEditDialog />
     <BlockMappingEditDialog />
     <GraphExecutePreview />
-    <BlockDescription/>
+    <BlockDescription />
 
     <q-dialog
-      :content-css="{minWidth: '60vw', minHeight: '80vh'}" v-model="savePopUpOpened"
+      :content-css="{minWidth: '60vw', minHeight: '80vh'}"
+      v-model="savePopUpOpened"
     >
       <q-card>
         <q-card-section class="row items-center">
@@ -413,37 +414,37 @@ export default {
       return this.$store.getters.availableDatabases
     },
     graphTitle: {
-      get: function() {
-       return this.$store.getters.graphTitle
+      get: function () {
+        return this.$store.getters.graphTitle
       },
-      set: function(t) {
-      this.$store.commit('graphTitle', t)
+      set: function (t) {
+        this.$store.commit('graphTitle', t)
       }
     },
     graphVersion: {
-      get: function() {
-       return this.$store.getters.graphVersion
+      get: function () {
+        return this.$store.getters.graphVersion
       },
-      set: function(v) {
-      this.$store.commit('graphVersion', v)
+      set: function (v) {
+        this.$store.commit('graphVersion', v)
       }
-      },
+    },
     graphDescription: {
-      get: function() {
-       return this.$store.getters.graphDescription
+      get: function () {
+        return this.$store.getters.graphDescription
       },
-      set: function(d) {
-      this.$store.commit('graphDescription', d)
+      set: function (d) {
+        this.$store.commit('graphDescription', d)
       }
+    },
+    graphAuthor: {
+      get: function () {
+        return this.$store.getters.graphAuthor
       },
-     graphAuthor: {
-      get: function() {
-       return this.$store.getters.graphAuthor
-      },
-      set: function(a) {
-      this.$store.commit('graphAuthor', a)
+      set: function (a) {
+        this.$store.commit('graphAuthor', a)
       }
-     }
+    }
   },
   methods: {
     // Open the Preview Graph Dialog. Pass graph details
@@ -496,11 +497,11 @@ export default {
         })
     },
 
-    clearGraphBlocks() {
+    clearGraphBlocks () {
       // Clears blocks from source block wizard panel and LiteGraph right-click library menu
-      for (var m = 0; m < this.blockModels.length; m++ ) {
+      for (var m = 0; m < this.blockModels.length; m++) {
         var model = this.blockModels[m]
-        LiteGraph.deregisterNode( model.source + "/" + model.collection )
+        LiteGraph.deregisterNode(model.source + "/" + model.collection)
       }
       this.$store.commit('clearBlocks')
     },
@@ -538,7 +539,7 @@ export default {
       this.graphTitle = (graph.metadata && graph.metadata.title !== null) ? graph.metadata.title : ""
       this.graphAuthor = (graph.metadata && graph.metadata.author !== null) ? graph.metadata.author : ""
       this.graphVersion = (graph.metadata && graph.metadata.version !== null) ? graph.metadata.version : ""
-      this.graphDescription = (graph.metadata && graph.metadata.description !== null) ?graph.metadata.description : ""
+      this.graphDescription = (graph.metadata && graph.metadata.description !== null) ? graph.metadata.description : ""
 
       if (notifyLoaded) this.notifyPositive(self, "Loaded graph " + this.graphTitle)
       this.$root.$emit("resetGraphTitle") // reset the titlebar to top graph (remove all subgraph history)
@@ -719,11 +720,11 @@ export default {
     createGraphDef () {
       const jsonGraph = this.graph.serialize()
       var meta = {
-          "version": this.graphVersion,
-          "author": this.graphAuthor,
-          "title": this.graphTitle,
-          "description" : this.graphDescription,
-          "dateExported": (new Date()).toLocaleString()
+        "version": this.graphVersion,
+        "author": this.graphAuthor,
+        "title": this.graphTitle,
+        "description": this.graphDescription,
+        "dateExported": (new Date()).toLocaleString()
       }
       return {
         pipesFileVersion: 2,
@@ -736,7 +737,7 @@ export default {
     },
     downloadGraph () {
       const graphDef = this.createGraphDef();
-      var blob = new Blob([JSON.stringify(graphDef,null,2)], {
+      var blob = new Blob([JSON.stringify(graphDef, null, 2)], {
         type: "text/plain;charset=utf-8",
         endings: "transparent"
       });
@@ -841,7 +842,7 @@ export default {
       var self = this;
       this.$axios.get('/customSteps').then((response) => {
 
-        function alphabeticalOrder(a, b) {
+        function alphabeticalOrder (a, b) {
           if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
           if (b.name.toLowerCase() > a.name.toLowerCase()) return -1;
           return 0;
@@ -894,25 +895,25 @@ export default {
         // Mapping edit (string/Mapvalues block)
         if (block.node_over.properties.mapping) {
           this.$root.$emit("openMappingEdit", block.node_over.properties.mapping)
-        } else  if (block.node_over.properties.mappingRange) {
-            this.$root.$emit("openMappingEdit", block.node_over.properties.mappingRange, true)
+        } else if (block.node_over.properties.mappingRange) {
+          this.$root.$emit("openMappingEdit", block.node_over.properties.mappingRange, true)
 
-          } else   if (block.node_over.properties.mappingCase) {
-            this.$root.$emit("openMappingEdit", block.node_over, false, true)
+        } else if (block.node_over.properties.mappingCase) {
+          this.$root.$emit("openMappingEdit", block.node_over, false, true)
 
-              // Property edit. selectCase, Lookup, EvalJavaScript, & generic edit window hook
-            }else if (this.isNotEmpty(block.node_over.properties.pipesDblClickProp) && block.node_over.properties.editProp) {
-              this.$root.$emit("openPropertyEdit", block.node_over)
-            }
+          // Property edit. selectCase, Lookup, EvalJavaScript, & generic edit window hook
+        } else if (this.isNotEmpty(block.node_over.properties.pipesDblClickProp) && block.node_over.properties.editProp) {
+          this.$root.$emit("openPropertyEdit", block.node_over)
+        }
 
       }
     },
     // Re-center and re-zoom graph
-    resetView() {
+    resetView () {
       this.graph_canvas.ds.reset()
     },
     // Re-center
-    recenterView() {
+    recenterView () {
       this.graph_canvas.ds.offset[0] = 0;
       this.graph_canvas.ds.offset[1] = 0;
     },
@@ -920,13 +921,13 @@ export default {
       return (prop !== null && prop != '')
     },
     // Block description popup
-    showBlockDetails(block) {
-         if ( block.description && block.description != '')
-         this.$root.$emit('showBlockDescription',block)
+    showBlockDetails (block) {
+      if (block.description && block.description != '')
+        this.$root.$emit('showBlockDescription', block)
     },
     // Process blocks from old version of pipes and update
-    updateGraph(graph) {
-     graph.executionGraph = this.remapBlocks(LiteGraph,graph)
+    updateGraph (graph) {
+      graph.executionGraph = this.remapBlocks(LiteGraph, graph)
     },
     registerBlocksByConf (configs, LiteGraph) {
 
@@ -935,7 +936,7 @@ export default {
       for (let config of configs) {
 
         // Generate LiteGraph node from config
-        var blockCode = this.createGraphNodeFromConfig(config,availableDatabases)
+        var blockCode = this.createGraphNodeFromConfig(config, availableDatabases)
         try { eval(blockCode) } catch (e) {
           console.log("Error occured registering block " + config.blockName + ": " + e)
         }
@@ -951,10 +952,11 @@ export default {
           this.$router.push({ path: "/" })
         }
       })
+
     }
   },
   mounted: function () {
-    this.checkLoggedIn()
+    // this.checkLoggedIn()
 
     this.$root.$on("csvLoadingRequested", this.createGraphFromMapping)
     this.$root.$on("openGraphPreview", this.openGraphPreviewDialog)
@@ -1030,7 +1032,7 @@ export default {
     this.$root.$off("loadDHFDefaultGraphCall", this.resetDhfDefaultGraph);
     this.$root.$off("listGraphBlocks", this.listGraphBlocks);
     this.$root.$off("checkGraphBlockDelete", this.checkGraphBlockDelete);
-    this.$root.$off('blockDetails', this.showBlockDetails,node);
+    this.$root.$off('blockDetails', this.showBlockDetails, node);
   }
 
 }

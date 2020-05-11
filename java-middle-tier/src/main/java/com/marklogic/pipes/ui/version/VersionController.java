@@ -11,7 +11,7 @@ import java.io.IOException;
 public class VersionController {
 
   @Autowired
-  Service versionService;
+  PipesVersionService versionService;
 
   @RequestMapping(value = "/version", method = RequestMethod.GET)
   public String listOfCustomStepNames() throws IOException {

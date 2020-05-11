@@ -119,42 +119,42 @@ module.exports = function (ctx) {
 
     devServer: {
       // https: true,
-      port: 8085,
+      port: 9085,
       open: true, // opens browser window automatically
       proxy: {
         // proxy all requests starting with /api to jsonplaceholder
         '/v1': {
-          target: 'http://localhost:8081/',
+          target: 'http://localhost:9081/',
           // pathRewrite: {
           //   '^/api': ''
           // }
         },
         '/status': {
-          target: 'http://localhost:8081/',
+          target: 'http://localhost:9081/',
           // pathRewrite: {
           //   '^/api': ''
           // }
         },
         '/login': {
-          target: 'http://localhost:8081/',
+          target: 'http://localhost:9081/',
           // pathRewrite: {
           //   '^/api': ''
           // }
         },
         '/customSteps': {
-          target: 'http://localhost:8081/',
+          target: 'http://localhost:9081/',
           // pathRewrite: {
           //   '^/api': ''
           // }
         },
         '/logout': {
-          target: 'http://localhost:8081/',
+          target: 'http://localhost:9081/',
           // pathRewrite: {
           //   '^/api': ''
           // }
         },
         '/version': {
-          target: 'http://localhost:8081/',
+          target: 'http://localhost:9081/',
           // pathRewrite: {
           //   '^/api': ''
           // }

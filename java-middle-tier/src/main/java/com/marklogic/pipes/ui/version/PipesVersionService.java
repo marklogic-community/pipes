@@ -9,7 +9,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 @Component
-public class Service {
+public class PipesVersionService {
 
   final String VERSIONFILE="/version.txt";
   public String get() throws IOException {

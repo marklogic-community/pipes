@@ -11,6 +11,7 @@ import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StringQueryDefinition;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.admin.AdminManager;
+import com.marklogic.pipes.ui.BackendModules.BackendModulesManager;
 import com.marklogic.pipes.ui.config.ClientConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,9 @@ public class AuthService extends AbstractLoggingClass {
   @Autowired
   ClientConfig clientConfig;
 
+  @Autowired
+  BackendModulesManager backendModulesManager;
+
   private Boolean isAuthorized=false;
   private ResourceServices service=null;
 
@@ -29,6 +33,7 @@ public class AuthService extends AbstractLoggingClass {
 
   private DatabaseClient databaseClient;
   private DatabaseClient modulesDbClient;
+
 
   public String getUsername() {
     return username;
@@ -97,6 +102,8 @@ public class AuthService extends AbstractLoggingClass {
     DatabaseClient modulesDbClient= clientConfig.createModulesDbClient(username,password);
     setModulesDbClient(modulesDbClient);
 
+    // check modules version and deploy
+    backendModulesManager.checkModulesVersion(this);
 
     return isAuthorized();
   }
