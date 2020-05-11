@@ -18,7 +18,12 @@ import com.marklogic.client.ext.modulesloader.ModulesFinder;
 import com.marklogic.client.ext.modulesloader.impl.AssetFileLoader;
 import com.marklogic.client.ext.modulesloader.impl.DefaultModulesFinder;
 import com.marklogic.client.ext.modulesloader.impl.DefaultModulesLoader;
+import com.marklogic.client.extensions.ResourceServices;
+import com.marklogic.client.io.Format;
+import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.*;
+import com.marklogic.client.util.RequestParameters;
+import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;
@@ -27,6 +32,7 @@ import com.marklogic.mgmt.api.database.Database;
 import com.marklogic.pipes.ui.auth.AuthService;
 import com.marklogic.pipes.ui.config.ClientConfig;
 import com.marklogic.pipes.ui.Application;
+import com.marklogic.pipes.ui.version.Service;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +57,9 @@ public class BackendModulesManager {
   @Autowired
   AuthService authService;
 
+  @Autowired
+  Service versionService;
+
   final String resourcesDhfRoot = "/dhf/src/main/ml-modules";
   final String destinationDhfRoot = "/src/main/ml-modules";
   final String customModulesPathPrefix = "/root/custom-modules/pipes";
@@ -60,8 +69,60 @@ public class BackendModulesManager {
     Remove
   }
 
+  public void checkModulesVersion() throws IOException {
+    // since the user is not running with deployBackend=true,
+    // let's check if the user has backend installed and
+    // if the versions in front-end (java) and backe-end (MarkLogic) match
+
+    // get the version from backend
+    ResourceServices pipesBackendService= authService.getService();
+    StringHandle output = new StringHandle();
+
+    RequestParameters params = new RequestParameters();
+    params.add("action","GetVersion");
+
+    output=pipesBackendService.get(params,new StringHandle().withFormat(Format.TEXT));
+
+
+    // get the version info from front end
+    String javaVersionInfo=versionService.get();
+
+    // compare and stop the service if not working
+
+    CharSequence version=null;
+    CharSequence build=null;
+
+
+    if (output.toString() !=null) {
+      JSONObject outputJson=new JSONObject(output.toString());
+      version=outputJson.getString("Version");
+      build=outputJson.getString("Build");
+    }
+    else {
+      version="Not avaiable";
+      build="Not avaiable";
+    }
+
+    // version information
+    System.out.println("--------------------\n"+ versionService.get()+"--------------------");
+
+    if (!javaVersionInfo.contains(version) || !javaVersionInfo.contains(build)) {
+      deployModules();
+    }
+
+  }
+
   public void copyAndDeployPipesBackend() throws Exception {
 
+    copyModulestoDhfProjectFolder();
+
+    deployModules();
+
+    logger.info(
+      String.format("Modules successfully copied and deployed."));
+  }
+
+  private void copyModulestoDhfProjectFolder() throws Exception {
     logger.info(
       String.format("Will copy MarkLogic backend modules to following DHF root: %s", clientConfig.getMlDhfRoot()));
     try {
@@ -73,6 +134,9 @@ public class BackendModulesManager {
       throw e;
     }
 
+  }
+
+  private void deployModules() {
     try {
 
       logger.info(
@@ -94,10 +158,6 @@ public class BackendModulesManager {
         String.format("Aborting Pipes start-up - Failed to load modules: "+e.getMessage()),e);
       throw e;
     }
-
-    logger.info(
-      String.format("Modules successfully copied and deployed."));
-
   }
 
   private void manageMarkLogicBackendModules(fileOperation operation) throws Exception {

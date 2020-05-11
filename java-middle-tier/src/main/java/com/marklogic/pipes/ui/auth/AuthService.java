@@ -27,8 +27,6 @@ public class AuthService extends AbstractLoggingClass {
   private ManageClient manageClient;
   private AdminManager adminManager;
 
-
-
   private DatabaseClient databaseClient;
   private DatabaseClient modulesDbClient;
 
@@ -98,6 +96,7 @@ public class AuthService extends AbstractLoggingClass {
 
     DatabaseClient modulesDbClient= clientConfig.createModulesDbClient(username,password);
     setModulesDbClient(modulesDbClient);
+
 
     return isAuthorized();
   }

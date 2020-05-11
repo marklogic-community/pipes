@@ -52,10 +52,6 @@ public class ClientConfig
   @NotBlank(message = message)
   private String mlHost;
 
-  private String mlUsername;
-
-  private String mlPassword;
-
   public Boolean getMlUseSsl() {
     return mlUseSsl;
   }
@@ -125,13 +121,6 @@ public class ClientConfig
     return mlDhfRoot;
   }
 
-  public String getMlUsername() {
-    return mlUsername;
-  }
-
-  public String getMlPassword() {
-    return mlPassword;
-  }
 
   public void setMlHost(String mlHost) {
     if (mlHost!=mlHost.trim()) {
@@ -139,22 +128,6 @@ public class ClientConfig
       mlHost = mlHost.trim();
     }
     this.mlHost = mlHost;
-  }
-
-  public void setMlUsername(@Valid String mlUsername) {
-    if (mlUsername!=mlUsername.trim()) {
-      logger.warn("I trimmed the value of mlUsername from \""+mlUsername+"\" to \""+mlUsername.trim()+"\"");
-      mlUsername = mlUsername.trim();
-    }
-    this.mlUsername = mlUsername;
-  }
-
-  public void setMlPassword(@Valid String mlPassword) {
-    if (mlPassword!=mlPassword.trim()) {
-      logger.warn("I trimmed the value of mlPassword from \""+mlPassword+"\" to \""+mlPassword.trim()+"\"");
-      mlPassword = mlPassword.trim();
-    }
-    this.mlPassword = mlPassword;
   }
 
   public void setMlStagingPort(int mlStagingPort) {
