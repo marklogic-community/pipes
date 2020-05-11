@@ -3,21 +3,21 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
-export default function () {
 
-  const store =  new Vuex.Store({
-    state: {
-      models: [],
-      helpMode: false,
-      authenticated: false,
-      databases: [],
-      databasesMap: {},
-      graphTitle: 'My Graph',
-      graphVersion: "00.01",
-      graphAuthor: "",
-      graphDescription: "",
-    },
-    getters: {
+
+const store = new Vuex.Store({
+  state: {
+    models: [],
+    helpMode: false,
+    authenticated: false,
+    databases: [],
+    databasesMap: {},
+    graphTitle: 'My Graph',
+    graphVersion: "00.01",
+    graphAuthor: "",
+    graphDescription: "",
+  },
+  getters: {
     availableDatabases: state => { return state.databases },
     authenticated: state => { return state.authenticated },
     models: state => { return state.models },
@@ -28,59 +28,60 @@ export default function () {
     helpMode: state => { return state.helpMode },
     sourceBlocks: state => {
       return this.$store.state.models.filter(function (block) {
-      return block.source == "Sources"
-  })
-}
-    },
-    mutations: {
-    availableDatabases( state, dbs) {
+        return block.source == "Sources"
+      })
+    }
+  },
+  mutations: {
+    availableDatabases (state, dbs) {
       state.databases = dbs
     },
-    authenticated( state, auth ) {
+    authenticated (state, auth) {
       state.authenticated = auth
     },
-    graphTitle(state, title) {
+    graphTitle (state, title) {
       state.graphTitle = title
     },
-    graphVersion(state, version) {
+    graphVersion (state, version) {
       state.graphVersion = version
     },
-    graphAuthor(state, author ) {
+    graphAuthor (state, author) {
       state.graphAuthor = author
     },
-    graphDescription(state, description) {
+    graphDescription (state, description) {
       state.graphDescription = description
     },
-    helpMode(state, mode) {
+    helpMode (state, mode) {
       state.helpMode = mode
     },
-    addBlock(state, block) {
-     // console.log("addBlock:" + block.source + "/"+ block.label)
+    addBlock (state, block) {
+      // console.log("addBlock:" + block.source + "/"+ block.label)
       var blockExists = false
       for (var x = 0; x < state.models.length; x++) {
-        if ( state.models[x].label == block.label && state.models[x].source == block.source) {
+        if (state.models[x].label == block.label && state.models[x].source == block.source) {
           blockExists = true
-          if ( state.models[x].fields == block.fields  ) {
-        //    console.log("addBloc: Block " + block.source+"/"+block.label + " already in list (exact same fields)")
+          if (state.models[x].fields == block.fields) {
+            //    console.log("addBloc: Block " + block.source+"/"+block.label + " already in list (exact same fields)")
           } else {
-        //    console.log("addBloc: Block " + block.source+"/"+block.label + " already in list (fields different)")
-        //    console.log( "[current] " + state.models[x].fields.length + " vs " + block.fields.length + "[new]" )
+            //    console.log("addBloc: Block " + block.source+"/"+block.label + " already in list (fields different)")
+            //    console.log( "[current] " + state.models[x].fields.length + " vs " + block.fields.length + "[new]" )
           }
           break;
         }
       }
 
-        state.models.push(block)
+      state.models.push(block)
 
     },
     // blockKey should be block.source/block.label
     removeBlock: (state, blockKey) => {
       const i = state.models.map(item => (item.source + "/" + item.label)).indexOf(blockKey);
       state.models.splice(i, 1);
-      },
-    clearBlocks(state) { state.models = [] }
-    }
+    },
+    clearBlocks (state) { state.models = [] }
+  }
 });
 
-  return store
-}
+
+
+export default store

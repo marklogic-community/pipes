@@ -952,11 +952,15 @@ export default {
           this.$router.push({ path: "/" })
         }
       })
+        .catch((error) => {
+          console.log("checkLoggedIn:", error)
+        })
 
     }
   },
   mounted: function () {
-    // this.checkLoggedIn()
+    //this.checkLoggedIn()
+
 
     this.$root.$on("csvLoadingRequested", this.createGraphFromMapping)
     this.$root.$on("openGraphPreview", this.openGraphPreviewDialog)

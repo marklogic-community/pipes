@@ -5,6 +5,7 @@ Copyright ©2020 MarkLogic Corporation.
 package com.marklogic.pipes.ui.auth;
 
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.SearchHandle;
 import com.marklogic.client.query.QueryManager;
@@ -87,23 +88,32 @@ public class AuthService extends AbstractLoggingClass {
 
     try {
       queryManager.search(stringQueryDefinition, new SearchHandle());
-    } catch (Exception e) {
+
+    }
+    catch (FailedRequestException failedRequestException) {
+      logger.error("Authentication failed.");
+      setAuthorized(false);
+    }
+    catch (Exception e) {
       setAuthorized(false); //failed
+      logger.error("Unexpected error happened");
       e.printStackTrace();
     }
 
+    if (isAuthorized()) {
+      ResourceServices service = clientConfig.getService(client);
+      setService(service);
+      setUsername(username);
+      setPassword(password);
+      setDatabaseClient(client);
 
-    ResourceServices service = clientConfig.getService(client);
-    setService(service);
-    setUsername(username);
-    setPassword(password);
-    setDatabaseClient(client);
+      DatabaseClient modulesDbClient= clientConfig.createModulesDbClient(username,password);
+      setModulesDbClient(modulesDbClient);
 
-    DatabaseClient modulesDbClient= clientConfig.createModulesDbClient(username,password);
-    setModulesDbClient(modulesDbClient);
+      // check modules version and deploy
+      backendModulesManager.checkModulesVersion(this);
+    }
 
-    // check modules version and deploy
-    backendModulesManager.checkModulesVersion(this);
 
     return isAuthorized();
   }

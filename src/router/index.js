@@ -1,7 +1,10 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import { sync } from 'vuex-router-sync';
 
 import routes from './routes'
+import store from '../store'
+
 
 Vue.use(VueRouter)
 
@@ -10,8 +13,9 @@ Vue.use(VueRouter)
  * directly export the Router instantiation
  */
 
+
 export default function (/* { store, ssrContext } */) {
-  const Router = new VueRouter({
+  let Router = new VueRouter({
     scrollBehavior: () => ({ x: 0, y: 0 }),
     routes,
 
@@ -22,5 +26,16 @@ export default function (/* { store, ssrContext } */) {
     base: process.env.VUE_ROUTER_BASE
   })
 
+  // // Keep the router in sync with vuex store
+  // sync(store, Router);
+
+  Router.beforeEach((to, from, next) => {
+    console.log("guarding.")
+    if (to.name !== 'login' && !store.state.authenticated) next({ name: 'login' })
+    else next()
+  })
+
   return Router
 }
+
+

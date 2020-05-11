@@ -5,6 +5,7 @@ Copyright ©2020 MarkLogic Corporation.
 package com.marklogic.pipes.ui.BackendModules;
 
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.ext.modulesloader.ModulesFinder;
 import com.marklogic.client.ext.modulesloader.impl.AssetFileLoader;
 import com.marklogic.client.ext.modulesloader.impl.DefaultModulesFinder;
@@ -63,7 +64,16 @@ public class BackendModulesManager {
     RequestParameters params = new RequestParameters();
     params.add("action","GetVersion");
 
-    output=pipesBackendService.get(params,new StringHandle().withFormat(Format.TEXT));
+    try {
+      output = pipesBackendService.get(params, new StringHandle().withFormat(Format.TEXT));
+    }
+    catch (FailedRequestException failedRequestException){
+      logger.info("Pipes REST extension not installed");
+      }
+    catch (Exception e) {
+      logger.error("Unknown exception occurred");
+      logger.error(e.toString());
+    }
 
 
     // get the version info from front end
@@ -271,6 +281,7 @@ public class BackendModulesManager {
     DatabaseClient client = authService.getModulesDatabaseClient();
 
       AssetFileLoader assetFileLoader = new AssetFileLoader(client); // Uses the REST API to load asset modules
+    assetFileLoader.setCollections("pipes-modules");
     DefaultModulesLoader modulesLoader = new DefaultModulesLoader(assetFileLoader);
 
     modulesLoader.setIncludeFilenamePattern(pattern);

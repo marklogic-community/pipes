@@ -1,12 +1,12 @@
 <template>
   <q-page class="column items-center">
 
-    <div  style="padding-top:30px;max-width: 500px; min-width: 300px"  v-if="showLogin">
+    <div
+      style="padding-top:30px;max-width: 500px; min-width: 300px"
+      v-if="showLogin"
+    >
 
-      <q-form
-
-        class="q-gutter-md "
-      >
+      <q-form class="q-gutter-md ">
         <q-input
           filled
           v-model="username"
@@ -23,10 +23,21 @@
           label="Password"
         />
 
-
         <div>
-          <q-btn label="Login" type="submit" color="primary" @click="loginToPipes" />
-          <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" @click="function(){this.username=''; this.password=''}.bind(this)" />
+          <q-btn
+            label="Login"
+            type="submit"
+            color="primary"
+            @click="loginToPipes"
+          />
+          <q-btn
+            label="Reset"
+            type="reset"
+            color="primary"
+            flat
+            class="q-ml-sm"
+            @click="function(){this.username=''; this.password=''}.bind(this)"
+          />
 
         </div>
       </q-form>
@@ -41,24 +52,24 @@ export default {
   // name: 'PageName',
   data () {
     return {
-      username:"",
-      showLogin:false,
-      password:"",
-      loginmessage:""
+      username: "",
+      showLogin: false,
+      password: "",
+      loginmessage: ""
     }
   },
   methods: {
 
-    loginToPipes() {
+    loginToPipes () {
 
-      let payload = {"username":this.username, "password": this.password}
+      let payload = { "username": this.username, "password": this.password }
       this.$axios.post('/login', payload).then(response => {
 
-        this.$store.commit('authenticated',true)
-        this.$router.push({path:"/home"})
+        this.$store.commit('authenticated', true)
+        this.$router.push({ path: "/home" })
       })
         .catch((error) => {
-          this.$store.commit('authenticated',true)
+          this.$store.commit('authenticated', true)
           this.$q.notify({
             color: 'negative',
             position: 'center',
@@ -69,17 +80,17 @@ export default {
         })
 
     }
-    },
-  beforeCreate() {
-  this.$axios.get('/status').then(response => {
+  },
+  beforeCreate () {
+    this.$axios.get('/status').then(response => {
 
-    if(response.data && response.data.authenticated) {
-      this.$store.commit('authenticated',true)
-      this.$router.push({path: "/home"})
-    }
-    else this.showLogin=true
-  })
+      if (response.data && response.data.authenticated) {
+        this.$store.commit('authenticated', true)
+        this.$router.push({ path: "/home" })
+      }
+      else this.showLogin = true
+    })
 
-}
+  }
 }
 </script>
