@@ -30,8 +30,10 @@ export default function (/* { store, ssrContext } */) {
   // sync(store, Router);
 
   Router.beforeEach((to, from, next) => {
-    console.log("guarding.")
-    if (to.name !== 'login' && !store.state.authenticated) next({ name: 'login' })
+
+    if (to.name !== 'login' && !store.state.authenticated) {
+      next({ name: 'login' })
+    }
     else next()
   })
 

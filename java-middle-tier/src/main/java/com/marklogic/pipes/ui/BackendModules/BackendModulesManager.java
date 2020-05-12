@@ -112,6 +112,10 @@ public class BackendModulesManager {
 
 
     if (!javaVersionInfo.contains(version) || !javaVersionInfo.contains(build)) {
+
+      logger.info("{} missmatch with Pipes backend modules, Version: {} | Build: {}",
+        javaVersionInfo, version, build);
+
       try {
         copyModules();
       } catch (Exception e) {

@@ -4,15 +4,17 @@ Copyright ©2020 MarkLogic Corporation.
 
 package com.marklogic.pipes.ui;
 
-import com.marklogic.pipes.ui.auth.AuthService;
 import com.marklogic.pipes.ui.config.ClientConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
+import org.springframework.boot.web.server.ErrorPage;
+import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
-import org.springframework.web.context.annotation.SessionScope;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -67,5 +69,18 @@ public class Application {
 	public static void main(final String[] args) {
 		SpringApplication.run(Application.class, args);
 	}
+
+  /**
+   * Copied from https://karl.run/2018/05/07/kotlin-spring-boot-react/ - ensures that for a single page application,
+   * any non-root route is routed back to "/".
+   *
+   * @return
+   */
+  @Bean
+  public ConfigurableServletWebServerFactory webServerFactory() {
+    TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory();
+    factory.getErrorPages().add(new ErrorPage(HttpStatus.NOT_FOUND, "/"));
+    return factory;
+  }
 
 }

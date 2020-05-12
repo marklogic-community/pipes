@@ -32,6 +32,11 @@ const store = new Vuex.Store({
       })
     }
   },
+  actions: {
+    authenticated ({ commit }, { auth }) {
+      commit('authenticated', auth)
+    }
+  },
   mutations: {
     availableDatabases (state, dbs) {
       state.databases = dbs

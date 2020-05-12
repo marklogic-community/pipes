@@ -1,12 +1,12 @@
 <template>
   <q-page class="column items-center">
 
-    <div
-      style="padding-top:30px;max-width: 500px; min-width: 300px"
-      v-if="showLogin"
-    >
+    <div style="padding-top:30px;max-width: 500px; min-width: 300px">
 
-      <q-form class="q-gutter-md ">
+      <q-form
+        class="q-gutter-md "
+        @submit="loginToPipes"
+      >
         <q-input
           filled
           v-model="username"
@@ -28,7 +28,6 @@
             label="Login"
             type="submit"
             color="primary"
-            @click="loginToPipes"
           />
           <q-btn
             label="Reset"
@@ -46,6 +45,7 @@
   </q-page>
 </template>
 
+
 <script>
 import { Vuex } from "vuex";
 export default {
@@ -53,23 +53,25 @@ export default {
   data () {
     return {
       username: "",
-      showLogin: false,
       password: "",
       loginmessage: ""
     }
   },
   methods: {
 
-    loginToPipes () {
+    loginToPipes (evt) {
+      evt.preventDefault();
 
       let payload = { "username": this.username, "password": this.password }
-      this.$axios.post('/login', payload).then(response => {
 
-        this.$store.commit('authenticated', true)
-        this.$router.push({ path: "/home" })
+      // TO-DO: this axios call should happen from inside the store (action)
+      this.$axios.post('/login', payload).then(response => {
+        this.$store.dispatch('authenticated', { auth: true }).then(() => {
+          this.$router.push({ name: "home" })
+        })
       })
         .catch((error) => {
-          this.$store.commit('authenticated', true)
+          this.$store.commit('authenticated', false)
           this.$q.notify({
             color: 'negative',
             position: 'center',
@@ -81,16 +83,5 @@ export default {
 
     }
   },
-  beforeCreate () {
-    this.$axios.get('/status').then(response => {
-
-      if (response.data && response.data.authenticated) {
-        this.$store.commit('authenticated', true)
-        this.$router.push({ path: "/home" })
-      }
-      else this.showLogin = true
-    })
-
-  }
 }
 </script>

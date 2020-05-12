@@ -19,7 +19,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.validation.annotation.Validated;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.util.Map;
@@ -65,20 +64,12 @@ public class ClientConfig
   @Min(message = intMessage,value = 1)
   private int mlStagingPort;
 
-  @Min(message = intMessage,value = 1)
-  private int mlAppServicesPort;
-
-  @Min(message = intMessage,value = 1)
-  private int mlAdminPort;
-
-  @Min(message = intMessage,value = 1)
-  private int mlManagePort;
-
   @NotBlank(message = message)
+  @Value("${mlDhfRoot:.}")
   private String mlDhfRoot;
 
   @NotBlank(message = message)
-  private String mlModulesDatabase;
+  private String mlModulesDbName;
 
   @Value("${customModulesRoot:#{null}}")
   private String customModulesRoot;
@@ -103,15 +94,9 @@ public class ClientConfig
       return customModulesRoot;
   }
 
-  public String getMlModulesDatabase() {
-      return mlModulesDatabase;
+  public String getMlModulesDbName() {
+      return mlModulesDbName;
   }
-
-  public int getMlAppServicesPort() { return mlAppServicesPort; }
-
-  public int getMlAdminPort() { return mlAdminPort; }
-
-  public int getMlManagePort() { return mlManagePort; }
 
   public String getMlHost() {
     return mlHost;
@@ -134,18 +119,6 @@ public class ClientConfig
     this.mlStagingPort = mlStagingPort;
   }
 
-  public void setMlAppServicesPort(int mlAppServicesPort) {
-    this.mlAppServicesPort = mlAppServicesPort;
-  }
-
-  public void setMlAdminPort(int mlAdminPort) {
-    this.mlAdminPort = mlAdminPort;
-  }
-
-  public void setMlManagePort(int mlManagePort) {
-    this.mlManagePort = mlManagePort;
-  }
-
   public void setMlDhfRoot(String mlDhfRoot) {
     if (mlDhfRoot!=mlDhfRoot.trim()) {
       logger.warn("I trimmed the value of mlDhfRoot from \""+mlDhfRoot+"\" to \""+mlDhfRoot.trim()+"\"");
@@ -162,12 +135,12 @@ public class ClientConfig
     this.customModulesRoot = customModulesRoot;
   }
 
-  public void setMlModulesDatabase(String mlModulesDatabase) {
-    if (mlModulesDatabase!=mlModulesDatabase.trim()) {
-      logger.warn("I trimmed the value of mlModulesDatabase from \""+mlModulesDatabase+"\" to \""+mlModulesDatabase.trim()+"\"");
-      mlModulesDatabase = mlModulesDatabase.trim();
+  public void setMlModulesDbName(String mlModulesDbName) {
+    if (mlModulesDbName != mlModulesDbName.trim()) {
+      logger.warn("I trimmed the value of mlModulesDatabase from \""+ mlModulesDbName +"\" to \""+ mlModulesDbName.trim()+"\"");
+      mlModulesDbName = mlModulesDbName.trim();
     }
-    this.mlModulesDatabase = mlModulesDatabase;
+    this.mlModulesDbName = mlModulesDbName;
   }
 
 
@@ -238,6 +211,6 @@ public class ClientConfig
   }
 
   public DatabaseClient createModulesDbClient(String username, String password) {
-    return createClient(username,password,getMlModulesDatabase());
+    return createClient(username,password, getMlModulesDbName());
   }
 }
