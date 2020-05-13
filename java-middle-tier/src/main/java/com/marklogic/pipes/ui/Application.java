@@ -21,7 +21,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.io.File;
 
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages={
+  "com.marklogic.hub","com.marklogic.pipes"})
 public class Application {
   private static final Logger logger = LoggerFactory.getLogger(Application.class);
 

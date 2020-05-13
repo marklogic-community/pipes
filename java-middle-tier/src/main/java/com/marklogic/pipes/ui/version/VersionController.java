@@ -1,3 +1,7 @@
+/*
+Copyright ©2020 MarkLogic Corporation.
+*/
+
 package com.marklogic.pipes.ui.version;
 
 import org.springframework.beans.factory.annotation.Autowired;

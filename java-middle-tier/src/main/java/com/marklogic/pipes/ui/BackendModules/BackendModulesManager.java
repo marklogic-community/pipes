@@ -14,6 +14,8 @@ import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
+import com.marklogic.hub.DatabaseKind;
+import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.pipes.ui.Application;
 import com.marklogic.pipes.ui.auth.AuthService;
@@ -39,6 +41,9 @@ public class BackendModulesManager {
 
   @Autowired
   ClientConfig clientConfig;
+
+  @Autowired
+  HubConfigImpl hubConfig;
 
   @Autowired
   PipesVersionService versionService;
@@ -155,8 +160,11 @@ public class BackendModulesManager {
     }
     catch (com.marklogic.client.MarkLogicIOException e) {
       logger.error(
-        String.format("Hm, failed to connect to your database: "+clientConfig.getMlHost()+":"+clientConfig.getMlStagingPort()+
-          ". Are you sure your MarkLogic server is running at that address? Aborting Pipes start."),e);
+        String.format("Hm, failed to connect to your database %s on %s. " +
+          "Are you sure your MarkLogic server is running at that address? Aborting Pipes start."),
+        hubConfig.getDbName(DatabaseKind.STAGING),
+        hubConfig.getHost());
+      logger.error(e.getMessage());
       System.exit(1);
     }
     catch (Exception e) {
