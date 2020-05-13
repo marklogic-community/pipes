@@ -98,7 +98,8 @@ module.exports = function (ctx) {
       plugins: [
         'Notify',
         'Dialog',
-        'LocalStorage'
+        'LocalStorage',
+        'Loading'
 
       ]
     },

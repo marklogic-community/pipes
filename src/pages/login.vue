@@ -62,15 +62,21 @@ export default {
     loginToPipes (evt) {
       evt.preventDefault();
 
+      this.$q.loading.show({
+        delay: 400 // ms
+      })
+
       let payload = { "username": this.username, "password": this.password }
 
       // TO-DO: this axios call should happen from inside the store (action)
       this.$axios.post('/login', payload).then(response => {
         this.$store.dispatch('authenticated', { auth: true }).then(() => {
+          this.$q.loading.hide()
           this.$router.push({ name: "home" })
         })
       })
         .catch((error) => {
+          this.$q.loading.hide()
           this.$store.commit('authenticated', false)
           this.$q.notify({
             color: 'negative',

@@ -103,8 +103,13 @@ public class AuthService extends AbstractLoggingClass {
       envName = "local";
     }
     hubConfig.withPropertiesFromEnvironment(envName);
+    hubConfig.setMlUsername(username);
+    hubConfig.setMlPassword(password);
+    
     hubConfig.resetHubConfigs();
     hubConfig.refreshProject();
+
+
 
     DatabaseClient client=hubConfig.newStagingClient();
 
