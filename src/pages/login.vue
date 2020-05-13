@@ -63,7 +63,8 @@ export default {
       evt.preventDefault();
 
       this.$q.loading.show({
-        delay: 400 // ms
+        delay: 400, // ms
+        message: 'Reticulating splines.<br/><span>Hang on...</span>'
       })
 
       let payload = { "username": this.username, "password": this.password }
