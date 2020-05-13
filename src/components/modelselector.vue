@@ -102,49 +102,8 @@
         <q-radio @input="sourceOptionChanged" color="blue" v-model="blockSourceOption" val="db_collection" label="Sample the documents in a database collection"></q-radio>
 
         <div v-if="blockSourceOption == 'db_collection'">
-    <q-select
-      name="databaseSelector"
-      v-model="selectedDatabase"
-      :options="dropdownDatabaseOptions"
-      @filter="dropdownDynamicDBfilter"
-      @input="databaseChanged"
-      use-input
-      filled
-      hide-selected
-      input-debounce="0"
-      fill-input
-      separator
-      label="Source database"
-      stack-label
-    >
 
-   <q-tooltip v-if="helpMode" self="center right" content-class="tool-tip" v-model="toolTips">
-     Database
-   </q-tooltip>
-       <template v-slot:prepend>
-        <q-icon name="fas fa-database"/>
-      </template>
-    </q-select>
-
-    <q-select
-      name="collectionSelector"
-      v-model="selectedCollection"
-      :options="dropdownCollectionOptions"
-      @filter="dropdownDynamicCollectionfilter"
-      @input="collectionChanged"
-      input-debounce="0"
-      use-input
-      filled
-      hide-selected
-      fill-input
-      separator
-      label="Source collection"
-      stack-label
-    >
-    <template v-slot:prepend>
-        <q-icon name="fas fa-tags"/>
-      </template>
-    </q-select>
+    <DatabaseCollectionSelector :showCollectionDropDown="true" :selectedDatabase = "selectedDatabase" :selectedCollection = "selectedCollection" @databaseChanged="databaseChangedEvent" @collectionChanged="collectionChangedEvent"/>
 
     </div>
 
@@ -472,6 +431,7 @@
   import Notifications from '../components/notificationHandler.js';
   import DatabaseFilter from '../components/databaseFilter.js';
   import CollectionFilter from '../components/collectionFilter.js';
+  import DatabaseCollectionSelector from '../components/databaseCollectionSelector.vue';
   import { SOURCE_BLOCK_TYPE, BLOCK_FIELDS, BLOCK_FIELD, BLOCK_LABEL, BLOCK_TYPE, BLOCK_OPTIONS,
   BLOCK_OPTION_NODE_INPUT, BLOCK_OPTION_NODE_OUTPUT, BLOCK_OPTION_FIELDS_INPUT, BLOCK_OPTION_FIELDS_OUTPUT,
   BLOCK_CHILDREN, BLOCK_PATH, BLOCK_COLLECTION, BLOCK_SOURCE, BLOCK_OPTIONS_DOC_BY_URI } from '../components/constants.js'
@@ -498,7 +458,8 @@
   export default {
     // name: 'ComponentName',
     components: {
-      VueJsonPretty
+      VueJsonPretty,
+      DatabaseCollectionSelector
     },
     mixins: [
       Notifications,
@@ -562,20 +523,6 @@
     }
     }
     },
-/*
-  selectedCollection:  function (val) {
-    console.log("watch selectedCollection.." + val)
-       if ( val !== null ) {
-        this.collectionChanged()
-       } else {
-        this.selectedDatabase = null
-        this.selectedCollection = null
-        this.collectionChanged()
-    }
-  }
-  },
-*/
-
   computed: {
     dbHasCollections: function() {
       return this.selectedDatabase == null || (this.selectedDatabase !== null && this.availableCollections.length > 0)
@@ -827,33 +774,6 @@
     },
 
     methods: {
-     dropdownDynamicDBfilter (val, update, abort) {
-      if (val === '') {
-        update(() => {
-          this.dropdownDatabaseOptions = this.availableDatabases
-        })
-        return
-      }
-
-      update(() => {
-        const needle = val.toLowerCase()
-        this.dropdownDatabaseOptions = this.availableDatabases.filter(v => v.label.toLowerCase().indexOf(needle) > -1)
-      })
-    },
-     dropdownDynamicCollectionfilter (val, update, abort) {
-      if (val === '') {
-        update(() => {
-          this.dropdownCollectionOptions = this.availableCollections
-        })
-        return
-      }
-
-      update(() => {
-        const needle = val.toLowerCase()
-        this.dropdownCollectionOptions = this.availableCollections.filter(v => v.label.toLowerCase().indexOf(needle) > -1)
-      })
-    },
-      //
       explainBlockNotReady() {
           return ( ! this.createBlockReady)
       },
@@ -952,6 +872,7 @@
 	  },
     // Auto set database and collection dropdowns
     // if block included then restore fields
+/*
       setDatabaseCollectionsDropdowns(dbName, collectionName, reloadBlock) {
         if ( dbName === null || dbName == '') return;
         for (var x = 0; x < this.availableDatabases.length; x++) {
@@ -978,6 +899,7 @@
           }
         }
       },
+      */
       selectFieldPath(node){
         console.log(node)
       }
@@ -1006,6 +928,11 @@
       removeURIFromList(uri) {
          this.customURIList = this.customURIList.filter(i => i.uri!== uri);
       },
+      collectionChangedEvent(selectedCol) {
+        console.log("Collection changed event received: " + JSON.stringify(selectedCol))
+        this.selectedCollection = selectedCol
+        this.collectionChanged()
+      },
       collectionChanged() {
         this.selectedFields = [];
         this.resetFieldSelectionTree()
@@ -1018,7 +945,6 @@
         this.blockDescription = ''
         this.customURIList = []
         this.customURI = ''
-        this.discoverDatabases('data-hub-STAGING')
         this.selectedCollection = null
         this.selectedStep = null
         this.discoverDhfSteps()
@@ -1095,6 +1021,7 @@
             self.notifyError("checkCustomDocURI", error, self);
           })
       },
+      /*
       discoverCollections() {
         var self = this;
         let dbOption =""
@@ -1109,7 +1036,10 @@
             self.notifyError("collectionDetails", error, self);
           })
       },
+      */
+
       // same as discoverCollections but returns promise so we can set dropdown after retreiving collection list
+      /*
        discoverCollectionsPromise() {
         let dbOption =""
         if(this.selectedDatabase!=null && this.selectedDatabase!="") {
@@ -1117,25 +1047,8 @@
         }
           return this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionDetails' + dbOption )
       },
-      discoverDatabases(preSelectedDB, prefetchCollections) {
-        var self = this;
-        this.$axios.get('/v1/resources/vppBackendServices?rs:action=databasesDetails')
-          .then((response) => {
-            this.availableDatabases = this.filterDatabases(response.data)
-            if (preSelectedDB !== null && preSelectedDB != '') {
-              for (var x = 0; x < this.availableDatabases.length; x++) {
-              if ( this.availableDatabases[x].label == preSelectedDB ) {
-                    this.selectedDatabase = this.availableDatabases[x]
-              }
-              }
-              if (prefetchCollections) this.discoverCollections()
-              }
+      */
 
-          })
-          .catch((error) => {
-            self.notifyError("databasesDetails", error,self);
-          })
-      },
      discoverDhfSteps () {
       var self = this;
       this.$axios.get('/customSteps').then((response) => {
@@ -1330,10 +1243,14 @@
             })
           })
       },
+      databaseChangedEvent(selectedDB){
+        this.selectedDatabase = selectedDB
+        this.databaseChanged()
+      },
       databaseChanged(){
         this.resetFieldSelectionTree()
-        this.selectedCollection = []
-        this.discoverCollections()
+        this.selectedCollection = null
+   //     this.discoverCollections()
       },
 
       discoverCustomSteps() {
@@ -1371,7 +1288,6 @@
 
     },
     mounted() {
-      this.discoverDatabases('data-hub-STAGING', true)
       this.discoverDhfSteps()
       this.$root.$on('resetBlockFormFields', this.resetBlockFormFields);
     },

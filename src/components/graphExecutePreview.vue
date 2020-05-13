@@ -16,18 +16,18 @@
 
             <div style="width: 1032px;max-width:1032px">
               <q-stepper
-                v-model="previewWizard"
+                v-model="previewWizardStep"
                 vertical
                 flat
                 color="primary"
                 animated
-                v-if="previewWizard < 4"
+                v-if="previewWizardStep < 4"
               >
                 <q-step
                   :name="1"
                   title="Select the source of the document for preview"
                   icon="settings"
-                  :done="previewWizard > 1"
+                  :done="previewWizardStep > 1"
                 >
                   <q-list>
                     <q-item tag="label" v-ripple>
@@ -76,7 +76,7 @@
 
                   <q-stepper-navigation>
                     <q-btn
-                      @click="previewWizard = 2"
+                      @click="previewWizardStep = 2"
                       color="primary"
                       label="Continue"
                       :disable="isStep1ContinueDisabled"
@@ -89,47 +89,13 @@
                   title="Select details"
                   caption=""
                   icon="settings"
-                  :done="previewWizard > 2"
+                  :done="previewWizardStep > 2"
                 >
 
                   <div v-if="isCollectionSelected || isUriSelected">
-                    <q-select
-                      :options="availableDB"
-                      filled
-                      label="Source Database*"
-                      v-model="selectedDB"
-                      @input="dbChanged()"
-                    >
-                      <q-tooltip content-style="font-size: 1em" content-class="pipes-tooltip">
-                        Preview will be executed on documents from this database
-                      </q-tooltip>
-                      <template v-slot:prepend>
-                        <q-icon
-                          name="fas fa-database"
-                          @click.stop
-                        />
-                      </template>
-                    </q-select>
-                  </div>
 
-                  <div
-                    id="collectionGroup"
-                    v-if="isCollectionSelected"
-                  >
+      <DatabaseCollectionSelector :showCollectionDropDown="true" :selectedDatabase = "selectedDB" :selectedCollection = "collectionForPreview" @databaseChanged="databaseChanged" @collectionChanged="collectionChanged"/>
 
-                    <q-select
-                      :options="availableCollections"
-                      filled
-                      label="Source Collection*"
-                      v-model="collectionForPreview"
-                    >
-
-                      <template v-slot:prepend>
-                        <q-icon
-                          name="fas fa-tags"
-                          @click.stop
-                        />
-                      </template>
                       <q-tooltip content-style="font-size: 1em" content-class="pipes-tooltip">
                         Preview will be executed on documents from this collection
                       </q-tooltip>
@@ -174,14 +140,14 @@
 
                   <q-stepper-navigation>
                     <q-btn
-                      @click="previewWizard = 3"
+                      @click="previewWizardStep = 3"
                       color="primary"
                       label="Continue"
                       :disable="isStep2ContinueDisabled"
                     />
                     <q-btn
                       flat
-                      @click="previewWizard = 1"
+                      @click="previewWizardStep = 1"
                       color="primary"
                       label="Back"
                       class="q-ml-sm"
@@ -199,33 +165,20 @@
                     v-model="saveToDB"
                   />
 
-                  <q-select
-                    v-if="saveToDB"
-                    :options="availableDB"
-                    filled
-                    label="Save to Database"
-                    v-model="selectedTargetDB"
-                  >
-
-                    <template v-slot:prepend>
-                      <q-icon
-                        name="fas fa-database"
-                        @click.stop
-                      />
-                    </template>
-
-                  </q-select>
+<div v-if="saveToDB">
+   <DatabaseCollectionSelector :showCollectionDropDown="false" :selectedDatabase = "selectedTargetDB" @databaseChanged="targetDatabaseChanged"/>
+</div>
 
                   <q-stepper-navigation>
                     <q-btn
-                      @click="previewWizard = 4"
+                      @click="previewWizardStep = 4"
                       color="primary"
                       label="Continue"
                       :disable="isStep3ContinueDisabled"
                     />
                     <q-btn
                       flat
-                      @click="previewWizard = 2"
+                      @click="previewWizardStep = 2"
                       color="primary"
                       label="Back"
                       class="q-ml-sm"
@@ -247,7 +200,7 @@
 
 
           <q-card bordered>
-             <q-card-section v-if="previewWizard == 4">
+             <q-card-section v-if="previewWizardStep == 4">
 
                   <div>Source Database: <q-chip icon="storage"> {{summarySelectedDB}}</q-chip>
                   </div>
@@ -286,7 +239,7 @@
 
                     <q-btn
                       flat
-                      @click="previewWizard = 3"
+                      @click="previewWizardStep = 3"
                       color="primary"
                       label="Back"
                       class="q-ml-sm"
@@ -375,11 +328,13 @@
 import VueJsonPretty from 'vue-json-pretty';
 import Notifications from '../components/notificationHandler.js';
 import CollectionFilter from '../components/collectionFilter.js';
+import DatabaseCollectionSelector from '../components/databaseCollectionSelector.vue';
 import { LocalStorage, copyToClipboard } from 'quasar';
 import { Vuex } from "vuex";
 export default {
   components: {
-    VueJsonPretty
+    VueJsonPretty,
+    DatabaseCollectionSelector
   },
    mixins: [
     Notifications,
@@ -389,24 +344,22 @@ export default {
     return {
       graph: null,
       serializedGraph: '',
-      graphMetadata: null,
       dhfStepSelectOptions: [],
       dhfSteps: null,
       blocks: null,
       showPreview: false,
-      selectedDB: null,
+      selectedDB: null,     // Preview Database
+      collectionForPreview: null,
+      selectedTargetDB: null, // Target Database where result will be saved
       selectedStep: null,
-      availableCollections: [],
-      selectedTargetDB: null,
       randomDocPreview: false,
-      previewWizard: 1,
+      previewWizardStep: 1,
       docUri: null,
       errorOccured: false,
       executionRun: false,
       errorMessage: '',
       statusHoverText: '',
       previewSource: null,
-      collectionForPreview: "",
       jsonFromPreview: {},
       executionTime: null,
       saveToDB: false,
@@ -467,13 +420,21 @@ export default {
         this.dhfSteps = dhfSteps
         this.dhfStepSelectOptions = dhfStepOptions
     },
+      databaseChanged: function(db) {
+        this.selectedDB = db
+     },
+      targetDatabaseChanged: function(db) {
+        this.selectedTargetDB = db
+     },
+     collectionChanged: function(col) {
+        this.collectionForPreview = col
+
+     },
      copyResultToClipboard (result) {
       var document;
       document = ((typeof result == "object") ? JSON.stringify(result,null,2) : result)
       copyToClipboard(document).then(() => {
-        //  console.log("Copied to clip board!")
         }).catch(() => {
-       //   console.log("Failed to copy to clip board!")
         })
     },
       checkConfiguration (graph, configs) {
@@ -549,7 +510,7 @@ export default {
 
         var self = this; // keep reference for notifications called from catch block
         let dbOption = ""
-        if (this.selectedDB != null && this.selectedDB != "") {
+        if ( this.selectedDB !== null ) {
           dbOption += "&rs:database=" + this.selectedDB.label
         }
 
@@ -585,7 +546,6 @@ export default {
               console.log("Error executing graph")
               this.errorOccured = true
               var error = JSON.stringify(response.data.error.stack);
-              //console.log(error)
               error = (error.split("in "))[0]
               if ( error.length > 50) error = error.substring(0,50) // if we don't capture message correctly truncate
               this.errorMessage = error
@@ -593,7 +553,6 @@ export default {
               this.errorOccured = true
               this.errorMessage = response.data.error
             }
-
             }
 
           })
@@ -605,32 +564,11 @@ export default {
         createGraphDef() {
         const jsonGraph = this.graph
         return {
-            pipesFileVersion : 1,
+            pipesFileVersion : 2,
             models: this.blocks,
             executionGraph: jsonGraph.serialize(),
             name: this.$store.getters.graphTitle
-           // metadata: this.graphMetadata
           }
-    },
-        dbChanged () {
-      this.collectionForPreview = ""
-      this.availableCollections = []
-      this.discoverCollections()
-    },
-    discoverCollections() {
-      var self = this; // keep reference for notifications called from catch block
-      let dbOption = ""
-      if (this.selectedDB != null && this.selectedDB != "") {
-        dbOption += "&rs:database=" + this.selectedDB.value
-
-        this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionDetails' + dbOption)
-          .then((response) => {
-            this.availableCollections = self.filterCollections(response.data)
-          })
-          .catch((error) => {
-            self.notifyError("collectionDetails", error, self);
-          })
-      }
     }
 },
 watch: {
@@ -643,7 +581,7 @@ watch: {
         else if (this.previewSource == 'collection' || this.previewSource == 'dhfStep') {
           this.docUri = null;
         }
-        this.previewWizard = 2;
+        this.previewWizardStep = 2;
       }
     },
     selectedStep: function (val) {
@@ -687,25 +625,13 @@ watch: {
       return this.$store.getters.availableDatabases
     },
     summarySelectedDB: function () {
-      let val = "";
-      if (this.selectedDB != null) {
-        val = this.selectedDB.label;
-      }
-      return val;
+      return (this.selectedDB !== null) ? this.selectedDB.label : ""
     },
     summarySaveDB: function () {
-      let val = "";
-      if (this.selectedTargetDB != null) {
-        val = this.selectedTargetDB.label;
-      }
-      return val;
+      return (this.selectedTargetDB !== null) ? this.selectedTargetDB.label : ""
     },
-        summaryCollectionForPreview: function () {
-      let val = "";
-      if (this.collectionForPreview != null) {
-        val = this.collectionForPreview.value;
-      }
-      return val;
+    summaryCollectionForPreview: function () {
+      return (this.collectionForPreview !== null) ? this.collectionForPreview.value : ""
     },
     isCollectionSelected: function () {
       return (this.previewSource == "collection")
@@ -719,7 +645,7 @@ watch: {
     isStep2ContinueDisabled: function () {
       let disabled = true;
       if (this.previewSource == 'collection' || this.previewSource == 'dhfStep') {
-        if (this.selectedDB != null && this.selectedDB != '' && this.collectionForPreview != null && this.collectionForPreview != '') {
+        if ( this.selectedDB !== null && this.collectionForPreview !== null ) {
           disabled = false;
         }
       } else if (this.previewSource == 'uri') {
