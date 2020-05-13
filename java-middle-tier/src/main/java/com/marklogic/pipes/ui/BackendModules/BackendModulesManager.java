@@ -220,7 +220,8 @@ public class BackendModulesManager {
     else {
       //final InputStream is = Application.class.getResourceAsStream(resourcesDhfRoot + filePath);
       final File source = new File(CUSTOMSJSPATH);
-      final File dest = new File(clientConfig.getMlDhfRoot() + destinationDhfRoot + customModulesPathPrefix + File.separator +CUSTOMSJSNAME);
+
+      final File dest = new File(clientConfig.getMlDhfRoot() + File.separator+".pipes" + File.separator +CUSTOMSJSNAME);
       try {
         if (operation== fileOperation.Copy) {
           FileUtils.copyFile(source,dest, false);
@@ -237,8 +238,6 @@ public class BackendModulesManager {
 
       } catch (final IOException e) {
         // TODO Auto-generated catch block
-//        e.printStackTrace();
-//        System.out.println(e.toString());
         throw e;
       }
     }
@@ -246,7 +245,7 @@ public class BackendModulesManager {
 
     for (final String filePath : filePaths) {
       final InputStream is = Application.class.getResourceAsStream(resourcesDhfRoot + filePath);
-      final File dest = new File(clientConfig.getMlDhfRoot() + destinationDhfRoot + filePath);
+      final File dest = new File(clientConfig.getMlDhfRoot() +  File.separator+".pipes" + File.separator + filePath);
 
       try {
         if (operation== fileOperation.Copy) {
@@ -298,7 +297,9 @@ public class BackendModulesManager {
 
     modulesLoader.setIncludeFilenamePattern(pattern);
 
-    String path= clientConfig.getMlDhfRoot()+"/src/main/ml-modules";
+//    String path= clientConfig.getMlDhfRoot()+"/src/main/ml-modules";
+//    final File dest = new File(clientConfig.getMlDhfRoot() + File.separator+".pipes" + File.separator +CUSTOMSJSNAME);
+    String path=clientConfig.getMlDhfRoot()+ File.separator+".pipes";
     ModulesFinder modulesFinder = new DefaultModulesFinder(); // Allows for adjusting where modules are stored on a filesystem
 
     modulesLoader.loadModules(path, modulesFinder, client);
