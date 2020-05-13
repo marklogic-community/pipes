@@ -41,9 +41,6 @@ public class ClientConfig
   private String mlHost;
   private String mlModulesDbName;
 
-  @Value("${mlUseSsl:#{null}}")
-  private Boolean mlUseSsl;
-
   @NotBlank(message = message)
   @Value("${mlDhfRoot:.}")
   private String mlDhfRoot;
@@ -55,14 +52,6 @@ public class ClientConfig
   private String environmentName;
 
   // getters  / setters
-
-  public Boolean getMlUseSsl() {
-    return mlUseSsl;
-  }
-
-  public void setMlUseSsl(Boolean mlUseSsl) {
-    this.mlUseSsl = mlUseSsl;
-  }
 
   public String getEnvironmentName() {
     return environmentName;
