@@ -18,6 +18,7 @@ import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.admin.AdminManager;
 import com.marklogic.pipes.ui.BackendModules.BackendModulesManager;
 import com.marklogic.pipes.ui.config.ClientConfig;
+import com.marklogic.pipes.ui.config.PipesResourceManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -105,9 +106,6 @@ public class AuthService extends AbstractLoggingClass {
     hubConfig.resetHubConfigs();
     hubConfig.refreshProject();
 
-    clientConfig.setMlHost(hubConfig.getHost());
-    clientConfig.setMlModulesDbName(hubConfig.getDbName(DatabaseKind.MODULES));
-
     DatabaseClient client=hubConfig.newStagingClient();
 
     setAuthorized(true);
@@ -137,7 +135,7 @@ public class AuthService extends AbstractLoggingClass {
     if (isAuthorized()) {
 
 
-      ResourceServices service = clientConfig.getService(client);
+      ResourceServices service = this.getService(client);
       setService(service);
       setUsername(username);
       setPassword(password);
@@ -171,6 +169,11 @@ public class AuthService extends AbstractLoggingClass {
 
   private DatabaseClient createModulesDbClient(String username, String password) {
     return hubConfig.newModulesDbClient();
+  }
+
+  private ResourceServices getService(DatabaseClient client) {
+    PipesResourceManager pipesResourceManager=new PipesResourceManager(client);
+    return pipesResourceManager.getServices();
   }
 
 }

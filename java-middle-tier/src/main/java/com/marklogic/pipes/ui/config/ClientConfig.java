@@ -27,7 +27,6 @@ public class ClientConfig
   private static final Logger logger = LoggerFactory.getLogger(ClientConfig.class);
 
   final String message="Can't be blank. Set in application.properties or on the command line.";
-  final String intMessage="You have to set value in application.properties or on the command line.";
 
   public int getContainerPort() {
     return containerPort;
@@ -38,8 +37,6 @@ public class ClientConfig
   }
 
   private int containerPort;
-  private String mlHost;
-  private String mlModulesDbName;
 
   @NotBlank(message = message)
   @Value("${mlDhfRoot:.}")
@@ -65,24 +62,8 @@ public class ClientConfig
       return customModulesRoot;
   }
 
-  public String getMlModulesDbName() {
-      return mlModulesDbName;
-  }
-
-  public String getMlHost() {
-    return mlHost;
-  }
-
   public String getMlDhfRoot() {
     return mlDhfRoot;
-  }
-
-  public void setMlHost(String mlHost) {
-    if (mlHost!=mlHost.trim()) {
-      logger.warn("I trimmed the value of mlHost from \""+mlHost+"\" to \""+mlHost.trim()+"\"");
-      mlHost = mlHost.trim();
-    }
-    this.mlHost = mlHost;
   }
 
   public void setMlDhfRoot(String mlDhfRoot) {
@@ -101,18 +82,7 @@ public class ClientConfig
     this.customModulesRoot = customModulesRoot;
   }
 
-  public void setMlModulesDbName(String mlModulesDbName) {
-    if (mlModulesDbName != mlModulesDbName.trim()) {
-      logger.warn("I trimmed the value of mlModulesDatabase from \""+ mlModulesDbName +"\" to \""+ mlModulesDbName.trim()+"\"");
-      mlModulesDbName = mlModulesDbName.trim();
-    }
-    this.mlModulesDbName = mlModulesDbName;
-  }
 
-  public ResourceServices getService(DatabaseClient client) {
-    PipesResourceManager pipesResourceManager=new PipesResourceManager(client);
-    return pipesResourceManager.getServices();
-  }
 
 
 }

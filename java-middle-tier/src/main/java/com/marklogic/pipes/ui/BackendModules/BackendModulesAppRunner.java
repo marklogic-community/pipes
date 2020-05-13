@@ -51,6 +51,19 @@ public class BackendModulesAppRunner extends AbstractLoggingClass implements App
       System.exit(1);
     }
 
+    // check if gradle.properties exist
+    String gradlePropertiesFileNameWithAbsolutePath=f.getAbsolutePath()+File.separator+"gradle.properties";
+    File gradleProperies=new File(gradlePropertiesFileNameWithAbsolutePath);
+
+
+    if (!gradleProperies.exists() || !gradleProperies.isFile()) {
+      logger.error(
+        String.format("It looks like this file doesn't exist: %s", gradlePropertiesFileNameWithAbsolutePath));
+      logger.info(
+        String.format("Pipes will not start, it requires gradle.properties to be present here: %s",f.getAbsolutePath()));
+      System.exit(1);
+    }
+
 
     logger.info(
       String.format("Pipes running on port: "+ environment.getProperty("local.server.port")));

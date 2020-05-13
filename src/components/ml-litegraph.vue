@@ -941,27 +941,9 @@ export default {
           console.log("Error occured registering block " + config.blockName + ": " + e)
         }
       }
-    },
-    checkLoggedIn () {
-      this.$axios.get('/status').then(response => {
-        if (response.data && response.data.authenticated) {
-          console.log("Logged in")
-          this.$store.commit('authenticated', true)
-        } else {
-          console.log("Not logged in. Redirecting to login page")
-          this.$router.push({ path: "/" })
-        }
-      })
-        .catch((error) => {
-          console.log("checkLoggedIn:", error)
-        })
-
     }
   },
   mounted: function () {
-    //this.checkLoggedIn()
-
-
     this.$root.$on("csvLoadingRequested", this.createGraphFromMapping)
     this.$root.$on("openGraphPreview", this.openGraphPreviewDialog)
     this.$root.$on("executeGraph", this.openGraphPreviewDialog);

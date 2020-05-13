@@ -13,67 +13,62 @@ It assumes that:
 
 - A DHF project (5.1.0 and higher) is present on the local file-system
 - That DHF project is installed to your MarkLogic server
+- Java 8 or higher installed
  
 
 ## Great! How do I run it?
 To use Pipes you will need to have an instance of MarkLogic with the [Data Hub](https://docs.marklogic.com/datahub/index.html) installed.
 
-Next, download the Pipes jar from the [Releases](https://github.com/marklogic-community/pipes/releases) section. In the same directory where you placed the jar, create an ```application.properties``` file with following content (for Linux/Unix/Mac):
+Next, download the Pipes jar from the [Releases](https://github.com/marklogic-community/pipes/releases) section. Copy the jar to the DHF folder root you plan to use Pipes for.
 
-```
-# this is where the UI will be running, make sure the port is not used
-server.port=8081
-
-# MarkLogic DHF settings
-mlHost=localhost
-mlStagingPort=8010
-mlAppServicesPort=8000
-mlAdminPort=8001
-mlManagePort=8002
-mlModulesDatabase=data-hub-MODULES
-
-# this is the root of your DHF project
-mlDhfRoot=/my/projects/dhf 
-```
-and for Windows
-```
-# this is where the UI will be running, make sure the port is not used
-server.port=8081
-
-# MarkLogic DHF settings
-mlHost=localhost
-mlStagingPort=8010
-mlAppServicesPort=8000
-mlAdminPort=8001
-mlManagePort=8002
-mlModulesDatabase=data-hub-MODULES
-
-# this is the root of your DHF project
-mlDhfRoot=C:/Users/user/dev/test-pipes
-```
-
-To run Pipes do:
+Run pipes from the command line:
 
 ```
 java -jar marklogic-pipes-1.1.jar
 ```
 
-Pipes UI is now running on localhost and the port that you've specified in the application.properties under value server.port. Example: [localhost:8081](http://localhost:8081)
+As soon as Pipes starts, it will print out the port number it's running on. Example, Pipes will be available on: [localhost:8080](http://localhost:8080) if the port is 8080.
 
-### Can I use another filename instead of ```application.properties```?
-Yes. Assuming you want to use a filename ```myEnvironment.properites```, add a parameter 
+## Pipes options (command line parameters)
 
-```--spring.config.location=myEnvironment.properites``` 
+Pipes has several properties that can be used on the command line, when starting the Pipes jar:
 
-when running the jar.
+- ```environmentName```
+    
+    If you have multiple environments in your DHF project, you can tell Pipes which one to use.
+
+    Example:
+    
+    ```java -jar marklogic-pipes-1.1.jar --environmentName=production```
+
+    will first read gradle.properties of the project and then gradle-production.properties
+
+- ```server.port```
+
+    Pipes will run on a first availble port it finds counting from 8000. If you want to specify your own port, use this parmeter
+
+- ```mlDhfRoot```
+
+    If you want to run Pipes from another folder (not from the DHF root project folder), you have to use this parameter to tell Pipes where to look for the DHF project.
+
+    Example:
+
+    ```java -jar marklogic-pipes-1.1.jar --mlDhfRoot=/users/user/dev/test-pipes```
+
+    or, on Windows:
+
+    ```java -jar marklogic-pipes-1.1.jar --mlDhfRoot=C:/Users/user/dev/test-pipes```
 
 
 #### Backend modules
 
-Pipes requires several backend modules (libraries) to be installed on the MarkLogic server.
+Pipes requires several backend modules (libraries) to be installed on the MarkLogic server, both when running the Pipes UI to design your custom code and when running the custom code within the DHF flow, later.
+
 They will be installed automatically when Pipes runs.
 
-IF you need to have the Pipes modules present in your project structure, we bundled them together using [mlBundle](https://github.com/marklogic-community/ml-gradle/wiki/Bundles). To use this bundle in your DHF project, add the following to `build.gradle`:
+In case when you have 2 environments - one where you use the Pipes UI and another where you run the custom steps designed by Pipes, you will need these modules installed on both environments.
+
+Pipes modules can be separately installed using [mlBundle](https://github.com/marklogic-community/ml-gradle/wiki/Bundles). To use the Pipes modules bundle in your DHF project, add the following to `build.gradle`:
 
     ```
     repositories {
@@ -84,8 +79,6 @@ IF you need to have the Pipes modules present in your project structure, we bund
         mlBundle "com.marklogic:pipes-modules:1.1"
     }
     ```
-
-
 
 
 ## Uhm, OK, I got it up and running! How do I use it?
