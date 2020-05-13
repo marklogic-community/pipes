@@ -51,8 +51,8 @@ public class ClientConfig
   @Value("${customModulesRoot:#{null}}")
   private String customModulesRoot;
 
-  @Value("${dhfEnv:#{null}}")
-  private String dhfEnv;
+  @Value("${environmentName:#{null}}")
+  private String environmentName;
 
   // getters  / setters
 
@@ -64,12 +64,12 @@ public class ClientConfig
     this.mlUseSsl = mlUseSsl;
   }
 
-  public String getDhfEnv() {
-    return dhfEnv;
+  public String getEnvironmentName() {
+    return environmentName;
   }
 
-  public void setDhfEnv(String dhfEnv) {
-    this.dhfEnv = dhfEnv;
+  public void setEnvironmentName(String environmentName) {
+    this.environmentName = environmentName;
   }
 
   public String getCustomModulesRoot() {

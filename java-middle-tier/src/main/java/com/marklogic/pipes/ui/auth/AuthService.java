@@ -5,27 +5,21 @@ Copyright ©2020 MarkLogic Corporation.
 package com.marklogic.pipes.ui.auth;
 
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.MarkLogicIOException;
-import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager;
 import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.SearchHandle;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StringQueryDefinition;
 import com.marklogic.hub.DatabaseKind;
-import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.impl.HubConfigImpl;
-import com.marklogic.hub.impl.HubProjectImpl;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.admin.AdminManager;
 import com.marklogic.pipes.ui.BackendModules.BackendModulesManager;
 import com.marklogic.pipes.ui.config.ClientConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.xml.crypto.Data;
 
 @Service
 public class AuthService extends AbstractLoggingClass {
@@ -103,12 +97,13 @@ public class AuthService extends AbstractLoggingClass {
     hubConfig.refreshProject();
 
    // hubConfig.resetAppConfigs();
-    String envName = clientConfig.getDhfEnv();
+    String envName = clientConfig.getEnvironmentName();
     if (envName == null || envName.isEmpty()) {
       envName = "local";
     }
-    System.out.println("envName: " + envName);
     hubConfig.withPropertiesFromEnvironment(envName);
+    hubConfig.resetHubConfigs();
+    hubConfig.refreshProject();
 
     clientConfig.setMlHost(hubConfig.getHost());
     clientConfig.setMlModulesDbName(hubConfig.getDbName(DatabaseKind.MODULES));
