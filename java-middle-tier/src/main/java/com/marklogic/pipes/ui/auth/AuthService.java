@@ -7,6 +7,7 @@ package com.marklogic.pipes.ui.auth;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.DatabaseClientFactory;
 import com.marklogic.client.FailedRequestException;
+import com.marklogic.client.MarkLogicIOException;
 import com.marklogic.client.ext.modulesloader.ssl.SimpleX509TrustManager;
 import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.SearchHandle;
@@ -122,6 +123,11 @@ public class AuthService extends AbstractLoggingClass {
     try {
       queryManager.search(stringQueryDefinition, new SearchHandle());
 
+    }
+    catch (MarkLogicIOException markLogicIOException) {
+      logger.error("Error connecting to MarkLogic. Check your gradle properties.");
+      logger.error(markLogicIOException.getMessage());
+      setAuthorized(false);
     }
     catch (FailedRequestException failedRequestException) {
       logger.error("Authentication failed.");
