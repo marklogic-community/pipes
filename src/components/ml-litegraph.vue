@@ -1018,7 +1018,11 @@ export default {
     this.$root.$off("loadDHFDefaultGraphCall", this.resetDhfDefaultGraph);
     this.$root.$off("listGraphBlocks", this.listGraphBlocks);
     this.$root.$off("checkGraphBlockDelete", this.checkGraphBlockDelete);
-    this.$root.$off('blockDetails', this.showBlockDetails, node);
+
+    if (typeof node == undefined) {
+      this.$root.$off('blockDetails', this.showBlockDetails, node);
+    }
+
   }
 
 }
