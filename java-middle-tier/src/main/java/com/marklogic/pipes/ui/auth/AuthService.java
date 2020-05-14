@@ -38,10 +38,14 @@ public class AuthService extends AbstractLoggingClass {
   HubProject hubProject;
 
 
-
-
   private Boolean isAuthorized=false;
   private ResourceServices service=null;
+
+  public String getEnvironmentName() {
+    return environmentName;
+  }
+
+  private String environmentName=null;
 
   private ManageClient manageClient;
   private AdminManager adminManager;
@@ -98,11 +102,11 @@ public class AuthService extends AbstractLoggingClass {
     hubConfig.refreshProject();
 
    // hubConfig.resetAppConfigs();
-    String envName = clientConfig.getEnvironmentName();
-    if (envName == null || envName.isEmpty()) {
-      envName = "local";
+    environmentName = clientConfig.getEnvironmentName();
+    if (environmentName == null || environmentName.isEmpty()) {
+      environmentName = "local";
     }
-    hubConfig.withPropertiesFromEnvironment(envName);
+    hubConfig.withPropertiesFromEnvironment(environmentName);
     hubConfig.setMlUsername(username);
     hubConfig.setMlPassword(password);
 

@@ -6,9 +6,39 @@ public class SessionStatus {
 	private boolean authenticated;
 
 	// These aren't currently documented, but they're being set by the Node middle tier
-	private String username;
+
 	private boolean disallowUpdates;
-	private boolean appUsersOnly;
+
+  private String username;
+  private String environment;
+  private String port;
+  private String database;
+
+  public String getEnvironment() {
+    return environment;
+  }
+
+  public void setEnvironment(String environment) {
+    this.environment = environment;
+  }
+
+  public String getPort() {
+    return port;
+  }
+
+  public void setPort(String port) {
+    this.port = port;
+  }
+
+  public String getDatabase() {
+    return database;
+  }
+
+  public void setDatabase(String database) {
+    this.database = database;
+  }
+
+
 
 	public SessionStatus() {
 	}
@@ -54,11 +84,4 @@ public class SessionStatus {
 		this.disallowUpdates = disallowUpdates;
 	}
 
-	public boolean isAppUsersOnly() {
-		return appUsersOnly;
-	}
-
-	public void setAppUsersOnly(boolean appUsersOnly) {
-		this.appUsersOnly = appUsersOnly;
-	}
 }
