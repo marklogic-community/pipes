@@ -65,8 +65,10 @@
       Notifications
     ],
     props: {
-      selectedDatabase: Object,    // Currently selected database
-      selectedCollection: Object, // Currently selected collection
+      selectedDatabase: Object,          // Currently selected database
+      selectedCollection: Object,        // Currently selected collection
+      dbName: String,      // Currently selected database
+      collectionName: String,    // Currently selected database
       showCollectionDropDown: Boolean
     },
     data() {
@@ -143,7 +145,8 @@
             self.notifyError("collectionDetails", error, self);
           })
       },
-       setDatabaseCollectionsDropdowns(dbName, collectionName, reloadBlock) {
+       setDatabaseCollectionsDropdowns(dbName, collectionName, reloadBlock  ) {
+         console.log("setDatabaseCollectionsDropdowns: " + dbName + "," + collectionName)
         if ( dbName === null || dbName == '') return;
         for (var x = 0; x < this.availableDatabases.length; x++) {
           if ( this.availableDatabases[x].label == dbName ) {
@@ -157,6 +160,7 @@
                   if ( self.availableCollections[x].label == collectionName ) {
                   self.collection = self.availableCollections[x]
                 //  self.discoverModel( this.selectedCollection,"", reloadBlock)
+                  this.$emit('discoverModel',self.database,self.collection);
                   return
                   }
 			  }
@@ -178,10 +182,14 @@
       },
     },
     mounted() {
-
+      console.log("Mounted datbase collection selector: " + this.dbName + "," + this.collectionName)
       this.setAvailableDatabases()
+      if ((this.dbName !== null && this.dbName != '') && (this.collectionName !== null && this.collectionName != '')) {
+        this.setDatabaseCollectionsDropdowns(this.dbName,this.collectionName,false)
+      } else {
       this.database = this.selectedDatabase
       this.collection = this.selectedCollection
+      }
     }
   }
 </script>
