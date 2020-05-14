@@ -16,6 +16,11 @@ public class PipesVersionService {
 
     final InputStream is = Application.class.getResourceAsStream(VERSIONFILE);
 
+    return InputStreamToString(is);
+
+  }
+
+  public String InputStreamToString(InputStream is) throws IOException {
     InputStreamReader isReader = new InputStreamReader(is);
     //Creating a BufferedReader object
     BufferedReader reader = new BufferedReader(isReader);
@@ -26,6 +31,5 @@ public class PipesVersionService {
     }
 
     return sb.toString();
-
   }
 }

@@ -10,12 +10,17 @@ plugins {
 group = 'com.marklogic.pipes'
 sourceCompatibility = '1.8'
 
-repositories { jcenter()}
+repositories {
+  jcenter()
+  maven { url 'https://jitpack.io' }
+}
+
 ext {
 	set('springCloudVersion', "Hoxton.RELEASE")
 }
 
 dependencies {
+  implementation 'com.github.everit-org.json-schema:org.everit.json.schema:1.12.1'
   implementation 'org.apache.httpcomponents:httpclient:4.5.10'
 
   implementation 'com.marklogic:ml-app-deployer:3.17.0'
