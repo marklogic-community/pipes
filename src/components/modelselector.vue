@@ -102,40 +102,17 @@
         <q-radio @input="sourceOptionChanged" color="blue" v-model="blockSourceOption" val="db_collection" label="Sample the documents in a database collection"></q-radio>
 
         <div v-if="blockSourceOption == 'db_collection'">
-    <q-select
-      name="databaseSelector"
-      v-model="selectedDatabase"
-      :options.sync="availableDatabases"
-      @input="databaseChanged"
-      filled
-      separator
-      label="Source database"
-      stack-label
-    >
 
-   <q-tooltip v-if="helpMode" self="center right" content-class="tool-tip" v-model="toolTips">
-     Database
-   </q-tooltip>
-       <template v-slot:prepend>
-        <q-icon name="fas fa-database"/>
-      </template>
-    </q-select>
-
-    <q-select
-      name="collectionSelector"
-      v-model="selectedCollection"
-      :options.sync="availableCollections"
-      @input="collectionChanged"
-      filled
-      separator
-      label="Source collection"
-      stack-label
-    >
-    <template v-slot:prepend>
-        <q-icon name="fas fa-tags">
-        </q-icon>
-      </template>
-    </q-select>
+    <DatabaseCollectionSelector
+    :showCollectionDropDown="true"
+    :selectedDatabase = "selectedDatabase"
+    :selectedCollection = "selectedCollection"
+    :dbName = "blockDBName"
+    :collectionName = "blockCollectionName"
+    @databaseChanged="databaseChangedEvent"
+    @collectionChanged="collectionChangedEvent"
+    @discoverModel="populateModelBlockRestore"
+    />
 
     </div>
 
@@ -235,17 +212,6 @@
 	  		</q-btn>
 			</div>
 		</div>
-    <!--
-	<div class="row">
-			<div class="col-2">
-			<q-btn dense flat style="padding: 0px; margin: 0px;">
-      			<q-icon style="font-size: 1.5em;padding: 0px; margin: 0px;" name="far fa-check-square" @click="$refs.selectionTree.collapseAll()">
-            	<q-tooltip content-class="pipes-tooltip">Select All</q-tooltip>
-    			</q-icon>
-			</q-btn>
-			</div>
-		</div>
-    -->
     </div>
 
     <div class="col-11" align="left">
@@ -397,7 +363,6 @@
       </div> <!-- block row -->
 
       </div>
-
     </div>
 
    <q-stepper-navigation>
@@ -461,8 +426,7 @@
 <script>
   import VueJsonPretty from 'vue-json-pretty'
   import Notifications from '../components/notificationHandler.js';
-  import DatabaseFilter from '../components/databaseFilter.js';
-  import CollectionFilter from '../components/collectionFilter.js';
+  import DatabaseCollectionSelector from '../components/databaseCollectionSelector.vue';
   import { SOURCE_BLOCK_TYPE, BLOCK_FIELDS, BLOCK_FIELD, BLOCK_LABEL, BLOCK_TYPE, BLOCK_OPTIONS,
   BLOCK_OPTION_NODE_INPUT, BLOCK_OPTION_NODE_OUTPUT, BLOCK_OPTION_FIELDS_INPUT, BLOCK_OPTION_FIELDS_OUTPUT,
   BLOCK_CHILDREN, BLOCK_PATH, BLOCK_COLLECTION, BLOCK_SOURCE, BLOCK_OPTIONS_DOC_BY_URI } from '../components/constants.js'
@@ -489,18 +453,15 @@
   export default {
     // name: 'ComponentName',
     components: {
-      VueJsonPretty
+      VueJsonPretty,
+      DatabaseCollectionSelector
     },
     mixins: [
       Notifications,
-      DatabaseFilter,
-      CollectionFilter,
       LiteGraphHelper
     ],
     data() {
       return {
-        treeLabel_DocumentFields: "Document Fields",
-        treeLabel_CustomFields: "Custom Fields",
         // Block tool tip
         userRequestingBlockOptionHelp: false,
         showBlockOptionTooltip: false,
@@ -511,26 +472,27 @@
         dhfSteps: [],
         dhfStepSelectOptions: null,
 		    showCustomURIPanel: false,
-        selectedStep: null,       // DHF custom step currently selected
-        selectedDatabase:null,    // Currently selected database
-        selectedCollection: null, // Currently selected collection
-		    selectedFields: [],       // Node selected in the collectionModel field tree
-        availableCollections: [],
-        availableDatabases: [],
-        blockFieldsWarning : false,
-		    tickedNodes: null,        // selected tree nodes here due to Stepper
+        selectedStep: null,           // DHF custom step currently selected
+        selectedDatabase:null,        // Currently selected database
+        selectedCollection: null,     // Currently selected collection
+		    selectedFields: [],           // Nodes selected in the collectionModel field tree
+        availableDatabases: [],       // List of available DBs. Populated out of master data in vuex store
+        blockDBName: '',              // db name when reloading a block to them form
+        blockCollectionName: '',      // collection name when reloading a block to the form
+		    tickedNodes: null,            // Selected tree nodes. Using stepper so needs to be here in model
 		    collectionModelPopulated: false,
         emptyCollection: false,
         collectionModel: FIELD_TREE_DEFAULT,
         previousBlockOptions: [BLOCK_OPTION_NODE_INPUT, BLOCK_OPTION_FIELDS_OUTPUT],
         blockOptions: [BLOCK_OPTION_NODE_INPUT, BLOCK_OPTION_FIELDS_OUTPUT],
-        newSelectedOption: "", // most recently selection block option
+        newSelectedOption: "",        // most recently selected block option
         blockOptionDescription: "",
         blockName: "",
         blockDescription: "",
         newCustomFieldName:"",
         customURI:"",
         customURIList: [],
+        reloadBlockFields: [],
         toolTips:true
       }
     },
@@ -550,18 +512,9 @@
       this.resetFieldSelectionTree()
     }
     }
-  },
-  selectedCollection:  function (val) {
-       if ( val !== null ) {
-        this.collectionChanged()
-       } else {
-        this.selectedDatabase = null
-        this.selectedCollection = null
-        this.collectionChanged()
-    }
-  },
+    },
   computed: {
-// can user proceed from select data source step?
+// Can user proceed from the "Select Data Source" step?
 	dataSourceNextOk: function() {
 		return (this.blockSourceOption == "db_collection" && this.selectedCollection !== null) ||
     (this.showCustomURIPanel == true && this.customURIList.length > 0) ||
@@ -808,7 +761,6 @@
     },
 
     methods: {
-      //
       explainBlockNotReady() {
           return ( ! this.createBlockReady)
       },
@@ -905,34 +857,6 @@
        this.selectedStep = step
        //
 	  },
-    // Auto set database and collection dropdowns
-    // if block included then restore fields
-      setDatabaseCollectionsDropdowns(dbName, collectionName, reloadBlock) {
-        if ( dbName === null || dbName == '') return;
-        for (var x = 0; x < this.availableDatabases.length; x++) {
-          if ( this.availableDatabases[x].label == dbName ) {
-            this.selectedDatabase = this.availableDatabases[x]
-            var self = this
-            this.discoverCollectionsPromise().then((response) => {
-            this.availableCollections = self.filterCollections(response.data)
-            if (collectionName !== null && collectionName !== '') {
-           //   Try to select Collection
-              for (var x = 0; x < self.availableCollections.length; x++) {
-                  if ( self.availableCollections[x].label == collectionName ) {
-                  self.selectedCollection = self.availableCollections[x]
-                  self.discoverModel( this.selectedCollection,"", reloadBlock)
-                  return
-                  }
-			  }
-			  console.log("Warning: collection " + collectionName + " not found")
-            }
-          })
-          .catch((error) => {
-            self.notifyError("collectionDetails", error, self);
-          })
-          }
-        }
-      },
       selectFieldPath(node){
         console.log(node)
       }
@@ -961,30 +885,41 @@
       removeURIFromList(uri) {
          this.customURIList = this.customURIList.filter(i => i.uri!== uri);
       },
+      collectionChangedEvent(selectedCol) {
+        this.selectedCollection = selectedCol
+        this.collectionChanged()
+      },
       collectionChanged() {
         this.selectedFields = [];
+        this.resetFieldSelectionTree()
         this.discoverModel(this.selectedCollection,this.userDocumentURIs,null)
       },
       // Reset block create form to default values
        resetBlockFormFields() {
+        console.log("Resetting all source block wizard fields")
         this.newCustomFieldName = ''
         this.blockName = ''
         this.blockDescription = ''
         this.customURIList = []
         this.customURI = ''
-        this.discoverDatabases('data-hub-STAGING')
+        this.blockSourceOption = 'custom_step'
+        this.reloadBlockFields = []
         this.selectedCollection = null
+        this.selectedDatabase = null
+        this.blockDBName = ''
+        this.blockCollectionName = ''
         this.selectedStep = null
-        this.discoverDhfSteps()
-        this.tickedNodes = null
-        this.selectedFields = []
 		    this.resetFieldSelectionTree()
         this.resetBlockOptions()
         this.emptyCollection = false
         this.createBlockStep = 1
         this.formMode = 'create'
+        this.discoverDhfSteps()
       },
       resetFieldSelectionTree() {
+        console.log("Resetting the field selection tree")
+        this.selectedFields = []
+   //     this.tickedNodes = null
         this.collectionModel = FIELD_TREE_DEFAULT
 		    this.collectionModelPopulated = false
       },
@@ -1049,47 +984,7 @@
             self.notifyError("checkCustomDocURI", error, self);
           })
       },
-      discoverCollections() {
-        var self = this;
-        let dbOption =""
-        if(this.selectedDatabase!=null && this.selectedDatabase!="") {
-          dbOption += "&rs:database=" + this.selectedDatabase.value
-        }
-          this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionDetails' + dbOption )
-          .then((response) => {
-            this.availableCollections = self.filterCollections(response.data)
-          })
-          .catch((error) => {
-            self.notifyError("collectionDetails", error, self);
-          })
-      },
-      // same as discoverCollections but returns promise so we can set dropdown after retreiving collection list
-       discoverCollectionsPromise() {
-        let dbOption =""
-        if(this.selectedDatabase!=null && this.selectedDatabase!="") {
-          dbOption += "&rs:database=" + this.selectedDatabase.value
-        }
-          return this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionDetails' + dbOption )
-      },
-      discoverDatabases(preSelectedDB, prefetchCollections) {
-        var self = this;
-        this.$axios.get('/v1/resources/vppBackendServices?rs:action=databasesDetails')
-          .then((response) => {
-            this.availableDatabases = this.filterDatabases(response.data)
-            if (preSelectedDB !== null && preSelectedDB != '') {
-              for (var x = 0; x < this.availableDatabases.length; x++) {
-              if ( this.availableDatabases[x].label == preSelectedDB ) {
-                    this.selectedDatabase = this.availableDatabases[x]
-              }
-              }
-              if (prefetchCollections) this.discoverCollections()
-              }
 
-          })
-          .catch((error) => {
-            self.notifyError("databasesDetails", error,self);
-          })
-      },
      discoverDhfSteps () {
       var self = this;
       this.$axios.get('/customSteps').then((response) => {
@@ -1116,15 +1011,16 @@
     },
       // Restore a block to main editing panel
       restoreBlockToForm(block) {
-        console.log("Restoring source block to form: " + JSON.stringify(block))
+        console.log("Restoring source block to form: " + JSON.stringify(block.fields))
+
+            this.createBlockStep = 1
 
             this.resetBlockFormFields()
-            this.collectionModel[0].children=[] // clear model and selected fields
-            this.collectionModel[1].children=[]
+            this.resetFieldSelectionTree()
             this.selectedFields=[]
+            this.reloadBlockFields = block.fields
             this.blockName = block.label
-
-           this.createBlockStep = 3
+            this.createBlockStep = 2
 
         if ( block.metadata ) {
 
@@ -1138,8 +1034,7 @@
             switch (block.metadata.blockCreatedFrom) {
               case 'custom_step':
                 var dhfStep = ''
-                 var blockSourceDatabase, blockSourceCollection
-                  var blockSourceDatabase, blockSourceCollection
+                var blockSourceDatabase, blockSourceCollection
                 if (block.metadata.sourceDatabase && block.metadata.sourceDatabase != '')
                   blockSourceDatabase = block.metadata.sourceDatabase
                 if (block.metadata.sourceCollection && block.metadata.sourceCollection != '')
@@ -1147,7 +1042,9 @@
                 if ((blockSourceDatabase === null || blockSourceDatabase == '') ||
                   (blockSourceCollection === null || blockSourceCollection == '') ) {
                 } else {
-                  this.setDatabaseCollectionsDropdowns(blockSourceDatabase,blockSourceCollection,block)
+                 // this.setDatabaseCollectionsDropdowns(blockSourceDatabase,blockSourceCollection,block)
+                 this.blockDBName = blockSourceDatabase
+                 this.blockCollectionName = blockSourceCollection
                 }
                   if (block.metadata.sourceDHFStep && block.metadata.sourceDHFStep != '')
                   dhfStep = block.metadata.sourceDHFStep
@@ -1164,14 +1061,16 @@
                 if ((blockSourceDatabase === null || blockSourceDatabase == '') ||
                   (blockSourceCollection === null || blockSourceCollection == '') ) {
                 } else {
-                  this.setDatabaseCollectionsDropdowns(blockSourceDatabase,blockSourceCollection,block)
+                  // this.setDatabaseCollectionsDropdowns(blockSourceDatabase,blockSourceCollection,block)
+                 this.blockDBName = blockSourceDatabase
+                 this.blockCollectionName = blockSourceCollection
                 }
                 this.blockOptions = block.options;
                 this.blockSourceOption = 'db_collection'
               break;
               default:
                 this.blockSourceOption = 'none'
-                this.restoreFields(block, false) // restore fields from block
+                this.restoreFields(this.reloadBlockFields, false) // restore fields from block
               break;
           }
 
@@ -1180,11 +1079,11 @@
             // if trying to restore an old block etc then default to none
             this.blockSourceOption = 'none'
           }
-
         }
 
             this.formMode = 'edit'
-            this.createBlockStep = 3 // open the edit fields step
+         //   this.reloadBlockFields = []
+            this.createBlockStep = 2 // open the source step
 
       },
       // remove block Model list
@@ -1192,18 +1091,17 @@
         this.$root.$emit("checkGraphBlockDelete",block)
       },
       // Restore collection and custom fields after block reload
-      restoreFields(reloadedBlock, expandTree) {
+      restoreFields(blockFields, expandTree) {
 
-        console.log("Restoring the fields..")
+        console.log("Restoring block fields: " + JSON.stringify(blockFields))
 
-          if ( reloadedBlock.fields.length > 0) {
-          for (var i = 0; i < reloadedBlock.fields.length; i++) {
+          if ( blockFields.length > 0) {
+          for (var i = 0; i < blockFields.length; i++) {
 
-            var block = reloadedBlock.fields[i]
+            var blockfield = blockFields[i]
+            var fieldName = blockfield.label
 
-            if ( (block.type == 'custom') ) {
-
-                var fieldName = block.label
+            if ( (blockfield.type == 'custom') ) {
 
                 this.collectionModel[1].children.push({
                   [BLOCK_LABEL]: fieldName,
@@ -1215,37 +1113,41 @@
 
             } else {
 
-                var fieldName = block.label
-
-              console.log("Document field: " + fieldName)
               if ( JSON.stringify(this.collectionModel[0].children).indexOf("\"" + fieldName + "\"") > -1 ) {
                 // if field has been discovered from current model, we don't want to duplicate from the field from the block
               } else {
 
                 this.collectionModel[0].children.push({
                   [BLOCK_LABEL]: fieldName,
-                  [BLOCK_FIELD] : block.field,
-                  value : block.field,
-                  [BLOCK_PATH]:  "//"  + block.field,
-                  [BLOCK_CHILDREN]: block.children,
+                  [BLOCK_FIELD] : blockfield.field,
+                  value : blockfield.field,
+                  [BLOCK_PATH]:  "//"  + blockfield.field,
+                  [BLOCK_CHILDREN]: blockfield.children,
                   [BLOCK_TYPE]: "3",
-                  parent: block.parent
+                  parent: blockfield.parent
                 })
 
               }
 
             }
-            // Add all field regardless of type to "selected" so check boxes in tree are filled in
-            this.selectedFields.push(reloadedBlock.fields[i].label)
+            // Add all fields regardless of type to "selected" so check boxes in tree are filled in
+            this.selectedFields.push(blockFields[i].label)
          }
             if ( this.collectionModel[1].children.length > 0  && expandTree)
             this.$refs["selectionTree"].setExpanded("Custom Fields",true)
           }
 
+          //this.reloadBlockFields = []
+
+     },
+     populateModelBlockRestore(db, collection) {
+       console.log("populateModelBlockRestore: " + JSON.stringify(this.reloadBlockFields))
+        this.selectedDatabase = db
+        this.selectedCollection = collection
+        this.discoverModel(this.selectedCollection,this.customURIs,this.reloadBlockFields)
      },
 	 // Discover fields and populate the tree view
-
-      discoverModel(collection,custURIs, reloadBlock) {
+      discoverModel(collection,custURIs,reloadBlockFields) {
 
         var self = this
         this.emptyCollection = true
@@ -1265,7 +1167,9 @@
         this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionModel' + dbOption)
           .then((response) => {
             this.collectionModel[0].children = response.data
-            if ( reloadBlock != null) self.restoreFields(reloadBlock, false)
+            if ( reloadBlockFields !== null && reloadBlockFields.length > 0 ) {
+              self.restoreFields(reloadBlockFields, false) }
+              else console.log("No fields found in block to restore: ")
             if ( response.data !== null && response.data.length > 0  ) {
 				    this.collectionModelPopulated = true
             this.emptyCollection = false
@@ -1284,14 +1188,14 @@
             })
           })
       },
+      databaseChangedEvent(selectedDB){
+        this.selectedDatabase = selectedDB
+        this.databaseChanged()
+      },
       databaseChanged(){
-        this.selectedCollection = []
-        this.discoverCollections()
-         this.$root.$emit("databaseChanged",
-           {selectedDatabase: this.selectedDatabase,availableDatabases:this.availableDatabases
-           }
-
-          );
+        this.resetFieldSelectionTree()
+        this.selectedCollection = null
+   //     this.discoverCollections()
       },
 
       discoverCustomSteps() {
@@ -1323,13 +1227,11 @@
             options: this.blockOptions,
             metadata: blockMetadata
 		  }
-
           this.$root.$emit("blockRequested", blockDef);
       }
 
     },
     mounted() {
-      this.discoverDatabases('data-hub-STAGING', true)
       this.discoverDhfSteps()
       this.$root.$on('resetBlockFormFields', this.resetBlockFormFields);
     },
