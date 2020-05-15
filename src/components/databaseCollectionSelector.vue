@@ -14,7 +14,7 @@
       input-debounce="0"
       fill-input
       separator
-      label="Source database"
+      :label="dbLabel"
       stack-label
     >
 
@@ -37,7 +37,7 @@
       hide-selected
       fill-input
       separator
-      label="Source collection"
+      :label="collLabel"
       stack-label
     >
     <template v-slot:prepend>
@@ -69,7 +69,9 @@
       selectedCollection: Object,        // Currently selected collection
       dbName: String,      // Currently selected database
       collectionName: String,    // Currently selected database
-      showCollectionDropDown: Boolean
+      showCollectionDropDown: Boolean,
+      databaseLabel: String,
+      collectionLabel: String
     },
     data() {
       return {
@@ -86,6 +88,12 @@
     computed: {
       InfoMessage: function () {
         return this.infoMessage
+      },
+      dbLabel: function() {
+        return (this.databaseLabel != null && this.databaseLabel != undefined) ? this.databaseLabel : "Database"
+      },
+      collLabel: function() {
+        return (this.collectionLabel != null && this.collectionLabel != undefined) ? this.collectionLabel : "Collection"
       }
     },
     methods: {
@@ -145,8 +153,7 @@
             self.notifyError("collectionDetails", error, self);
           })
       },
-       setDatabaseCollectionsDropdowns(dbName, collectionName, reloadBlock  ) {
-         console.log("setDatabaseCollectionsDropdowns: " + dbName + "," + collectionName)
+       setDatabaseCollectionsDropdowns(dbName, collectionName ) {
         if ( dbName === null || dbName == '') return;
         for (var x = 0; x < this.availableDatabases.length; x++) {
           if ( this.availableDatabases[x].label == dbName ) {
@@ -159,7 +166,6 @@
               for (var x = 0; x < self.availableCollections.length; x++) {
                   if ( self.availableCollections[x].label == collectionName ) {
                   self.collection = self.availableCollections[x]
-                //  self.discoverModel( this.selectedCollection,"", reloadBlock)
                   this.$emit('discoverModel',self.database,self.collection);
                   return
                   }
@@ -182,14 +188,19 @@
       },
     },
     mounted() {
-      console.log("Mounted datbase collection selector: " + this.dbName + "," + this.collectionName)
       this.setAvailableDatabases()
-      if ((this.dbName !== null && this.dbName != '') && (this.collectionName !== null && this.collectionName != '')) {
-        this.setDatabaseCollectionsDropdowns(this.dbName,this.collectionName,false)
-      } else {
-      this.database = this.selectedDatabase
-      this.collection = this.selectedCollection
+
+      const DB_NAME = (this.dbName !== null && this.dbName != '' && this.dbName != undefined)
+      const COLLECTION_NAME = (this.collectionName !== null && this.collectionName != '' && this.collectionName != undefined)
+      const SELECTED_DB = (this.selectedDatabase !== null && this.selectedDatabase != '' && this.selectedDatabase != undefined)
+      const SELECTED_COL = (this.selectedCollection !== null && this.selectedCollection != '' && this.selectedCollection != undefined)
+
+      if ( DB_NAME  ) {
+        this.setDatabaseCollectionsDropdowns(this.dbName,this.collectionName)
+      } else if ( SELECTED_DB ) {
+        this.setDatabaseCollectionsDropdowns(this.selectedDatabase.label,(this.selectedCollection !== null) ? this.selectedCollection.label : null)
       }
-    }
+
+      }
   }
 </script>

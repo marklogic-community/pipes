@@ -12,6 +12,7 @@ export default function () {
       authenticated: false,
       databases: [],
       databasesMap: {},
+      dhfSteps: [],
       graphTitle: 'My Graph',
       graphVersion: "00.01",
       graphAuthor: "",
@@ -19,6 +20,7 @@ export default function () {
     },
     getters: {
     availableDatabases: state => { return state.databases },
+    availableDHFSteps: state => { return state.dhfSteps },
     authenticated: state => { return state.authenticated },
     models: state => { return state.models },
     graphTitle: state => { return state.graphTitle },
@@ -35,6 +37,9 @@ export default function () {
     mutations: {
     availableDatabases( state, dbs) {
       state.databases = dbs
+    },
+    availableDHFSteps( state, steps) {
+      state.dhfSteps = steps
     },
     authenticated( state, auth ) {
       state.authenticated = auth

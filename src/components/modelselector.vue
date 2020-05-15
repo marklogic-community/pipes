@@ -212,17 +212,6 @@
 	  		</q-btn>
 			</div>
 		</div>
-    <!--
-	<div class="row">
-			<div class="col-2">
-			<q-btn dense flat style="padding: 0px; margin: 0px;">
-      			<q-icon style="font-size: 1.5em;padding: 0px; margin: 0px;" name="far fa-check-square" @click="$refs.selectionTree.collapseAll()">
-            	<q-tooltip content-class="pipes-tooltip">Select All</q-tooltip>
-    			</q-icon>
-			</q-btn>
-			</div>
-		</div>
-    -->
     </div>
 
     <div class="col-11" align="left">
@@ -374,7 +363,6 @@
       </div> <!-- block row -->
 
       </div>
-
     </div>
 
    <q-stepper-navigation>
@@ -438,8 +426,6 @@
 <script>
   import VueJsonPretty from 'vue-json-pretty'
   import Notifications from '../components/notificationHandler.js';
-  import DatabaseFilter from '../components/databaseFilter.js';
-  import CollectionFilter from '../components/collectionFilter.js';
   import DatabaseCollectionSelector from '../components/databaseCollectionSelector.vue';
   import { SOURCE_BLOCK_TYPE, BLOCK_FIELDS, BLOCK_FIELD, BLOCK_LABEL, BLOCK_TYPE, BLOCK_OPTIONS,
   BLOCK_OPTION_NODE_INPUT, BLOCK_OPTION_NODE_OUTPUT, BLOCK_OPTION_FIELDS_INPUT, BLOCK_OPTION_FIELDS_OUTPUT,
@@ -472,14 +458,10 @@
     },
     mixins: [
       Notifications,
-      DatabaseFilter,
-      CollectionFilter,
       LiteGraphHelper
     ],
     data() {
       return {
-        treeLabel_DocumentFields: "Document Fields",
-        treeLabel_CustomFields: "Custom Fields",
         // Block tool tip
         userRequestingBlockOptionHelp: false,
         showBlockOptionTooltip: false,
@@ -490,22 +472,20 @@
         dhfSteps: [],
         dhfStepSelectOptions: null,
 		    showCustomURIPanel: false,
-        selectedStep: null,       // DHF custom step currently selected
-        selectedDatabase:null,    // Currently selected database
-        selectedCollection: null, // Currently selected collection
-		    selectedFields: [],       // Node selected in the collectionModel field tree
-        availableCollections: [],
-        availableDatabases: [],
-        blockDBName: '',
-        blockCollectionName: '',
-        blockFieldsWarning : false,
-		    tickedNodes: null,        // selected tree nodes here due to Stepper
+        selectedStep: null,           // DHF custom step currently selected
+        selectedDatabase:null,        // Currently selected database
+        selectedCollection: null,     // Currently selected collection
+		    selectedFields: [],           // Nodes selected in the collectionModel field tree
+        availableDatabases: [],       // List of available DBs. Populated out of master data in vuex store
+        blockDBName: '',              // db name when reloading a block to them form
+        blockCollectionName: '',      // collection name when reloading a block to the form
+		    tickedNodes: null,            // Selected tree nodes. Using stepper so needs to be here in model
 		    collectionModelPopulated: false,
         emptyCollection: false,
         collectionModel: FIELD_TREE_DEFAULT,
         previousBlockOptions: [BLOCK_OPTION_NODE_INPUT, BLOCK_OPTION_FIELDS_OUTPUT],
         blockOptions: [BLOCK_OPTION_NODE_INPUT, BLOCK_OPTION_FIELDS_OUTPUT],
-        newSelectedOption: "",    // most recently selection block option
+        newSelectedOption: "",        // most recently selected block option
         blockOptionDescription: "",
         blockName: "",
         blockDescription: "",
@@ -534,10 +514,7 @@
     }
     },
   computed: {
-    dbHasCollections: function() {
-      return this.selectedDatabase == null || (this.selectedDatabase !== null && this.availableCollections.length > 0)
-    },
-// can user proceed from select data source step?
+// Can user proceed from the "Select Data Source" step?
 	dataSourceNextOk: function() {
 		return (this.blockSourceOption == "db_collection" && this.selectedCollection !== null) ||
     (this.showCustomURIPanel == true && this.customURIList.length > 0) ||
@@ -909,7 +886,6 @@
          this.customURIList = this.customURIList.filter(i => i.uri!== uri);
       },
       collectionChangedEvent(selectedCol) {
-        console.log("Collection changed event received: " + JSON.stringify(selectedCol))
         this.selectedCollection = selectedCol
         this.collectionChanged()
       },
@@ -920,23 +896,30 @@
       },
       // Reset block create form to default values
        resetBlockFormFields() {
+        console.log("Resetting all source block wizard fields")
         this.newCustomFieldName = ''
         this.blockName = ''
         this.blockDescription = ''
         this.customURIList = []
         this.customURI = ''
+        this.blockSourceOption = 'custom_step'
+        this.reloadBlockFields = []
         this.selectedCollection = null
+        this.selectedDatabase = null
+        this.blockDBName = ''
+        this.blockCollectionName = ''
         this.selectedStep = null
-        this.discoverDhfSteps()
-        this.tickedNodes = null
-        this.selectedFields = []
 		    this.resetFieldSelectionTree()
         this.resetBlockOptions()
         this.emptyCollection = false
         this.createBlockStep = 1
         this.formMode = 'create'
+        this.discoverDhfSteps()
       },
       resetFieldSelectionTree() {
+        console.log("Resetting the field selection tree")
+        this.selectedFields = []
+   //     this.tickedNodes = null
         this.collectionModel = FIELD_TREE_DEFAULT
 		    this.collectionModelPopulated = false
       },
@@ -1001,33 +984,6 @@
             self.notifyError("checkCustomDocURI", error, self);
           })
       },
-      /*
-      discoverCollections() {
-        var self = this;
-        let dbOption =""
-        if(this.selectedDatabase!=null && this.selectedDatabase!="") {
-          dbOption += "&rs:database=" + this.selectedDatabase.value
-        }
-          this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionDetails' + dbOption )
-          .then((response) => {
-            this.availableCollections = self.filterCollections(response.data)
-          })
-          .catch((error) => {
-            self.notifyError("collectionDetails", error, self);
-          })
-      },
-      */
-
-      // same as discoverCollections but returns promise so we can set dropdown after retreiving collection list
-      /*
-       discoverCollectionsPromise() {
-        let dbOption =""
-        if(this.selectedDatabase!=null && this.selectedDatabase!="") {
-          dbOption += "&rs:database=" + this.selectedDatabase.value
-        }
-          return this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionDetails' + dbOption )
-      },
-      */
 
      discoverDhfSteps () {
       var self = this;
@@ -1055,7 +1011,7 @@
     },
       // Restore a block to main editing panel
       restoreBlockToForm(block) {
-        console.log("Restoring source block to form: " + JSON.stringify(block))
+        console.log("Restoring source block to form: " + JSON.stringify(block.fields))
 
             this.createBlockStep = 1
 
@@ -1126,7 +1082,7 @@
         }
 
             this.formMode = 'edit'
-            this.reloadBlockFields = []
+         //   this.reloadBlockFields = []
             this.createBlockStep = 2 // open the source step
 
       },
@@ -1137,7 +1093,7 @@
       // Restore collection and custom fields after block reload
       restoreFields(blockFields, expandTree) {
 
-     //   console.log("Restoring block fields: " + JSON.stringify(blockFields))
+        console.log("Restoring block fields: " + JSON.stringify(blockFields))
 
           if ( blockFields.length > 0) {
           for (var i = 0; i < blockFields.length; i++) {
@@ -1181,8 +1137,11 @@
             this.$refs["selectionTree"].setExpanded("Custom Fields",true)
           }
 
+          //this.reloadBlockFields = []
+
      },
      populateModelBlockRestore(db, collection) {
+       console.log("populateModelBlockRestore: " + JSON.stringify(this.reloadBlockFields))
         this.selectedDatabase = db
         this.selectedCollection = collection
         this.discoverModel(this.selectedCollection,this.customURIs,this.reloadBlockFields)
@@ -1208,7 +1167,9 @@
         this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionModel' + dbOption)
           .then((response) => {
             this.collectionModel[0].children = response.data
-            if ( reloadBlockFields !== null && reloadBlockFields.length > 0 ) self.restoreFields(reloadBlockFields, false)
+            if ( reloadBlockFields !== null && reloadBlockFields.length > 0 ) {
+              self.restoreFields(reloadBlockFields, false) }
+              else console.log("No fields found in block to restore: ")
             if ( response.data !== null && response.data.length > 0  ) {
 				    this.collectionModelPopulated = true
             this.emptyCollection = false
@@ -1266,7 +1227,6 @@
             options: this.blockOptions,
             metadata: blockMetadata
 		  }
-
           this.$root.$emit("blockRequested", blockDef);
       }
 

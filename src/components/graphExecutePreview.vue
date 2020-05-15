@@ -94,7 +94,15 @@
 
                   <div v-if="isCollectionSelected || isUriSelected">
 
-      <DatabaseCollectionSelector :showCollectionDropDown="true" :selectedDatabase = "selectedDB" :selectedCollection = "collectionForPreview" @databaseChanged="databaseChanged" @collectionChanged="collectionChanged"/>
+      <DatabaseCollectionSelector
+      :showCollectionDropDown="true"
+      :selectedDatabase = "selectedDB"
+      :selectedCollection = "collectionForPreview"
+      @databaseChanged="databaseChanged"
+      @collectionChanged="collectionChanged"
+      databaseLabel="Source Database"
+      collectionLabel="Source Collection"
+      />
 
                       <q-tooltip content-style="font-size: 1em" content-class="pipes-tooltip">
                         Preview will be executed on documents from this collection
@@ -166,7 +174,12 @@
                   />
 
 <div v-if="saveToDB">
-   <DatabaseCollectionSelector :showCollectionDropDown="false" :selectedDatabase = "selectedTargetDB" @databaseChanged="targetDatabaseChanged"/>
+   <DatabaseCollectionSelector
+   :showCollectionDropDown="false"
+   :selectedDatabase = "selectedTargetDB"
+   @databaseChanged="targetDatabaseChanged"
+   databaseLabel="Target Database"
+   />
 </div>
 
                   <q-stepper-navigation>
@@ -427,8 +440,8 @@ export default {
         this.selectedTargetDB = db
      },
      collectionChanged: function(col) {
+       console.log("collectionChanged: " + JSON.stringify(col))
         this.collectionForPreview = col
-
      },
      copyResultToClipboard (result) {
       var document;
@@ -575,7 +588,7 @@ watch: {
       previewSource: function (val) {
       if (val !== null) {
         if (this.previewSource == "uri") {
-          this.collectionForPreview = "";
+          this.collectionForPreview = null;
           this.randomDocPreview = false;
         }
         else if (this.previewSource == 'collection' || this.previewSource == 'dhfStep') {
