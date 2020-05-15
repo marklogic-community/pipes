@@ -70,6 +70,47 @@
     }
   },
 
+  {
+    "functionName": "stringPadding",
+    "blockName": "stringPadding",
+    "title": "Padding",
+    "description" : "Pads a string out using specified character",
+    "library": "Format",
+    "widgets": [
+      {
+        "type": "text",
+        "name": "Size",
+        "default": "10"
+      },
+    {
+      "type": "combo",
+      "name": "Padding Direction",
+      "values": ["left","right"],
+      "default": "left"
+    },
+    {
+      "type": "text",
+      "name": "Padding Character",
+      "default": ""
+    }],
+    "inputs": [
+      {
+        "name": "input",
+        "type": "xs:string"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "output",
+        "type": "xs:string"
+      }
+    ],
+    "function": {
+      "ref": null,
+      "code": null
+    }
+  },
+
 {
   "functionName": "stringCase",
   "blockName": "stringCase",
@@ -461,7 +502,7 @@
     "blockName": "Split",
     "title": "Split String",
     "library": "Split",
-    "description" : "Splits an string using a specified character",
+    "description" : "Splits a string using a specified character",
     "inputs": [
       {
         "name": "string",
@@ -504,7 +545,7 @@
     "blockName": "FormatDateAuto",
     "title": "Auto-format Date",
     "library": "Format",
-    "description": "Formats an date to ISO format using MM-DD-YYYY, YYYY-MM-DD, DD/MM/YYYY",
+    "description": "Formats a date to ISO format using MM-DD-YYYY, YYYY-MM-DD, DD/MM/YYYY",
     "inputs": [
       {
         "name": "inputDate",
