@@ -998,8 +998,8 @@
     "functionName": "fn_stringJoin",
     "blockName": "String join",
     "library": "Join",
-    "title": "Flatten Array",
-    "description" : "Joins elements of an array into a single string, using the provided separator",
+    "title": "String Join",
+    "description" : "Joins the elements of an array into a single string, using the separator character",
     "inputs": [
       {
         "name": "string*",
