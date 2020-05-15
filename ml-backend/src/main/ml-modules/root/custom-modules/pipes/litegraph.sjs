@@ -10715,7 +10715,7 @@ LGraphNode.prototype.executeAction = function(action)
       // objArray = (objArray!= null && objArray.toObject) ? objArray.toObject() : objArray;
       var arrayInput = this.inputs[0];
       if (objArray) {
-        if (objArray || objArray.toArray || Array.isArray(objArray)) {
+        if (objArray.toArray || Array.isArray(objArray)) {
 
 
           // for (var j = 0; j < objArray.length; j++) {
