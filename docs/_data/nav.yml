@@ -1,3 +1,0 @@
-main:
-    - { url: '/', text: 'Getting Started' }
-    - { absurl: 'https://github.com/marklogic-community/pipes', text: 'GitHub' }
