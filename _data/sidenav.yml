@@ -1,7 +1,8 @@
 main:
-  - { url: '/', text: 'Getting Started' }
+  - { url: '/', text: 'Installing Pipes' }
   #- { url: '/how-does-it-work/', text: 'How Does it Work?' }
   - { url: '/how-to-use/', text: 'How Do I Use it?' }
+  - { url: '/custom-blocks/', text: 'How to create and use custom blocks' }
   #- {
   #  url: '/subpages/',
   #  text: 'SubPages Example',
@@ -20,9 +21,7 @@ main:
     url: '/components/',
     text: 'Component Guides',
     childPages: [
-      { url: '/components/connect/', text: 'Connect' },
-      { url: '/components/explore/', text: 'Explore' },
-      { url: '/components/know/', text: 'Know' },
+      { url: '/components/connect/', text: 'Connect' }
       #{
       #  url: '/subpages/subsubpages/',
       #  text: 'Subsub pages',
