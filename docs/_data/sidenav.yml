@@ -1,0 +1,37 @@
+main:
+  - { url: '/', text: 'Getting Started' }
+  #- { url: '/how-does-it-work/', text: 'How Does it Work?' }
+  - { url: '/how-to-use/', text: 'How Do I Use it?' }
+  #- {
+  #  url: '/subpages/',
+  #  text: 'SubPages Example',
+  #  childPages: [
+  #    { url: '/subpages/test/', text: 'Test SubPage' },
+  #    {
+  #      url: '/subpages/subsubpages/',
+  #      text: 'Subsub pages',
+  #      childPages: [
+  #        { url: '/subpages/testsubsub/', text: 'Test Sub Sub Page' }
+  #      ]
+  #    }
+  # ]
+  #}
+  - {
+    url: '/components/',
+    text: 'Component Guides',
+    childPages: [
+      { url: '/components/connect/', text: 'Connect' },
+      { url: '/components/explore/', text: 'Explore' },
+      { url: '/components/know/', text: 'Know' },
+      #{
+      #  url: '/subpages/subsubpages/',
+      #  text: 'Subsub pages',
+      #  childPages: [
+      #   { url: '/subpages/testsubsub/', text: 'Test Sub Sub Page' }
+      # ]
+      #}
+    ]
+  }
+  - { url: '/faqs/', text: 'FAQs' }
+  - { url: '/troubleshooting/', text: 'Troubleshooting' }
+  - { absurl: 'https://github.com/marklogic-community/envision', text: 'Envision on GitHub' }

@@ -7,49 +7,137 @@
 #
 # For technical reasons, this file is *NOT* reloaded automatically when you use
 # 'bundle exec jekyll serve'. If you change this file, please restart the server process.
-#
-# If you need help with YAML syntax, here are some quick references for you: 
-# https://learn-the-web.algonquindesign.ca/topics/markdown-yaml-cheat-sheet/#yaml
-# https://learnxinyminutes.com/docs/yaml/
-#
+
 # Site settings
 # These are used to personalize your new site. If you look in the HTML files,
 # you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title: Your awesome title
-email: your-email@example.com
-description: >- # this means to ignore newlines until "baseurl:"
-  Write an awesome description for your new site here. You can edit this
-  line in _config.yml. It will appear in your document head meta (for
-  Google search results) and in your feed.xml site description.
-baseurl: "" # the subpath of your site, e.g. /blog
-url: "" # the base hostname & protocol for your site, e.g. http://example.com
-twitter_username: jekyllrb
-github_username:  jekyll
+# Where things are
+repository: marklogic-community/envision
+source:      .
+destination: ./_site
+plugins_dir:     ./_plugins
+layouts_dir:     ./_layouts
+data_dir: ./_data
+# collections: null
 
-# Build settings
-theme: minima
+# Handling Reading
+safe:         true
+include:      [".htaccess"]
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - vendor
+  - Rakefile
+keep_files:   [".git", ".svn"]
+encoding:     "utf-8"
+markdown_ext: "markdown,mkdown,mkdn,mkd,md"
+
+# Filtering Content
+show_drafts: null
+limit_posts: 0
+future:      true
+unpublished: false
+
+# Plugins
+whitelist: []
 plugins:
-  - jekyll-feed
+  - jekyll-assets
+  - jekyll-relative-links
 
-# Exclude from processing.
-# The following items will not be processed, by default.
-# Any item listed under the `exclude:` key here will be automatically added to
-# the internal "default list".
-#
-# Excluded items can be processed by explicitly listing the directories or
-# their entries' file path in the `include:` list.
-#
-# exclude:
-#   - .sass-cache/
-#   - .jekyll-cache/
-#   - gemfiles/
-#   - Gemfile
-#   - Gemfile.lock
-#   - node_modules/
-#   - vendor/bundle/
-#   - vendor/cache/
-#   - vendor/gems/
-#   - vendor/ruby/
+# Conversion
+markdown:    rouge
+lsi:         false
+excerpt_separator: "\n\n"
+
+# Serving
+detach:  false
+port:    4000
+host:    127.0.0.1
+baseurl: "/envision" # does not include hostname
+
+# Outputting
+permalink:     /:title.html
+timezone:      null
+
+quiet:    false
+defaults: []
+
+# Markdown Processors
+rdiscount:
+  extensions: []
+
+redcarpet:
+  extensions: []
+
+# kramdown:
+#   auto_ids:       true
+#   footnote_nr:    1
+#   entity_output:  as_char
+#   toc_levels:     1..6
+#   smart_quotes:   lsquo,rsquo,ldquo,rdquo
+#   enable_coderay: false
+
+include: ['_pages']
+
+# jekyll-press:
+#   exclude: 'atom.xml' # Exclude files from processing - file name, glob pattern or array of file names and glob patterns
+#   js_options: {}      # js minifier options
+#   css_options: {}     # css minifier options
+#   html_options: {}    # html minifier options
+
+assets:
+  liquid: false
+  prefix: "/assets"
+  integrity: false
+  autowrite: true
+  digest: false
+  strict: false
+  caching:
+    enabled: false
+    # path: ".jekyll-cache/assets"
+    # type: file
+  precompile: []
+  cdn:
+    baseurl: false
+    prefix: false
+  plugins:
+    img:
+      optim: {}
+    compression:
+      js:
+        enabled: false
+        opts: {}
+      css:
+        enabled: true
+  sources:
+    - assets/css
+    - assets/fonts
+    - assets/images
+    - assets/javascript
+    - assets/image
+    - assets/img
+    - assets/js
+
+    - _assets/css
+    - _assets/fonts
+    - _assets/images
+    - _assets/javascript
+    - _assets/image
+    - _assets/img
+    - _assets/js
+
+    - css
+    - fonts
+    - images
+    - javascript
+    - image
+    - img
+    - js
+
+relative_links:
+  enabled:     true
+  collections: true
