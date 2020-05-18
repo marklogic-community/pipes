@@ -1,5 +1,5 @@
-# Envision Website
-This branch contains the code that generates the github.io website for Envision.
+# Pipes Docs Website
+This branch contains the code that generates the github.io website for Pipes.
 
 Before you can get going you must have Ruby installed. This project has .ruby-version and .ruby-gem files if you are using [RVM](https://rvm.io/).
 
@@ -42,7 +42,7 @@ bundle exec jekyll serve
 
 Open the docs website at the server address displayed in the terminal, e.g.: 
 
-`http://127.0.0.1:4000/envision/`
+`http://127.0.0.1:4000/pipes/`
 
 ### Making Content Changes
 

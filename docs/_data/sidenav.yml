@@ -34,4 +34,4 @@ main:
   }
   - { url: '/faqs/', text: 'FAQs' }
   - { url: '/troubleshooting/', text: 'Troubleshooting' }
-  - { absurl: 'https://github.com/marklogic-community/envision', text: 'Envision on GitHub' }
+  - { absurl: 'https://github.com/marklogic-community/pipes', text: 'Pipes on GitHub' }
