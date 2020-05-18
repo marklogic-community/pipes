@@ -79,7 +79,7 @@
     "widgets": [
       {
         "type": "text",
-        "name": "Size",
+        "name": "Length",
         "default": "10",
         "callback": "let sVal = this.widgets[0].value; let n = Math.floor(Number(sVal));if (!( n !== Infinity && String(n) === sVal && n >= 0 )) { sVal ='0' }; this.widgets[0].value = sVal"
       },
