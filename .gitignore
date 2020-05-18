@@ -6,3 +6,9 @@ vendor
 .asset-cache
 .DS_Store
 node_modules
+.gradle
+build
+.idea
+.tmp
+*.iml
+.bundle
