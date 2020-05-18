@@ -1,0 +1,22 @@
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <p>
+                    Copyright © {{ 'now' | date: "%Y" }} MarkLogic Corporation. All Rights Reserved. MARKLOGIC® is a registered trademark of MarkLogic Corporation.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <!--[if lt IE 9]>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="{{ site.baseurl }}/js/respond.min.js"></script>
+    <![endif]-->
+
+    {% js bundle id:1 %}
+  </body>
+</html>
