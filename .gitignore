@@ -77,3 +77,9 @@ Examples/Advanced/gradle-local.properties
 Examples/Advanced/.classpath
 Examples/Advanced/.project
 Examples/Advanced/.settings/
+
+#Jekyll
+.asset-cache/
+.bundle/
+.jekyll-metadata
+_site/
