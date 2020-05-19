@@ -26,7 +26,8 @@ It assumes that:
 ## Great! How do I run it?
 To use Pipes you will need to have an instance of MarkLogic with the [Data Hub](https://docs.marklogic.com/datahub/index.html) installed.
 
-Next, download the Pipes jar from the [Releases](https://github.com/marklogic-community/pipes/releases) section. Copy the jar to the DHF folder root you plan to use Pipes for.
+- Download the Pipes jar from the [Releases](https://github.com/marklogic-community/pipes/releases) section. 
+- Copy the jar to the DHF folder root you plan to use Pipes for.
 
 Run pipes from the command line:
 
