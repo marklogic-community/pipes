@@ -111,6 +111,7 @@ public class AuthService extends AbstractLoggingClass {
     hubConfig.setMlPassword(password);
 
     hubConfig.resetHubConfigs();
+    ((HubConfigImpl)hubConfig).setHost(null);
     hubConfig.refreshProject();
 
 

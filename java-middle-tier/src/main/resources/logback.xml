@@ -28,6 +28,12 @@
     <appender-ref ref="STDOUT" />
   </logger>
 
+
+
+    <logger name="com.marklogic.hub.impl.HubConfigImpl" level="INFO" additivity="false">
+      <appender-ref ref="STDOUT" />
+    </logger>
+
 <!--  <logger name="com.marklogic" level="INFO" additivity="false">-->
 <!--    <appender-ref ref="STDOUT" />-->
 <!--  </logger>-->
