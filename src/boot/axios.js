@@ -14,8 +14,8 @@ export default async ({ Vue, router, store }) => {
 
     if (401 === error.response.status) {
       Dialog.create({
-        title: 'Session expired',
-        message: 'You will have to log in again.',
+        title: 'No connection to MarkLogic',
+        message: 'Pipes cannot connect to MarkLogic or the session has already expired. Make sure your MarkLogic host is running and try logging in again.',
         persistent: true
 
       }).onOk(() => {
