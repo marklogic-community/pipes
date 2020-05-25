@@ -994,19 +994,23 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
   featureQueryBuilderBlock.prototype.onExecute = function()
   {
     //let output = "lookup(" + this.getInputData(0) + "," + this.getInputData(1) + "," + this.getInputData(2) + ")"
-    let queryString = this.properties.queryBuilder
+    let query = this.properties.queryBuilder
 
   
     let computedQuery= null
 
     // TODO : pass also the list of input in order to replace inside the query if needed
     if(queryString.logicalOperator == "all"){
-     computedQuery = cts.andQuery(computeQueryRecursively(queryString))
+     computedQuery = cts.andQuery(computeQueryRecursively(query))
     }else{
-      computedQuery = cts.orQuery(computeQueryRecursively(queryString))
+      computedQuery = cts.orQuery(computeQueryRecursively(query))
     }
     
-    this.setOutputData(0, computedQuery);
+    let result = xdmp.invokeFunction(()=>{
+      return cts.search(computedQuery);
+    }, {database: xdmp.database(query.selectedDB.name)});
+
+    this.setOutputData(0, result);
   }
 
   LiteGraph.registerNodeType("Query/ExpertQueryBuilder", featureQueryBuilderBlock );
