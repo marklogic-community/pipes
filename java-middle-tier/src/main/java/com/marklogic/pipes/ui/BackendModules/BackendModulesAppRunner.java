@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 
-
 /**
  * BackendModulesManager
  */
@@ -44,35 +43,27 @@ public class BackendModulesAppRunner extends AbstractLoggingClass implements App
     // sanity check: does the DHF root folder exist?
     File f = new File(clientConfig.getMlDhfRoot());
     if (!f.exists() || !f.isDirectory()) {
-      logger.error(
-        String.format("It looks like this folder doesn't exist: "+ clientConfig.getMlDhfRoot()));
-      logger.info(
-        String.format("Pipes will not start, check your application.properties"));
+      logger
+          .error(String.format("You've specified the mlDhfRoot parameter but it looks like this folder doesn't exist: "
+              + clientConfig.getMlDhfRoot()));
+      logger.info(String.format("Pipes will not start, check the value of the mlDhfRoot parameter."));
       System.exit(1);
     }
 
     // check if gradle.properties exist
-    String gradlePropertiesFileNameWithAbsolutePath=f.getAbsolutePath()+File.separator+"gradle.properties";
-    File gradleProperies=new File(gradlePropertiesFileNameWithAbsolutePath);
-
+    String gradlePropertiesFileNameWithAbsolutePath = f.getAbsolutePath() + File.separator + "gradle.properties";
+    File gradleProperies = new File(gradlePropertiesFileNameWithAbsolutePath);
 
     if (!gradleProperies.exists() || !gradleProperies.isFile()) {
-      logger.error(
-        String.format("It looks like this file doesn't exist: %s", gradlePropertiesFileNameWithAbsolutePath));
-      logger.info(
-        String.format("Pipes will not start, it requires gradle.properties to be present here: %s",f.getAbsolutePath()));
+      logger
+          .error(String.format("It looks like this file doesn't exist: %s", gradlePropertiesFileNameWithAbsolutePath));
+      logger.info(String.format("Pipes will not start, it requires gradle.properties to be present here: %s",
+          f.getAbsolutePath()));
       System.exit(1);
     }
 
-
-    logger.info(
-      String.format("Pipes running on port: "+ environment.getProperty("local.server.port")));
-
-
-
+    logger.info(String.format("Pipes running on port: " + environment.getProperty("local.server.port")));
 
   }
-
-
 
 }
