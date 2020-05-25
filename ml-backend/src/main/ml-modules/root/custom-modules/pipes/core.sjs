@@ -962,26 +962,51 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
 
   function featureQueryBuilderBlock()
   {
-    this.addInput("value0");
-    this.addInput("value1");
+    this.addInput("v0");
+    this.addInput("v1");
     this.addProperty("queryBuilder");
+    this.database = this.addWidget("text","database", "string", function(v){},  { } );
   }
   featureQueryBuilderBlock.title = "ExpertQueryBuilder";
+
+  function computeQueryRecursively(queryString){
+    let qArray = []
+     for(let child of queryString.children){
+       if(child.type == "query-builder-rule"){
+         if(child.query.rule == "cts.collectionQuery"){
+           qArray.push( cts.collectionQuery(child.query.value.value))
+         } else if (child.query.rule == "jsonPropertyValueQuery"){
+            qArray.push( cts.jsonPropertyValueQuery(child.query.value.selectedAttribute, child.query.value.selectedValue))
+         } else if (child.query.rule == "wordQuery"){
+             qArray.push( cts.wordQuery(child.query.value))
+         }
+       } else if (child.type == "query-builder-group"){
+         if(child.query.logicalOperator == "all"){
+          qArray.push(cts.andQuery(computeQueryRecursively(child.query)))
+         }else{
+         qArray.push(cts.orQuery(computeQueryRecursively(child.query)))
+         }
+       }
+     }
+     return qArray
+   }
 
   featureQueryBuilderBlock.prototype.onExecute = function()
   {
     //let output = "lookup(" + this.getInputData(0) + "," + this.getInputData(1) + "," + this.getInputData(2) + ")"
+    let queryString = this.properties.queryBuilder
 
-    let v0 = this.getInputData(0)
-    let v1 = this.getInputData(1)
-    let v2 = this.getInputData(2)
-    let v4 = this.getInputData(3)
-    let v5 = this.getInputData(4)
-    let v6 = this.getInputData(5)
-    let v7 = this.getInputData(6)
-    let template = "`" + this.properties.queryBuilder + "`"
-    let result = eval(eval(template))
-    this.setOutputData(0, result);
+  
+    let computedQuery= null
+
+    // TODO : pass also the list of input in order to replace inside the query if needed
+    if(queryString.logicalOperator == "all"){
+     computedQuery = cts.andQuery(computeQueryRecursively(queryString))
+    }else{
+      computedQuery = cts.orQuery(computeQueryRecursively(queryString))
+    }
+    
+    this.setOutputData(0, computedQuery);
   }
 
   LiteGraph.registerNodeType("Query/ExpertQueryBuilder", featureQueryBuilderBlock );

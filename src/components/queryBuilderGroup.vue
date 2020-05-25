@@ -35,20 +35,21 @@
     <div class="vqb-group-body card-body ">
       <div class="rule-actions form-inline">
         <div class="form-group row">
-          <q-select  size="sm"
+          <q-select 
             v-model="selectedRule"
             :options="rules"
             option-value="id"
             stack-label
-            option-label="label"
+            option-label="label" 
             class="form-control mr-2"
+            style="width:300px"
           >
           
           </q-select>
 
            <q-btn
-            type="button" style="width:50px;height:50px" size="sm"
-            class="btn btn-secondary mr-2"
+            type="button" style="width:50px;height:50px;margin:3px" size="sm"
+            class="btn btn-secondary mr-2" 
             @click="addRule"
           >
             {{ labels.addRule }}
@@ -56,7 +57,7 @@
 
             <q-btn
             v-if="depth < maxDepth"
-            type="button" style="width:50px;height:50px" size="sm"
+            type="button" style="width:50px;height:50px;margin:3px" size="sm"
             class="btn btn-secondary"
             @click="addGroup"
           >

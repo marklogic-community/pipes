@@ -1,6 +1,6 @@
 <!-- Copyright ©2020 MarkLogic Corporation. -->
 <template>
-  <div id="queryBuilder" >
+  <div id="queryBuilder">
 
     <!-- Reusable mapping edit dialog -->
     <q-dialog
@@ -8,7 +8,7 @@
       v-model="showqueryBuilderEdit"
     >
 
-      <q-card style="width:700px;">
+      <q-card style="max-width:900px;min-width:900px;">
         <q-card-section>
           <div class="text-h6">{{ queryBuilderForm.title }}</div>
         </q-card-section>
@@ -36,17 +36,21 @@
           </q-select>
         </q-card-section>
 
-        <q-card-section>
+        <q-card-section v-if="selectedDB">
 
-
-         <vue-query-builder :rules="rules"
+          <vue-query-builder
+            :rules="rules"
             :maxDepth="3"
             :labels="labels"
-            v-model="query">
-                <template v-slot:default="slotProps">
-                  <query-builder-group v-bind="slotProps" :query.sync="query"/>
-                </template>
-            </vue-query-builder>
+            v-model="query"
+          >
+            <template v-slot:default="slotProps">
+              <query-builder-group
+                v-bind="slotProps"
+                :query.sync="query"
+              />
+            </template>
+          </vue-query-builder>
         </q-card-section>
 
         <q-card-actions align="right">
@@ -57,6 +61,11 @@
             @click="closeForm()"
           />
         </q-card-actions>
+        <q-card-section>
+          <p>Generated output:</p>
+
+          <pre>{{ JSON.stringify(this.query, null, 2) }}</pre>
+        </q-card-section>
       </q-card>
 
     </q-dialog>
@@ -74,7 +83,7 @@ export default {
   mixins: [
     Notifications
   ],
-  components: { VueQueryBuilder,     QueryBuilderGroup, JsonPropertyValueQuery },
+  components: { VueQueryBuilder, QueryBuilderGroup, JsonPropertyValueQuery },
   data () {
     return {
       selectedDB: null,
@@ -100,12 +109,15 @@ export default {
           type: "custom-component",
           id: "jsonPropertyValueQuery",
           label: "jsonPropertyValueQuery",
+
           operators: ["="],
           component: JsonPropertyValueQuery,
-          default: { selectedDB: null ,selectedCollection: "", selectedAttribute: "", selectedValue: "" }
+          default: { valueOptions: [], selectedCollection: "", selectedAttribute: "", selectedValue: "" }
         }
       ],
-      query: {},
+      query: {
+        selectedDB : this.selectedDB
+      },
       labels: {
         "matchType": "Match Type",
         "matchTypes": [
@@ -129,8 +141,9 @@ export default {
   watch: {
     selectedDB: function (val) {
       this.selectedDB = val;
-      this.rules[2].default.selectedDB =  this.selectedDB ;
-      
+      this.query.selectedDB = val
+      this.rules[2].default.selectedDB = this.selectedDB;
+      this.$store.commit('queryBuilderDB', val)
     }
   },
   methods: {
@@ -140,22 +153,27 @@ export default {
       this.showqueryBuilderEdit = true
       this.query = block.properties.queryBuilder
       this.queryBuilderForm.block = block
+      this.rules[2].default.valueOptions = block.inputs.map(x => { let result = { name: '${' + x.name + '}', type: x.type }; return result });
+
+      for(let db of this.availableDB){
+        if (db.label === this.queryBuilderForm.block.widgets[1].value) {
+          this.selectedDB = db
+        }
+      }
 
     },
     // Close edit dialog and reset everything
     closeForm () {
-      this.queryBuilderForm.block.properties.queryBuilder= this.query
+      this.queryBuilderForm.block.properties.queryBuilder = this.query
       this.showqueryBuilderEdit = false
     },
-    selectDatabase() {
+    selectDatabase () {
       this.$axios.get('http://localhost:8085/v1/resources/vppBackendServices?rs:action=collectionDetails&rs:database=' + this.selectedDB.value)
         .then((response) => {
-          console.log(response.data)
-          this.rules[0].choices=[]
-          for(let choice of response.data){
-              this.rules[0].choices.push( choice );
+          this.rules[0].choices = []
+          for (let choice of response.data) {
+            this.rules[0].choices.push(choice);
           }
-          
         })
 
     }

@@ -1,14 +1,16 @@
 <template>
   <!-- eslint-disable vue/no-v-html -->
-  <div class="vqb-rule card">
-    <div class="form-inline">
-      <label class="mr-5">{{ rule.label }}</label>
+  <div class="vqb-rule card ">
+    <label class="mr-5">{{ rule.label }}</label>
+    <div class="form-inline row">
+      
+
 
       <!-- List of operands (optional) -->
-      <select
+      <select :label="rule.label"
         v-if="typeof rule.operands !== 'undefined'"
         v-model="query.operand"
-        class="form-control mr-2"
+        class="form-control mr-2 col"
       >
         <option
           v-for="operand in rule.operands"
@@ -22,7 +24,7 @@
       <select
         v-if="typeof rule.operators !== 'undefined' && rule.operators.length > 1"
         v-model="query.operator"
-        class="form-control mr-2"
+        class="form-control mr-2 col"
       >
         <option
           v-for="operator in rule.operators"
@@ -37,7 +39,7 @@
       <input
         v-if="rule.inputType === 'text'"
         v-model="query.value"
-        class="form-control"
+        class="form-control col"
         type="text"
         :placeholder="labels.textInputPlaceholder"
       >
@@ -46,7 +48,7 @@
       <input
         v-if="rule.inputType === 'number'"
         v-model="query.value"
-        class="form-control"
+        class="form-control col"
         type="number"
       >
 
@@ -54,18 +56,20 @@
       <input
         v-if="rule.inputType === 'date'"
         v-model="query.value"
-        class="form-control"
+        class="form-control col"
         type="date"
       >
 
       <!-- Custom component input -->
       <div
         v-if="isCustomComponent"
-        class="vqb-custom-component-wrap row"
+        class="vqb-custom-component-wrap col"
       >
-        <component
+        <component 
           :is="rule.component"
           :value="query.value"
+          :query="query"
+          :rule="rule"
           @input="updateQuery"
         />
       </div>
@@ -77,7 +81,7 @@
         <div
           v-for="choice in rule.choices"
           :key="choice.value"
-          class="form-check form-check-inline"
+          class="form-check form-check-inline col"
         >
           <input
             :id="'depth' + depth + '-' + rule.id + '-' + index + '-' + choice.value"
@@ -102,7 +106,7 @@
         <div
           v-for="choice in rule.choices"
           :key="choice.value"
-          class="form-check form-check-inline"
+          class="form-check form-check-inline col"
         >
           <input
             :id="'depth' + depth + '-' + rule.id + '-' + index + '-' + choice.value"
@@ -124,7 +128,7 @@
       <q-select
         v-if="rule.inputType === 'select' && !hasOptionGroups"
         v-model="query.value"
-        class="form-control"
+        class="form-control col"
         :multiple="rule.type === 'multi-select'"
         :options="formatOptions(selectOptions)"
         option-value="value"
@@ -148,7 +152,7 @@
       <select
         v-if="rule.inputType === 'select' && hasOptionGroups"
         v-model="query.value"
-        class="form-control"
+        class="form-control col"
         :multiple="rule.type === 'multi-select'"
       >
         <optgroup
@@ -167,9 +171,9 @@
       </select>
 
       <!-- Remove rule button -->
-      <q-btn
+      <q-btn style='float: right;'
         type="button"
-        class="close ml-auto"
+        class="close ml-auto .col-md .offset-md"
         @click="remove"
         v-html="labels.removeRule"
       >

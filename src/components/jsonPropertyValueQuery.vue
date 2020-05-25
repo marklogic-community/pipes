@@ -1,10 +1,9 @@
 <!-- Copyright ©2020 MarkLogic Corporation. -->
 <template>
-  <div class="rule-actions form-inline">
-    <div class="form-group ">
-    
+  <div class="rule-actions form-inline ">
+    <div class="form-group row">
     <q-select
-      name="collectionSelector" class="form-control mr-2"
+      name="collectionSelector" class="form-control mr-2  col" style="overflow: hidden;"
       v-if="value"
       v-model="value.selectedCollection"
       :options.sync="availableCollections"
@@ -12,18 +11,41 @@
       filled
       separator
       label="Source collection"
+      new-value-mode="add"
+      use-input
+      use-chips
       stack-label
     >
 
     </q-select>
-    <q-select class="form-control"
+    <q-select class="form-control col" 
       name="attributeSelector"
-       v-if="value"
+      v-if="value"
       v-model="value.selectedAttribute"
-      :options.sync="availableAttributes"
+      :options="availableAttributes"
       filled
       separator
       label="attribute"
+      new-value-mode="add"
+      use-input
+      use-chips
+      stack-label
+    >
+     </q-select>
+
+    <q-select class="form-control col" 
+      name="valueSelector"
+      v-if="value"
+      v-model="value.selectedValue"
+      filled
+      :options="availableValues"
+      option-value="name"
+      option-label="name"
+      separator
+      label="value"
+      new-value-mode="add"
+      use-input
+      use-chips
       stack-label
     >
 
@@ -36,16 +58,24 @@
 
 export default {
   name: 'JsonPropertyValueQuery',
-  props: ['value'],
+  props: ['value','rule'],
   data () {
     return {
+      selectedDB : null,
       availableCollections: [],
-      availableAttributes: []
+      availableAttributes: [],
+      availableValues: []
     }
   },
   watch: {
-    query: function (val) {
+    value: function (val) {
       this.value = val;
+    },
+    'rule.default.selectedDB': {
+      handler: function (after, before) {
+        this.selectedDB=after
+      },
+      deep: true
     }
   },
   methods: {
@@ -60,10 +90,14 @@ export default {
       }
     },
     loadCollection () {
-      this.$axios.get('http://localhost:8085/v1/resources/vppBackendServices?rs:action=collectionDetails&rs:database=' + this.value.selectedDB.value)
-        .then((response) => {
-          this.availableCollections = response.data
-        })
+
+        this.$axios.get('http://localhost:8085/v1/resources/vppBackendServices?rs:action=collectionDetails&rs:database=' + this.selectedDB.value)
+          .then((response) => {
+            this.availableCollections = response.data
+      })
+    },
+    loadValues(){
+      this.availableValues = this.value.valueOptions
     },
     collectionChanged () {
 
@@ -71,7 +105,7 @@ export default {
     },
     discoverModel (collection) {
 
-      let dbOption = "&rs:database="+ this.value.selectedDB.value
+      let dbOption = "&rs:database="+ this.selectedDB.value
 
 
       if (collection !== null && collection.value != null)
@@ -90,10 +124,14 @@ export default {
   },
   created () {
     let vm = this;
+    this.selectedDB = this.$store.getters.queryBuilderDB
 
     vm.$nextTick(function () {
       vm.loadCollection()
+      vm.loadValues()
     });
+
+    
   }
 }
 </script>

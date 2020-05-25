@@ -751,6 +751,11 @@
         "default": "2",
         "values": [],
         "callback": "let nb = this.inputs.length;for(let i=0;i<nb;i++) {this.removeInput(0);};for(let i=0;i<parseInt(v);i++) this.addInput('v' + i,null);"
+      }, {
+        "type": "combo",
+        "name": "database",
+        "default": "#DATABASES#",
+        "values": []
       }
      ],
     "outputs": [

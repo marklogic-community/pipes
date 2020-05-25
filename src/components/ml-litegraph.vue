@@ -896,7 +896,6 @@ export default {
             this.$root.$emit("openMappingEdit", block.node_over, false, true)
 
             } else   if (block.node_over.properties.queryBuilder) {
-              console.log(block.node_over.properties)
               this.$root.$emit("openQueryBuilderEdit", block.node_over)
 
               // Property edit. selectCase, Lookup, EvalJavaScript, & generic edit window hook
