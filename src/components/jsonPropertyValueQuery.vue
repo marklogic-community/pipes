@@ -58,7 +58,7 @@
 
 export default {
   name: 'JsonPropertyValueQuery',
-  props: ['value','rule'],
+  props: ['value'],
   data () {
     return {
       selectedDB : null,
@@ -70,12 +70,6 @@ export default {
   watch: {
     value: function (val) {
       this.value = val;
-    },
-    'rule.default.selectedDB': {
-      handler: function (after, before) {
-        this.selectedDB=after
-      },
-      deep: true
     }
   },
   methods: {
@@ -120,18 +114,26 @@ export default {
           }
 
         })
+    },
+    changeDatabase(newDB){
+        this.selectedDB=newDB
+        this.loadCollection ()
     }
   },
   created () {
     let vm = this;
     this.selectedDB = this.$store.getters.queryBuilderDB
-
+    console.log(this.selectedDB)
     vm.$nextTick(function () {
       vm.loadCollection()
       vm.loadValues()
-    });
-
-    
+    }); 
+  },  
+  mounted () {
+    this.$root.$on('updateSelectedDB', this.changeDatabase);
+  },
+  beforeDestroy () {
+    this.$root.$off('updateSelectedDB', this.changeDatabase);
   }
 }
 </script>

@@ -19,7 +19,7 @@
             filled
             @input="selectDatabase"
             label="Source Database*"
-            v-model="selectedDB"
+            v-model="query.selectedDB"
           >
             <q-tooltip
               content-style="font-size: 1em"
@@ -36,7 +36,7 @@
           </q-select>
         </q-card-section>
 
-        <q-card-section v-if="selectedDB">
+        <q-card-section v-if="query.selectedDB">
 
           <vue-query-builder
             :rules="rules"
@@ -86,7 +86,6 @@ export default {
   components: { VueQueryBuilder, QueryBuilderGroup, JsonPropertyValueQuery },
   data () {
     return {
-      selectedDB: null,
       queryBuilderForm: {
         title: '',
         currentProperties: [],
@@ -138,14 +137,6 @@ export default {
       return this.$store.getters.availableDatabases
     }
   },
-  watch: {
-    selectedDB: function (val) {
-      this.selectedDB = val;
-      this.query.selectedDB = val
-      this.rules[2].default.selectedDB = this.selectedDB;
-      this.$store.commit('queryBuilderDB', val)
-    }
-  },
   methods: {
 
     openForm (block) {
@@ -157,7 +148,8 @@ export default {
 
       for(let db of this.availableDB){
         if (db.label === this.queryBuilderForm.block.widgets[1].value) {
-          this.selectedDB = db
+          this.query.selectedDB = db
+          this.$store.commit('queryBuilderDB', this.query.selectedDB)
         }
       }
 
@@ -168,14 +160,15 @@ export default {
       this.showqueryBuilderEdit = false
     },
     selectDatabase () {
-      this.$axios.get('http://localhost:8085/v1/resources/vppBackendServices?rs:action=collectionDetails&rs:database=' + this.selectedDB.value)
+      this.$store.commit('queryBuilderDB', this.query.selectedDB)
+      this.$root.$emit("updateSelectedDB", this.query.selectedDB)
+      this.$axios.get('http://localhost:8085/v1/resources/vppBackendServices?rs:action=collectionDetails&rs:database=' + this.query.selectedDB.value)
         .then((response) => {
           this.rules[0].choices = []
           for (let choice of response.data) {
             this.rules[0].choices.push(choice);
           }
         })
-
     }
   },
   mounted () {
