@@ -975,6 +975,7 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
     let query = this.properties.queryBuilder
 
     let computedQuery= null
+    
 
     // TODO : pass also the list of input in order to replace inside the query if needed
     if(query.logicalOperator == "all"){
@@ -982,12 +983,14 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
     }else{
       computedQuery = cts.orQuery(coreFunctions.computeQueryRecursively(query, this))
     }
-
-    let result = xdmp.invokeFunction(()=>{
-      return cts.search(computedQuery);
-    }, {database: query.selectedDB.value});
-
-    this.setOutputData(0, result);
+    
+    let result = fn.head(xdmp.invokeFunction(()=>{
+      return cts.search(computedQuery).toArray();
+    }, {database: query.selectedDB.value}));
+    console.log("result = " + result)
+    if(result != null){
+      this.setOutputData(0, result);
+    }
   }
 
   LiteGraph.registerNodeType("Query/ExpertQueryBuilder", featureQueryBuilderBlock );

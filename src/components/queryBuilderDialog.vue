@@ -111,7 +111,7 @@ export default {
 
           operators: ["="],
           component: JsonPropertyValueQuery,
-          default: { valueOptions: [], selectedCollection: "", selectedAttribute: "", selectedValue: "" }
+          default: { valueOptions: [], selectedCollection: null, selectedAttribute: null, selectedValue: null, selectedType : "string" }
         }
       ],
       query: {

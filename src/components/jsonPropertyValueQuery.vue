@@ -47,6 +47,18 @@
       use-input
       use-chips
       stack-label
+    > </q-select>
+
+    <q-select class="form-control col" 
+      name="typeSelector"
+      v-if="value"
+      v-model="value.selectedType"
+      filled
+      value="string"
+      :options="availableTypes"
+      separator
+      label="type"
+      stack-label
     >
 
     </q-select>
@@ -64,7 +76,8 @@ export default {
       selectedDB : null,
       availableCollections: [],
       availableAttributes: [],
-      availableValues: []
+      availableValues: [],
+      availableTypes: ["string","number"]
     }
   },
   watch: {
@@ -74,7 +87,7 @@ export default {
   },
   methods: {
     getAttributeRecursively (json, result) {
-      if (json.type == 3) {
+      if (json.type != 18) {
         result.push(json.field)
       }
       if (json.children) {

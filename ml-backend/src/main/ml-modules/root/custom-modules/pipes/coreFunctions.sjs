@@ -25,15 +25,19 @@ function computeQueryRecursively(queryString, block){
        if(child.query.rule == "cts.collectionQuery"){
          qArray.push( cts.collectionQuery(replaceInputValueQuery(child.query.value.value, block)))
        } else if (child.query.rule == "jsonPropertyValueQuery"){
-          qArray.push( cts.jsonPropertyValueQuery(child.query.value.selectedAttribute, replaceInputValueQuery(child.query.value.selectedValue.name, block)))
+
+          let value = child.query.value.selectedType == "string" ? fn.string(replaceInputValueQuery(child.query.value.selectedValue.name ?child.query.value.selectedValue.name : child.query.value.selectedValue , block)) : child.query.value.selectedType == "number"  ? fn.number(replaceInputValueQuery(child.query.value.selectedValue.name?child.query.value.selectedValue.name : child.query.value.selectedValue , block)) : replaceInputValueQuery(child.query.value.selectedValue.name?child.query.value.selectedValue.name : child.query.value.selectedValue , block)
+
+          qArray.push( cts.jsonPropertyValueQuery(child.query.value.selectedAttribute, value))
        } else if (child.query.rule == "wordQuery"){
           qArray.push( cts.wordQuery(replaceInputValueQuery(child.query.value, block)))
        }
      } else if (child.type == "query-builder-group"){
        if(child.query.logicalOperator == "all"){
-        qArray.push(cts.andQuery(computeQueryRecursively(child.query)))
+        qArray.push(cts.andQuery(computeQueryRecursively(child.query,block)))
+        console.log(qArray)
        }else{
-       qArray.push(cts.orQuery(computeQueryRecursively(child.query)))
+        qArray.push(cts.orQuery(computeQueryRecursively(child.query,block)))
        }
      }
    }
