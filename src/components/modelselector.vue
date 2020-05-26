@@ -744,6 +744,7 @@ export default {
       tickedNodes: null,            // Selected tree nodes. Using stepper so needs to be here in model
       collectionModelPopulated: false,
       emptyCollection: false,
+      emptyDatabase: false,
       collectionModel: FIELD_TREE_DEFAULT,
       previousBlockOptions: [BLOCK_OPTION_NODE_INPUT, BLOCK_OPTION_FIELDS_OUTPUT],
       blockOptions: [BLOCK_OPTION_NODE_INPUT, BLOCK_OPTION_FIELDS_OUTPUT],
@@ -765,9 +766,11 @@ export default {
           map[obj.label] = obj.value;
           return map;
         }, {});
+
         this.selectedDatabase = { "label": this.dhfSteps[val.label].database, "value": availableDbHash[this.dhfSteps[val.label].database] };
         this.selectedCollection = { "label": this.dhfSteps[val.label].collection, "value": this.dhfSteps[val.label].collection };
         this.collectionChanged() // populate field tree, includes any custom URIs
+
       } else {
         this.selectedDatabase = null
         this.selectedCollection = null
@@ -780,14 +783,21 @@ export default {
     dataSourceNextOk: function () {
       return (this.blockSourceOption == "db_collection" && this.selectedCollection !== null) ||
         (this.showCustomURIPanel == true && this.customURIList.length > 0) ||
-        (this.blockSourceOption == "custom_step" && this.selectedStep !== null && this.selectedCollection !== null && !this.emptyCollection) ||
+        (this.blockSourceOption == "custom_step" && this.selectedStep !== null && this.selectedCollection !== null && !this.emptyCollection && this.emptyDatabase !== null) ||
         this.blockSourceOption == "none"
     },
     collectionSamplingStatus: function () {
       var status = ''
       if (!this.collectionModelPopulated) status = ["No document fields sampled yet based on current selection", "grey"]
-      if (this.collectionModelPopulated && this.selectedCollection !== null && !this.emptyCollection) status = ["Fields have been sampled and are ready in next step", "green"]
-      if (this.collectionModelPopulated && this.selectedCollection !== null && this.emptyCollection) status = ["The collection '" + this.selectedCollection.label + "' for this step currently contains no documents. No fields could be sampled", "red"]
+      if (this.collectionModelPopulated) {
+          if (! this.emptyDatabase && this.selectedCollection !== null) {
+            if ( this.emptyCollection ) status = ["Fields have been sampled and are ready in next step", "green"]
+            else status = ["The collection '" + this.selectedCollection.label + "' for this step currently contains no documents. No fields could be sampled", "red"]
+          }
+          if (this.emptyDatabase) {
+           status = ["The database for this step no longer exists. No fields could be sampled", "red"]
+      }
+      }
       return status
     },
     showBlockHelp: function () {
@@ -1049,6 +1059,7 @@ export default {
     sourceOptionChanged (currentOption) {
       this.selectedStep = null
       this.emptyCollection = false
+      this.emptyDatabase=false
       this.selectedDatabase = null
       this.selectedCollection = null
       this.resetFieldSelectionTree()
@@ -1157,7 +1168,7 @@ export default {
     collectionChanged () {
       this.selectedFields = [];
       this.resetFieldSelectionTree()
-      this.discoverModel(this.selectedCollection, this.userDocumentURIs, null)
+      this.discoverModel(this.selectedDatabase, this.selectedCollection, this.userDocumentURIs, null)
     },
     // Reset block create form to default values
     resetBlockFormFields () {
@@ -1174,6 +1185,7 @@ export default {
       this.blockDBName = ''
       this.blockCollectionName = ''
       this.selectedStep = null
+      this.emptyDatabase = false
       this.resetFieldSelectionTree()
       this.resetBlockOptions()
       this.emptyCollection = false
@@ -1409,18 +1421,21 @@ export default {
       console.log("populateModelBlockRestore: " + JSON.stringify(this.reloadBlockFields))
       this.selectedDatabase = db
       this.selectedCollection = collection
-      this.discoverModel(this.selectedCollection, this.customURIs, this.reloadBlockFields)
+      this.discoverModel(this.selectedDatabase, this.selectedCollection, this.customURIs, this.reloadBlockFields)
     },
     // Discover fields and populate the tree view
-    discoverModel (collection, custURIs, reloadBlockFields) {
+    discoverModel(database, collection, custURIs, reloadBlockFields) {
 
       var self = this
       this.emptyCollection = true
       this.collectionModelPopulated = false
 
       let dbOption = ""
-      if (this.selectedDatabase != null && this.selectedDatabase != "") {
-        dbOption += "&rs:database=" + this.selectedDatabase.value
+      if (database !== null && database != "") {
+        this.emptyDatabase = false
+        dbOption += "&rs:database=" + database.value
+      } else {
+        this.emptyDatabase = true
       }
 
       if (collection !== null && collection.value != null)
@@ -1428,6 +1443,8 @@ export default {
 
       if (custURIs !== null && custURIs != '')
         dbOption += "&rs:customURI=" + custURIs
+
+      if ( ! this.emptyDatabase ) {
 
       this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionModel' + dbOption)
         .then((response) => {
@@ -1452,6 +1469,14 @@ export default {
             icon: 'report_problem'
           })
         })
+
+      } else {
+        //database can be empty if a step is used with a db that no longer exists
+        this.collectionModelPopulated = true
+        this.emptyDatabase = false
+      }
+
+
     },
     databaseChangedEvent (selectedDB) {
       this.selectedDatabase = selectedDB
