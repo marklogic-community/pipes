@@ -739,7 +739,6 @@ export default {
       selectedDatabase: null,        // Currently selected database
       selectedCollection: null,     // Currently selected collection
       selectedFields: [],           // Nodes selected in the collectionModel field tree
-      availableDatabases: [],       // List of available DBs. Populated out of master data in vuex store
       blockDBName: '',              // db name when reloading a block to them form
       blockCollectionName: '',      // collection name when reloading a block to the form
       tickedNodes: null,            // Selected tree nodes. Using stepper so needs to be here in model
@@ -762,7 +761,7 @@ export default {
   watch: {
     selectedStep: function (val) {
       if (val !== null) {
-        let availableDbHash = this.availableDatabases.reduce(function (map, obj) {
+        let availableDbHash = this.availableDB.reduce(function (map, obj) {
           map[obj.label] = obj.value;
           return map;
         }, {});
@@ -808,6 +807,9 @@ export default {
         title = (this.blockName !== null && this.blockName != '') ? this.blockName : "Block Name"
       }
       return title
+    },
+    availableDB: function () {
+      return this.$store.getters.availableDatabases
     },
     stepTitleDataSource: function () {
       var label = 'Data Source for Fields'
