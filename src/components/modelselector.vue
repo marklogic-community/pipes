@@ -783,7 +783,7 @@ export default {
     dataSourceNextOk: function () {
       return (this.blockSourceOption == "db_collection" && this.selectedCollection !== null) ||
         (this.showCustomURIPanel == true && this.customURIList.length > 0) ||
-        (this.blockSourceOption == "custom_step" && this.selectedStep !== null && this.selectedCollection !== null && !this.emptyCollection && this.emptyDatabase !== null) ||
+        (this.blockSourceOption == "custom_step" && this.selectedStep !== null && this.selectedCollection !== null && !this.emptyCollection && !this.emptyDatabase) ||
         this.blockSourceOption == "none"
     },
     collectionSamplingStatus: function () {
@@ -1427,7 +1427,7 @@ export default {
     discoverModel(database, collection, custURIs, reloadBlockFields) {
 
       var self = this
-      this.emptyCollection = true
+      this.emptyCollection = false
       this.collectionModelPopulated = false
 
       let dbOption = ""
@@ -1474,6 +1474,7 @@ export default {
         //database can be empty if a step is used with a db that no longer exists
         this.collectionModelPopulated = true
         this.emptyDatabase = false
+        this.emptyCollection = false
       }
 
 
