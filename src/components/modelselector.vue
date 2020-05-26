@@ -783,7 +783,7 @@ export default {
     dataSourceNextOk: function () {
       return (this.blockSourceOption == "db_collection" && this.selectedCollection !== null) ||
         (this.showCustomURIPanel == true && this.customURIList.length > 0) ||
-        (this.blockSourceOption == "custom_step" && this.selectedStep !== null && this.selectedCollection !== null && !this.emptyCollection && this.emptyDatabase !== null) ||
+        (this.blockSourceOption == "custom_step" && this.selectedStep !== null && this.selectedCollection !== null && !this.emptyCollection && !this.emptyDatabase) ||
         this.blockSourceOption == "none"
     },
     collectionSamplingStatus: function () {
@@ -1426,7 +1426,7 @@ export default {
     // Discover fields and populate the tree view
     discoverModel (database, collection, custURIs, reloadBlockFields) {
       var self = this
-      this.emptyCollection = true
+      this.emptyCollection = false
       this.collectionModelPopulated = false
 
       let dbOption = ""
