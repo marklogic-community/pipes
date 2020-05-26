@@ -71,13 +71,14 @@ export default {
 
       // TO-DO: this axios call should happen from inside the store (action)
       this.$axios.post('/login', payload).then(response => {
+        console.log('response.data:', response.data)
         this.$store.dispatch('authenticated', {
           auth: true,
           user: response.data.username,
           environment: response.data.environment,
           port: response.data.port,
           database: response.data.database,
-
+          host: response.data.host
         }).then(() => {
           this.$q.loading.hide()
           this.$router.push({ name: "home" })

@@ -13,6 +13,7 @@ public class SessionStatus {
   private String environment;
   private String port;
   private String database;
+  private String host;
 
   public String getEnvironment() {
     return environment;
@@ -37,8 +38,14 @@ public class SessionStatus {
   public void setDatabase(String database) {
     this.database = database;
   }
+  
+  public String getHost() {
+    return host;
+  }
 
-
+  public void setHost(String host) {
+    this.host = host;
+  }
 
 	public SessionStatus() {
 	}

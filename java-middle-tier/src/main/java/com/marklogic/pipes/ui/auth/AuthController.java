@@ -53,6 +53,7 @@ public class AuthController extends AbstractLoggingClass {
       sessionStatus.setDatabase(authService.getDatabaseClient().getDatabase()
       );
       sessionStatus.setEnvironment(authService.getEnvironmentName());
+      sessionStatus.setHost(authService.getDatabaseClient().getHost());
 
       return sessionStatus;
     }

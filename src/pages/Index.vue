@@ -33,7 +33,7 @@
 
         <q-card-section>
           <pre>{{version}}</pre>
-
+          <div>Host: <strong>{{host}}</strong></div>
           <span class="q-pr-md">Environment: <strong>{{environment}}</strong></span>
           <span>Logged as: <strong>{{user}}</strong></span>
           <br />
@@ -89,6 +89,9 @@ export default {
     },
     database: function () {
       return this.$store.getters.database
+    },
+    host: function () {
+      return this.$store.getters.host
     }
   },
   methods: {

@@ -790,13 +790,13 @@ export default {
       var status = ''
       if (!this.collectionModelPopulated) status = ["No document fields sampled yet based on current selection", "grey"]
       if (this.collectionModelPopulated) {
-          if (! this.emptyDatabase && this.selectedCollection !== null) {
-            if ( this.emptyCollection ) status = ["Fields have been sampled and are ready in next step", "green"]
-            else status = ["The collection '" + this.selectedCollection.label + "' for this step currently contains no documents. No fields could be sampled", "red"]
-          }
-          if (this.emptyDatabase) {
-           status = ["The database for this step no longer exists. No fields could be sampled", "red"]
-      }
+        if (!this.emptyDatabase && this.selectedCollection !== null) {
+          if (!this.emptyCollection) status = ["Fields have been sampled and are ready in next step", "green"]
+          else status = ["The collection '" + this.selectedCollection.label + "' for this step currently contains no documents. No fields could be sampled", "red"]
+        }
+        else if (this.emptyDatabase) {
+          status = ["The database for this step no longer exists. No fields could be sampled", "red"]
+        }
       }
       return status
     },
@@ -1059,7 +1059,7 @@ export default {
     sourceOptionChanged (currentOption) {
       this.selectedStep = null
       this.emptyCollection = false
-      this.emptyDatabase=false
+      this.emptyDatabase = false
       this.selectedDatabase = null
       this.selectedCollection = null
       this.resetFieldSelectionTree()
@@ -1424,14 +1424,13 @@ export default {
       this.discoverModel(this.selectedDatabase, this.selectedCollection, this.customURIs, this.reloadBlockFields)
     },
     // Discover fields and populate the tree view
-    discoverModel(database, collection, custURIs, reloadBlockFields) {
-
+    discoverModel (database, collection, custURIs, reloadBlockFields) {
       var self = this
       this.emptyCollection = true
       this.collectionModelPopulated = false
 
       let dbOption = ""
-      if (database !== null && database != "") {
+      if (database !== null && database != "" && database.value != undefined) {
         this.emptyDatabase = false
         dbOption += "&rs:database=" + database.value
       } else {
@@ -1444,36 +1443,36 @@ export default {
       if (custURIs !== null && custURIs != '')
         dbOption += "&rs:customURI=" + custURIs
 
-      if ( ! this.emptyDatabase ) {
+      if (!this.emptyDatabase) {
 
-      this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionModel' + dbOption)
-        .then((response) => {
-          this.collectionModel[0].children = response.data
-          if (reloadBlockFields !== null && reloadBlockFields.length > 0) {
-            self.restoreFields(reloadBlockFields, false)          }
-          else console.log("No fields found in block to restore: ")
-          if (response.data !== null && response.data.length > 0) {
-            this.collectionModelPopulated = true
-            this.emptyCollection = false
-          } else {
-            this.collectionModelPopulated = true
-            this.emptyCollection = true
-            console.log("Warning: No fields returned")
-          }
-        })
-        .catch((e) => {
-          this.$q.notify({
-            color: 'negative',
-            position: 'top',
-            message: 'Loading failed ' + e,
-            icon: 'report_problem'
+        this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionModel' + dbOption)
+          .then((response) => {
+            this.collectionModel[0].children = response.data
+            if (reloadBlockFields !== null && reloadBlockFields.length > 0) {
+              self.restoreFields(reloadBlockFields, false)            }
+            else console.log("No fields found in block to restore: ")
+            if (response.data !== null && response.data.length > 0) {
+              this.collectionModelPopulated = true
+              this.emptyCollection = false
+            } else {
+              this.collectionModelPopulated = true
+              this.emptyCollection = true
+              console.log("Warning: No fields returned")
+            }
           })
-        })
+          .catch((e) => {
+            this.$q.notify({
+              color: 'negative',
+              position: 'top',
+              message: 'Loading failed ' + e,
+              icon: 'report_problem'
+            })
+          })
 
       } else {
         //database can be empty if a step is used with a db that no longer exists
         this.collectionModelPopulated = true
-        this.emptyDatabase = false
+        // this.emptyDatabase = false
       }
 
 
