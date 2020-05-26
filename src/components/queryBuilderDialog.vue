@@ -156,6 +156,7 @@ export default {
     },
     // Close edit dialog and reset everything
     closeForm () {
+      this.queryBuilderForm.block.widgets[1].value=this.query.selectedDB.label
       this.queryBuilderForm.block.properties.queryBuilder = this.query
       this.showqueryBuilderEdit = false
     },
