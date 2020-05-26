@@ -4,9 +4,41 @@ module.exports = {
   lookUpCollectionPropertyValue,
   split,
   lookUp,
-  regExpReplace
+  regExpReplace,
+  computeQueryRecursively
 };
 
+function replaceInputValueQuery(value, block){
+  for(var i = 0 ; i <block.inputs.length;i++){
+      if(value.includes("${v"+i+"}")){
+        return value.replace("${v"+i+"}",block.getInputData(i))
+      }
+  }
+  return value
+}
+
+function computeQueryRecursively(queryString, block){
+  let qArray = []
+ 
+   for(let child of queryString.children){
+     if(child.type == "query-builder-rule"){
+       if(child.query.rule == "cts.collectionQuery"){
+         qArray.push( cts.collectionQuery(replaceInputValueQuery(child.query.value.value, block)))
+       } else if (child.query.rule == "jsonPropertyValueQuery"){
+          qArray.push( cts.jsonPropertyValueQuery(child.query.value.selectedAttribute, replaceInputValueQuery(child.query.value.selectedValue.name, block)))
+       } else if (child.query.rule == "wordQuery"){
+          qArray.push( cts.wordQuery(replaceInputValueQuery(child.query.value, block)))
+       }
+     } else if (child.type == "query-builder-group"){
+       if(child.query.logicalOperator == "all"){
+        qArray.push(cts.andQuery(computeQueryRecursively(child.query)))
+       }else{
+       qArray.push(cts.orQuery(computeQueryRecursively(child.query)))
+       }
+     }
+   }
+   return qArray
+ }
 
 function getCurrentDate(dateOption) {
   switch (dateOption) {

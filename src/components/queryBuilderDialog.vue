@@ -145,13 +145,17 @@ export default {
       this.query = block.properties.queryBuilder
       this.queryBuilderForm.block = block
       this.rules[2].default.valueOptions = block.inputs.map(x => { let result = { name: '${' + x.name + '}', type: x.type }; return result });
-
+      this.rules[0].choices = []
+      this.rules[0].choices.push( this.queryBuilderForm.block.inputs.map(x => '${' + x.name + '}'))
+      
       for(let db of this.availableDB){
         if (db.label === this.queryBuilderForm.block.widgets[1].value) {
           this.query.selectedDB = db
           this.$store.commit('queryBuilderDB', this.query.selectedDB)
         }
       }
+
+      this.selectDatabase()
 
     },
     // Close edit dialog and reset everything
@@ -166,9 +170,11 @@ export default {
       this.$axios.get('http://localhost:8085/v1/resources/vppBackendServices?rs:action=collectionDetails&rs:database=' + this.query.selectedDB.value)
         .then((response) => {
           this.rules[0].choices = []
+          this.rules[0].choices.push( ...this.queryBuilderForm.block.inputs.map(x =>  { let result = { label: '${' + x.name + '}', value: '${' + x.name + '}'}; return result }))
           for (let choice of response.data) {
             this.rules[0].choices.push(choice);
           }
+
         })
     }
   },

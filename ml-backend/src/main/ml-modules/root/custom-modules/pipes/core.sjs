@@ -969,46 +969,23 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
   }
   featureQueryBuilderBlock.title = "ExpertQueryBuilder";
 
-  function computeQueryRecursively(queryString){
-    let qArray = []
-     for(let child of queryString.children){
-       if(child.type == "query-builder-rule"){
-         if(child.query.rule == "cts.collectionQuery"){
-           qArray.push( cts.collectionQuery(child.query.value.value))
-         } else if (child.query.rule == "jsonPropertyValueQuery"){
-            qArray.push( cts.jsonPropertyValueQuery(child.query.value.selectedAttribute, child.query.value.selectedValue))
-         } else if (child.query.rule == "wordQuery"){
-             qArray.push( cts.wordQuery(child.query.value))
-         }
-       } else if (child.type == "query-builder-group"){
-         if(child.query.logicalOperator == "all"){
-          qArray.push(cts.andQuery(computeQueryRecursively(child.query)))
-         }else{
-         qArray.push(cts.orQuery(computeQueryRecursively(child.query)))
-         }
-       }
-     }
-     return qArray
-   }
-
   featureQueryBuilderBlock.prototype.onExecute = function()
   {
-    //let output = "lookup(" + this.getInputData(0) + "," + this.getInputData(1) + "," + this.getInputData(2) + ")"
+
     let query = this.properties.queryBuilder
 
-  
     let computedQuery= null
 
     // TODO : pass also the list of input in order to replace inside the query if needed
-    if(queryString.logicalOperator == "all"){
-     computedQuery = cts.andQuery(computeQueryRecursively(query))
+    if(query.logicalOperator == "all"){
+     computedQuery = cts.andQuery(coreFunctions.computeQueryRecursively(query, this))
     }else{
-      computedQuery = cts.orQuery(computeQueryRecursively(query))
+      computedQuery = cts.orQuery(coreFunctions.computeQueryRecursively(query, this))
     }
-    
+
     let result = xdmp.invokeFunction(()=>{
       return cts.search(computedQuery);
-    }, {database: xdmp.database(query.selectedDB.name)});
+    }, {database: query.selectedDB.value});
 
     this.setOutputData(0, result);
   }
