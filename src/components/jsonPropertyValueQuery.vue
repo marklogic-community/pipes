@@ -135,8 +135,9 @@ export default {
   },
   created () {
     let vm = this;
-    this.selectedDB = this.$store.getters.queryBuilderDB
-    console.log(this.selectedDB)
+    if(!this.selectedDB){
+      this.selectedDB = this.$store.getters.queryBuilderDB
+    }
     vm.$nextTick(function () {
       vm.loadCollection()
       vm.loadValues()
