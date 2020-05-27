@@ -1194,10 +1194,9 @@ export default {
       this.discoverDhfSteps()
     },
     resetFieldSelectionTree () {
-      console.log("Resetting the field selection tree")
       this.selectedFields = []
-      //     this.tickedNodes = null
-      this.collectionModel = FIELD_TREE_DEFAULT
+      this.collectionModel[0].children = []
+      this.collectionModel[1].children = []
       this.collectionModelPopulated = false
     },
     resetCustomFieldValidation () {
