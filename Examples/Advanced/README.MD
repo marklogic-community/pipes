@@ -21,9 +21,9 @@ After this, assuming you have the QuickStart UI running on port 8080 and Pipes r
 - Browse to this project folder. Use QuickStart to initialize this project and then deploy the application.
 
 
-### **Example 1 - Safety Reports**
+### **Example 1 - FAERS Safety Reports (a pharmaceutical data example)**
 
-This example  shows how to create instances for 3 different entities (Safety Report, Reaction and Drug) from single complex XML records originating from the FDA Adverse Event Reporting System (FAERS). This data contains reports about patients experiencing one or multiple adverse events after taking certain medication(s).
+This example  shows how to create instances for 3 different entities (Safety Report, Reaction and Drug) from single complex XML records originating from the FDA Adverse Event Reporting System (FAERS). We will be using MarkLogic and Pipes for MarkLogic Data Hub to do this. This data contains reports about patients experiencing one or multiple adverse events after taking certain medication(s).
 
 #### Data model
 - SafetyReport
