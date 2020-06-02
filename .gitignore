@@ -79,6 +79,10 @@ Examples/Advanced/gradle-local.properties
 Examples/Advanced/.classpath
 Examples/Advanced/.project
 Examples/Advanced/.settings/
+Examples/Advanced/.pipes/
+Examples/Customer360/.pipes/
+*.war
+*.jar
 
 #Jekyll
 .asset-cache/
