@@ -627,6 +627,7 @@
 
           <q-item-section avatar>
             <div class="block">
+              <q-tooltip content-class="pipes-tooltip"> {{ JSON.stringify(block) }} </q-tooltip>
               <div class="block-title block">abc</div>
               <div class="block-body block">
                 <div :class="block.source" />
@@ -729,7 +730,6 @@ export default {
       userRequestingBlockOptionHelp: false,
       showBlockOptionTooltip: false,
       //
-      formMode: 'create', // 'create' or 'edit'
       createBlockStep: 1,
       blockSourceOption: 'custom_step',
       dhfSteps: [],
@@ -1057,11 +1057,15 @@ export default {
     },
     // When user changes data source options
     sourceOptionChanged (currentOption) {
+      console.log("Changing source option")
       this.selectedStep = null
       this.emptyCollection = false
       this.emptyDatabase = false
+      this.blockCollectionName = null
+      this.blockDBName = null
       this.selectedDatabase = null
       this.selectedCollection = null
+      this.reloadBlockFields = []
       this.resetFieldSelectionTree()
     },
     // When user clicks on block options
@@ -1166,13 +1170,11 @@ export default {
       this.collectionChanged()
     },
     collectionChanged () {
-      this.selectedFields = [];
       this.resetFieldSelectionTree()
-      this.discoverModel(this.selectedDatabase, this.selectedCollection, this.userDocumentURIs, null)
+      this.discoverModel(this.selectedDatabase, this.selectedCollection, this.userDocumentURIs, this.reloadBlockFields)
     },
     // Reset block create form to default values
     resetBlockFormFields () {
-      console.log("Resetting all source block wizard fields")
       this.newCustomFieldName = ''
       this.blockName = ''
       this.blockDescription = ''
@@ -1190,7 +1192,6 @@ export default {
       this.resetBlockOptions()
       this.emptyCollection = false
       this.createBlockStep = 1
-      this.formMode = 'create'
       this.discoverDhfSteps()
     },
     resetFieldSelectionTree () {
@@ -1287,13 +1288,10 @@ export default {
     },
     // Restore a block to main editing panel
     restoreBlockToForm (block) {
-      console.log("Restoring source block to form: " + JSON.stringify(block.fields))
 
       this.createBlockStep = 1
 
       this.resetBlockFormFields()
-      this.resetFieldSelectionTree()
-      this.selectedFields = []
       this.reloadBlockFields = block.fields
       this.blockName = block.label
       this.createBlockStep = 2
@@ -1352,13 +1350,11 @@ export default {
 
         } else {
           console.log("No metadata found")
-          // if trying to restore an old block etc then default to none
+          // if trying to restore an old block which has no metadata then default to none
           this.blockSourceOption = 'none'
         }
       }
 
-      this.formMode = 'edit'
-      //   this.reloadBlockFields = []
       this.createBlockStep = 2 // open the source step
 
     },
@@ -1369,9 +1365,8 @@ export default {
     // Restore collection and custom fields after block reload
     restoreFields (blockFields, expandTree) {
 
-      console.log("Restoring block fields: " + JSON.stringify(blockFields))
-
       if (blockFields.length > 0) {
+
         for (var i = 0; i < blockFields.length; i++) {
 
           var blockfield = blockFields[i]
@@ -1413,17 +1408,15 @@ export default {
           this.$refs["selectionTree"].setExpanded("Custom Fields", true)
       }
 
-      //this.reloadBlockFields = []
-
     },
     populateModelBlockRestore (db, collection) {
-      console.log("populateModelBlockRestore: " + JSON.stringify(this.reloadBlockFields))
       this.selectedDatabase = db
       this.selectedCollection = collection
       this.discoverModel(this.selectedDatabase, this.selectedCollection, this.customURIs, this.reloadBlockFields)
     },
     // Discover fields and populate the tree view
     discoverModel (database, collection, custURIs, reloadBlockFields) {
+
       var self = this
       this.emptyCollection = false
       this.collectionModelPopulated = false
@@ -1449,7 +1442,7 @@ export default {
             this.collectionModel[0].children = response.data
             if (reloadBlockFields !== null && reloadBlockFields.length > 0) {
               self.restoreFields(reloadBlockFields, false)            }
-            else console.log("No fields found in block to restore: ")
+        //    else console.log("No fields found in block to restore: ")
             if (response.data !== null && response.data.length > 0) {
               this.collectionModelPopulated = true
               this.emptyCollection = false
