@@ -760,6 +760,10 @@
      ],
     "outputs": [
       {
+        "name": "documents",
+        "type": null
+      },
+      {
         "name": "ctsQuery",
         "type": null
       }

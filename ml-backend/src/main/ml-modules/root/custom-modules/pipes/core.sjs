@@ -964,6 +964,8 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
   {
     this.addInput("v0");
     this.addInput("v1");
+    this.addOutput("documents");
+    this.addOutput("ctsQuery");
     this.addProperty("queryBuilder");
     this.database = this.addWidget("text","database", "string", function(v){},  { } );
   }
@@ -985,12 +987,13 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
     }
     
     let result = fn.head(xdmp.invokeFunction(()=>{
-      return cts.search(computedQuery).toArray();
+      return cts.search(computedQuery);
     }, {database: query.selectedDB.value}));
-    console.log("result = " + result)
+
     if(result != null){
       this.setOutputData(0, result);
     }
+    this.setOutputData(1, computedQuery);
   }
 
   LiteGraph.registerNodeType("Query/ExpertQueryBuilder", featureQueryBuilderBlock );

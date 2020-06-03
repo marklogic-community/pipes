@@ -138,13 +138,27 @@ export default {
     }
   },
   methods: {
-
+    updateValueOptions(query, options){
+      for(let c in query){
+console.log(query[c])
+        if(query[c].type== "query-builder-rule" && query[c].query.rule == "jsonPropertyValueQuery"){
+          query[c].query.value.valueOptions=options
+          console.log("update options")
+        }
+        if(query[c].type== "query-builder-group"){
+         this.updateValueOptions(query[c].query.children, options)
+        }
+      }
+    },
     openForm (block) {
       this.queryBuilderForm.title = "Build your query"
       this.showqueryBuilderEdit = true
       this.query = block.properties.queryBuilder
       this.queryBuilderForm.block = block
       this.rules[2].default.valueOptions = block.inputs.map(x => { let result = { name: '${' + x.name + '}', type: x.type }; return result });
+
+      this.updateValueOptions(this.query.children, this.rules[2].default.valueOptions)
+
       this.rules[0].choices = []
       this.rules[0].choices.push( this.queryBuilderForm.block.inputs.map(x => '${' + x.name + '}'))
       
