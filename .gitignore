@@ -89,3 +89,7 @@ Examples/Customer360/.pipes/
 .bundle/
 .jekyll-metadata
 _site/
+
+ml-backend/gradle/
+ml-backend/gradlew
+ml-backend/gradlew.bat
