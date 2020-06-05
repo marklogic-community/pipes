@@ -9,5 +9,8 @@
 - Assign the new tag ("1.1-release" in our example)
 - Publish the release
 - Let people know in Slack channels
+- Merge the branch into master
+- Create a new release candidate branch:
+    - ```git checkout -b release/1.2-candidate```
 
 

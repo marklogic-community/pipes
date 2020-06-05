@@ -4,7 +4,7 @@ This example that shows how to create instances of 2 entities (Customer and Addr
 
 ## Prerequisites:
 
-- Download Pipes: https://github.com/marklogic-community/pipes/releases/tag/1.1
+- Download Pipes: https://github.com/marklogic-community/pipes/releases/tag/1.2
 
 - Download DHF 5.2.1 QuickStart UI: https://github.com/marklogic/marklogic-data-hub/releases/download/v5.2.1/marklogic-datahub-5.2.1.war
 
@@ -14,7 +14,7 @@ This example that shows how to create instances of 2 entities (Customer and Addr
 
 - Run the QuickStart UI (marklogic-datahub-5.2.1.war). For instructions how, have a look here: https://docs.marklogic.com/datahub/projects/create-project-using-quickstart.html
 
-- Run Pipes (marklogic-pipes-1.1.jar). For instructions how, have a look here: https://github.com/marklogic-community/pipes#great-how-do-i-run-it
+- Run Pipes (marklogic-pipes-1.2.jar). For instructions how, have a look here: https://github.com/marklogic-community/pipes#great-how-do-i-run-it
 
 After this, assuming you have the QuickStart UI running on port 8080 and Pipes running on 8081:
 
