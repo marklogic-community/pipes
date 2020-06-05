@@ -4,29 +4,23 @@ Copyright ©2020 MarkLogic Corporation.
 
 package com.marklogic.pipes.ui.BackendModules;
 
-import com.marklogic.appdeployer.AppConfig;
-import com.marklogic.appdeployer.AppDeployer;
-import com.marklogic.appdeployer.command.modules.DeleteModulesCommand;
-import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
-import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.DatabaseClientFactory;
-import com.marklogic.client.admin.ResourceExtensionsManager;
-import com.marklogic.client.document.DocumentWriteSet;
-import com.marklogic.client.document.JSONDocumentManager;
+import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.ext.modulesloader.ModulesFinder;
 import com.marklogic.client.ext.modulesloader.impl.AssetFileLoader;
 import com.marklogic.client.ext.modulesloader.impl.DefaultModulesFinder;
 import com.marklogic.client.ext.modulesloader.impl.DefaultModulesLoader;
-import com.marklogic.client.query.*;
-import com.marklogic.mgmt.ManageClient;
-import com.marklogic.mgmt.ManageConfig;
-import com.marklogic.mgmt.admin.AdminConfig;
-import com.marklogic.mgmt.admin.AdminManager;
-import com.marklogic.mgmt.api.database.Database;
+import com.marklogic.client.extensions.ResourceServices;
+import com.marklogic.client.io.Format;
+import com.marklogic.client.io.StringHandle;
+import com.marklogic.client.util.RequestParameters;
+import com.marklogic.hub.DatabaseKind;
+import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.hub.util.json.JSONObject;
+import com.marklogic.pipes.ui.Application;
 import com.marklogic.pipes.ui.auth.AuthService;
 import com.marklogic.pipes.ui.config.ClientConfig;
-import com.marklogic.pipes.ui.Application;
+import com.marklogic.pipes.ui.version.PipesVersionService;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +43,10 @@ public class BackendModulesManager {
   ClientConfig clientConfig;
 
   @Autowired
-  AuthService authService;
+  HubConfigImpl hubConfig;
+
+  @Autowired
+  PipesVersionService versionService;
 
   final String resourcesDhfRoot = "/dhf/src/main/ml-modules";
   final String destinationDhfRoot = "/src/main/ml-modules";
@@ -60,8 +57,83 @@ public class BackendModulesManager {
     Remove
   }
 
-  public void copyAndDeployPipesBackend() throws Exception {
+  public void checkModulesVersion(AuthService authService) {
+    // since the user is not running with deployBackend=true,
+    // let's check if the user has backend installed and
+    // if the versions in front-end (java) and backe-end (MarkLogic) match
 
+    // get the version from backend
+    ResourceServices pipesBackendService= authService.getService();
+    StringHandle output = new StringHandle();
+
+    RequestParameters params = new RequestParameters();
+    params.add("action","GetVersion");
+
+    try {
+      output = pipesBackendService.get(params, new StringHandle().withFormat(Format.TEXT));
+    }
+    catch (FailedRequestException failedRequestException){
+      logger.info("Pipes REST extension not installed");
+      }
+    catch (Exception e) {
+      logger.error("Unknown exception occurred");
+      logger.error(e.toString());
+    }
+
+
+    // get the version info from front end
+    String javaVersionInfo= null;
+    try {
+      javaVersionInfo = versionService.get();
+    } catch (IOException e) {
+      e.printStackTrace();
+      logger.error("Unable to read version information");
+      System.exit(1);
+    }
+
+    // compare and stop the service if not working
+
+    CharSequence version=null;
+    CharSequence build=null;
+
+
+    if (output.toString() !=null) {
+      JSONObject outputJson= null;
+      try {
+        outputJson = new JSONObject(output.toString());
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+      version= outputJson!=null ? outputJson.getString("Version") : "Error reading version";
+      build=outputJson!=null ? outputJson.getString("Build") : "Error reading build";
+    }
+    else {
+      version="Not avaiable";
+      build="Not avaiable";
+    }
+
+    // output version information
+      System.out.println("--------------------\n"+ javaVersionInfo+"--------------------");
+
+
+    if (!javaVersionInfo.contains(version) || !javaVersionInfo.contains(build)) {
+
+      logger.info("{} missmatch with Pipes backend modules, Version: {} | Build: {}",
+        javaVersionInfo, version, build);
+
+      try {
+        copyModules();
+      } catch (Exception e) {
+        e.printStackTrace();
+        logger.error("Failed to copy modules, aborting");
+        System.exit(1);
+      }
+      deployModules(authService);
+    }
+
+  }
+
+  private void copyModules() throws Exception {
     logger.info(
       String.format("Will copy MarkLogic backend modules to following DHF root: %s", clientConfig.getMlDhfRoot()));
     try {
@@ -73,20 +145,26 @@ public class BackendModulesManager {
       throw e;
     }
 
+  }
+
+  private void deployModules(AuthService authService) {
     try {
 
       logger.info(
         String.format("Now loading Pipes modules to your DHF modules database...")
       );
-      deployMlBackendModulesToModulesDatabase(".*/pipes/.*.sjs|.*vppBackendServices.sjs");
+      deployMlBackendModulesToModulesDatabase(".*/pipes/.*.sjs|.*vppBackendServices.sjs", authService);
       logger.info(
         String.format("MarkLogic backend modules have been loaded."));
 
     }
     catch (com.marklogic.client.MarkLogicIOException e) {
       logger.error(
-        String.format("Hm, failed to connect to your database: "+clientConfig.getMlHost()+":"+clientConfig.getMlStagingPort()+
-          ". Are you sure your MarkLogic server is running at that address? Aborting Pipes start."),e);
+        String.format("Hm, failed to connect to your database %s on %s. " +
+          "Are you sure your MarkLogic server is running at that address? Aborting Pipes start."),
+        hubConfig.getDbName(DatabaseKind.STAGING),
+        hubConfig.getHost());
+      logger.error(e.getMessage());
       System.exit(1);
     }
     catch (Exception e) {
@@ -94,10 +172,6 @@ public class BackendModulesManager {
         String.format("Aborting Pipes start-up - Failed to load modules: "+e.getMessage()),e);
       throw e;
     }
-
-    logger.info(
-      String.format("Modules successfully copied and deployed."));
-
   }
 
   private void manageMarkLogicBackendModules(fileOperation operation) throws Exception {
@@ -146,7 +220,8 @@ public class BackendModulesManager {
     else {
       //final InputStream is = Application.class.getResourceAsStream(resourcesDhfRoot + filePath);
       final File source = new File(CUSTOMSJSPATH);
-      final File dest = new File(clientConfig.getMlDhfRoot() + destinationDhfRoot + customModulesPathPrefix + File.separator +CUSTOMSJSNAME);
+
+      final File dest = new File(clientConfig.getMlDhfRoot() + File.separator+".pipes" + File.separator +CUSTOMSJSNAME);
       try {
         if (operation== fileOperation.Copy) {
           FileUtils.copyFile(source,dest, false);
@@ -163,8 +238,6 @@ public class BackendModulesManager {
 
       } catch (final IOException e) {
         // TODO Auto-generated catch block
-//        e.printStackTrace();
-//        System.out.println(e.toString());
         throw e;
       }
     }
@@ -172,7 +245,7 @@ public class BackendModulesManager {
 
     for (final String filePath : filePaths) {
       final InputStream is = Application.class.getResourceAsStream(resourcesDhfRoot + filePath);
-      final File dest = new File(clientConfig.getMlDhfRoot() + destinationDhfRoot + filePath);
+      final File dest = new File(clientConfig.getMlDhfRoot() +  File.separator+".pipes" + File.separator + filePath);
 
       try {
         if (operation== fileOperation.Copy) {
@@ -212,65 +285,24 @@ public class BackendModulesManager {
 
   }
 
-  public void deployMlBackendModulesToModulesDatabase(String patternString) {
+  public void deployMlBackendModulesToModulesDatabase(String patternString, AuthService authService) {
     // ".*/pipes/.*.sjs|.*vppBackendServices.sjs"
     Pattern pattern=Pattern.compile(patternString);
 
     DatabaseClient client = authService.getModulesDatabaseClient();
 
       AssetFileLoader assetFileLoader = new AssetFileLoader(client); // Uses the REST API to load asset modules
+    assetFileLoader.setCollections("pipes-modules");
     DefaultModulesLoader modulesLoader = new DefaultModulesLoader(assetFileLoader);
 
     modulesLoader.setIncludeFilenamePattern(pattern);
 
-    String path= clientConfig.getMlDhfRoot()+"/src/main/ml-modules";
+//    String path= clientConfig.getMlDhfRoot()+"/src/main/ml-modules";
+//    final File dest = new File(clientConfig.getMlDhfRoot() + File.separator+".pipes" + File.separator +CUSTOMSJSNAME);
+    String path=clientConfig.getMlDhfRoot()+ File.separator+".pipes";
     ModulesFinder modulesFinder = new DefaultModulesFinder(); // Allows for adjusting where modules are stored on a filesystem
 
     modulesLoader.loadModules(path, modulesFinder, client);
-  }
-
-
-  public void unloadPipesModules() throws Exception {
-
-    logger.info(
-      String.format("Now deleting Pipes modules from your DHF modules database...")
-    );
-
-
-    DatabaseClient databaseClient = authService.getModulesDatabaseClient();
-
-    JSONDocumentManager jsonDocumentManager= databaseClient.newJSONDocumentManager();
-    // TO-DO delete files
-    QueryManager qm = databaseClient.newQueryManager();
-    DeleteQueryDefinition deleteQueryDefinition = qm.newDeleteDefinition();
-
-    deleteQueryDefinition.setDirectory("/custom-modules/pipes/");
-
-    qm.delete(deleteQueryDefinition);
-
-    logger.info(
-      String.format("MarkLogic backend modules have been deleted."));
-
-    logger.info(
-      String.format("Now deleting Pipes REST extension from your DHF modules database...")
-    );
-
-
-    DatabaseClient dbClient=authService.getDatabaseClient();
-
-    ResourceExtensionsManager resourceExtensionsManager = dbClient.newServerConfigManager().newResourceExtensionsManager();
-    resourceExtensionsManager.deleteServices("vppBackendServices");
-
-
-    logger.info(
-      String.format("Deleted Pipes REST extension from your DHF modules database...")
-    );
-
-    manageMarkLogicBackendModules(fileOperation.Remove);
-
-    logger.info(
-      String.format("Pipes deleted.")
-    );
 
 
   }

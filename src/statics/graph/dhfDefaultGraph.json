@@ -6,7 +6,7 @@
     "nodes": [
       {
         "id": 2,
-        "type": "dhf/output",
+        "type": "DHF/output",
         "pos": [
           1308,
           434
@@ -29,7 +29,7 @@
       },
       {
         "id": 1,
-        "type": "dhf/input",
+        "type": "DHF/input",
         "pos": [
           248,
           489
@@ -71,6 +71,6 @@
     "title": "My Graph",
     "version": "00.01",
     "author": "",
-    "dateCreated": ""  
+    "dateCreated": ""
   }
 }

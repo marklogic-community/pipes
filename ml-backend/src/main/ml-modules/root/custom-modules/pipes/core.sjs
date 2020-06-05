@@ -1388,19 +1388,13 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
   function CreateTriple () {
     this.addInput("subject");
     this.addInput("object");
-
     this.addOutput("triple");
-
-
     this.subjectIsIRI = this.addWidget("toggle", "subjectIsIRI", true, function (v) { }, {});
     this.predicate = this.addWidget("text", "predicate", "myPredicate", function (v) { }, {});
     this.objectIsIRI = this.addWidget("toggle", "objectIsIRI", true, function (v) { }, {});
     this.size = [230, 160];
     this.serialize_widgets = true;
-
   }
-
-
 
   CreateTriple.title = "Create Triple";
   CreateTriple.desc = "Create Triple";
@@ -1421,9 +1415,9 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
 
     this.setOutputData(0, sem.triple(subject, predicate, object));
   }
-
-
   LiteGraph.registerNodeType("Enrich/CreateTriple", CreateTriple);
+
+
 
   function uuidString () {
 
@@ -1675,7 +1669,7 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
   function selectCase () {
     this.addInput("value2Test", null);
     this.addOutput("result", "number");
-    this.addProperty("testCases");
+    this.addProperty("mappingCase");
     var that = this;
     this.slider = this.addWidget("text", "nbInputs", 1, function (v) { }, { min: 0, max: 1000 });
     this.size = this.computeSize();
@@ -1694,15 +1688,17 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
     } else {
       value2test = String(value2test)
     }
-    let map2Output = {};
-    fn.tokenize(this.properties.testCases, "\n").toArray().map(item => {
-      item = fn.tokenize(item, ";").toArray()
-      map2Output[item[0]] = parseInt(item[1])
-    })
-    let o = map2Output[value2test];
+
     let r = null;
+    let o = null;
+    for(let mapCase of this.properties.mappingCase){
+        if(mapCase.value == value2test){
+            o = mapCase.input;
+        }
+    }
+
     if (o != null) {
-      r = this.getInputData(o + 2);
+      r = this.getInputData(parseInt(o) + 2);
     } else {
       const defaultValue = this.getInputData(1);
       if (defaultValue == null) {
@@ -2093,6 +2089,38 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
 
   }
   LiteGraph.registerNodeType("Generate/multiConstant", MultipurposeConstant);
+
+  // String Padding Block
+function StringPadding()  {
+  this.addInput("input");
+  this.addOutput("output");
+  this.totalWidth = this.addWidget("text","Size", "", function(v){}, {} );
+  this.paddingDirection = this.addWidget("combo","Padding Direction", "left", function(v){}, { values:["left","right"]} );
+  this.paddingChar = this.addWidget("text","Padding Character", "", function(v){}, {} );
+}
+
+StringPadding.title = "padding";
+
+StringPadding.prototype.onExecute = function()  {
+  let totalWidth = this.totalWidth.value
+  let paddingDirection = String(this.paddingDirection.value)
+  let paddingChar = String(this.paddingChar.value)
+  let inputString = String(this.getInputData(0) ? this.getInputData(0) : "")
+  let outputval = inputString
+  switch (paddingDirection) {
+    case "left":
+      outputval = inputString.padStart(totalWidth,paddingChar)
+    break
+    case "right":
+      outputval = inputString.padEnd(totalWidth,paddingChar)
+    break
+    default:
+    break
+  }
+  this.setOutputData(0, outputval)
+}
+LiteGraph.registerNodeType("Format/stringPadding", StringPadding);
+
 }
 
 module.exports = {

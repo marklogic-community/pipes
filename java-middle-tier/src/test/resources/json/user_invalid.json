@@ -1,0 +1,26 @@
+[
+  {
+    "functionName": "parseWsrlPhoneBookHtml",
+    "blockName": "parseWsrlPhoneBookHtml",
+    "library": "user",
+    "height" :90 ,,
+    "width" : 150,
+    "inputs": [
+      {
+        "name": "html",
+        "type": "node"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "phonebookEntries",
+        "type": ""
+      }
+    ],
+     "widgets": [],
+    "function": {
+      "ref": null,
+      "code": null
+    }
+  }
+]

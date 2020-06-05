@@ -9,13 +9,18 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 @Component
-public class Service {
+public class PipesVersionService {
 
   final String VERSIONFILE="/version.txt";
   public String get() throws IOException {
 
     final InputStream is = Application.class.getResourceAsStream(VERSIONFILE);
 
+    return InputStreamToString(is);
+
+  }
+
+  public String InputStreamToString(InputStream is) throws IOException {
     InputStreamReader isReader = new InputStreamReader(is);
     //Creating a BufferedReader object
     BufferedReader reader = new BufferedReader(isReader);
@@ -26,6 +31,5 @@ public class Service {
     }
 
     return sb.toString();
-
   }
 }

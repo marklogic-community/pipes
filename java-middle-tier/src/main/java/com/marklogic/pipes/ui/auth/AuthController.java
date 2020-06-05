@@ -45,7 +45,17 @@ public class AuthController extends AbstractLoggingClass {
       session.setAttribute(SESSION_USERNAME_KEY, request.getUsername());
       session.setAttribute(SESSION_SERVICE, authService.getService());
       logger.info("Logged in successfully.");
-      return new SessionStatus(true);
+      SessionStatus sessionStatus=new SessionStatus(true);
+      sessionStatus.setUsername(authService.getUsername());
+      sessionStatus.setPort(
+        Integer.toString(authService.getDatabaseClient().getPort())
+      );
+      sessionStatus.setDatabase(authService.getDatabaseClient().getDatabase()
+      );
+      sessionStatus.setEnvironment(authService.getEnvironmentName());
+      sessionStatus.setHost(authService.getDatabaseClient().getHost());
+
+      return sessionStatus;
     }
     else {
       response.setStatus(HttpStatus.UNAUTHORIZED.value());
