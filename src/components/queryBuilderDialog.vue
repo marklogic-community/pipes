@@ -111,11 +111,11 @@ export default {
 
           operators: ["="],
           component: JsonPropertyValueQuery,
-          default: { valueOptions: [], selectedCollection: null, selectedAttribute: null, selectedValue: null, selectedType : "string" }
+          default: { valueOptions: [], selectedCollection: null, selectedAttribute: null, selectedValue: null, selectedType: "string" }
         }
       ],
       query: {
-        selectedDB : this.selectedDB
+        selectedDB: this.selectedDB
       },
       labels: {
         "matchType": "Match Type",
@@ -138,15 +138,15 @@ export default {
     }
   },
   methods: {
-    updateValueOptions(query, options){
-      for(let c in query){
-console.log(query[c])
-        if(query[c].type== "query-builder-rule" && query[c].query.rule == "jsonPropertyValueQuery"){
-          query[c].query.value.valueOptions=options
+    updateValueOptions (query, options) {
+      for (let c in query) {
+        console.log(query[c])
+        if (query[c].type == "query-builder-rule" && query[c].query.rule == "jsonPropertyValueQuery") {
+          query[c].query.value.valueOptions = options
           console.log("update options")
         }
-        if(query[c].type== "query-builder-group"){
-         this.updateValueOptions(query[c].query.children, options)
+        if (query[c].type == "query-builder-group") {
+          this.updateValueOptions(query[c].query.children, options)
         }
       }
     },
@@ -160,9 +160,9 @@ console.log(query[c])
       this.updateValueOptions(this.query.children, this.rules[2].default.valueOptions)
 
       this.rules[0].choices = []
-      this.rules[0].choices.push( this.queryBuilderForm.block.inputs.map(x => '${' + x.name + '}'))
-      
-      for(let db of this.availableDB){
+      this.rules[0].choices.push(this.queryBuilderForm.block.inputs.map(x => '${' + x.name + '}'))
+
+      for (let db of this.availableDB) {
         if (db.label === this.queryBuilderForm.block.widgets[1].value) {
           this.query.selectedDB = db
           this.$store.commit('queryBuilderDB', this.query.selectedDB)
@@ -174,17 +174,17 @@ console.log(query[c])
     },
     // Close edit dialog and reset everything
     closeForm () {
-      this.queryBuilderForm.block.widgets[1].value=this.query.selectedDB.label
+      this.queryBuilderForm.block.widgets[1].value = this.query.selectedDB.label
       this.queryBuilderForm.block.properties.queryBuilder = this.query
       this.showqueryBuilderEdit = false
     },
     selectDatabase () {
       this.$store.commit('queryBuilderDB', this.query.selectedDB)
       this.$root.$emit("updateSelectedDB", this.query.selectedDB)
-      this.$axios.get('http://localhost:8085/v1/resources/vppBackendServices?rs:action=collectionDetails&rs:database=' + this.query.selectedDB.value)
+      this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionDetails&rs:database=' + this.query.selectedDB.value)
         .then((response) => {
           this.rules[0].choices = []
-          this.rules[0].choices.push( ...this.queryBuilderForm.block.inputs.map(x =>  { let result = { label: '${' + x.name + '}', value: '${' + x.name + '}'}; return result }))
+          this.rules[0].choices.push(...this.queryBuilderForm.block.inputs.map(x => { let result = { label: '${' + x.name + '}', value: '${' + x.name + '}' }; return result }))
           for (let choice of response.data) {
             this.rules[0].choices.push(choice);
           }

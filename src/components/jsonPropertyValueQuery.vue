@@ -2,66 +2,71 @@
 <template>
   <div class="rule-actions form-inline ">
     <div class="form-group row">
-    <q-select
-      name="collectionSelector" class="form-control mr-2  col" style="overflow: hidden;"
-      v-if="value"
-      v-model="value.selectedCollection"
-      :options.sync="availableCollections"
-      @input="collectionChanged"
-      filled
-      separator
-      label="Source collection"
-      new-value-mode="add"
-      use-input
-      use-chips
-      stack-label
-    >
+      <q-select
+        name="collectionSelector"
+        class="form-control mr-2  col"
+        style="overflow: hidden;"
+        v-if="value"
+        v-model="value.selectedCollection"
+        :options.sync="availableCollections"
+        @input="collectionChanged"
+        filled
+        separator
+        label="Source collection"
+        new-value-mode="add"
+        use-input
+        use-chips
+        stack-label
+      >
 
-    </q-select>
-    <q-select class="form-control col" 
-      name="attributeSelector"
-      v-if="value"
-      v-model="value.selectedAttribute"
-      :options="availableAttributes"
-      filled
-      separator
-      label="attribute"
-      new-value-mode="add"
-      use-input
-      use-chips
-      stack-label
-    >
-     </q-select>
+      </q-select>
+      <q-select
+        class="form-control col"
+        name="attributeSelector"
+        v-if="value"
+        v-model="value.selectedAttribute"
+        :options="availableAttributes"
+        filled
+        separator
+        label="attribute"
+        new-value-mode="add"
+        use-input
+        use-chips
+        stack-label
+      >
+      </q-select>
 
-    <q-select class="form-control col" 
-      name="valueSelector"
-      v-if="value"
-      v-model="value.selectedValue"
-      filled
-      :options="availableValues"
-      option-value="name"
-      option-label="name"
-      separator
-      label="value"
-      new-value-mode="add"
-      use-input
-      use-chips
-      stack-label
-    > </q-select>
+      <q-select
+        class="form-control col"
+        name="valueSelector"
+        v-if="value"
+        v-model="value.selectedValue"
+        filled
+        :options="availableValues"
+        option-value="name"
+        option-label="name"
+        separator
+        label="value"
+        new-value-mode="add"
+        use-input
+        use-chips
+        stack-label
+      > </q-select>
 
-    <q-select class="form-control col" 
-      name="typeSelector"
-      v-if="value"
-      v-model="value.selectedType"
-      filled
-      value="string"
-      :options="availableTypes"
-      separator
-      label="type"
-      stack-label
-    >
+      <q-select
+        class="form-control col"
+        name="typeSelector"
+        v-if="value"
+        v-model="value.selectedType"
+        filled
+        value="string"
+        :options="availableTypes"
+        separator
+        label="type"
+        stack-label
+      >
 
-    </q-select>
+      </q-select>
     </div>
   </div>
 </template>
@@ -73,11 +78,11 @@ export default {
   props: ['value'],
   data () {
     return {
-      selectedDB : null,
+      selectedDB: null,
       availableCollections: [],
       availableAttributes: [],
       availableValues: [],
-      availableTypes: ["string","number"]
+      availableTypes: ["string", "number"]
     }
   },
   watch: {
@@ -98,12 +103,12 @@ export default {
     },
     loadCollection () {
 
-        this.$axios.get('http://localhost:8085/v1/resources/vppBackendServices?rs:action=collectionDetails&rs:database=' + this.selectedDB.value)
-          .then((response) => {
-            this.availableCollections = response.data
-      })
+      this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionDetails&rs:database=' + this.selectedDB.value)
+        .then((response) => {
+          this.availableCollections = response.data
+        })
     },
-    loadValues(){
+    loadValues () {
       this.availableValues = this.value.valueOptions
     },
     collectionChanged () {
@@ -112,7 +117,7 @@ export default {
     },
     discoverModel (collection) {
 
-      let dbOption = "&rs:database="+ this.selectedDB.value
+      let dbOption = "&rs:database=" + this.selectedDB.value
 
 
       if (collection !== null && collection.value != null)
@@ -128,21 +133,21 @@ export default {
 
         })
     },
-    changeDatabase(newDB){
-        this.selectedDB=newDB
-        this.loadCollection ()
+    changeDatabase (newDB) {
+      this.selectedDB = newDB
+      this.loadCollection()
     }
   },
   created () {
     let vm = this;
-    if(!this.selectedDB){
+    if (!this.selectedDB) {
       this.selectedDB = this.$store.getters.queryBuilderDB
     }
     vm.$nextTick(function () {
       vm.loadCollection()
       vm.loadValues()
-    }); 
-  },  
+    });
+  },
   mounted () {
     this.$root.$on('updateSelectedDB', this.changeDatabase);
   },
