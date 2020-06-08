@@ -411,8 +411,8 @@ function executeGraph(input, params) {
   const invokeExecuteGraph = InvokeExecuteGraph(input)
   let db = (params.database != null) ? xdmp.database(params.database) : xdmp.database()
   let targetDb = (params.toDatabase != null) ? xdmp.database(params.toDatabase) : xdmp.database()
-  let result = xdmp.invokeFunction(invokeExecuteGraph.execute, {database: db})
-  let jsonResults = result
+  let result = fn.head(xdmp.invokeFunction(invokeExecuteGraph.execute, {database: db}))
+  let jsonResults = result.result
   if (params.save == "true") {
 
     if(jsonResults.toArray) jsonResults = jsonResults.toArray()
@@ -432,7 +432,7 @@ function executeGraph(input, params) {
 
       xdmp.invokeFunction(() => {
 
-          xdmp.documentInsert(uri, doc, null, collections)
+          xdmp.documentInsert(uri, doc, xdmp.defaultPermissions(), collections)
 
         }, {"database": targetDb, "update": "true"}
       )
