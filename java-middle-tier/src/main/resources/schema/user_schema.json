@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "title": "User block",
+  "description": "A custom Pipes block defined by the user",
+  "type": "object",
+  "properties": {
+    "functionName": {
+      "description": "Name of the function",
+      "type": "string"
+    },
+    "blockName": {
+      "description": "Name of the block",
+      "type": "string"
+    }
+  },
+  "required": ["functionName", "blockName"]
+}

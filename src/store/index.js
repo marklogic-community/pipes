@@ -3,22 +3,27 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
-export default function () {
 
-  const store =  new Vuex.Store({
-    state: {
-      models: [],
-      helpMode: false,
-      authenticated: false,
-      databases: [],
-      databasesMap: {},
-      graphTitle: 'My Graph',
-      graphVersion: "00.01",
-      graphAuthor: "",
-      graphDescription: "",
-      queryBuilderDB: null
-    },
-    getters: {
+
+const store = new Vuex.Store({
+  state: {
+    models: [],
+    helpMode: false,
+    authenticated: false,
+    databases: [],
+    databasesMap: {},
+    graphTitle: 'My Graph',
+    graphVersion: "00.01",
+    graphAuthor: "",
+    graphDescription: "",
+    queryBuilderDB: null
+  },
+  getters: {
+    user: state => { return state.user },
+    environment: state => { return state.environment },
+    database: state => { return state.database },
+    port: state => { return state.port },
+    host: state => { return state.host },
     availableDatabases: state => { return state.databases },
     authenticated: state => { return state.authenticated },
     models: state => { return state.models },
@@ -26,66 +31,92 @@ export default function () {
     graphVersion: state => { return state.graphVersion },
     graphAuthor: state => { return state.graphAuthor },
     graphDescription: state => { return state.graphDescription },
-    queryBuilderDB: state => { return state.queryBuilderDB},
+    queryBuilderDB: state => { return state.queryBuilderDB },
     helpMode: state => { return state.helpMode },
     sourceBlocks: state => {
       return this.$store.state.models.filter(function (block) {
-      return block.source == "Sources"
-  })
-}
+        return block.source == "Sources"
+      })
+    }
+  },
+  actions: {
+    authenticated ({ commit }, { auth, user, environment, port, database, host }) {
+      commit('authenticated', { auth })
+      commit('user', user)
+      commit('environment', environment)
+      commit('port', port)
+      commit('database', database)
+      commit('host', host)
+    }
+  },
+  mutations: {
+    user (state, user) {
+      state.user = user
     },
-    mutations: {
-    availableDatabases( state, dbs) {
+    environment (state, environment) {
+      state.environment = environment
+    },
+    port (state, port) {
+      state.port = port
+    },
+    database (state, database) {
+      state.database = database
+    },
+    host (state, host) {
+      state.host = host
+    },
+    availableDatabases (state, dbs) {
       state.databases = dbs
     },
-    authenticated( state, auth ) {
+    authenticated (state, auth) {
       state.authenticated = auth
     },
-    graphTitle(state, title) {
+    graphTitle (state, title) {
       state.graphTitle = title
     },
-    graphVersion(state, version) {
+    graphVersion (state, version) {
       state.graphVersion = version
     },
-    graphAuthor(state, author ) {
+    graphAuthor (state, author) {
       state.graphAuthor = author
     },
-    graphDescription(state, description) {
+    graphDescription (state, description) {
       state.graphDescription = description
     },
-    queryBuilderDB(state, db){
+    queryBuilderDB (state, db) {
       state.queryBuilderDB = db
     },
-    helpMode(state, mode) {
+    helpMode (state, mode) {
       state.helpMode = mode
     },
-    addBlock(state, block) {
-     // console.log("addBlock:" + block.source + "/"+ block.label)
+    addBlock (state, block) {
+      // console.log("addBlock:" + block.source + "/"+ block.label)
       var blockExists = false
       for (var x = 0; x < state.models.length; x++) {
-        if ( state.models[x].label == block.label && state.models[x].source == block.source) {
+        if (state.models[x].label == block.label && state.models[x].source == block.source) {
           blockExists = true
-          if ( state.models[x].fields == block.fields  ) {
-        //    console.log("addBloc: Block " + block.source+"/"+block.label + " already in list (exact same fields)")
+          if (state.models[x].fields == block.fields) {
+            //    console.log("addBloc: Block " + block.source+"/"+block.label + " already in list (exact same fields)")
           } else {
-        //    console.log("addBloc: Block " + block.source+"/"+block.label + " already in list (fields different)")
-        //    console.log( "[current] " + state.models[x].fields.length + " vs " + block.fields.length + "[new]" )
+            //    console.log("addBloc: Block " + block.source+"/"+block.label + " already in list (fields different)")
+            //    console.log( "[current] " + state.models[x].fields.length + " vs " + block.fields.length + "[new]" )
           }
           break;
         }
       }
 
-        state.models.push(block)
+      state.models.push(block)
 
     },
     // blockKey should be block.source/block.label
     removeBlock: (state, blockKey) => {
       const i = state.models.map(item => (item.source + "/" + item.label)).indexOf(blockKey);
       state.models.splice(i, 1);
-      },
-    clearBlocks(state) { state.models = [] }
-    }
+    },
+    clearBlocks (state) { state.models = [] }
+  }
 });
 
-  return store
-}
+
+
+export default store

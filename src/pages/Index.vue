@@ -33,7 +33,13 @@
 
         <q-card-section>
           <pre>{{version}}</pre>
-
+          <div>Host: <strong>{{host}}</strong></div>
+          <span class="q-pr-md">Environment: <strong>{{environment}}</strong></span>
+          <span>Logged as: <strong>{{user}}</strong></span>
+          <br />
+          <span class="q-pr-md">Database: <strong>{{database}}</strong></span>
+          <span>Port: <strong>{{port}}</strong></span>
+          <br /><br />
           Learn how to use Pipes: <a
             href="https://github.com/marklogic-community/pipes/wiki"
             target="_blank"
@@ -48,7 +54,7 @@
             text-weight-bold">About Pipes</span><br />
           Pipes for MarkLogic Data Hub is a community tool<br />
           As such, <b>Pipes for MarkLogic Data Hub is not supported by MarkLogic Corporation</b> and is updated and corrected on a best-effort basis.<br />
-          Any contribution or feedback is welcomed to make the tool better<br />
+          Any contribution or feedback is welcomed to make Pipes better.<br />
 
         </q-card-section>
       </q-card>
@@ -71,6 +77,21 @@ export default {
   computed: {
     version: function () {
       return this.val
+    },
+    user: function () {
+      return this.$store.getters.user
+    },
+    environment: function () {
+      return this.$store.getters.environment
+    },
+    port: function () {
+      return this.$store.getters.port
+    },
+    database: function () {
+      return this.$store.getters.database
+    },
+    host: function () {
+      return this.$store.getters.host
     }
   },
   methods: {

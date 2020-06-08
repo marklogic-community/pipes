@@ -5,6 +5,7 @@ Copyright ©2020 MarkLogic Corporation.
 package com.marklogic.pipes.ui;
 
 import java.net.URISyntaxException;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,7 +44,7 @@ public class MarkLogicController extends AbstractLoggingClass
         return null;
       }
 
-      RequestParameters params = clientConfig.extractParams(request);
+      RequestParameters params = extractParams(request);
 
       StringHandle output = new StringHandle();
       output=service.get(params,new StringHandle().withFormat(Format.TEXT));
@@ -64,7 +65,7 @@ public class MarkLogicController extends AbstractLoggingClass
       return null;
     }
 
-      RequestParameters params = clientConfig.extractParams(request);
+      RequestParameters params = extractParams(request);
 
       StringHandle bodyHandle = new StringHandle().withMimetype("text/plain").with(body);
 
@@ -87,7 +88,7 @@ public class MarkLogicController extends AbstractLoggingClass
         return null;
       }
 
-      RequestParameters params = clientConfig.extractParams(request);
+      RequestParameters params = extractParams(request);
 
       StringHandle bodyHandle = new StringHandle().withMimetype("text/plain").with(body);
 
@@ -108,7 +109,7 @@ public class MarkLogicController extends AbstractLoggingClass
       return null;
     }
 
-    RequestParameters params = clientConfig.extractParams(request);
+    RequestParameters params = extractParams(request);
 
     StringHandle bodyHandle = new StringHandle().withMimetype("text/plain").with("");
 
@@ -118,5 +119,17 @@ public class MarkLogicController extends AbstractLoggingClass
 
     return output.toString();
 
+  }
+
+  private RequestParameters extractParams(HttpServletRequest request) {
+    Map<String, String[]> requestParams = request.getParameterMap();
+
+    RequestParameters params=new RequestParameters();
+    for (Map.Entry<String, String[]> entry : requestParams.entrySet()) {
+      String newKey = entry.getKey().replace("rs:","");
+      params.add(newKey,entry.getValue()[0]);
+    }
+
+    return params;
   }
 }

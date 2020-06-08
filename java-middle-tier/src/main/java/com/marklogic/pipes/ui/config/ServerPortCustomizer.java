@@ -1,3 +1,7 @@
+/*
+Copyright ©2020 MarkLogic Corporation.
+*/
+
 package com.marklogic.pipes.ui.config;
 
 import com.marklogic.pipes.ui.auth.AbstractLoggingClass;
@@ -9,6 +13,12 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+
+/**
+ * This class configures the port that Pipes UI will be available on
+ * If the user didn't specify @server.port, first available port will be used,
+ * starting the count from 8080
+ */
 
 @Component
 public class ServerPortCustomizer extends AbstractLoggingClass
@@ -52,6 +62,5 @@ public class ServerPortCustomizer extends AbstractLoggingClass
       clientConfig.setContainerPort(Integer.parseInt(serverPort));
     }
 
-//    factory.setPort(8086);
   }
 }

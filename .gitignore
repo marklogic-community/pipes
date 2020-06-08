@@ -13,6 +13,7 @@ node_modules
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+quasar.conf.js
 
 # Editor directories and files
 .idea
@@ -71,3 +72,24 @@ Examples/Advanced/src/main/ml-modules/services/vppBackendServices.sjs
 
 Examples/Customer360/src/main/ml-modules/root/custom-modules/pipes/
 Examples/Customer360/src/main/ml-modules/services/vppBackendServices.sjs
+Examples/Customer360/.classpath
+Examples/Customer360/.settings/org.eclipse.buildship.core.prefs
+
+Examples/Advanced/gradle-local.properties
+Examples/Advanced/.classpath
+Examples/Advanced/.project
+Examples/Advanced/.settings/
+Examples/Advanced/.pipes/
+Examples/Customer360/.pipes/
+*.war
+*.jar
+
+#Jekyll
+.asset-cache/
+.bundle/
+.jekyll-metadata
+_site/
+
+ml-backend/gradle/
+ml-backend/gradlew
+ml-backend/gradlew.bat

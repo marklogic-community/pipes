@@ -2,7 +2,7 @@
 
 ## Prerequisites:
 
-- Download Pipes: https://github.com/marklogic-community/pipes/releases/tag/1.1
+- Download Pipes: https://github.com/marklogic-community/pipes/releases/tag/1.2
 
 - Download DHF 5.2.1 QuickStart UI: https://github.com/marklogic/marklogic-data-hub/releases/download/v5.2.1/marklogic-datahub-5.2.1.war
 
@@ -13,7 +13,7 @@
 
 - Run the QuickStart UI (marklogic-datahub-5.2.1.war). For instructions how, have a look here: https://docs.marklogic.com/datahub/projects/create-project-using-quickstart.html
 
-- Run Pipes (marklogic-pipes-1.1.jar). For instructions how, have a look here: https://github.com/marklogic-community/pipes#great-how-do-i-run-it
+- Run Pipes (marklogic-pipes-1.2.jar). For instructions how, have a look here: https://github.com/marklogic-community/pipes#great-how-do-i-run-it
 
 After this, assuming you have the QuickStart UI running on port 8080 and Pipes running on 8081:
 
@@ -21,9 +21,9 @@ After this, assuming you have the QuickStart UI running on port 8080 and Pipes r
 - Browse to this project folder. Use QuickStart to initialize this project and then deploy the application.
 
 
-### **Example 1 - Safety Reports**
+### **Example 1 - FAERS Safety Reports (a pharmaceutical data example)**
 
-This example  shows how to create instances for 3 different entities (Safety Report, Reaction and Drug) from single complex XML records originating from the FDA Adverse Event Reporting System (FAERS). This data contains reports about patients experiencing one or multiple adverse events after taking certain medication(s).
+This example  shows how to create instances for 3 different entities (Safety Report, Reaction and Drug) from single complex XML records originating from the FDA Adverse Event Reporting System (FAERS). We will be using MarkLogic and Pipes for MarkLogic Data Hub to do this. This data contains reports about patients experiencing one or multiple adverse events after taking certain medication(s).
 
 #### Data model
 - SafetyReport

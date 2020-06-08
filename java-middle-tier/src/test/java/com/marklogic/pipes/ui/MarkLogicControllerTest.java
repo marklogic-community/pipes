@@ -6,6 +6,7 @@ package com.marklogic.pipes.ui;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.extensions.ResourceServices;
@@ -14,6 +15,9 @@ import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
+import com.marklogic.hub.DatabaseKind;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.pipes.ui.auth.AuthService;
 import com.marklogic.pipes.ui.config.ClientConfig;
@@ -63,6 +67,12 @@ class MarkLogicControllerTest {
   protected final static String SESSION_SERVICE = "pipes-service";
   protected final static String SESSION_USERNAME_KEY = "pipes-username";
 
+  private final static String MLUSERNAME="admin";
+  private final static String MLPASSWORD="admin";
+  private final static String MLTESTDATABASE="data-hub-STAGING";
+  private final static String MLTESTHOST="localhost";
+  private final static int MLTESTPORT=8035;
+
   static MockHttpSession session;
 
   @Autowired
@@ -73,6 +83,9 @@ class MarkLogicControllerTest {
 
   @Autowired
   AuthService authService;
+
+  @Autowired
+  HubConfigImpl hubConfig;
 
   void addCustomerSourceDocument(String s) throws Exception {
     DatabaseClient client = getDatabaseClient();
@@ -103,10 +116,7 @@ class MarkLogicControllerTest {
   }
 
   private DatabaseClient getDatabaseClient() {
-
-    assertTrue("Failed to authorize",authService.tryAuthorize(clientConfig,clientConfig.getMlUsername(), clientConfig.getMlPassword()));
-
-    return authService.getDatabaseClient();
+    return hubConfig.newStagingClient();
   }
 
   void removeCustomerSource() throws Exception {
@@ -166,7 +176,7 @@ class MarkLogicControllerTest {
     System.out.println("BeforeAll init() method called");
 
 
-    String loginPayload="{\"username\":\""+clientConfig.getMlUsername()+"\",\"password\":\""+clientConfig.getMlPassword()+"\"}";
+    String loginPayload="{\"username\":\""+MLUSERNAME+"\",\"password\":\""+MLPASSWORD+"\"}";
 
     this.mockMvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON)
       .content(loginPayload))
@@ -174,7 +184,7 @@ class MarkLogicControllerTest {
 
     session = new MockHttpSession();
 
-    session.setAttribute(SESSION_USERNAME_KEY, clientConfig.getMlUsername());
+    session.setAttribute(SESSION_USERNAME_KEY, MLUSERNAME);
     session.setAttribute(SESSION_SERVICE, authService.getService());
   }
 
@@ -202,7 +212,10 @@ class MarkLogicControllerTest {
       expectedJO.put("result", new JSONObject(expectedResponseHandle.toString()));
       expectedJO.put("uri",TEST_INPUT_JSON);
 
-      String request="/v1/resources/vppBackendServices?rs:action=ExecuteGraph&rs:database="+clientConfig.getMlTestDatabase();
+      //extract the value part only from the expected returned graph
+      JsonNode expectedResultJson= expectedJO.getNode("result");
+
+      String request="/v1/resources/vppBackendServices?rs:action=ExecuteGraph&rs:database="+MLTESTDATABASE;
 
       MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(request).content(payloadJO.toString())
         .session(session);
@@ -211,11 +224,14 @@ class MarkLogicControllerTest {
         .andExpect(status().isOk());
 
       MvcResult result = resultActions.andReturn();
-      String responseAsString = result.getResponse().getContentAsString();
+
+      JSONObject responseJson=new JSONObject(result.getResponse().getContentAsString());
+      JsonNode actualResponseResultJson= responseJson.getNode("result");
 
       // compare strings as JSON objects using Jackson ObjectMapper
       ObjectMapper mapper = new ObjectMapper();
-      assertEquals("Response doesn't match expected",mapper.readTree(expectedJO.toString()), mapper.readTree(responseAsString));
+      assertEquals("Response doesn't match expected",mapper.readTree(expectedResultJson.toString()), mapper.readTree(actualResponseResultJson.toString()));
+
 
 
     } finally {
@@ -394,15 +410,6 @@ class MarkLogicControllerTest {
 
     deleteSourceBlock();
     resultItr.close();
-  }
-
-  @Test
-  void LoginTestWrongUserPass() throws Exception {
-    String username="somefakeusername";
-    String password="somenonexistingpassword";
-    String request = "/login";
-    String payload= String.format("{\"username\":\"%s\",\"password\":\"%s\"}",username,password);
-    this.mockMvc.perform(post(request).content(payload).contentType("application/json")).andExpect(status().isUnauthorized());
   }
 
   @Test

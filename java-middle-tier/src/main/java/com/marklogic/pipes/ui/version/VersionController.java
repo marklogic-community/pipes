@@ -1,3 +1,7 @@
+/*
+Copyright ©2020 MarkLogic Corporation.
+*/
+
 package com.marklogic.pipes.ui.version;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +15,7 @@ import java.io.IOException;
 public class VersionController {
 
   @Autowired
-  Service versionService;
+  PipesVersionService versionService;
 
   @RequestMapping(value = "/version", method = RequestMethod.GET)
   public String listOfCustomStepNames() throws IOException {

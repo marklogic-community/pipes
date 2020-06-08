@@ -1400,19 +1400,13 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
   function CreateTriple () {
     this.addInput("subject");
     this.addInput("object");
-
     this.addOutput("triple");
-
-
     this.subjectIsIRI = this.addWidget("toggle", "subjectIsIRI", true, function (v) { }, {});
     this.predicate = this.addWidget("text", "predicate", "myPredicate", function (v) { }, {});
     this.objectIsIRI = this.addWidget("toggle", "objectIsIRI", true, function (v) { }, {});
     this.size = [230, 160];
     this.serialize_widgets = true;
-
   }
-
-
 
   CreateTriple.title = "Create Triple";
   CreateTriple.desc = "Create Triple";
@@ -1433,9 +1427,9 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
 
     this.setOutputData(0, sem.triple(subject, predicate, object));
   }
-
-
   LiteGraph.registerNodeType("Enrich/CreateTriple", CreateTriple);
+
+
 
   function uuidString () {
 
@@ -1714,7 +1708,7 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
             o = mapCase.input;
         }
     }
-    
+
     if (o != null) {
       r = this.getInputData(parseInt(o) + 2);
     } else {
@@ -2107,6 +2101,38 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
 
   }
   LiteGraph.registerNodeType("Generate/multiConstant", MultipurposeConstant);
+
+  // String Padding Block
+function StringPadding()  {
+  this.addInput("input");
+  this.addOutput("output");
+  this.totalWidth = this.addWidget("text","Size", "", function(v){}, {} );
+  this.paddingDirection = this.addWidget("combo","Padding Direction", "left", function(v){}, { values:["left","right"]} );
+  this.paddingChar = this.addWidget("text","Padding Character", "", function(v){}, {} );
+}
+
+StringPadding.title = "padding";
+
+StringPadding.prototype.onExecute = function()  {
+  let totalWidth = this.totalWidth.value
+  let paddingDirection = String(this.paddingDirection.value)
+  let paddingChar = String(this.paddingChar.value)
+  let inputString = String(this.getInputData(0) ? this.getInputData(0) : "")
+  let outputval = inputString
+  switch (paddingDirection) {
+    case "left":
+      outputval = inputString.padStart(totalWidth,paddingChar)
+    break
+    case "right":
+      outputval = inputString.padEnd(totalWidth,paddingChar)
+    break
+    default:
+    break
+  }
+  this.setOutputData(0, outputval)
+}
+LiteGraph.registerNodeType("Format/stringPadding", StringPadding);
+
 }
 
 module.exports = {

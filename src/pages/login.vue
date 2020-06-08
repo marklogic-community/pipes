@@ -1,11 +1,11 @@
 <template>
   <q-page class="column items-center">
 
-    <div  style="padding-top:30px;max-width: 500px; min-width: 300px"  v-if="showLogin">
+    <div style="padding-top:30px;max-width: 500px; min-width: 300px">
 
       <q-form
-
         class="q-gutter-md "
+        @submit="loginToPipes"
       >
         <q-input
           filled
@@ -23,10 +23,20 @@
           label="Password"
         />
 
-
         <div>
-          <q-btn label="Login" type="submit" color="primary" @click="loginToPipes" />
-          <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" @click="function(){this.username=''; this.password=''}.bind(this)" />
+          <q-btn
+            label="Login"
+            type="submit"
+            color="primary"
+          />
+          <q-btn
+            label="Reset"
+            type="reset"
+            color="primary"
+            flat
+            class="q-ml-sm"
+            @click="function(){this.username=''; this.password=''}.bind(this)"
+          />
 
         </div>
       </q-form>
@@ -35,30 +45,48 @@
   </q-page>
 </template>
 
+
 <script>
 import { Vuex } from "vuex";
 export default {
   // name: 'PageName',
   data () {
     return {
-      username:"",
-      showLogin:false,
-      password:"",
-      loginmessage:""
+      username: "",
+      password: "",
+      loginmessage: ""
     }
   },
   methods: {
 
-    loginToPipes() {
+    loginToPipes (evt) {
+      evt.preventDefault();
 
-      let payload = {"username":this.username, "password": this.password}
+      this.$q.loading.show({
+        delay: 400, // ms
+        message: 'Reticulating splines.<br/><span>Hang on...</span>'
+      })
+
+      let payload = { "username": this.username, "password": this.password }
+
+      // TO-DO: this axios call should happen from inside the store (action)
       this.$axios.post('/login', payload).then(response => {
-
-        this.$store.commit('authenticated',true)
-        this.$router.push({path:"/home"})
+        console.log('response.data:', response.data)
+        this.$store.dispatch('authenticated', {
+          auth: true,
+          user: response.data.username,
+          environment: response.data.environment,
+          port: response.data.port,
+          database: response.data.database,
+          host: response.data.host
+        }).then(() => {
+          this.$q.loading.hide()
+          this.$router.push({ name: "home" })
+        })
       })
         .catch((error) => {
-          this.$store.commit('authenticated',true)
+          this.$q.loading.hide()
+          this.$store.commit('authenticated', false)
           this.$q.notify({
             color: 'negative',
             position: 'center',
@@ -69,17 +97,6 @@ export default {
         })
 
     }
-    },
-  beforeCreate() {
-  this.$axios.get('/status').then(response => {
-
-    if(response.data && response.data.authenticated) {
-      this.$store.commit('authenticated',true)
-      this.$router.push({path: "/home"})
-    }
-    else this.showLogin=true
-  })
-
-}
+  },
 }
 </script>
