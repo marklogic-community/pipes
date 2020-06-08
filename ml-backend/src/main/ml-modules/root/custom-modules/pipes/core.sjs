@@ -988,7 +988,7 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
     
     let result = fn.head(xdmp.invokeFunction(()=>{
       return cts.search(computedQuery);
-    }, {database: query.selectedDB.value}));
+    }, {database: xdmp.database(query.selectedDB.label)}));
 
     if(result != null){
       this.setOutputData(0, result);
