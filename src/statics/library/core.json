@@ -832,7 +832,8 @@
         "type": "combo",
         "name": "database",
         "default": "#DATABASES#",
-        "values": []
+        "values": [],
+        "callback": "this.properties.queryBuilder.selectedDB.label=this.widgets[1].value"
       }
     ],
     "outputs": [
