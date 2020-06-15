@@ -1,7 +1,16 @@
 main:
   - { url: '/', text: 'Installing Pipes' }
   #- { url: '/how-does-it-work/', text: 'How Does it Work?' }
-  - { url: '/how-to-use/', text: 'How Do I Use it?' }
+  - { 
+      url: '/how-to-use/', 
+      text: 'How Do I Use it?',
+       childPages: [
+        { url: '/how-to-use#data-model', text: 'Define the data model in QuickStart UI' },
+        { url: '/how-to-use#custom-step', text: 'Add a custom step in QuickStart UI' },
+        { url: '/how-to-use#minimal-graph', text: 'Build a minimal graph in Pipes' },
+        { url: '/how-to-use#run-preview', text: 'Run the graph preview' }
+       ]
+      }
   - { url: '/custom-blocks/', text: 'How to create and use custom blocks' }
   #- {
   #  url: '/subpages/',
