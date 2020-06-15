@@ -253,6 +253,7 @@ Now, let's run the preview and have a look at the result.
 
 ![](../images/how-to-use/customer-address-preview.gif)
 
+<a name="custom-uris"></a>
 ### Create custom URIs
 
 The Envelope block contains an URI node. However, if that node remains unmapped, the resulting document will have the same URI as the source document. In many situations, we'd like to be able to change the URI.
@@ -270,6 +271,7 @@ Now, let's run the preview and have a look at the result. Observe the new URI an
 
 ![](../images/how-to-use/customer-address-uri.gif)
 
+<a name="1-to-many"></a>
 ### Create multiple Entity instances (1 to many mapping)
 
 Sometimes, we want to create a more normalized model of the data. For instance, the address is a business domain entity that can be independent from the customer's personal details and have a separate life cycle.

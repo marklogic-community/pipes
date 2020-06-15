@@ -11,7 +11,9 @@ main:
         { url: '/how-to-use#run-preview', text: 'Run the graph preview' },
         { url: '/how-to-use#entity-blocks', text: 'Create entity blocks' },
         { url: '/how-to-use#source-blocks', text: 'Create source data blocks' },
-        { url: '/how-to-use#map-values', text: 'Mapping values' }
+        { url: '/how-to-use#map-values', text: 'Mapping values' },
+        { url: '/how-to-use#custom-uris', text: 'Create custom URIs' },
+        { url: '/how-to-use#1-to-many', text: '1-to-many Mapping' }
        ]
       }
   - { url: '/custom-blocks/', text: 'How to create and use custom blocks' }
