@@ -8,7 +8,10 @@ main:
         { url: '/how-to-use#data-model', text: 'Define the data model in QuickStart UI' },
         { url: '/how-to-use#custom-step', text: 'Add a custom step in QuickStart UI' },
         { url: '/how-to-use#minimal-graph', text: 'Build a minimal graph in Pipes' },
-        { url: '/how-to-use#run-preview', text: 'Run the graph preview' }
+        { url: '/how-to-use#run-preview', text: 'Run the graph preview' },
+        { url: '/how-to-use#entity-blocks', text: 'Create entity blocks' },
+        { url: '/how-to-use#source-blocks', text: 'Create source data blocks' },
+        { url: '/how-to-use#map-values', text: 'Mapping values' }
        ]
       }
   - { url: '/custom-blocks/', text: 'How to create and use custom blocks' }

@@ -88,7 +88,7 @@ The biggest part of the UI is taken by the canvas. On the canvas we can see 2 bl
 
 ![](../images/how-to-use/pipes-3-input.png)
 
-This block represents the input to the custom step we're designing here. As the input into the custom step, we specified collection "Customer-Source" as we were defining the custom step in the DHF QuickStart. The Custom Step Input block has 3 nodes on the right side. That means it provides 3 different things:
+This block represents the input to the custom step we're designing here. As the input into the custom step, we specified collection "Customer-Source" as we were defining the custom step in the DHF QuickStart. The _Custom Step Input_ block has 3 nodes on the right side. That means it provides 3 different things:
 
 - **input**: Provides the content of the document(s) in the "Customer-Source" collection. That's the content we will be transforming in the graph into our data model entities.
 
@@ -137,7 +137,7 @@ Here's the summary of our actions in an animated GIF:
 ### Add envelope
 
 - Hover over an empty place on the canvas and right-click
-- Now, left-clich on the "Add Node"
+- Now, left-click on the "Add Node"
 - Left-click on the "DHF" group and another sub-group will open
 - Left-click on "Evelope.
 - The Envelope block will appear on the canvas
@@ -160,6 +160,7 @@ That's it, we're now producing an envelope at the output of our custom step. Run
 
 ![](../images/how-to-use/connect-envelope.gif)
 
+<a name="entity-blocks"></a>
 ### Create Entity blocks
 
 The data model is defined by the entities and their relationships we created in the QuickStart UI. Let's create blocks that represent the DHF Entities in Pipes.
@@ -173,9 +174,119 @@ The data model is defined by the entities and their relationships we created in 
 
 ![](../images/how-to-use/create-entity-blocks.gif)
 
+Let's add Entity blocks to our graph.
+
+- Hover over an empty place on the canvas and right-click
+- Now, left-click on the "Add Node"
+- Letf-click on "Entities" (all the way at the bottom)
+- Select _Customer_
+- Connect the _Customer_ **Node** with the _Envelope_ **Instance**
+
+![](../images/how-to-use/adding-entity-block.gif)
+
+<a name="source-blocks"></a>
 ### Create source blocks
 
+Now, we need to map some source into our Entity block. We'll do that by creating a Source block that captures part of the data we will use to map the _Customer_ block.
+
+- In the upper-left corner, click on the "Setting and Block Creation button"
+- Click on the "SOURCE BLOCKS" tab
+- Click on the "START NEW BLOCK" button
+- Enter a name for the block: "customer-source"
+- (Optionally, add a description)
+- Click "NEXT"
+- From the drop-down, select the name of the custom step we created earlier: "customer-address-custom"
+- Click "NEXT"
+- Click on the gray triangle next to "Document Fields"
+- Repeat the same for "envelope" and "instance"
+- Notice that you've partially expanded the document tree now
+- Check the boxes next to values we want to capture from the source: "dob", "email", "first_name", "gender", "id" and "last_name"
+- Click "NEXT"
+- You'll see a block preview, on the left there should be **Node** and on the right there should be the field names we've selected in the previous step
+- Finally, click the "CREATE SOURCE BLOCK"
+
+Here's the summary of our actions in an animated GIF:
+
+![](../images/how-to-use/create-source-block.gif)
+
+<a name="map-values"></a>
 ### Map values
+
+Let's add the source block we've just created to the graph and connect it.
+
+- Hover over an empty place on the canvas and right-click
+- Now, left-click on the "Add Node"
+- Click on "Sources" (at the bottom)
+- Click on "customer-source", the block that we just defined
+- Connect the nodes between _customer-source_ and _Customer_ in the following way
+- - dob -> dateOfBirth
+- - email -> email
+- - id -> externalId
+- - first_name -> firstName
+- - gender -> gender
+- - last_name -> last_name
+- Finally, connect the _Custom Step Input_ **input** to _customer-source_ **node**
+
+Here's the summary of our actions in an animated GIF:
+
+![](../images/how-to-use/adding-source-block.gif)
+
+Let's run the preview and see what our graph will output.
+
+![](../images/how-to-use/source-entity-blocks-preview.gif)
+
+### Add the address entity and map values
+
+- Add the Address Entity block to the canvas
+- Create the "address-source" source block, similar to how you created the "customer-source" source block
+- Add the _address-source_ to the canvas
+- Map the values between _address-source_ and _Address_ block. The **customerId** should be mapped from _customer_source_ **id** node.
+- Connect _Custom Step Input_ **Input** with _address-source_ **Node**
+- On the _Address_ block uncheck/disable the WithInstanceRoot toggle
+- Connect _Address_ **Node** to _Customer_ **address**
+
+Here's the summary of our actions in an animated GIF:
+
+![](../images/how-to-use/adding-address.gif)
+
+Now, let's run the preview and have a look at the result.
+
+![](../images/how-to-use/customer-address-preview.gif)
+
+### Create custom URIs
+
+The Envelope block contains an URI node. However, if that node remains unmapped, the resulting document will have the same URI as the source document. In many situations, we'd like to be able to change the URI.
+
+- Add a "Unique ID" block to the canvas (Generate->Unique ID), below the _Customer_ block
+- Click on the field with the prefix and clear the content
+- Add a "String Template" block to the canvas (Generate->String Template)
+- Connect _Unique ID_ **uuid** with _String Template_ **v1**
+- On the _String Template_, click on the template field and define the template as "/customer/${v1}.json"
+- Connect _String Template_ **newString** to the _Envelope_ **uri**
+- Connect Connect _Unique ID_ **uuid** to the _Customer_ **id** to re-use the same uuid for the Customer id
+- Run the preview to see how the URI of the resulting document changed but also the "id" property in the Customer instance
+
+Now, let's run the preview and have a look at the result. Observe the new URI and the Customer's id.
+
+![](../images/how-to-use/customer-address-uri.gif)
+
+### Create multiple Entity instances (1 to many mapping)
+
+Sometimes, we want to create a more normalized model of the data. For instance, the address is a business domain entity that can be independent from the customer's personal details and have a separate life cycle.
+
+Let's see how we use Pipes to create multiple Entity instances.
+
+- Add another Envelope block to the canvas
+- Enable the WithInstanceRoot toggle on the _Address_
+- Connect _Address_ **Node** to new _Envelope's_ **instance**
+- Add a "Generate Array" block to the canvas (Join->Generate Array)
+- Connect *both* Envelopes to this block: Customer Envelope to **item1** and Address Envelope to **item2**
+- Connect _Generate Array_ **array** to _Custom Step Output_ **output**
+- Create a unique URI for the Address Envelope
+- Optionally, map the _Custom Step Input_ **uri** to both Envelope's **uri**, this will add provenance information (the originating uri) to the resulting documents
+- Run the preview and observe that the graph is now producing an array of 2 json documents - a document per Entity from our data model
+
+![](../images/how-to-use/multiple-instances.gif)
 
 ## Save the custom step code from Pipes into the DHF project
 
