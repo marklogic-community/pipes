@@ -43,8 +43,8 @@
     }
   ],
   "executionGraph": {
-    "last_node_id": 10,
-    "last_link_id": 12,
+    "last_node_id": 11,
+    "last_link_id": 14,
     "nodes": [
       {
         "id": 1,
@@ -82,46 +82,6 @@
         "properties": {}
       },
       {
-        "id": 4,
-        "type": "Sources/ab",
-        "pos": [
-          428,
-          415
-        ],
-        "size": [
-          305,
-          108
-        ],
-        "flags": {},
-        "order": 1,
-        "mode": 0,
-        "inputs": [
-          {
-            "name": "Node",
-            "type": 0,
-            "link": 2
-          }
-        ],
-        "outputs": [
-          {
-            "name": "a",
-            "links": [
-              1
-            ]
-          },
-          {
-            "name": "b",
-            "links": [
-              4
-            ]
-          }
-        ],
-        "properties": {},
-        "widgets_values": [
-          true
-        ]
-      },
-      {
         "id": 2,
         "type": "DHF/output",
         "pos": [
@@ -133,7 +93,7 @@
           160
         ],
         "flags": {},
-        "order": 9,
+        "order": 10,
         "mode": 0,
         "inputs": [
           {
@@ -156,13 +116,13 @@
           160
         ],
         "flags": {},
-        "order": 6,
+        "order": 7,
         "mode": 0,
         "inputs": [
           {
             "name": "headers",
             "type": 0,
-            "link": null
+            "link": 14
           },
           {
             "name": "triples",
@@ -216,7 +176,7 @@
           160
         ],
         "flags": {},
-        "order": 7,
+        "order": 8,
         "mode": 0,
         "inputs": [
           {
@@ -276,7 +236,7 @@
           "1": 106
         },
         "flags": {},
-        "order": 8,
+        "order": 9,
         "mode": 0,
         "inputs": [
           {
@@ -381,7 +341,7 @@
           "1": 146
         },
         "flags": {},
-        "order": 4,
+        "order": 5,
         "mode": 0,
         "inputs": [
           {
@@ -427,7 +387,7 @@
           "1": 78
         },
         "flags": {},
-        "order": 3,
+        "order": 4,
         "mode": 0,
         "inputs": [
           {
@@ -481,7 +441,7 @@
           "1": 146
         },
         "flags": {},
-        "order": 5,
+        "order": 6,
         "mode": 0,
         "inputs": [
           {
@@ -513,6 +473,103 @@
           "",
           "",
           "/test/${v1}.json"
+        ]
+      },
+      {
+        "id": 4,
+        "type": "Sources/ab",
+        "pos": [
+          428,
+          415
+        ],
+        "size": [
+          305,
+          108
+        ],
+        "flags": {},
+        "order": 1,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "Node",
+            "type": 0,
+            "link": 2
+          }
+        ],
+        "outputs": [
+          {
+            "name": "a",
+            "links": [
+              1,
+              13
+            ]
+          },
+          {
+            "name": "b",
+            "links": [
+              4
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          true
+        ]
+      },
+      {
+        "id": 11,
+        "type": "Mapping/Map values",
+        "pos": [
+          1169,
+          131
+        ],
+        "size": {
+          "0": 255,
+          "1": 102
+        },
+        "flags": {},
+        "order": 3,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "value",
+            "type": 0,
+            "link": 13
+          },
+          {
+            "name": "default",
+            "type": 0,
+            "link": null
+          }
+        ],
+        "outputs": [
+          {
+            "name": "mappedValue",
+            "links": [
+              14
+            ]
+          }
+        ],
+        "properties": {
+          "mapping": [
+            {
+              "source": "#NULL#",
+              "target": "#NULL#"
+            },
+            {
+              "source": "#EMPTY#",
+              "target": "#EMPTY#"
+            },
+            {
+              "source": "5",
+              "target": "FIVE"
+            }
+          ],
+          "hoverText": "Double click block to edit the mapping rules"
+        },
+        "widgets_values": [
+          "string",
+          false
         ]
       }
     ],
@@ -612,6 +669,22 @@
         6,
         4,
         0
+      ],
+      [
+        13,
+        4,
+        0,
+        11,
+        0,
+        0
+      ],
+      [
+        14,
+        11,
+        0,
+        5,
+        0,
+        0
       ]
     ],
     "groups": [],
@@ -624,6 +697,6 @@
     "author": "",
     "title": "mapRangeValuesTest",
     "description": "",
-    "dateExported": "28/04/2020, 10:16:44"
+    "dateExported": "16/06/2020, 15:16:16"
   }
 }

@@ -2,7 +2,9 @@
   {
     "value": {
       "envelope": {
-        "headers": {},
+        "headers": {
+          "value": "FIVE"
+        },
         "triples": [],
         "instance": {
           "value": "LOW"
