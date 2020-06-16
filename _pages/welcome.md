@@ -22,9 +22,11 @@ It assumes that:
 - That DHF project is installed to your MarkLogic server
 - Java 8 or higher installed
  
-
+<a name="download-pipes"></a>
 ## Great! How do I run it?
 To use Pipes you will need to have an instance of MarkLogic with the [Data Hub](https://docs.marklogic.com/datahub/index.html) installed.
+
+
 
 - Download the Pipes jar from the [Releases](https://github.com/marklogic-community/pipes/releases) section. 
 - Copy the jar to the DHF folder root you plan to use Pipes for.
@@ -37,6 +39,7 @@ java -jar marklogic-pipes-1.1.jar
 
 As soon as Pipes starts, it will print out the port number it's running on. Example, Pipes will be available on: [localhost:8080](http://localhost:8080) if the port is 8080.
 
+<a name="configure-pipes"></a>
 ## Pipes options (command line parameters)
 
 Pipes has several properties that can be used on the command line, when starting the Pipes jar:
@@ -88,14 +91,4 @@ Pipes modules can be separately installed using [mlBundle](https://github.com/ma
     }
     ```
 
-
-## Uhm, OK, I got it up and running! How do I use it?
-Learn on Pipes Wiki [how to create your first Pipes project](https://github.com/marklogic-community/pipes/wiki/1.-Creating-your-first-Pipes-project)
-
-Have fun!
-
-![alt text](https://github.com/marklogic-community/pipes/blob/master/Pipes.png?raw=true) 
-
-## How I deploy the module with my custom blocks
-Read about it here: [Creating custom user blocks](https://github.com/marklogic-community/pipes/wiki/4.-Creating-custom-user-blocks-for-developers)
 

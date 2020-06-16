@@ -84,6 +84,7 @@ Enter the username and password of one of the DHF users (such as flow-developer 
 
 The biggest part of the UI is taken by the canvas. On the canvas we can see 2 blocks. **Any Pipes graph we build must contain these blocks**.
 
+<a name="custom-step-input"></a>
 ### **Custom Step Input** block:
 
 ![](../images/how-to-use/pipes-3-input.png)
@@ -96,6 +97,7 @@ This block represents the input to the custom step we're designing here. As the 
 
 - **collections**: provides the collections of the incoming document as an array. This, too, is a useful provenance information that can be passed down into the final data model.
 
+<a name="custom-step-output"></a>
 ### **Custom Step Output** block
 
 ![](../images/how-to-use/pipes-4-output.png)
@@ -134,7 +136,10 @@ Here's the summary of our actions in an animated GIF:
 
 ![](../images/how-to-use/preview-minimal.gif)
 
-### Add envelope
+<a name="envelope-block"></a>
+### Envelope block
+
+To add en Evelope block:
 
 - Hover over an empty place on the canvas and right-click
 - Now, left-click on the "Add Node"
@@ -161,9 +166,9 @@ That's it, we're now producing an envelope at the output of our custom step. Run
 ![](../images/how-to-use/connect-envelope.gif)
 
 <a name="entity-blocks"></a>
-### Create Entity blocks
+### Entity block
 
-The data model is defined by the entities and their relationships we created in the QuickStart UI. Let's create blocks that represent the DHF Entities in Pipes.
+The data model is defined by the entities and their relationships we created in the QuickStart UI. An Entity block represents the DHF Entities in Pipes. Let's create it:
 
 - In the upper-left corner, click on the "Setting and Block Creation button"
 - Click on the "ENTITY BLOCKS" tab
@@ -185,9 +190,9 @@ Let's add Entity blocks to our graph.
 ![](../images/how-to-use/adding-entity-block.gif)
 
 <a name="source-blocks"></a>
-### Create source blocks
+### Source block
 
-Now, we need to map some source into our Entity block. We'll do that by creating a Source block that captures part of the data we will use to map the _Customer_ block.
+We nwanted to map some source data into our Entity block. We'll do that by creating a Source block. Source blocks capture parts of the data and we will use it as input for the  _Customer_ block.
 
 - In the upper-left corner, click on the "Setting and Block Creation button"
 - Click on the "SOURCE BLOCKS" tab

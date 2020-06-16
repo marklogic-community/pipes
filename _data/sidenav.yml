@@ -1,5 +1,10 @@
 main:
-  - { url: '/', text: 'Installing Pipes' }
+  - { url: '/', text: 'Installing Pipes' ,
+      childPages: [
+        { url: '/#download-pipes', text: 'Download Pipes' },
+        { url: '/#configure-pipes', text: 'Configure Pipes' }
+      ]
+      }
   #- { url: '/how-does-it-work/', text: 'How Does it Work?' }
   - { 
       url: '/how-to-use/', 
@@ -18,6 +23,26 @@ main:
         { url: '/how-to-use#run-custom-step', text: 'Run the custom step' }
        ]
       }
+  - {
+    url: '/blocks/',
+    text: 'Block library',
+    childPages: [
+      { url: '/how-to-use#source-blocks', text: 'Source Blocks' },
+      { url: '/how-to-use#entity-blocks', text: 'Entity Blocks' },
+      { url: '/how-to-use#custom-step-input', text: 'Custom Step Input' },
+      { url: '/how-to-use#custom-step-output', text: 'Custom Step Output' },
+      { url: '/how-to-use#envelope-block', text: 'Envelope' },
+      
+      
+      #{
+      #  url: '/subpages/subsubpages/',
+      #  text: 'Subsub pages',
+      #  childPages: [
+      #   { url: '/subpages/testsubsub/', text: 'Test Sub Sub Page' }
+      # ]
+      #}
+    ]
+  }
   - { url: '/custom-blocks/', text: 'How to create and use custom blocks' }
   #- {
   #  url: '/subpages/',
@@ -33,20 +58,7 @@ main:
   #    }
   # ]
   #}
-  - {
-    url: '/components/',
-    text: 'Component Guides',
-    childPages: [
-      { url: '/components/connect/', text: 'Connect' }
-      #{
-      #  url: '/subpages/subsubpages/',
-      #  text: 'Subsub pages',
-      #  childPages: [
-      #   { url: '/subpages/testsubsub/', text: 'Test Sub Sub Page' }
-      # ]
-      #}
-    ]
-  }
+
   - { url: '/faqs/', text: 'FAQs' }
   - { url: '/troubleshooting/', text: 'Troubleshooting' }
   - { absurl: 'https://github.com/marklogic-community/pipes', text: 'Pipes on GitHub' }
