@@ -290,8 +290,30 @@ Let's see how we use Pipes to create multiple Entity instances.
 
 ![](../images/how-to-use/multiple-instances.gif)
 
-## Save the custom step code from Pipes into the DHF project
+<a name="save-custom-step"></a>
+## Export the custom step code from Pipes into the DHF project
 
+With Pipes, we have defined our custom transformation and now we'd like to run it as a custom step in a DHF flow. To export the code to our previously created custom step, do following:
+
+- In the top bar, click the "Export DHF custom step module" button: <img src="../images/how-to-use/export-button.png" alt="drawing" width="30x"/>
+- In the dialogue:
+- - Check "Save to project code" - this will will save the main.sjs into your local DHF project
+- -  (optionally) Uncheck the "Download main.sjs file" if you don't want the file to be additionally downloaded into the download folder your browser is pointing to
+- - Check "Deploy to MarkLogic" (this will push the module to your MODULES database)
+- - From the drop-down, select the name of the custom step we're exporting the code for: "customer-address-custom"
+- - Click "Export"
+- If successful, you'll see a message in a green bar poping-up near the top of the canvas
+
+![](../images/how-to-use/export-custom-step.gif)
+
+
+<a name="run-custom-step"></a>
 ## Run the custom step
+
+Once the custom code has been exported from Pipes, you can go back to QuickStart UI and run that step in the Customer360 flow:
+
+![](../images/how-to-use/run-custom-step.gif)
+
+As a result, we'll now see 1000 documents with the customer information and 1000 documents with address information.
 
 
