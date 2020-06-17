@@ -51,9 +51,9 @@
           >Report it here</a>
           <br /><br />
           <span class="
-            text-weight-bold">About Pipes</span><br />
-          Pipes for MarkLogic Data Hub is a community tool<br />
-          As such, <b>Pipes for MarkLogic Data Hub is not supported by MarkLogic Corporation</b> and is updated and corrected on a best-effort basis.<br />
+            text-weight-bold">Pipes for MarkLogic Data Hub is a community tool</span><br />
+          <br />
+          As such, <b>Pipes is not supported by MarkLogic Corporation</b> and is updated and corrected on a best-effort basis.<br />
           Any contribution or feedback is welcomed to make Pipes better.<br />
 
         </q-card-section>
