@@ -2,7 +2,8 @@ main:
   - { url: '/', text: 'Installing Pipes' ,
       childPages: [
         { url: '/#download-pipes', text: 'Download Pipes' },
-        { url: '/#configure-pipes', text: 'Configure Pipes' }
+        { url: '/#configure-pipes', text: 'Configure Pipes' },
+        { url: '/custom-blocks#use-custom-blocks', text: 'Use custom blocks'}
       ]
       }
   #- { url: '/how-does-it-work/', text: 'How Does it Work?' }

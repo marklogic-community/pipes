@@ -74,8 +74,13 @@ LiteGraph.registerNodeType("user/MyFunction", myBlock ); //The first parameter m
 You must then run gradle mlloadmodules
 You can also find details on block implementation here: [Litegraph guides](https://github.com/jagenjo/litegraph.js/tree/master/guides)
 
-## How to tell Pipes to use these blocks
-Put these files in a directory and in application.properties, define a property:
-`customModulesRoot=/my/custom/modules/path`
 
-Now, run the Jar with --deployBackend=true and the custom modules will be used by Pipes.
+<a name="use-custom-blocks"></a>
+## How to tell Pipes to use these blocks
+
+- Put these files in a separate directory. Don't put them in the src/ directory of your DHF project. For instance, if your DHF project is in
+```/usr/dev/my-dhf-project```, create a folder
+```/usr/dev/my-dhf-project/user-modules``` and put the files there
+- Now, to tell Pipes you want to include the user blocks defined in this files, you have to use the ```customModulesRoot``` property. There are 2 ways to do it:
+- - ```java -jar marklogic-pipes-1.1-release.jar --customModulesRoot=/usr/dev/my-dhf-project/user-modules```
+- - Or, put ```customModulesRoot=/usr/dev/my-dhf-project/user-modules``` in application.properties. The application.properties file should be put in the same folder from which you're running the Pipes jar so that it can be read in on start.
