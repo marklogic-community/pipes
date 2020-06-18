@@ -30,6 +30,7 @@ dependencies {
 	implementation 'commons-io:commons-io:2.5'
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    exclude group: "com.vaadin.external.google", module:"android-json"
 	}
   testCompile group: 'org.springframework.security', name: 'spring-security-test', version: '5.3.0.RELEASE'
   annotationProcessor group: 'org.springframework.boot', name: 'spring-boot-configuration-processor'

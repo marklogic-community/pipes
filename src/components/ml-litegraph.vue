@@ -894,9 +894,9 @@ export default {
 
         // Mapping edit (string/Mapvalues block)
         if (block.node_over.properties.mapping) {
-          this.$root.$emit("openMappingEdit", block.node_over.properties.mapping)
+          this.$root.$emit("openMappingEdit", block.node_over)
         } else if (block.node_over.properties.mappingRange) {
-          this.$root.$emit("openMappingEdit", block.node_over.properties.mappingRange, true)
+          this.$root.$emit("openMappingEdit", block.node_over, true)
 
         } else if (block.node_over.properties.mappingCase) {
           this.$root.$emit("openMappingEdit", block.node_over, false, true)
