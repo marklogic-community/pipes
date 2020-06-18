@@ -413,8 +413,8 @@ export default {
     availableDB: function () {
       return this.$store.getters.availableDatabases
     },
-    loadGraph: function () {
-      return this.$store.getters.loadGraph
+    graphToLoad: function () {
+      return this.$store.getters.graphToLoad
     },
     graphTitle: {
       get: function () {
@@ -885,8 +885,8 @@ export default {
             .then((response) => {
               this.registerBlocksByConf(response.data, LiteGraph)
 
-              if (this.loadGraph) {
-                this.getSavedGraph("/marklogic-pipes/savedGraph/" + this.loadGraph + ".json", this.loadGraph)
+              if (this.graphToLoad) {
+                this.getSavedGraph("/marklogic-pipes/savedGraph/" + this.graphToLoad + ".json", this.graphToLoad)
               }
               else {
                 this.resetDhfDefaultGraph()

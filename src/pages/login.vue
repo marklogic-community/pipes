@@ -79,7 +79,7 @@ export default {
           port: response.data.port,
           database: response.data.database,
           host: response.data.host,
-          loadGraph: response.data.loadGraph
+          graphToLoad: response.data.loadGraph
         }).then(() => {
           this.$q.loading.hide()
           this.$router.push({ name: "home" })
