@@ -15,6 +15,10 @@ public class SessionStatus {
   private String database;
   private String host;
 
+
+
+  private String startingGraph;
+
   public String getEnvironment() {
     return environment;
   }
@@ -38,13 +42,21 @@ public class SessionStatus {
   public void setDatabase(String database) {
     this.database = database;
   }
-  
+
   public String getHost() {
     return host;
   }
 
   public void setHost(String host) {
     this.host = host;
+  }
+
+  public String getStartingGraph() {
+    return startingGraph;
+  }
+
+  public void setStartingGraph(String startingGraph) {
+    this.startingGraph = startingGraph;
   }
 
 	public SessionStatus() {

@@ -78,7 +78,8 @@ export default {
           environment: response.data.environment,
           port: response.data.port,
           database: response.data.database,
-          host: response.data.host
+          host: response.data.host,
+          startingGraph: response.data.startingGraph
         }).then(() => {
           this.$q.loading.hide()
           this.$router.push({ name: "home" })

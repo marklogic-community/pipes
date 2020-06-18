@@ -413,6 +413,9 @@ export default {
     availableDB: function () {
       return this.$store.getters.availableDatabases
     },
+    startingGraph: function () {
+      return this.$store.getters.startingGraph
+    },
     graphTitle: {
       get: function () {
         return this.$store.getters.graphTitle
@@ -550,6 +553,7 @@ export default {
     getSavedGraph (uri, graphName) {
       //if(uri!=null)
       console.log("Reloading saved graph " + graphName)
+      console.log("saved graph uri:", uri)
       var self = this; // keep reference for notifications called from catch block
       this.$axios.get('/v1/resources/vppBackendServices?rs:action=GetSavedGraph&rs:uri=' + encodeURI(uri))
         .then((response) => {
@@ -565,7 +569,7 @@ export default {
           this.loadPopUpOpened = false
         })
         .catch((error) => {
-          self.notifyError("GetSavedGraph", error, self);
+          self.notifyError("GetSavedGraph", "Failed to load graph '" + graphName + "'", self);
         })
     },
     listSavedGraphs () {
@@ -770,14 +774,29 @@ export default {
           self.notifyError("SaveGraph", error, self);
         })
     },
-    resetDhfDefaultGraph () {
-      this.$axios.get('/statics/graph/dhfDefaultGraph.json')
-        .then((response) => {
-          this.clearGraphBlocks()
-          let defaultGraph = response.data
-          defaultGraph.models = this.blockModels
-          this.loadGraphFromJson(defaultGraph, false)
-        })
+    resetDhfDefaultGraph (startingGraph) {
+      if (startingGraph == null || startingGraph == "") {
+        this.$axios.get('/statics/graph/dhfDefaultGraph.json')
+          .then((response) => {
+            this.clearGraphBlocks()
+            let defaultGraph = response.data
+            defaultGraph.models = this.blockModels
+            this.loadGraphFromJson(defaultGraph, false)
+          })
+      }
+      else {
+        // this.$root.$emit("loadGraphJsonCall", JSON.parse(startingGraph)); works
+        // this.loadGraphFromJson(JSON.parse(startingGraph)) works
+
+        this.getSavedGraph("/marklogic-pipes/savedGraph/" + startingGraph + ".json", "startingGraph")
+
+        // this.clearGraphBlocks()
+        // let defaultGraph = JSON.parse(startingGraph);
+        // defaultGraph.models = this.blockModels
+        // this.loadGraphFromJson(defaultGraph, false)
+      }
+
+
     },
     saveGraph (event) {
       this.savePopUpOpened = true;
@@ -988,8 +1007,7 @@ export default {
     }
 
     //console.log("Registered blocks : " + JSON.stringify(LiteGraph.getRegisteredNodes()))
-
-    this.resetDhfDefaultGraph()
+    this.resetDhfDefaultGraph(this.startingGraph)
   },
   beforeMount () {
     window.addEventListener("beforeunload", this.browserRefreshConfirm)

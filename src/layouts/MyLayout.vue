@@ -334,7 +334,6 @@ export default {
       this.$root.$emit("exportGraphCall");
     },
     loadDHFDefaultGraph () {
-      // TODO add an "are you sure...?" graph
 
       this.$q.dialog({
         title: 'New Graph',

@@ -5,6 +5,7 @@ Copyright ©2020 MarkLogic Corporation.
 package com.marklogic.pipes.ui.auth;
 
 import com.marklogic.pipes.ui.config.ClientConfig;
+import com.marklogic.pipes.ui.version.PipesVersionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,6 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 /**
  * This is intended for development only, as it simply records a user as being "logged in" by virtue of being able to
@@ -29,6 +34,9 @@ public class AuthController extends AbstractLoggingClass {
 	private ClientConfig clientConfig;
 
 	@Autowired AuthService authService;
+
+  @Autowired
+  PipesVersionService pipesVersionService;
 
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public SessionStatus login(@RequestBody LoginRequest request, HttpSession session, HttpServletResponse response) {
@@ -54,6 +62,14 @@ public class AuthController extends AbstractLoggingClass {
       );
       sessionStatus.setEnvironment(authService.getEnvironmentName());
       sessionStatus.setHost(authService.getDatabaseClient().getHost());
+      sessionStatus.setStartingGraph(clientConfig.getStartingGraph());
+
+//      try {
+//        sessionStatus.setStartingGraph(pipesVersionService.InputStreamToString(new FileInputStream(new File(clientConfig.getStartingGraph()))));
+//      } catch (IOException ioException) {
+//        ioException.printStackTrace();
+//      }
+
 
       return sessionStatus;
     }
