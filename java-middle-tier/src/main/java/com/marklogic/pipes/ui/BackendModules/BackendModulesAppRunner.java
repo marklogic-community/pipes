@@ -40,20 +40,6 @@ public class BackendModulesAppRunner extends AbstractLoggingClass implements App
   @Override
   public void run(ApplicationArguments args) throws Exception {
 
-
-//    // sanity check: does the startingGraph file exist?
-//    if (clientConfig.getStartingGraph() != null) {
-//      File startingGraphFile = new File(clientConfig.getStartingGraph());
-//      if (!startingGraphFile.exists() || !startingGraphFile.isFile()) {
-//        logger
-//          .error(String.format("You've specified the startingGraph parameter but it looks like this file doesn't exist: "
-//            + clientConfig.getStartingGraph()));
-//        logger.info(String.format("Pipes will not start, check the value of the startingGraph parameter."));
-//        System.exit(1);
-//      }
-//    }
-
-
     // sanity check: does the DHF root folder exist?
     File f = new File(clientConfig.getMlDhfRoot());
     if (!f.exists() || !f.isDirectory()) {

@@ -47,8 +47,8 @@ public class ClientConfig {
 
 
 
-  @Value("${startingGraph:#{null}}")
-  private String startingGraph;
+  @Value("${loadGraph:#{null}}")
+  private String loadGraph;
 
   // getters / setters
 
@@ -85,11 +85,11 @@ public class ClientConfig {
     this.customModulesRoot = customModulesRoot;
   }
 
-  public String getStartingGraph() {
-    return startingGraph;
+  public String getLoadGraph() {
+    return loadGraph;
   }
 
-  public void setStartingGraph(String startingGraph) {
-    this.startingGraph = startingGraph;
+  public void setLoadGraph(String loadGraph) {
+    this.loadGraph = loadGraph;
   }
 }

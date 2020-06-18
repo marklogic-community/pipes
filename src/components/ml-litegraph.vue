@@ -413,8 +413,8 @@ export default {
     availableDB: function () {
       return this.$store.getters.availableDatabases
     },
-    startingGraph: function () {
-      return this.$store.getters.startingGraph
+    loadGraph: function () {
+      return this.$store.getters.loadGraph
     },
     graphTitle: {
       get: function () {
@@ -774,8 +774,8 @@ export default {
           self.notifyError("SaveGraph", error, self);
         })
     },
-    resetDhfDefaultGraph (startingGraph) {
-      if (startingGraph == null || startingGraph == "") {
+    resetDhfDefaultGraph (loadGraph) {
+      if (loadGraph == null || loadGraph == "") {
         this.$axios.get('/statics/graph/dhfDefaultGraph.json')
           .then((response) => {
             this.clearGraphBlocks()
@@ -785,15 +785,7 @@ export default {
           })
       }
       else {
-        // this.$root.$emit("loadGraphJsonCall", JSON.parse(startingGraph)); works
-        // this.loadGraphFromJson(JSON.parse(startingGraph)) works
-
-        this.getSavedGraph("/marklogic-pipes/savedGraph/" + startingGraph + ".json", "startingGraph")
-
-        // this.clearGraphBlocks()
-        // let defaultGraph = JSON.parse(startingGraph);
-        // defaultGraph.models = this.blockModels
-        // this.loadGraphFromJson(defaultGraph, false)
+        this.getSavedGraph("/marklogic-pipes/savedGraph/" + loadGraph + ".json", loadGraph)
       }
 
 
@@ -1007,7 +999,7 @@ export default {
     }
 
     //console.log("Registered blocks : " + JSON.stringify(LiteGraph.getRegisteredNodes()))
-    this.resetDhfDefaultGraph(this.startingGraph)
+    this.resetDhfDefaultGraph(this.loadGraph)
   },
   beforeMount () {
     window.addEventListener("beforeunload", this.browserRefreshConfirm)

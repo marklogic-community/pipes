@@ -23,7 +23,7 @@ const store = new Vuex.Store({
     database: state => { return state.database },
     port: state => { return state.port },
     host: state => { return state.host },
-    startingGraph: state => { return state.startingGraph },
+    loadGraph: state => { return state.loadGraph },
     availableDatabases: state => { return state.databases },
     authenticated: state => { return state.authenticated },
     models: state => { return state.models },
@@ -39,14 +39,14 @@ const store = new Vuex.Store({
     }
   },
   actions: {
-    authenticated ({ commit }, { auth, user, environment, port, database, host, startingGraph }) {
+    authenticated ({ commit }, { auth, user, environment, port, database, host, loadGraph }) {
       commit('authenticated', { auth })
       commit('user', user)
       commit('environment', environment)
       commit('port', port)
       commit('database', database)
       commit('host', host)
-      commit('startingGraph', startingGraph)
+      commit('loadGraph', loadGraph)
     }
   },
   mutations: {
@@ -65,8 +65,8 @@ const store = new Vuex.Store({
     host (state, host) {
       state.host = host
     },
-    startingGraph (state, startingGraph) {
-      state.startingGraph = startingGraph;
+    loadGraph (state, loadGraph) {
+      state.loadGraph = loadGraph;
     },
     availableDatabases (state, dbs) {
       state.databases = dbs
