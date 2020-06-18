@@ -774,21 +774,21 @@ export default {
           self.notifyError("SaveGraph", error, self);
         })
     },
-    resetDhfDefaultGraph (loadGraph) {
-      if (loadGraph == null || loadGraph == "") {
+
+    resetDhfDefaultGraph (overrideDefault) {
+      if (overrideDefault)
+        this.$axios.get('/statics/graph/' + overrideDefault)
+      else
         this.$axios.get('/statics/graph/dhfDefaultGraph.json')
+
           .then((response) => {
             this.clearGraphBlocks()
             let defaultGraph = response.data
-            defaultGraph.models = this.blockModels
+
+            defaultGraph.models = defaultGraph.models.concat(this.blockModels)
+
             this.loadGraphFromJson(defaultGraph, false)
           })
-      }
-      else {
-        this.getSavedGraph("/marklogic-pipes/savedGraph/" + loadGraph + ".json", loadGraph)
-      }
-
-
     },
     saveGraph (event) {
       this.savePopUpOpened = true;
@@ -884,6 +884,14 @@ export default {
           this.$axios.get('/statics/library/core.json')
             .then((response) => {
               this.registerBlocksByConf(response.data, LiteGraph)
+
+              if (this.loadGraph) {
+                this.getSavedGraph("/marklogic-pipes/savedGraph/" + this.loadGraph + ".json", this.loadGraph)
+              }
+              else {
+                this.resetDhfDefaultGraph()
+              }
+
             })
 
           this.$axios.get('/statics/library/custom/user.json')
@@ -997,9 +1005,6 @@ export default {
       var storedSettings = this.$q.localStorage.getItem(ADVANCED_SETTINGS_KEY)
       this.advancedSettings.confirmBrowserRefresh = storedSettings.confirmBrowserRefresh != null ? storedSettings.confirmBrowserRefresh : true
     }
-
-    //console.log("Registered blocks : " + JSON.stringify(LiteGraph.getRegisteredNodes()))
-    this.resetDhfDefaultGraph(this.loadGraph)
   },
   beforeMount () {
     window.addEventListener("beforeunload", this.browserRefreshConfirm)
