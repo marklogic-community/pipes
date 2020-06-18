@@ -770,12 +770,18 @@ export default {
           self.notifyError("SaveGraph", error, self);
         })
     },
-    resetDhfDefaultGraph () {
-      this.$axios.get('/statics/graph/dhfDefaultGraph.json')
+    resetDhfDefaultGraph (overrideDefault) {
+      if(overrideDefault)
+        this.$axios.get('/statics/graph/' + overrideDefault)
+        else
+        this.$axios.get('/statics/graph/dhfDefaultGraph.json')
+
         .then((response) => {
           this.clearGraphBlocks()
           let defaultGraph = response.data
-          defaultGraph.models = this.blockModels
+
+           defaultGraph.models = defaultGraph.models.concat(this.blockModels)
+
           this.loadGraphFromJson(defaultGraph, false)
         })
     },
@@ -873,6 +879,8 @@ export default {
           this.$axios.get('/statics/library/core.json')
             .then((response) => {
               this.registerBlocksByConf(response.data, LiteGraph)
+
+              this.resetDhfDefaultGraph()
             })
 
           this.$axios.get('/statics/library/custom/user.json')
@@ -989,7 +997,7 @@ export default {
 
     //console.log("Registered blocks : " + JSON.stringify(LiteGraph.getRegisteredNodes()))
 
-    this.resetDhfDefaultGraph()
+    //this.resetDhfDefaultGraph()
   },
   beforeMount () {
     window.addEventListener("beforeunload", this.browserRefreshConfirm)
