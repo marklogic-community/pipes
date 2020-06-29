@@ -16,6 +16,7 @@ const store = new Vuex.Store({
     graphVersion: "00.01",
     graphAuthor: "",
     graphDescription: "",
+    queryBuilderDB: null
   },
   getters: {
     user: state => { return state.user },
@@ -31,6 +32,7 @@ const store = new Vuex.Store({
     graphVersion: state => { return state.graphVersion },
     graphAuthor: state => { return state.graphAuthor },
     graphDescription: state => { return state.graphDescription },
+    queryBuilderDB: state => { return state.queryBuilderDB },
     helpMode: state => { return state.helpMode },
     sourceBlocks: state => {
       return this.$store.state.models.filter(function (block) {
@@ -85,6 +87,9 @@ const store = new Vuex.Store({
     },
     graphDescription (state, description) {
       state.graphDescription = description
+    },
+    queryBuilderDB (state, db) {
+      state.queryBuilderDB = db
     },
     helpMode (state, mode) {
       state.helpMode = mode

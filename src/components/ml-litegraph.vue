@@ -11,6 +11,7 @@
 
     <BlockPropertyEditDialog />
     <BlockMappingEditDialog />
+    <BlockQueryBuilderDialog />
     <GraphExecutePreview />
     <BlockDescription />
 
@@ -344,6 +345,7 @@ import EntityManager from '../components/entityManager.js';
 import LiteGraphHelper from '../components/liteGraphHelper.js';
 import BlockPropertyEditDialog from '../components/propertyEditDialog.vue';
 import BlockMappingEditDialog from '../components/mappingEditDialog.vue';
+import BlockQueryBuilderDialog from '../components/queryBuilderDialog.vue';
 import GraphExecutePreview from '../components/graphExecutePreview.vue';
 import BlockDescription from '../components/blockDescription.vue';
 import { LocalStorage } from 'quasar';
@@ -360,6 +362,7 @@ export default {
     CSVLoader,
     BlockPropertyEditDialog,
     BlockMappingEditDialog,
+    BlockQueryBuilderDialog,
     GraphExecutePreview,
     BlockDescription
   },
@@ -909,6 +912,7 @@ export default {
     },
     // Double click on nodes
     nodeDoubleClick (block) {
+
       if (block.node_over && block.node_over.properties) {
 
         // Mapping edit (string/Mapvalues block)
@@ -919,6 +923,9 @@ export default {
 
         } else if (block.node_over.properties.mappingCase) {
           this.$root.$emit("openMappingEdit", block.node_over, false, true)
+
+        } else if (block.node_over.properties.queryBuilder) {
+          this.$root.$emit("openQueryBuilderEdit", block.node_over)
 
           // Property edit. selectCase, Lookup, EvalJavaScript, & generic edit window hook
         } else if (this.isNotEmpty(block.node_over.properties.pipesDblClickProp) && block.node_over.properties.editProp) {

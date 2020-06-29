@@ -146,6 +146,7 @@
                     content-class="pipes-tooltip tooltip-square"
                   >
                     When checked, a random document from the collection will be used. Otherwise, the first document in the collection will be used.
+                    If the data is re-ingested, the order of documents is not guaranteed.
                   </q-tooltip>
                 </q-toggle>
               </div>

@@ -13,7 +13,7 @@ const coreFunctions = require("/custom-modules/pipes/coreFunctions.sjs")
 const DataHub = require("/data-hub/5/datahub.sjs");
 const datahub = new DataHub();
 
-function init(LiteGraph){
+function init (LiteGraph) {
 
   //Input for a subgraph
   function GraphInputDHF () {
@@ -158,14 +158,14 @@ function init(LiteGraph){
     let triples = (this.getInputData(1)) ? this.getInputData(1) : [];
     let instance = (this.getInputData(2)) ? this.getInputData(2) : {};
     let attachments = (this.getInputData(3)) ? this.getInputData(3) : {};
-    let hasAttachments = (attachments!=null)
+    let hasAttachments = (attachments != null)
 
     if (xdmp.type(headers) != "object") headers = { "value": headers }
-    if (xdmp.type(triples) != "array" ) triples = [triples]
+    if (xdmp.type(triples) != "array") triples = [triples]
     if (xdmp.type(instance) != "object") instance = { "value": instance }
     if (xdmp.type(attachments) != "object") attachments = { "value": attachments }
 
-xdmp.log(triples)
+    xdmp.log(triples)
     if (this.format.value == "json" && hasAttachments) {
       if (instance) {
         if (instance.toObject) instance = instance.toObject()
@@ -179,9 +179,9 @@ xdmp.log(triples)
 
     let result = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, this.format.value)
 
-    let defaultCollections = (this.graph.inputs["collections"]!=null)?this.graph.inputs["collections"].value:null
-    let defaultUri = (this.graph.inputs["uri"]!=null)?this.graph.inputs["uri"].value:sem.uuidString()
-    let defaultContext = (this.graph.inputs["context"]!=null)?JSON.parse(JSON.stringify(this.graph.inputs["context"].value)):{}
+    let defaultCollections = (this.graph.inputs["collections"] != null) ? this.graph.inputs["collections"].value : null
+    let defaultUri = (this.graph.inputs["uri"] != null) ? this.graph.inputs["uri"].value : sem.uuidString()
+    let defaultContext = (this.graph.inputs["context"] != null) ? JSON.parse(JSON.stringify(this.graph.inputs["context"].value)) : {}
 
     let uri = (this.getInputData(4) != undefined) ? this.getInputData(4) : defaultUri;
     let collections = (this.getInputData(5) != undefined) ? this.getInputData(5) : defaultCollections;
@@ -197,7 +197,7 @@ xdmp.log(triples)
     this.setOutputData(0, content)
   };
 
-  GraphOutputObjectDHF.prototype.onAction = function(action, param) {
+  GraphOutputObjectDHF.prototype.onAction = function (action, param) {
     if (this.properties.type == LiteGraph.ACTION) {
       this.graph.trigger(this.properties.name, param);
     }
@@ -218,9 +218,9 @@ xdmp.log(triples)
 
   LiteGraph.registerNodeType("DHF/envelope", GraphOutputObjectDHF);
 
-//Output for a subgraph
-  function GraphOutputDHF() {
-    this.addInput("output", null );
+  //Output for a subgraph
+  function GraphOutputDHF () {
+    this.addInput("output", null);
     this.name_in_graph = "";
     this.properties = {};
     var that = this;
@@ -230,7 +230,7 @@ xdmp.log(triples)
   GraphOutputDHF.title = "Output";
   GraphOutputDHF.desc = "Output of the graph";
 
-  GraphOutputDHF.prototype.onExecute = function() {
+  GraphOutputDHF.prototype.onExecute = function () {
 
     let output = this.getInputData(0)
     if (output && output.constructor === Array) {
@@ -285,48 +285,46 @@ xdmp.log(triples)
   LiteGraph.GraphOutput = GraphOutputDHF;
   LiteGraph.registerNodeType("DHF/output", GraphOutputDHF);
 
-/*
- String Case
-*/
+  /*
+   String Case
+  */
 
- function stringCaseBlock() {
-  this.addInput("value","xs:string");
-  this.addOutput("nsValue","xs:string");
-  this.stringOperation = this.addWidget("combo","lowercase", "stringOperation", function(v){}, { values:["lowercase","uppercase","Capitalise"]} );
-}
+  function stringCaseBlock () {
+    this.addInput("value", "xs:string");
+    this.addOutput("nsValue", "xs:string");
+    this.stringOperation = this.addWidget("combo", "lowercase", "stringOperation", function (v) { }, { values: ["lowercase", "uppercase", "Capitalise"] });
+  }
 
-stringCaseBlock.title = "String Case";
+  stringCaseBlock.title = "String Case";
 
-stringCaseBlock.prototype.onExecute = function()
-{
-  let input = this.getInputData(0);
-  let newVal = ''
-  if ( input ) {
+  stringCaseBlock.prototype.onExecute = function () {
+    let input = this.getInputData(0);
+    let newVal = ''
+    if (input) {
       let inputVal = String(input)
       switch (this.stringOperation.value) {
-       case 'lowercase':
-       newVal = inputVal.toLowerCase()
-       break;
-       case 'UPPERCASE':
-       newVal = inputVal.toUpperCase()
-       break;
-       case 'Capitalise':
-       newVal = inputVal.split(' ').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ')
-       break;
-       default:
-       newVal = inputVal
-     }
+        case 'lowercase':
+          newVal = inputVal.toLowerCase()
+          break;
+        case 'UPPERCASE':
+          newVal = inputVal.toUpperCase()
+          break;
+        case 'Capitalise':
+          newVal = inputVal.split(' ').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ')
+          break;
+        default:
+          newVal = inputVal
+      }
       this.setOutputData(0, newVal);
-  } else {
-    this.setOutputData(0,"")
+    } else {
+      this.setOutputData(0, "")
+    }
+    console.log("Returned: " + newVal)
   }
-  console.log("Returned: " + newVal)
-}
-LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
+  LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock);
 
-//Show value inside the debug console
-  function Console()
-  {
+  //Show value inside the debug console
+  function Console () {
     this.mode = LiteGraph.ON_EVENT;
     this.size = [60, 20];
     this.addProperty("msg", "");
@@ -360,11 +358,10 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
   LiteGraph.registerNodeType("basic/console", Console);
 
 
-//Show value inside the debug console
-  function NodeScript()
-  {
-    this.size = [60,20];
-    this.addProperty( "onExecute", "" );
+  //Show value inside the debug console
+  function NodeScript () {
+    this.size = [60, 20];
+    this.addProperty("onExecute", "");
     this.addInput("in", "");
     this.addInput("in2", "");
     this.addOutput("out", "");
@@ -410,10 +407,10 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
 
   let configs = [
     {
-      "functionName" : "fn_doc",
-      "blockName" : "doc",
-      "library" : "Query",
-      "inputs":[
+      "functionName": "fn_doc",
+      "blockName": "doc",
+      "library": "Query",
+      "inputs": [
         {
           name: "uri",
           type: "xs:string"
@@ -433,10 +430,10 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
 
     },
     {
-      "functionName" : "fn_collection",
-      "blockName" : "collection",
-      "library" : "Query",
-      "inputs":[
+      "functionName": "fn_collection",
+      "blockName": "collection",
+      "library": "Query",
+      "inputs": [
         {
           name: "collectionName",
           type: "xs:string"
@@ -454,10 +451,10 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
       }
     },
     {
-      "functionName" : "fn_baseUri",
-      "blockName" : "baseUri",
-      "library" : "Advanced",
-      "inputs":[
+      "functionName": "fn_baseUri",
+      "blockName": "baseUri",
+      "library": "Advanced",
+      "inputs": [
         {
           name: "node",
           type: "node"
@@ -475,10 +472,10 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
       }
     },
     {
-      "functionName" : "fn_head",
-      "blockName" : "head",
-      "library" : "Advanced",
-      "inputs":[
+      "functionName": "fn_head",
+      "blockName": "head",
+      "library": "Advanced",
+      "inputs": [
         {
           name: "nodes",
           type: null
@@ -496,10 +493,10 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
       }
     },
     {
-      "functionName" : "fn_count",
-      "blockName" : "count",
-      "library" : "Advanced",
-      "inputs":[
+      "functionName": "fn_count",
+      "blockName": "count",
+      "library": "Advanced",
+      "inputs": [
         {
           name: "list",
           type: null
@@ -517,10 +514,10 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
       }
     },
     {
-      "functionName" : "cts_andQuery",
-      "blockName" : "andQuery",
-      "library" : "Query",
-      "inputs":[
+      "functionName": "cts_andQuery",
+      "blockName": "andQuery",
+      "library": "Query",
+      "inputs": [
         {
           name: "query1",
           type: "cts:query"
@@ -553,12 +550,12 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
           "    if(this.getInputData(3)!=undefined) queries.push(this.getInputData(3));" +
           "    this.setOutputData( 0, cts.andQuery(queries));"
       }
-    } ,
+    },
     {
-      "functionName" : "cts_orQuery",
-      "blockName" : "orQuery",
-      "library" : "Query",
-      "inputs":[
+      "functionName": "cts_orQuery",
+      "blockName": "orQuery",
+      "library": "Query",
+      "inputs": [
         {
           name: "query1",
           type: "cts:query"
@@ -593,10 +590,10 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
       }
     },
     {
-      "functionName" : "cts_search",
-      "blockName" : "search",
-      "library" : "Query",
-      "inputs":[
+      "functionName": "cts_search",
+      "blockName": "search",
+      "library": "Query",
+      "inputs": [
         {
           name: "query",
           type: "cts:query"
@@ -614,10 +611,10 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
       }
     },
     {
-      "functionName" : "fn_stringJoin",
-      "blockName" : "String join",
-      "library" : "Join",
-      "inputs":[
+      "functionName": "fn_stringJoin",
+      "blockName": "String join",
+      "library": "Join",
+      "inputs": [
         {
           name: "string*",
           type: "xs:string*"
@@ -642,10 +639,10 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
       }
     },
     {
-      "functionName" : "cts_collectionQuery",
-      "blockName" : "collectionQuery",
-      "library" : "Query",
-      "inputs":[
+      "functionName": "cts_collectionQuery",
+      "blockName": "collectionQuery",
+      "library": "Query",
+      "inputs": [
         {
           name: "collectionName",
           type: "xs:string"
@@ -664,10 +661,10 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
     },
 
     {
-      "functionName" : "toEnvelope",
-      "blockName" : "to Envelope",
-      "library" : "dhf",
-      "inputs":[
+      "functionName": "toEnvelope",
+      "blockName": "to Envelope",
+      "library": "dhf",
+      "inputs": [
         {
           name: "headers",
           type: "node"
@@ -705,10 +702,10 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
     }
     ,
     {
-      "functionName" : "addProperty",
-      "blockName" : "Add property",
-      "library" : "Enrich",
-      "inputs":[
+      "functionName": "addProperty",
+      "blockName": "Add property",
+      "library": "Enrich",
+      "inputs": [
         {
           "name": "doc",
           "type": "node"
@@ -780,9 +777,8 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
   //xdmp.log(code)
   eval(code)
 
-//Output for a subgraph
-  function GlobalEnvelopeOutput()
-  {
+  //Output for a subgraph
+  function GlobalEnvelopeOutput () {
     //random name to avoid problems with other outputs when added
     var output_name = "output";
     var output_uri = "uri";
@@ -875,10 +871,9 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
 
   LiteGraph.registerNodeType("DHF/StepEnvelopeOutput", GlobalEnvelopeOutput);
 
-  function StringConstant()
-  {
-    this.addOutput("value","xs:string");
-    this.string = this.addWidget("text","string", "Your string", function(v){}, {} );
+  function StringConstant () {
+    this.addOutput("value", "xs:string");
+    this.string = this.addWidget("text", "string", "Your string", function (v) { }, {});
   }
 
   StringConstant.title = "Constant";
@@ -903,14 +898,14 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
     return code;
   }
 
-    LiteGraph.registerNodeType("Generate/constant", StringConstant);
+  LiteGraph.registerNodeType("Generate/constant", StringConstant);
 
   function featureLookupBlock () {
     this.addInput("var1");
     this.addInput("var2");
     this.nbOutputValues = this.addWidget("text", "nbOutputValues", "string", function (v) { }, {});
     console.log("this.nbOutputValues = " + this.nbOutputValues.value)
-    this.database = this.addWidget("text","database", "string", function(v){},  { } );
+    this.database = this.addWidget("text", "database", "string", function (v) { }, {});
     const OUTPUTS = 20;
     for (var vp = 0; vp < OUTPUTS; vp++) {
       var varName = 'value' + vp + 'Path'
@@ -921,19 +916,18 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
   }
   featureLookupBlock.title = "Lookup";
 
-  featureLookupBlock.prototype.onExecute = function()  {
+  featureLookupBlock.prototype.onExecute = function () {
     let var1 = this.getInputData(0);
     let var2 = this.getInputData(1);
     coreFunctions.lookUp(this, var1, var2, this.nbOutputValues.value, this.properties.ctsQuery)
   }
 
-  LiteGraph.registerNodeType("Query/Lookup", featureLookupBlock );
+  LiteGraph.registerNodeType("Query/Lookup", featureLookupBlock);
 
   /*
     featureLookupCollectionPropertyValueBlock
   */
-  function featureLookupCollectionPropertyValueBlock()
-  {
+  function featureLookupCollectionPropertyValueBlock () {
     this.addInput("var1");
     this.nbOutputValues = this.addWidget("text", "nbOutputValues", "string", function (v) { }, {});
     this.database = this.addWidget("text", "database", "string", function (v) { }, {});
@@ -952,39 +946,48 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
   //name to show
   featureLookupCollectionPropertyValueBlock.title = "LookupCollectionPropertyValue";
 
-  featureLookupCollectionPropertyValueBlock.prototype.onExecute = function()
-  {
+  featureLookupCollectionPropertyValueBlock.prototype.onExecute = function () {
     let var1 = this.getInputData(0);
     coreFunctions.lookUpCollectionPropertyValue(this, var1, this.nbOutputValues.value);
   }
 
-  LiteGraph.registerNodeType("Query/LookupCollectionPropertyValue", featureLookupCollectionPropertyValueBlock );
+  LiteGraph.registerNodeType("Query/LookupCollectionPropertyValue", featureLookupCollectionPropertyValueBlock);
 
-  function featureQueryBuilderBlock()
-  {
-    this.addInput("value0");
-    this.addInput("value1");
-    this.ctsQuery = this.addProperty("ctsQuery" );
+  function featureQueryBuilderBlock () {
+    this.addInput("v0");
+    this.addInput("v1");
+    this.addOutput("documents");
+    this.addOutput("ctsQuery");
+    this.addProperty("queryBuilder");
+    this.database = this.addWidget("text", "database", "string", function (v) { }, {});
   }
   featureQueryBuilderBlock.title = "ExpertQueryBuilder";
 
-  featureQueryBuilderBlock.prototype.onExecute = function()
-  {
-    //let output = "lookup(" + this.getInputData(0) + "," + this.getInputData(1) + "," + this.getInputData(2) + ")"
+  featureQueryBuilderBlock.prototype.onExecute = function () {
 
-    let v0 = this.getInputData(0)
-    let v1 = this.getInputData(1)
-    let v2 = this.getInputData(2)
-    let v4 = this.getInputData(3)
-    let v5 = this.getInputData(4)
-    let v6 = this.getInputData(5)
-    let v7 = this.getInputData(6)
-    let template = "`" + this.properties.ctsQuery + "`"
-    let result = eval(eval(template))
-    this.setOutputData(0, result);
+    let query = this.properties.queryBuilder
+
+    let computedQuery = null
+
+
+    // TODO : pass also the list of input in order to replace inside the query if needed
+    if (query.logicalOperator == "all") {
+      computedQuery = cts.andQuery(coreFunctions.computeQueryRecursively(query, this))
+    } else {
+      computedQuery = cts.orQuery(coreFunctions.computeQueryRecursively(query, this))
+    }
+
+    let result = xdmp.invokeFunction(() => {
+      return cts.search(computedQuery);
+    }, { database: xdmp.database(query.selectedDB.label) });
+
+    if (result != null) {
+      this.setOutputData(0, result);
+    }
+    this.setOutputData(1, computedQuery);
   }
 
-  LiteGraph.registerNodeType("Query/ExpertQueryBuilder", featureQueryBuilderBlock );
+  LiteGraph.registerNodeType("Query/ExpertQueryBuilder", featureQueryBuilderBlock);
 
   function mapValueBlock () {
     this.addInput("value");
@@ -995,7 +998,7 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
   }
   mapValueBlock.title = "mapValues";
 
-  mapValueBlock.prototype.onCodeGeneration = function(tempVarPrefix,inputVariables,outputVariables,propertiesWidgets) {
+  mapValueBlock.prototype.onCodeGeneration = function (tempVarPrefix, inputVariables, outputVariables, propertiesWidgets) {
     let code = [];
     code.push('let ' + tempVarPrefix + 'val = ' + inputVariables.input0 + ';');
     code.push('if(' + tempVarPrefix + 'val==undefined) {');
@@ -1068,12 +1071,11 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
     if (output == "#NULL#") output = null
     if (output == "#EMPTY#") output = ""
 
-    this.setOutputData( 0,output);
+    this.setOutputData(0, output);
   }
-  LiteGraph.registerNodeType("Mapping/Map values", mapValueBlock );
+  LiteGraph.registerNodeType("Mapping/Map values", mapValueBlock);
 
-  function mapRangeValueBlock()
-  {
+  function mapRangeValueBlock () {
     this.addInput("value");
     this.addInput("default");
     this.addOutput("mappedValue");
@@ -1082,8 +1084,7 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
   }
   mapRangeValueBlock.title = "mapRangeValues";
 
-  mapRangeValueBlock.prototype.onExecute = function()
-  {
+  mapRangeValueBlock.prototype.onExecute = function () {
     let val = Number(this.getInputData(0));
     let mappedValue = this.properties['mappingRange'].filter(item => {
       return val >= Number(item.from) && val <= Number(item.to)
@@ -1109,10 +1110,10 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
     } else if (this.castOutput.value === 'number') {
       output = Number(output.toString())
     }
-    this.setOutputData( 0,output);
+    this.setOutputData(0, output);
   }
 
-  LiteGraph.registerNodeType("Mapping/mapRangeValues", mapRangeValueBlock );
+  LiteGraph.registerNodeType("Mapping/mapRangeValues", mapRangeValueBlock);
 
   function EvalJavaScriptBlock () {
     this.addInput("var0");
@@ -1140,16 +1141,15 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
     this.setOutputData(0, output);
   }
 
-  LiteGraph.registerNodeType("Advanced/EvalJavaScript", EvalJavaScriptBlock );
+  LiteGraph.registerNodeType("Advanced/EvalJavaScript", EvalJavaScriptBlock);
 
-  function currentDate()
-  {
-    this.size = [300,300];
+  function currentDate () {
+    this.size = [300, 300];
     this.addOutput("current");
     this.addProperty("currentDate", "currentDate", "enum", { values: currentDate.values });
   }
 
-  currentDate.values = ["currentDate","currentDateNoTz","currentDateTime","currentTime"];
+  currentDate.values = ["currentDate", "currentDateNoTz", "currentDateTime", "currentTime"];
   currentDate.title = "Current date(time)";
   currentDate.desc = "Outputs current date(time)";
   currentDate["currentDate"] = { type: "enum", title: "currentDate", values: currentDate.values };
@@ -1158,22 +1158,20 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
     return this.properties.currentDate;
   }
 
-  currentDate.prototype.setValue = function(v)
-  {
+  currentDate.prototype.setValue = function (v) {
     this.properties["value"] = v;
   }
 
-  currentDate.prototype.onExecute = function()
-  {
-    switch(this.properties.currentDate){
-      case "currentDate": this.setOutputData(0, fn.currentDate() ); break;
+  currentDate.prototype.onExecute = function () {
+    switch (this.properties.currentDate) {
+      case "currentDate": this.setOutputData(0, fn.currentDate()); break;
       case "currentDateNoTz": this.setOutputData(0, fn.adjustDateToTimezone(fn.currentDate(), null)); break;
-      case "currentDateTime": this.setOutputData(0, fn.currentDateTime() ); break;
-      case "currentTime": this.setOutputData(0, fn.currentTime() ); break;
+      case "currentDateTime": this.setOutputData(0, fn.currentDateTime()); break;
+      case "currentTime": this.setOutputData(0, fn.currentTime()); break;
     }
   }
 
-  currentDate.prototype.onCodeGeneration = function(tempVarPrefix,inputVariables,outputVariables,propertiesWidgets) {
+  currentDate.prototype.onCodeGeneration = function (tempVarPrefix, inputVariables, outputVariables, propertiesWidgets) {
     let code = [];
     code.push("const " + outputVariables.output0 + " = coreFunctions.getCurrentDate('" + propertiesWidgets.properties.currentDate + "')");
     return code;
@@ -1184,13 +1182,13 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
       return;
   }
 
-  LiteGraph.registerNodeType("Generate/Current Date", currentDate );
+  LiteGraph.registerNodeType("Generate/Current Date", currentDate);
 
   function EpochToDateTime (epoch) {
     return (new Date(Number(epoch))).toISOString()
   }
-  LiteGraph.wrapFunctionAsNode('Format/EpochToDateTime',EpochToDateTime,
-    ['xs:string'],'xs:string');
+  LiteGraph.wrapFunctionAsNode('Format/EpochToDateTime', EpochToDateTime,
+    ['xs:string'], 'xs:string');
 
   function formatDateTimeAuto (srcDate) {
     let result = moment(srcDate).format();
@@ -1199,25 +1197,23 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
     else
       return result
   }
-  LiteGraph.wrapFunctionAsNode('Format/FormatDateTimeAuto',formatDateTimeAuto,
-    ['xs:string'],'xs:string')
+  LiteGraph.wrapFunctionAsNode('Format/FormatDateTimeAuto', formatDateTimeAuto,
+    ['xs:string'], 'xs:string')
 
-  function formatDateAuto(srcDate)
-  {
-    let result = moment(srcDate, ["MM-DD-YYYY", "YYYY-MM-DD","DD/MM/YYYY"]).format("YYYY-MM-DD")
-    if(result=="Invalid date")
+  function formatDateAuto (srcDate) {
+    let result = moment(srcDate, ["MM-DD-YYYY", "YYYY-MM-DD", "DD/MM/YYYY"]).format("YYYY-MM-DD")
+    if (result == "Invalid date")
       return null;
     else
       return result
 
   }
-  LiteGraph.wrapFunctionAsNode('Format/FormatDateAuto',formatDateAuto,
-    ['xs:string'],'xs:string')
+  LiteGraph.wrapFunctionAsNode('Format/FormatDateAuto', formatDateAuto,
+    ['xs:string'], 'xs:string')
 
-  function hashNode()
-  {
-    this.addInput("Node",null);
-    this.addOutput("Hash","xs:string");
+  function hashNode () {
+    this.addInput("Node", null);
+    this.addOutput("Hash", "xs:string");
     this.properties = {};
     var that = this;
     this.hashAlgo = this.addWidget("combo", "hash function", "hash64", function (v) { }, { values: ["hash64", "sha1", "sha256", "sha512"] });
@@ -1248,19 +1244,18 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
     }
   }
 
-  LiteGraph.registerNodeType("Generate/hashNode", hashNode );
+  LiteGraph.registerNodeType("Generate/hashNode", hashNode);
 
-//node constructor class
-  function normalizeSpaceBlock() {
-    this.addInput("value","xs:string");
-    this.addOutput("nsValue","xs:string");
+  //node constructor class
+  function normalizeSpaceBlock () {
+    this.addInput("value", "xs:string");
+    this.addOutput("nsValue", "xs:string");
 
   }
 
   normalizeSpaceBlock.title = "NormalizeSpace";
 
-  normalizeSpaceBlock.prototype.onExecute = function()
-  {
+  normalizeSpaceBlock.prototype.onExecute = function () {
 
     let input = this.getInputData(0);
     if (input) {
@@ -1280,7 +1275,7 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
     }
   }
 
-  LiteGraph.registerNodeType("Clean/NormalizeSpace", normalizeSpaceBlock );
+  LiteGraph.registerNodeType("Clean/NormalizeSpace", normalizeSpaceBlock);
 
   function RegExReplaceBlock () {
     this.addInput("input", "xs:string");
@@ -1300,10 +1295,9 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
     coreFunctions.regExpReplace(this, regEx, replace, global, caseInsensitive);
   }
 
-  LiteGraph.registerNodeType("Transform/RegExReplace", RegExReplaceBlock );
+  LiteGraph.registerNodeType("Transform/RegExReplace", RegExReplaceBlock);
 
-  function stringTemplate()
-  {
+  function stringTemplate () {
     this.addInput("v1");
     this.addInput("v2");
     this.addInput("v3");
@@ -1320,11 +1314,10 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
   stringTemplate.title = "String Templating";
   stringTemplate.desc = "Apply string template on inputs";
 
-  stringTemplate.prototype.onExecute = function()
-  {
-    let v1= this.getInputData(0)
-    let v2= this.getInputData(1)
-    let v3= this.getInputData(2)
+  stringTemplate.prototype.onExecute = function () {
+    let v1 = this.getInputData(0)
+    let v2 = this.getInputData(1)
+    let v3 = this.getInputData(2)
     let v4 = this.v4.value
     let v5 = this.v5.value
     let template = "`" + this.template.value + "`"
@@ -1357,7 +1350,7 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
   };
 
 
-  LiteGraph.registerNodeType("Generate/Templating",stringTemplate);
+  LiteGraph.registerNodeType("Generate/Templating", stringTemplate);
 
 
   function FormatDate () {
@@ -1372,9 +1365,8 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
   }
   FormatDate.title = "Format date";
   FormatDate.desc = "Format date with explicit format";
-  FormatDate.prototype.onExecute = function()
-  {
-    let inputDate= this.getInputData(0)
+  FormatDate.prototype.onExecute = function () {
+    let inputDate = this.getInputData(0)
     let format = this.format.value
     let result = fn.string(moment(inputDate, [format]).format('YYYY-MM-DD'))
     if (result == "Invalid date") result = null;
@@ -1382,7 +1374,7 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
   }
 
 
-  LiteGraph.registerNodeType("Format/FormatDate", FormatDate );
+  LiteGraph.registerNodeType("Format/FormatDate", FormatDate);
 
 
   function CreateTriple () {
@@ -1399,8 +1391,7 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
   CreateTriple.title = "Create Triple";
   CreateTriple.desc = "Create Triple";
 
-  CreateTriple.prototype.onExecute = function()
-  {
+  CreateTriple.prototype.onExecute = function () {
 
     let subject = this.getInputData(0)
     let object = this.getInputData(1)
@@ -1409,8 +1400,8 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
     let subjectIsIRI = this.subjectIsIRI.value
     let objectIsIRI = this.objectIsIRI.value
 
-    if(subjectIsIRI) subject=sem.iri(String(subject))
-    if(objectIsIRI) object=sem.iri(String(object))
+    if (subjectIsIRI) subject = sem.iri(String(subject))
+    if (objectIsIRI) object = sem.iri(String(object))
     predicate = sem.iri(predicate)
 
     this.setOutputData(0, sem.triple(subject, predicate, object));
@@ -1449,7 +1440,7 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
     return code;
   }
 
-  LiteGraph.registerNodeType("Generate/uuid", uuidString );
+  LiteGraph.registerNodeType("Generate/uuid", uuidString);
 
 
   function multicast () {
@@ -1501,7 +1492,7 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
     }
 
   }
-  LiteGraph.registerNodeType("Transform/multicast", multicast );
+  LiteGraph.registerNodeType("Transform/multicast", multicast);
 
 
 
@@ -1566,10 +1557,10 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
     let srcCS = parseInt(this.getInputData(0))
     let tgtCS = parseInt(this.getInputData(1))
     let strWKT = this.getInputData(2)
-    let result = wktReproject(srcCS,tgtCS,strWKT)
-    this.setOutputData(0, result )
+    let result = wktReproject(srcCS, tgtCS, strWKT)
+    this.setOutputData(0, result)
   }
-  LiteGraph.registerNodeType("Transform/GeoReproject", GeoReproject );
+  LiteGraph.registerNodeType("Transform/GeoReproject", GeoReproject);
 
 
   function Array () {
@@ -1595,10 +1586,9 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
     this.setOutputData(0, result)
 
   }
-  LiteGraph.registerNodeType("Join/Array", Array );
+  LiteGraph.registerNodeType("Join/Array", Array);
 
-  function split()
-  {
+  function split () {
     this.addInput("string");
     this.addOutput("v1");
     this.addOutput("v2");
@@ -1610,13 +1600,12 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
   split.title = "Split";
   split.desc = "Split";
 
-  split.prototype.onExecute = function()
-  {
+  split.prototype.onExecute = function () {
     let str = this.getInputData(0)
-    let result = fn.tokenize(str,this.splitChar.value).toArray()
-    for(let i=0;i<fn.max([result.length,3]);i++)
-      this.setOutputData(i, result[i] )
-    this.setOutputData(3, result )
+    let result = fn.tokenize(str, this.splitChar.value).toArray()
+    for (let i = 0; i < fn.max([result.length, 3]); i++)
+      this.setOutputData(i, result[i])
+    this.setOutputData(3, result)
   }
 
   split.prototype.onCodeGeneration = function (tempVarPrefix, inputVariables, outputVariables, propertiesWidgets) {
@@ -1628,10 +1617,9 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
     code.push("const " + outputVariables.output3 + " = " + tempVarPrefix + "splitValues");
     return code;
   }
-  LiteGraph.registerNodeType("Split/Split", split );
+  LiteGraph.registerNodeType("Split/Split", split);
 
-  function jsonPropertyValueQueryBlock()
-  {
+  function jsonPropertyValueQueryBlock () {
     this.addInput("property");
     this.addInput("value");
     this.addOutput("query");
@@ -1662,9 +1650,9 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
     if (this.wildcard.value != "") options.push(this.wildcard.value)
     if (this.exact.value != "") options.push(this.exact.value)
 
-    this.setOutputData(0, cts.jsonPropertyValueQuery(prop,value,options) )
+    this.setOutputData(0, cts.jsonPropertyValueQuery(prop, value, options))
   }
-  LiteGraph.registerNodeType("Query/jsonPropertyValueQuery", jsonPropertyValueQueryBlock );
+  LiteGraph.registerNodeType("Query/jsonPropertyValueQuery", jsonPropertyValueQueryBlock);
 
   function selectCase () {
     this.addInput("value2Test", null);
@@ -1691,10 +1679,10 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
 
     let r = null;
     let o = null;
-    for(let mapCase of this.properties.mappingCase){
-        if(mapCase.value == value2test){
-            o = mapCase.input;
-        }
+    for (let mapCase of this.properties.mappingCase) {
+      if (mapCase.value == value2test) {
+        o = mapCase.input;
+      }
     }
 
     if (o != null) {
@@ -1710,24 +1698,22 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
     this.setOutputData(0, r);
   }
 
-  LiteGraph.registerNodeType("Mapping/selectCase", selectCase );
+  LiteGraph.registerNodeType("Mapping/selectCase", selectCase);
 
-  function xmlValidate()
-  {
-    this.addInput("node",null);
-    this.addOutput("results",null);
+  function xmlValidate () {
+    this.addInput("node", null);
+    this.addOutput("results", null);
 
     this.size = this.computeSize();
     this.serialize_widgets = true;
   }
 
   xmlValidate.title = "xmlValidate";
-  xmlValidate.prototype.onExecute = function()
-  {
+  xmlValidate.prototype.onExecute = function () {
     let inputNode = this.getInputData(0);
     this.setOutputData(0, xdmp.validate(inputNode))
   }
-  LiteGraph.registerNodeType("Validate/XMLValidate", xmlValidate );
+  LiteGraph.registerNodeType("Validate/XMLValidate", xmlValidate);
 
   function jsonValidate () {
     this.addInput("node", null);
@@ -1754,17 +1740,16 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
     }
   }
 
-  LiteGraph.registerNodeType("Validate/JsonValidate", jsonValidate );
+  LiteGraph.registerNodeType("Validate/JsonValidate", jsonValidate);
 
-  function provo()
-  {
-    this.addInput("uri",null);
-    this.addInput("DerivedFrom1",null);
-    this.addInput("DerivedFrom2",null);
-    this.addInput("DerivedFrom3",null);
-    this.addInput("GeneratedBy",null);
-    this.addInput("createdOn",null);
-    this.addOutput("PROV-O",null);
+  function provo () {
+    this.addInput("uri", null);
+    this.addInput("DerivedFrom1", null);
+    this.addInput("DerivedFrom2", null);
+    this.addInput("DerivedFrom3", null);
+    this.addInput("GeneratedBy", null);
+    this.addInput("createdOn", null);
+    this.addOutput("PROV-O", null);
     this.size = this.computeSize();
   }
 
@@ -1790,7 +1775,7 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
     this.setOutputData(0, triples)
   }
 
-  LiteGraph.registerNodeType("Enrich/PROV-O structure", provo );
+  LiteGraph.registerNodeType("Enrich/PROV-O structure", provo);
 
   function xslBlock () {
     this.addInput("node", null);
@@ -1821,12 +1806,11 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
     }
 
   }
-  LiteGraph.registerNodeType("Transform/ApplyXSLT", xslBlock );
+  LiteGraph.registerNodeType("Transform/ApplyXSLT", xslBlock);
 
-  function DistinctValues()
-  {
-    this.addInput("array",null);
-    this.xpath = this.addWidget("text","xpath", "//prop", function(v){});
+  function DistinctValues () {
+    this.addInput("array", null);
+    this.xpath = this.addWidget("text", "xpath", "//prop", function (v) { });
 
     this.addOutput("distinctValues", null);
 
@@ -1842,7 +1826,7 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
     let t = builder.addNode(list.toArray()).toNode()
     this.setOutputData(0, fn.distinctValues(t.xpath(this.xpath.value)).toArray())
   }
-  LiteGraph.registerNodeType("Filter/DistinctValues", DistinctValues );
+  LiteGraph.registerNodeType("Filter/DistinctValues", DistinctValues);
 
   function Highlight () {
     this.addInput("string", null);
@@ -1860,7 +1844,7 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
     let query = this.getInputData(1);
     let highlightKeyword = this.getInputData(2);
 
-    let x = {"str": str};
+    let x = { "str": str };
     let result = new NodeBuilder();
     cts.highlight(x, query,
       function (builder, text, node, queries, start) {
@@ -1871,7 +1855,7 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
     );
     this.setOutputData(0, result.toNode().str)
   }
-  LiteGraph.registerNodeType("Enrich/Highlight", Highlight );
+  LiteGraph.registerNodeType("Enrich/Highlight", Highlight);
 
   function enrichEntity () {
     this.addInput("string", null);
@@ -1888,7 +1872,7 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
     let str = this.getInputData(0);
     let dict = this.getInputData(1);
 
-    function asNode(text) {
+    function asNode (text) {
       return new NodeBuilder()
         .addElement('node', text)
         .toNode();
@@ -1900,16 +1884,15 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
 
     this.setOutputData(0, result)
   }
-  LiteGraph.registerNodeType("Enrich/EntityEnrichment", enrichEntity );
+  LiteGraph.registerNodeType("Enrich/EntityEnrichment", enrichEntity);
 
-  function declarativeMapper()
-  {
-    this.addInput("node",null);
-    this.mappingName = this.addWidget("string","mappingName", "", function(v){});
-    this.mappingVersion = this.addWidget("string","mappingVersion", 1, function(v){});
-    this.WithInstanceRoot = this.addWidget("toggle","WithInstanceRoot", true, function(v){});
+  function declarativeMapper () {
+    this.addInput("node", null);
+    this.mappingName = this.addWidget("string", "mappingName", "", function (v) { });
+    this.mappingVersion = this.addWidget("string", "mappingVersion", 1, function (v) { });
+    this.WithInstanceRoot = this.addWidget("toggle", "WithInstanceRoot", true, function (v) { });
 
-    this.addOutput("mappedNode",null);
+    this.addOutput("mappedNode", null);
     this.serialize_widgets = true;
   }
 
@@ -1931,36 +1914,35 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
     entityType = entityType.substring(0, entityType.lastIndexOf("/"))
     entityType = entityType.substring(entityType.lastIndexOf("/") + 1).split("-")
 
-    let oOutput ={}
-    Object.keys(result.properties).map(item => {oOutput[item]= result.properties[item].output})
+    let oOutput = {}
+    Object.keys(result.properties).map(item => { oOutput[item] = result.properties[item].output })
     let out = {};
     if (this["WithInstanceRoot"].value == true) {
       out[entityType[0]] = oOutput
       out["info"] = {
-        "title" : entityType[0],
-        "version" : entityType[1]
+        "title": entityType[0],
+        "version": entityType[1]
       }
     }
-    else{
-      out= oOutput
+    else {
+      out = oOutput
     }
 
     this.setOutputData(0, out)
   }
-  LiteGraph.registerNodeType("DHF/declarativeMapper", declarativeMapper );
+  LiteGraph.registerNodeType("DHF/declarativeMapper", declarativeMapper);
 
-  function checkPhoneNumber()
-  {
-    this.addInput("phoneNumber",null);
-    this.addInput("countryISO2",null);
-    this.addInput("uri",null);
-    this.addOutput("phoneNumber",null);
-    this.addOutput("countryCode",null);
-    this.addOutput("numberType",null);
-    this.addOutput("qualityResult",null);
-    this.outputFormat = this.addWidget("combo","outputFormat", "INTERNATIONAL", function(v){}, {values: ["NATIONAL","INTERNATIONAL","E164"] } );
-    this.defaultCountry = this.addWidget("string","defaultCountry", "UK", function(v){});
-    this.ifInvalid = this.addWidget("toggle","Output if invalid ?", true, function(v){});
+  function checkPhoneNumber () {
+    this.addInput("phoneNumber", null);
+    this.addInput("countryISO2", null);
+    this.addInput("uri", null);
+    this.addOutput("phoneNumber", null);
+    this.addOutput("countryCode", null);
+    this.addOutput("numberType", null);
+    this.addOutput("qualityResult", null);
+    this.outputFormat = this.addWidget("combo", "outputFormat", "INTERNATIONAL", function (v) { }, { values: ["NATIONAL", "INTERNATIONAL", "E164"] });
+    this.defaultCountry = this.addWidget("string", "defaultCountry", "UK", function (v) { });
+    this.ifInvalid = this.addWidget("toggle", "Output if invalid ?", true, function (v) { });
 
     this.serialize_widgets = true;
   }
@@ -2012,10 +1994,9 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
 
   }
 
-  LiteGraph.registerNodeType("Validate/CheckPhoneNumber", checkPhoneNumber );
+  LiteGraph.registerNodeType("Validate/CheckPhoneNumber", checkPhoneNumber);
 
-  function xpathBlock()
-  {
+  function xpathBlock () {
     this.addInput("node");
     this.addOutput("nodes");
     this.xpath = this.addWidget("text", "xpath", "", function (v) { }, {});
@@ -2059,67 +2040,67 @@ LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock );
     return code;
   };
 
-  LiteGraph.registerNodeType("Transform/xpath", xpathBlock );
+  LiteGraph.registerNodeType("Transform/xpath", xpathBlock);
 
   // Multipurpose Constant Block
-  function MultipurposeConstant()  {
+  function MultipurposeConstant () {
     this.addOutput("value");
-    this.Type = this.addWidget("combo","Type", "string", function(v){}, { values:["string","number","NULL"]} );
-    this.constant = this.addWidget("text","constant", "", function(v){}, {} );
+    this.Type = this.addWidget("combo", "Type", "string", function (v) { }, { values: ["string", "number", "NULL"] });
+    this.constant = this.addWidget("text", "constant", "", function (v) { }, {});
   }
 
   MultipurposeConstant.title = "multiconstant";
 
-  MultipurposeConstant.prototype.onExecute = function()  {
+  MultipurposeConstant.prototype.onExecute = function () {
     let dataType = this.Type.value
     let value = this.constant.value
     let outputval = null
     switch (dataType) {
       case "string":
-        this.setOutputData(0, value )
-      break
+        this.setOutputData(0, value)
+        break
       case "number":
-        this.setOutputData(0, parseFloat( value ) )
-      break
+        this.setOutputData(0, parseFloat(value))
+        break
       case "NULL":
-        this.setOutputData(0, null )
+        this.setOutputData(0, null)
       default:
-      break
+        break
     }
 
   }
   LiteGraph.registerNodeType("Generate/multiConstant", MultipurposeConstant);
 
   // String Padding Block
-function StringPadding()  {
-  this.addInput("input");
-  this.addOutput("output");
-  this.totalWidth = this.addWidget("text","Size", "", function(v){}, {} );
-  this.paddingDirection = this.addWidget("combo","Padding Direction", "left", function(v){}, { values:["left","right"]} );
-  this.paddingChar = this.addWidget("text","Padding Character", "", function(v){}, {} );
-}
-
-StringPadding.title = "padding";
-
-StringPadding.prototype.onExecute = function()  {
-  let totalWidth = this.totalWidth.value
-  let paddingDirection = String(this.paddingDirection.value)
-  let paddingChar = String(this.paddingChar.value)
-  let inputString = String(this.getInputData(0) ? this.getInputData(0) : "")
-  let outputval = inputString
-  switch (paddingDirection) {
-    case "left":
-      outputval = inputString.padStart(totalWidth,paddingChar)
-    break
-    case "right":
-      outputval = inputString.padEnd(totalWidth,paddingChar)
-    break
-    default:
-    break
+  function StringPadding () {
+    this.addInput("input");
+    this.addOutput("output");
+    this.totalWidth = this.addWidget("text", "Size", "", function (v) { }, {});
+    this.paddingDirection = this.addWidget("combo", "Padding Direction", "left", function (v) { }, { values: ["left", "right"] });
+    this.paddingChar = this.addWidget("text", "Padding Character", "", function (v) { }, {});
   }
-  this.setOutputData(0, outputval)
-}
-LiteGraph.registerNodeType("Format/stringPadding", StringPadding);
+
+  StringPadding.title = "padding";
+
+  StringPadding.prototype.onExecute = function () {
+    let totalWidth = this.totalWidth.value
+    let paddingDirection = String(this.paddingDirection.value)
+    let paddingChar = String(this.paddingChar.value)
+    let inputString = String(this.getInputData(0) ? this.getInputData(0) : "")
+    let outputval = inputString
+    switch (paddingDirection) {
+      case "left":
+        outputval = inputString.padStart(totalWidth, paddingChar)
+        break
+      case "right":
+        outputval = inputString.padEnd(totalWidth, paddingChar)
+        break
+      default:
+        break
+    }
+    this.setOutputData(0, outputval)
+  }
+  LiteGraph.registerNodeType("Format/stringPadding", StringPadding);
 
 }
 

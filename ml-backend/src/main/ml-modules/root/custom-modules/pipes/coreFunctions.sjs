@@ -4,9 +4,45 @@ module.exports = {
   lookUpCollectionPropertyValue,
   split,
   lookUp,
-  regExpReplace
+  regExpReplace,
+  computeQueryRecursively
 };
 
+function replaceInputValueQuery(value, block){
+  for(var i = 0 ; i <block.inputs.length;i++){
+      if(value.includes("${v"+i+"}")){
+        return value.replace("${v"+i+"}",block.getInputData(i))
+      }
+  }
+  return value
+}
+
+function computeQueryRecursively(queryString, block){
+  let qArray = []
+ 
+   for(let child of queryString.children){
+     if(child.type == "query-builder-rule"){
+       if(child.query.rule == "cts.collectionQuery"){
+         qArray.push( cts.collectionQuery(replaceInputValueQuery(child.query.value.value, block)))
+       } else if (child.query.rule == "jsonPropertyValueQuery"){
+
+          let value = child.query.value.selectedType == "string" ? fn.string(replaceInputValueQuery(child.query.value.selectedValue.name ?child.query.value.selectedValue.name : child.query.value.selectedValue , block)) : child.query.value.selectedType == "number"  ? fn.number(replaceInputValueQuery(child.query.value.selectedValue.name?child.query.value.selectedValue.name : child.query.value.selectedValue , block)) : replaceInputValueQuery(child.query.value.selectedValue.name?child.query.value.selectedValue.name : child.query.value.selectedValue , block)
+
+          qArray.push( cts.jsonPropertyValueQuery(child.query.value.selectedAttribute, value))
+       } else if (child.query.rule == "wordQuery"){
+          qArray.push( cts.wordQuery(replaceInputValueQuery(child.query.value, block)))
+       }
+     } else if (child.type == "query-builder-group"){
+       if(child.query.logicalOperator == "all"){
+        qArray.push(cts.andQuery(computeQueryRecursively(child.query,block)))
+        console.log(qArray)
+       }else{
+        qArray.push(cts.orQuery(computeQueryRecursively(child.query,block)))
+       }
+     }
+   }
+   return qArray
+ }
 
 function getCurrentDate(dateOption) {
   switch (dateOption) {

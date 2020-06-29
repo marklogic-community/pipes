@@ -4,6 +4,9 @@
 
 #!/bin/sh
 
+# fetch the git tags, they are used for versioning
+git fetch --all
+
 # build the front end SPA UI
 
 echo "Copying overrides..."
