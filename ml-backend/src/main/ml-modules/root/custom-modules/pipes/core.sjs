@@ -430,27 +430,6 @@ function init (LiteGraph) {
 
     },
     {
-      "functionName": "fn_collection",
-      "blockName": "collection",
-      "library": "Query",
-      "inputs": [
-        {
-          name: "collectionName",
-          type: "xs:string"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "docs",
-          "type": "node()*"
-        }
-      ],
-      "function": {
-        "ref": "fn.collection",
-        "code": null
-      }
-    },
-    {
       "functionName": "fn_baseUri",
       "blockName": "baseUri",
       "library": "Advanced",
@@ -514,82 +493,6 @@ function init (LiteGraph) {
       }
     },
     {
-      "functionName": "cts_andQuery",
-      "blockName": "andQuery",
-      "library": "Query",
-      "inputs": [
-        {
-          name: "query1",
-          type: "cts:query"
-        },
-        {
-          name: "query2",
-          type: "cts:query"
-        },
-        {
-          name: "query3",
-          type: "cts:query"
-        },
-        {
-          name: "query4",
-          type: "cts:query"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "query",
-          "type": "cts:query"
-        }
-      ],
-      "function": {
-        "ref": null,
-        "code": "let queries = [];" +
-          "    if(this.getInputData(0)!=undefined) queries.push(this.getInputData(0));" +
-          "    if(this.getInputData(1)!=undefined) queries.push(this.getInputData(1));" +
-          "    if(this.getInputData(2)!=undefined) queries.push(this.getInputData(2));" +
-          "    if(this.getInputData(3)!=undefined) queries.push(this.getInputData(3));" +
-          "    this.setOutputData( 0, cts.andQuery(queries));"
-      }
-    },
-    {
-      "functionName": "cts_orQuery",
-      "blockName": "orQuery",
-      "library": "Query",
-      "inputs": [
-        {
-          name: "query1",
-          type: "cts:query"
-        },
-        {
-          name: "query2",
-          type: "cts:query"
-        },
-        {
-          name: "query3",
-          type: "cts:query"
-        },
-        {
-          name: "query4",
-          type: "cts:query"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "query",
-          "type": "cts:query"
-        }
-      ],
-      "function": {
-        "ref": null,
-        "code": "let queries = [];" +
-          "    if(this.getInputData(0)!=undefined) queries.push(this.getInputData(0));" +
-          "    if(this.getInputData(1)!=undefined) queries.push(this.getInputData(1));" +
-          "    if(this.getInputData(2)!=undefined) queries.push(this.getInputData(2));" +
-          "    if(this.getInputData(3)!=undefined) queries.push(this.getInputData(3));" +
-          "    this.setOutputData( 0, cts.orQuery(queries));"
-      }
-    },
-    {
       "functionName": "cts_search",
       "blockName": "search",
       "library": "Query",
@@ -638,28 +541,6 @@ function init (LiteGraph) {
         "code": null
       }
     },
-    {
-      "functionName": "cts_collectionQuery",
-      "blockName": "collectionQuery",
-      "library": "Query",
-      "inputs": [
-        {
-          name: "collectionName",
-          type: "xs:string"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "query",
-          "type": "cts:query"
-        }
-      ],
-      "function": {
-        "ref": "cts.collectionQuery",
-        "code": null
-      }
-    },
-
     {
       "functionName": "toEnvelope",
       "blockName": "to Envelope",
@@ -899,30 +780,6 @@ function init (LiteGraph) {
   }
 
   LiteGraph.registerNodeType("Generate/constant", StringConstant);
-
-  function featureLookupBlock () {
-    this.addInput("var1");
-    this.addInput("var2");
-    this.nbOutputValues = this.addWidget("text", "nbOutputValues", "string", function (v) { }, {});
-    console.log("this.nbOutputValues = " + this.nbOutputValues.value)
-    this.database = this.addWidget("text", "database", "string", function (v) { }, {});
-    const OUTPUTS = 20;
-    for (var vp = 0; vp < OUTPUTS; vp++) {
-      var varName = 'value' + vp + 'Path'
-      this[varName] = this.addWidget("text", "nbOutputValues", "", function (v) { }, {});
-      this.addOutput("val" + vp);
-    }
-
-  }
-  featureLookupBlock.title = "Lookup";
-
-  featureLookupBlock.prototype.onExecute = function () {
-    let var1 = this.getInputData(0);
-    let var2 = this.getInputData(1);
-    coreFunctions.lookUp(this, var1, var2, this.nbOutputValues.value, this.properties.ctsQuery)
-  }
-
-  LiteGraph.registerNodeType("Query/Lookup", featureLookupBlock);
 
   /*
     featureLookupByValueBlock

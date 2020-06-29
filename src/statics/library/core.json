@@ -382,29 +382,6 @@
     }
   },
   {
-    "functionName": "fn_collection",
-    "blockName": "collection",
-    "title": "Documents from Collection",
-    "description": "Loads documents from a specific database collection",
-    "library": "Query",
-    "inputs": [
-      {
-        "name": "collectionName",
-        "type": "xs:string"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "docs",
-        "type": "node()*"
-      }
-    ],
-    "function": {
-      "ref": "fn.collection",
-      "code": null
-    }
-  },
-  {
     "functionName": "fn_baseUri",
     "blockName": "baseUri",
     "title": "fn.baseUri",
@@ -722,76 +699,6 @@
     }
   },
   {
-    "functionName": "Lookup",
-    "blockName": "Lookup",
-    "title": "Lookup",
-    "description": "Retrieves data from a document matching a query (double click block to configure)",
-    "library": "Query",
-    "events": {
-      "onConfigure": "let v = this.widgets[0].value;if (this.widgets.length == (parseInt(v) + 2)) return; this.widgets=this.widgets.slice(0,2);for (let x=0;x < v ;x++) {this.addWidget(\"text\", \"value\" + x + \"Path\" , this.widgets_values[x+2], function (v) {})};return;",
-      "beforePropSave": "validation.override = true; return ctx.validateCtsQuery(v)"
-    },
-    "inputs": [
-      {
-        "name": "var1",
-        "type": null
-      },
-      {
-        "name": "var2",
-        "type": null
-      }
-    ],
-    "properties": [
-      {
-        "name": "ctsQuery",
-        "type": "cts.collectionQuery(\"${var1}\")"
-      },
-      {
-        "name": "editProp",
-        "type": "ctsQuery"
-      },
-      {
-        "name": "editWindowTitle",
-        "type": "Edit Query"
-      },
-      {
-        "name": "hoverText",
-        "type": "Double click block to edit the lookup query"
-      }
-    ],
-    "widgets": [
-      {
-        "type": "text",
-        "name": "nbOutputValues",
-        "default": "1",
-        "values": "1",
-        "callback": "let nb = this.outputs.length;let vInt = parseInt(v); if (vInt < nb) {for (let i=0;i<(nb - vInt);i++){this.removeOutput(this.outputs.length-1);this.widgets.pop()}} else if (vInt > nb) { this.widgets=this.widgets.slice(0,2 + nb);for(let i=nb;i<vInt;i++) {this.addOutput('value' + i,null);this.addWidget(\"text\", \"value\" + i + \"Path\" , '', function (v) {})};}"
-      },
-      {
-        "type": "combo",
-        "name": "database",
-        "default": "#DATABASES#",
-        "values": []
-      },
-      {
-        "type": "text",
-        "name": "value0Path",
-        "default": "/path/to/value/string()",
-        "values": []
-      }
-    ],
-    "outputs": [
-      {
-        "name": "value0",
-        "type": null
-      }
-    ],
-    "function": {
-      "ref": null,
-      "code": ""
-    }
-  },
-  {
     "functionName": "ExpertQueryBuilder",
     "blockName": "ExpertQueryBuilder",
     "title": "Expert Query Builder",
@@ -993,76 +900,6 @@
     }
   },
   {
-    "functionName": "cts_andQuery",
-    "blockName": "andQuery",
-    "library": "Query",
-    "description": "Builds a query using cts.Query",
-    "title": "cts.andQuery",
-    "inputs": [
-      {
-        "name": "query1",
-        "type": "cts:query"
-      },
-      {
-        "name": "query2",
-        "type": "cts:query"
-      },
-      {
-        "name": "query3",
-        "type": "cts:query"
-      },
-      {
-        "name": "query4",
-        "type": "cts:query"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "query",
-        "type": "cts:query"
-      }
-    ],
-    "function": {
-      "ref": null,
-      "code": ""
-    }
-  },
-  {
-    "functionName": "cts_orQuery",
-    "blockName": "orQuery",
-    "library": "Query",
-    "title": "cts.orQuery",
-    "description": "Builds an or query",
-    "inputs": [
-      {
-        "name": "query1",
-        "type": "cts:query"
-      },
-      {
-        "name": "query2",
-        "type": "cts:query"
-      },
-      {
-        "name": "query3",
-        "type": "cts:query"
-      },
-      {
-        "name": "query4",
-        "type": "cts:query"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "query",
-        "type": "cts:query"
-      }
-    ],
-    "function": {
-      "ref": null,
-      "code": ""
-    }
-  },
-  {
     "functionName": "cts_search",
     "blockName": "search",
     "library": "Query",
@@ -1235,29 +1072,6 @@
     "function": {
       "ref": null,
       "code": ""
-    }
-  },
-  {
-    "functionName": "cts_collectionQuery",
-    "blockName": "collectionQuery",
-    "title": "cts.collectionQuery",
-    "description": "cts.collectionQuery",
-    "library": "Query",
-    "inputs": [
-      {
-        "name": "collectionName",
-        "type": "xs:string"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "query",
-        "type": "cts:query"
-      }
-    ],
-    "function": {
-      "ref": "cts.collectionQuery",
-      "code": null
     }
   },
   {
