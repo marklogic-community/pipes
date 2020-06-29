@@ -595,10 +595,10 @@
     }
   },
   {
-    "functionName": "LookupCollectionPropertyValue",
-    "blockName": "LookupCollectionPropertyValue",
+    "functionName": "LookupByValue",
+    "blockName": "LookupByValue",
     "library": "Query",
-    "title": "LookupCollectionPropertyValue",
+    "title": "LookupByValue",
     "description": "Returns data from documents matching a collection and property value",
     "events": {
       "onConfigure": "console.debug('Lookup block onConfigure event: '+ JSON.stringify(node) + ' widgets.length=' + this.widgets.length + ' inputs:' + this.inputs.length + ' outputs:' + this.outputs.length + ', v:' + this.widgets[0].value);let v = this.widgets[0].value;if (this.widgets.length == (parseInt(v) + 5)) return; this.widgets=this.widgets.slice(0,5);for (let x=0;x < v ;x++) {this.addWidget(\"text\", \"value\" + x + \"Path\" , this.widgets_values[x+5], function (v) {})};return;"

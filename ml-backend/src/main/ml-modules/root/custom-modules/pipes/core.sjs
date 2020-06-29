@@ -925,9 +925,9 @@ function init (LiteGraph) {
   LiteGraph.registerNodeType("Query/Lookup", featureLookupBlock);
 
   /*
-    featureLookupCollectionPropertyValueBlock
+    featureLookupByValueBlock
   */
-  function featureLookupCollectionPropertyValueBlock () {
+  function featureLookupByValueBlock () {
     this.addInput("var1");
     this.nbOutputValues = this.addWidget("text", "nbOutputValues", "string", function (v) { }, {});
     this.database = this.addWidget("text", "database", "string", function (v) { }, {});
@@ -944,14 +944,14 @@ function init (LiteGraph) {
   }
 
   //name to show
-  featureLookupCollectionPropertyValueBlock.title = "LookupCollectionPropertyValue";
+  featureLookupByValueBlock.title = "LookupByValue";
 
-  featureLookupCollectionPropertyValueBlock.prototype.onExecute = function () {
+  featureLookupByValueBlock.prototype.onExecute = function () {
     let var1 = this.getInputData(0);
-    coreFunctions.lookUpCollectionPropertyValue(this, var1, this.nbOutputValues.value);
+    coreFunctions.LookupByValue(this, var1, this.nbOutputValues.value);
   }
 
-  LiteGraph.registerNodeType("Query/LookupCollectionPropertyValue", featureLookupCollectionPropertyValueBlock);
+  LiteGraph.registerNodeType("Query/LookupByValue", featureLookupByValueBlock);
 
   function featureQueryBuilderBlock () {
     this.addInput("v0");
