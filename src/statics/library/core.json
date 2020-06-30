@@ -900,29 +900,6 @@
     }
   },
   {
-    "functionName": "cts_search",
-    "blockName": "search",
-    "library": "Query",
-    "title": "cts.search",
-    "description": "Runs a MarkLogic search",
-    "inputs": [
-      {
-        "name": "query",
-        "type": "cts:query"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "results",
-        "type": ""
-      }
-    ],
-    "function": {
-      "ref": "cts.search",
-      "code": null
-    }
-  },
-  {
     "functionName": "fn_stringJoin",
     "blockName": "String join",
     "library": "Join",
@@ -1123,104 +1100,6 @@
     ],
     "function": {
       "ref": null,
-      "code": null
-    }
-  },
-  {
-    "functionName": "jsonPropertyValueQuery",
-    "blockName": "jsonPropertyValueQuery",
-    "library": "Query",
-    "title": "cts.jsonPropertyValueQuery",
-    "description": "Loads a JSON document by property value",
-    "inputs": [
-      {
-        "name": "property",
-        "type": "xs:string"
-      },
-      {
-        "name": "value",
-        "type": "xs:string"
-      }
-    ],
-    "widgets": [
-      {
-        "type": "combo",
-        "name": "case",
-        "default": "",
-        "values": [
-          "",
-          "case-sensitive",
-          "case-insensitive"
-        ]
-      },
-      {
-        "type": "combo",
-        "name": "diacritic",
-        "default": "",
-        "values": [
-          "",
-          "diacritic-sensitive",
-          "diacritic-insensitive"
-        ]
-      },
-      {
-        "type": "combo",
-        "name": "punctuation",
-        "default": "",
-        "values": [
-          "",
-          "punctuation-sensitive",
-          "punctuation-insensitive"
-        ]
-      },
-      {
-        "type": "combo",
-        "name": "whitespace",
-        "default": "",
-        "values": [
-          "",
-          "whitespace-sensitive",
-          "whitespace-insensitive"
-        ]
-      },
-      {
-        "type": "combo",
-        "name": "stemming",
-        "default": "",
-        "values": [
-          "",
-          "stemmed",
-          "unstemmed"
-        ]
-      },
-      {
-        "type": "combo",
-        "name": "wildcard",
-        "default": "",
-        "values": [
-          "",
-          "wildcarded",
-          "unwildcarded"
-        ]
-      },
-      {
-        "type": "combo",
-        "name": "exact",
-        "default": "",
-        "values": [
-          "",
-          "exact"
-        ]
-      }
-    ],
-    "outputs": [
-      {
-        "name": "query",
-        "type": "cts:query"
-      }
-    ],
-    "function": {
-      "ref": "cts.jsonPropertyValueQuery",
       "code": null
     }
   },

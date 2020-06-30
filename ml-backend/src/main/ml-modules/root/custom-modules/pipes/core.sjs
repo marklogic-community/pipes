@@ -493,27 +493,6 @@ function init (LiteGraph) {
       }
     },
     {
-      "functionName": "cts_search",
-      "blockName": "search",
-      "library": "Query",
-      "inputs": [
-        {
-          name: "query",
-          type: "cts:query"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "results",
-          "type": "node*"
-        }
-      ],
-      "function": {
-        "ref": "cts.search",
-        "code": null
-      }
-    },
-    {
       "functionName": "fn_stringJoin",
       "blockName": "String join",
       "library": "Join",
@@ -1475,41 +1454,6 @@ function init (LiteGraph) {
     return code;
   }
   LiteGraph.registerNodeType("Split/Split", split);
-
-  function jsonPropertyValueQueryBlock () {
-    this.addInput("property");
-    this.addInput("value");
-    this.addOutput("query");
-
-    this.case = this.addWidget("combo", "case", "", function (v) { }, { values: [] });
-    this.diacritic = this.addWidget("combo", "diacritic", "", function (v) { }, { values: [] });
-    this.punctuation = this.addWidget("combo", "punctuation", "", function (v) { }, { values: [] });
-    this.whitespace = this.addWidget("combo", "whitespace", "", function (v) { }, { values: [] });
-    this.stemming = this.addWidget("combo", "stemming", "", function (v) { }, { values: [] });
-    this.wildcard = this.addWidget("combo", "wildcard", "", function (v) { }, { values: [] });
-    this.exact = this.addWidget("combo", "exact", "", function (v) { }, { values: [] });
-  }
-
-  jsonPropertyValueQueryBlock.title = "jsonPropertyValueQuery";
-  jsonPropertyValueQueryBlock.desc = "jsonPropertyValueQuery";
-
-  jsonPropertyValueQueryBlock.prototype.onExecute = function () {
-
-    let prop = this.getInputData(0)
-    let value = this.getInputData(1)
-
-    let options = []
-    if (this.case.value != "") options.push(this.case.value)
-    if (this.diacritic.value != "") options.push(this.diacritic.value)
-    if (this.punctuation.value != "") options.push(this.punctuation.value)
-    if (this.whitespace.value != "") options.push(this.whitespace.value)
-    if (this.stemming.value != "") options.push(this.stemming.value)
-    if (this.wildcard.value != "") options.push(this.wildcard.value)
-    if (this.exact.value != "") options.push(this.exact.value)
-
-    this.setOutputData(0, cts.jsonPropertyValueQuery(prop, value, options))
-  }
-  LiteGraph.registerNodeType("Query/jsonPropertyValueQuery", jsonPropertyValueQueryBlock);
 
   function selectCase () {
     this.addInput("value2Test", null);
