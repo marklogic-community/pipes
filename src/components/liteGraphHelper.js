@@ -31,7 +31,7 @@ const blockMapping = new Map([
   ["geo/GeoReproject", TRANSFORM + "/GeoReproject"],
   ["transform/xpath", TRANSFORM + "/xpath"],
   ["string/Highlight", "Enrich/Highlight"],
-  ["cts/ExpertQueryBuilder", "Query/ExpertQueryBuilder"],
+  ["cts/ExpertQueryBuilder", "Query/Lookup by Query"],
   ["string/EntityEnrichment", "Enrich/EntityEnrichment"],
   ["feature/EvalJavaScript", "Advanced/EvalJavaScript"],
   ["string/Map values", "Mapping/Map values"],
@@ -53,7 +53,7 @@ const blockMapping = new Map([
   ["date/FormatDateAuto", FORMAT + "/FormatDateAuto"],
   ["date/FormatDate", FORMAT + "/FormatDate"],
   ["date/FormatDateTimeAuto", FORMAT + "/FormatDateTimeAuto"],
-  ["feature/LookupCollectionPropertyValue", FIND + "/LookupByValue"]
+  ["feature/LookupCollectionPropertyValue", FIND + "/Lookup by Value"]
 ]);
 
 
