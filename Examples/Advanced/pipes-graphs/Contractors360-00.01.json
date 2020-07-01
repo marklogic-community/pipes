@@ -338,8 +338,8 @@
     }
   ],
   "executionGraph": {
-    "last_node_id": 17,
-    "last_link_id": 24,
+    "last_node_id": 19,
+    "last_link_id": 28,
     "nodes": [
       {
         "id": 2,
@@ -630,116 +630,6 @@
         ]
       },
       {
-        "id": 5,
-        "type": "Sources/contractor-source",
-        "pos": [
-          -703,
-          601
-        ],
-        "size": [
-          305,
-          208
-        ],
-        "flags": {},
-        "order": 4,
-        "mode": 0,
-        "inputs": [
-          {
-            "name": "Node",
-            "type": 0,
-            "link": 3
-          }
-        ],
-        "outputs": [
-          {
-            "name": "ADDRESS LINE 1",
-            "links": [
-              4
-            ]
-          },
-          {
-            "name": "ADDRESS LINE 2",
-            "links": [
-              5
-            ]
-          },
-          {
-            "name": "CITY",
-            "links": [
-              6
-            ]
-          },
-          {
-            "name": "STATE",
-            "links": [
-              9
-            ]
-          },
-          {
-            "name": "VENDOR",
-            "links": [
-              7,
-              23
-            ]
-          },
-          {
-            "name": "VENDOR ID",
-            "links": [
-              8
-            ]
-          },
-          {
-            "name": "ZIP CODE",
-            "links": [
-              10
-            ]
-          }
-        ],
-        "properties": {},
-        "widgets_values": [
-          true
-        ]
-      },
-      {
-        "id": 16,
-        "type": "Query/LookupCollectionPropertyValue",
-        "pos": [
-          -273,
-          331
-        ],
-        "size": {
-          "0": 334.8999938964844,
-          "1": 195
-        },
-        "flags": {},
-        "order": 6,
-        "mode": 0,
-        "inputs": [
-          {
-            "name": "var1",
-            "type": 0,
-            "link": 23
-          }
-        ],
-        "outputs": [
-          {
-            "name": "value0",
-            "links": [
-              22
-            ]
-          }
-        ],
-        "properties": {},
-        "widgets_values": [
-          "1",
-          "advanced-data-hub-STAGING",
-          "business-person-source",
-          "Legal Name",
-          "string",
-          "//instance"
-        ]
-      },
-      {
         "id": 3,
         "type": "DHF/envelope",
         "pos": [
@@ -819,7 +709,7 @@
           {
             "name": "businessPersonList [List]",
             "type": 0,
-            "link": 22
+            "link": 26
           }
         ],
         "outputs": [
@@ -862,42 +752,10 @@
               ],
               "properties": {
                 "name": "result(s) [List]",
+                "type": "",
+                "value": "",
                 "isMain": true
-              },
-              "widgets_values": [
-                "result(s)"
-              ]
-            },
-            {
-              "id": 1,
-              "type": "Graph/input",
-              "pos": [
-                -208,
-                343
-              ],
-              "size": [
-                180,
-                60
-              ],
-              "flags": {},
-              "order": 0,
-              "mode": 0,
-              "outputs": [
-                {
-                  "name": "",
-                  "type": "",
-                  "links": [
-                    12
-                  ]
-                }
-              ],
-              "properties": {
-                "name": "businessPersonList [List]",
-                "isMain": true
-              },
-              "widgets_values": [
-                "businessPersonList"
-              ]
+              }
             },
             {
               "id": 13,
@@ -1047,6 +905,36 @@
               "widgets_values": [
                 false
               ]
+            },
+            {
+              "id": 1,
+              "type": "Graph/input",
+              "pos": [
+                -288,
+                342
+              ],
+              "size": [
+                267.14501953125,
+                69.27265167236328
+              ],
+              "flags": {},
+              "order": 0,
+              "mode": 0,
+              "outputs": [
+                {
+                  "name": "",
+                  "type": "",
+                  "links": [
+                    12
+                  ]
+                }
+              ],
+              "properties": {
+                "name": "businessPersonList [List]",
+                "type": "",
+                "value": "",
+                "isMain": true
+              }
             }
           ],
           "links": [
@@ -1127,6 +1015,154 @@
           "config": {},
           "version": 0.4
         }
+      },
+      {
+        "id": 5,
+        "type": "Sources/contractor-source",
+        "pos": [
+          -703,
+          601
+        ],
+        "size": [
+          305,
+          208
+        ],
+        "flags": {},
+        "order": 4,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "Node",
+            "type": 0,
+            "link": 3
+          }
+        ],
+        "outputs": [
+          {
+            "name": "ADDRESS LINE 1",
+            "links": [
+              4
+            ]
+          },
+          {
+            "name": "ADDRESS LINE 2",
+            "links": [
+              5
+            ]
+          },
+          {
+            "name": "CITY",
+            "links": [
+              6
+            ]
+          },
+          {
+            "name": "STATE",
+            "links": [
+              9
+            ]
+          },
+          {
+            "name": "VENDOR",
+            "links": [
+              7,
+              25
+            ]
+          },
+          {
+            "name": "VENDOR ID",
+            "links": [
+              8
+            ]
+          },
+          {
+            "name": "ZIP CODE",
+            "links": [
+              10
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          true
+        ]
+      },
+      {
+        "id": 18,
+        "type": "Query/ExpertQueryBuilder",
+        "pos": [
+          -233,
+          371
+        ],
+        "size": {
+          "0": 331.14501953125,
+          "1": 115.27265167236328
+        },
+        "flags": {},
+        "order": 6,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "v0",
+            "type": 0,
+            "link": 25
+          }
+        ],
+        "outputs": [
+          {
+            "name": "documents",
+            "links": [
+              26
+            ]
+          },
+          {
+            "name": "ctsQuery",
+            "links": null
+          }
+        ],
+        "properties": {
+          "queryBuilder": {
+            "logicalOperator": "all",
+            "children": [
+              {
+                "type": "query-builder-rule",
+                "query": {
+                  "rule": "jsonPropertyValueQuery",
+                  "operator": "=",
+                  "operand": "jsonPropertyValueQuery",
+                  "value": {
+                    "valueOptions": [
+                      {
+                        "name": "${v0}",
+                        "type": 0
+                      }
+                    ],
+                    "selectedCollection": {
+                      "label": "business-person-source",
+                      "value": "business-person-source",
+                      "sublabel": "259602 documents"
+                    },
+                    "selectedAttribute": "Legal Name",
+                    "selectedValue": {
+                      "name": "${v0}",
+                      "type": 0
+                    },
+                    "selectedType": "string"
+                  }
+                }
+              }
+            ],
+            "selectedDB": {
+              "value": "9729156219676115061",
+              "label": "advanced-data-hub-STAGING"
+            }
+          },
+          "hoverText": "Double click block to use the query builder"
+        },
+        "widgets_values": [
+          "1",
+          "advanced-data-hub-STAGING"
+        ]
       }
     ],
     "links": [
@@ -1259,27 +1295,27 @@
         0
       ],
       [
-        22,
-        16,
-        0,
-        15,
-        0,
-        0
-      ],
-      [
-        23,
-        5,
-        4,
-        16,
-        0,
-        0
-      ],
-      [
         24,
         15,
         0,
         4,
         3,
+        0
+      ],
+      [
+        25,
+        5,
+        4,
+        18,
+        0,
+        0
+      ],
+      [
+        26,
+        18,
+        0,
+        15,
+        0,
         0
       ]
     ],
@@ -1293,6 +1329,6 @@
     "author": "",
     "title": "Contractors360",
     "description": "",
-    "dateExported": "27/04/2020, 14:58:43"
+    "dateExported": "01/07/2020, 10:34:19"
   }
 }
