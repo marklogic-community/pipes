@@ -3,7 +3,7 @@
 - Tag the commit in the candidate branch with "1.1-release" (example for release 1.1):
     - ```git tag -a 1.1-release```
 - Build the jar
-- Go to https://github.com/marklogic-community/pipes/releases:
+- Go to https://github.com/marklogic-community/pipes/releases
     - create a new Draft release and write a description
     - list issues closed (look at previous releases)
 - Assign the new tag ("1.1-release" in our example)
