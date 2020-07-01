@@ -76,7 +76,7 @@ public class Application {
 
             } catch (IOException e) {
               logger.error(String.format("Trying to add a custom module at this location, but failing: \""
-                  + customJsonPath + "\". " + "Check your application.properties. Pipes will not start."));
+                  + customJsonPath + "\". " + "Check the 'customModulesRoot' argument value. Pipes will not start."));
               logger.error(e.getMessage());
             } catch (JSONException e) {
               logger.error(

@@ -30,6 +30,8 @@ import org.springframework.stereotype.Repository;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.regex.Pattern;
@@ -115,8 +117,9 @@ public class BackendModulesManager {
     // output version information
       System.out.println("--------------------\n"+ javaVersionInfo+"--------------------");
 
-
-    if (!javaVersionInfo.contains(version) || !javaVersionInfo.contains(build)) {
+    // it will deploy modules if versions mismatch
+    // and if using custom blocks
+    if (!javaVersionInfo.contains(version) || !javaVersionInfo.contains(build) || clientConfig.getCustomModulesRoot()!=null) {
 
       logger.info("{} missmatch with Pipes backend modules, Version: {} | Build: {}",
         javaVersionInfo, version, build);
@@ -172,6 +175,14 @@ public class BackendModulesManager {
         String.format("Aborting Pipes start-up - Failed to load modules: "+e.getMessage()),e);
       throw e;
     }
+    finally  {
+      try {
+        FileUtils.deleteDirectory(new File(clientConfig.getMlDhfRoot()+File.separator+".pipes"));
+      } catch (IOException ioException) {
+        logger.error("Failed to delete folder "+clientConfig.getMlDhfRoot()+File.separator+".pipes");
+        ioException.printStackTrace();
+      }
+    }
   }
 
   private void manageMarkLogicBackendModules(fileOperation operation) throws Exception {
@@ -221,10 +232,12 @@ public class BackendModulesManager {
       //final InputStream is = Application.class.getResourceAsStream(resourcesDhfRoot + filePath);
       final File source = new File(CUSTOMSJSPATH);
 
-      final File dest = new File(clientConfig.getMlDhfRoot() + File.separator+".pipes" + File.separator +CUSTOMSJSNAME);
+      final File dest = new File(clientConfig.getMlDhfRoot() + File.separator+".pipes" + customModulesPathPrefix + File.separator +CUSTOMSJSNAME);
       try {
         if (operation== fileOperation.Copy) {
-          FileUtils.copyFile(source,dest, false);
+          //FileUtils.copyFile(source,dest, false);
+          Files.createDirectories(Paths.get(clientConfig.getMlDhfRoot() + File.separator +".pipes" + customModulesPathPrefix));
+          Files.copy(source.toPath(), dest.toPath());
           logger.info("Copied "+source.getAbsolutePath()+" to "+dest.getAbsolutePath());
 
         }
