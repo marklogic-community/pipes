@@ -82,7 +82,7 @@ You can also find details on block implementation here: [Litegraph guides](https
 ```/usr/dev/my-dhf-project```, create a folder
 ```/usr/dev/my-dhf-project/user-modules``` and put the files there
 - Now, to tell Pipes you want to include the user blocks defined in these files, you have to use the ```customModulesRoot``` property. There are 2 ways to do it:
-  - ```java -jar marklogic-pipes-1.1-release.jar --customModulesRoot=/usr/dev/my-dhf-project/user-modules```
+  - ```java -jar marklogic-pipes-1.2-release.jar --customModulesRoot=/usr/dev/my-dhf-project/user-modules```
   - Or, put ```customModulesRoot=/usr/dev/my-dhf-project/user-modules``` in application.properties. The application.properties file should be put in the same folder from which you're running the Pipes jar so that it can be read in on start.
 - In the Pipes blocks menu, you should now see a "user" group. If you don't see it, you probably have to refresh your browser or even clear the browser history:
 

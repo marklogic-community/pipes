@@ -34,7 +34,7 @@ To use Pipes you will need to have an instance of MarkLogic with the [Data Hub](
 Run pipes from the command line:
 
 ```
-java -jar marklogic-pipes-1.1.jar
+java -jar marklogic-pipes-1.2.jar
 ```
 
 As soon as Pipes starts, it will print out the port number it's running on. Example, Pipes will be available on: [localhost:8080](http://localhost:8080) if the port is 8080.
@@ -50,7 +50,7 @@ Pipes has several properties that can be used on the command line, when starting
 
     Example:
     
-    ```java -jar marklogic-pipes-1.1.jar --environmentName=production```
+    ```java -jar marklogic-pipes-1.2.jar --environmentName=production```
 
     will first read gradle.properties of the project and then gradle-production.properties
 
@@ -64,11 +64,11 @@ Pipes has several properties that can be used on the command line, when starting
 
     Example:
 
-    ```java -jar marklogic-pipes-1.1.jar --mlDhfRoot=/users/user/dev/test-pipes```
+    ```java -jar marklogic-pipes-1.2.jar --mlDhfRoot=/users/user/dev/test-pipes```
 
     or, on Windows:
 
-    ```java -jar marklogic-pipes-1.1.jar --mlDhfRoot=C:/Users/user/dev/test-pipes```
+    ```java -jar marklogic-pipes-1.2.jar --mlDhfRoot=C:/Users/user/dev/test-pipes```
 
 
 #### Backend modules
@@ -87,7 +87,7 @@ Pipes modules can be separately installed using [mlBundle](https://github.com/ma
     }
     
     dependencies {
-        mlBundle "com.marklogic:pipes-modules:1.1"
+        mlBundle "com.marklogic:pipes-modules:1.2"
     }
     ```
 
