@@ -451,27 +451,6 @@ function init (LiteGraph) {
       }
     },
     {
-      "functionName": "fn_head",
-      "blockName": "head",
-      "library": "Advanced",
-      "inputs": [
-        {
-          name: "nodes",
-          type: null
-        }
-      ],
-      "outputs": [
-        {
-          "name": "node",
-          "type": null
-        }
-      ],
-      "function": {
-        "ref": "fn.head",
-        "code": null
-      }
-    },
-    {
       "functionName": "fn_count",
       "blockName": "count",
       "library": "Advanced",
@@ -759,6 +738,32 @@ function init (LiteGraph) {
   }
 
   LiteGraph.registerNodeType("Generate/constant", StringConstant);
+
+
+
+  function fn_head () {
+    this.addInput("list");
+    this.addOutput("firstItem");
+
+  }
+
+  //name to show
+  fn_head.title = "head";
+
+  fn_head.prototype.onExecute = function () {
+    let input=this.getInputData(0)
+    let output = null
+    if(xdmp.type(input)=="array") {
+      if (input.length > 0)
+        output = input[0]
+    }
+    else
+      output=fn.head(input)
+    this.setOutputData(0,output)
+  }
+
+  LiteGraph.registerNodeType("Advanced/fn_head", fn_head);
+
 
   /*
     featureLookupByValueBlock
