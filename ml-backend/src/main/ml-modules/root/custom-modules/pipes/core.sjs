@@ -762,7 +762,7 @@ function init (LiteGraph) {
     this.setOutputData(0,output)
   }
 
-  LiteGraph.registerNodeType("Advanced/fn_head", fn_head);
+  LiteGraph.registerNodeType("Advanced/head", fn_head);
 
 
   /*
