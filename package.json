@@ -16,7 +16,7 @@
     "axios": "^0.18.1",
     "file-saver": "^2.0.2",
     "litegraph.js": "^0.7.0",
-    "quasar": "^1.4.5",
+    "quasar": "^1.12.8",
     "vue-edit-json": "^1.0.4",
     "vue-json-edit": "^1.2.0",
     "vue-json-pretty": "^1.6.0",

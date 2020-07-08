@@ -74,7 +74,7 @@ task runQuasarBuild(type:Exec) {
     commandLine 'cmd', '/c', 'quasar build'
   } else {
     executable "quasar"
-    args "build"
+    args 'build','--modern'
   }
 
   doLast {
