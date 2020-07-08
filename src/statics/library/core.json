@@ -1173,6 +1173,9 @@
     "title": "Generate Array",
     "library": "Join",
     "description": "Creates an array from individual inputs. If one of the inputs is itself an array then it will be flattened first",
+    "events": {
+      "onConfigure": "let nb = this.inputs.length;for(let i=0;i<nb;i++) {this.removeInput(0);};for(let i=0;i<parseInt(this.widgets[0].value);i++) this.addInput('item' + i,null);"
+    },
     "inputs": [
       {
         "name": "item1",
@@ -1199,6 +1202,14 @@
       {
         "name": "array",
         "type": null
+      }
+    ],
+    "widgets": [
+      {
+        "type": "text",
+        "name": "nbInputs",
+        "default": "5",
+        "values": []
       }
     ],
     "function": {

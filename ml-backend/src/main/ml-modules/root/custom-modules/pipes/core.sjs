@@ -751,15 +751,15 @@ function init (LiteGraph) {
   fn_head.title = "head";
 
   fn_head.prototype.onExecute = function () {
-    let input=this.getInputData(0)
+    let input = this.getInputData(0)
     let output = null
-    if(xdmp.type(input)=="array") {
+    if (xdmp.type(input) == "array") {
       if (input.length > 0)
         output = input[0]
     }
     else
-      output=fn.head(input)
-    this.setOutputData(0,output)
+      output = fn.head(input)
+    this.setOutputData(0, output)
   }
 
   LiteGraph.registerNodeType("Advanced/head", fn_head);
@@ -1411,6 +1411,7 @@ function init (LiteGraph) {
     this.addInput("item4");
     this.addInput("item5");
     this.addOutput("array");
+    this.addWidget("text", "nbInputs", 5, function (v) { }, { min: 0, max: 1000 });
   }
 
   Array.title = "Array";
@@ -1418,7 +1419,7 @@ function init (LiteGraph) {
 
   Array.prototype.onExecute = function () {
     let result = []
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < this.widgets[0].value; i++) {
       let value = this.getInputData(i)
       if (value != null)
         result = result.concat(value)

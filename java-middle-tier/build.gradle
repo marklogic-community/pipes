@@ -172,7 +172,7 @@ task runQuasarDev(type:Exec) {
     commandLine 'cmd', '/c', 'quasar dev;'
   } else {
     executable "quasar"
-    args "dev"
+    args "dev", "--modern"
   }
 
   doLast {
