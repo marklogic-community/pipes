@@ -1174,7 +1174,7 @@
     "library": "Join",
     "description": "Creates an array from individual inputs. If one of the inputs is itself an array then it will be flattened first",
     "events": {
-      "onConfigure": "let nb = this.inputs.length;for(let i=0;i<nb;i++) {this.removeInput(0);};for(let i=0;i<parseInt(this.widgets[0].value);i++) this.addInput('item' + i,null);"
+      "onConfigure": "for(let i=this.inputs.length;i<parseInt(this.widgets[0].value);i++) this.addInput('item' + i,null);"
     },
     "inputs": [
       {
@@ -1209,7 +1209,8 @@
         "type": "text",
         "name": "nbInputs",
         "default": "5",
-        "values": []
+        "values": [],
+        "callback": "if (v<this.inputs.length) {this.widgets[0].value=this.inputs.length;} else { for(let i=this.inputs.length;i<parseInt(v);i++) this.addInput('item' + i,null); }"
       }
     ],
     "function": {
