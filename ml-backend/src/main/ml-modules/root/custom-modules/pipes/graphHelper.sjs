@@ -151,6 +151,9 @@ function createGraphNodeFromModel(blockDef) {
       code.push("const "+outputVariables['output'+this.ioSetup.outputs["Node"]]+" = "+tempVarPrefix+"out;");
       code.push("const "+outputVariables['output'+this.ioSetup.outputs["Prov"]]+"  = "+tempVarPrefix+"prov;");
     }
+    xdmp.trace(TRACEID_DETAIL, '*************code-start*****************');
+    xdmp.trace(TRACEID_DETAIL, code);
+    xdmp.trace(TRACEID_DETAIL, '*************code-stop******************');
     return code;
   }
 
