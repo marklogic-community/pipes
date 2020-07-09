@@ -354,11 +354,13 @@ function executeGraphFromJson(jsonGraph,uri, input,context){
   graph.addInput("input", "");
   graph.addInput("uri", "");
   graph.addInput("collections", "");
+  graph.addInput("permissions", "");
   graph.addInput("context", "");
   graph.addOutput("output", "");
   graph.setInputData("input",input)
   graph.setInputData("uri",uri)
   graph.setInputData("collections", xdmp.documentGetCollections(uri))
+  graph.setInputData("permissions", xdmp.documentGetPermissions(uri))
   graph.setInputData("context",context)
   graph.start();
 

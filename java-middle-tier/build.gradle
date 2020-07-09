@@ -24,7 +24,7 @@ dependencies {
   implementation 'org.apache.httpcomponents:httpclient:4.5.10'
 
   implementation 'com.marklogic:ml-app-deployer:3.17.0'
-  implementation 'com.marklogic:marklogic-data-hub:5.2.0'
+  implementation 'com.marklogic:marklogic-data-hub:5.2.2'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.session:spring-session-core'
 	implementation 'commons-io:commons-io:2.5'

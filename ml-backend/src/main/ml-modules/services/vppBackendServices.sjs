@@ -3,8 +3,8 @@
 const blocksCollection = "marklogic-pipes/type/savedBlock";
 const graphsCollection = "marklogic-pipes/type/savedGraph";
 
-const PIPESVERSION = "@PIPESVERSIONTOKEN@"
-const PIPESBUILD = "@PIPESBUILDTOKEN@"
+const PIPESVERSION = "@PIPESVERSIONTOKEN@";
+const PIPESBUILD = "@PIPESBUILDTOKEN@";
 
 const TRACE_ID = "pipes-vpp";
 const TRACE_ID_DETAILS = "pipes-vpp-details";
@@ -12,20 +12,21 @@ const TRACE_ID_DETAILS = "pipes-vpp-details";
 function mapper(item, cfg) {
 
   if (cfg.entities != null) {
-    let cols = xdmp.documentGetCollections(item.uri)
-    const invokeGetTriples = getTriplesByUri(item.uri)
+    let cols = xdmp.documentGetCollections(item.uri);
+    const invokeGetTriples = getTriplesByUri(item.uri);
     let result = {
       index: item.index,
       uri: item.uri,
       score: item.score,
       fitness: item.fitness,
       collections: xdmp.documentGetCollections(item.uri),
+      permissions: xdmp.documentGetPermissions(item.uri),
       triplesFromDocument: invokeGetTriples.getResults().length,
       document: {}
 
     }
 
-    let entity = null
+    let entity = null;
     for (let col of cols)
       if (cfg.entities[col] != null) {
         entity = col;
@@ -63,6 +64,7 @@ function mapper(item, cfg) {
       score: item.score,
       fitness: item.fitness,
       collections: xdmp.documentGetCollections(item.uri),
+      permissions: xdmp.documentGetPermissions(item.uri),
       triplesFromDocument: fn.count(invokeGetTriples.getResults()),
       document: item
 
@@ -355,7 +357,14 @@ function InvokeExecuteGraph(input) {
 
         var startTime = new Date();
 
-        graphResult = gHelper.executeGraphFromJson(execContext.jsonGraph, uri, doc, {collections: xdmp.documentGetCollections(uri)})
+        graphResult = gHelper.executeGraphFromJson(
+          execContext.jsonGraph, 
+          uri, 
+          doc, 
+          { 
+            collections: xdmp.documentGetCollections(uri), 
+            permissions: xdmp.documentGetPermissions(uri)
+          });
 
         var endTime = new Date();
         var executionTime = endTime - startTime;
