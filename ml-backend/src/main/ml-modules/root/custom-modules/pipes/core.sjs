@@ -796,7 +796,6 @@ function init (LiteGraph) {
 
   function featureQueryBuilderBlock () {
     this.addInput("v0");
-    this.addInput("v1");
     this.addOutput("documents");
     this.addOutput("ctsQuery");
     this.addProperty("queryBuilder");
