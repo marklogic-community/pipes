@@ -481,7 +481,7 @@ function getFieldsByCollection(collection, customURI) {
           let originalPath = String(xdmp.path(node))
 
           //let path = originalPath.replace(/[A-z]+-node\('([\s]*)'\)/g, "$1").replace(/text\('([\s]+)'\)/g, "$1").replace(/text\('([\s\w]+)'\)/g, "node('$1')").replace(/[A-z]+-node\('([\s]*)'\)/g, "node('$1')")
-          let pathTokens = originalPath.replace(/(\/object-node\(\))/g,"").replace(/(\[\d+\])/g,"").split("/")
+          let pathTokens = originalPath.replace(/(\/object-node\(\)|\/text\(\))/g,"").replace(/(\[\d+\])/g,"").split("/")
 
           pathTokens = pathTokens.map((item,index)=>{
             if(item=="") return null
