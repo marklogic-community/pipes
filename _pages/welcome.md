@@ -42,34 +42,52 @@ As soon as Pipes starts, it will print out the port number it's running on. Exam
 <a name="configure-pipes"></a>
 ## Pipes options (command line parameters)
 
-Pipes has several properties that can be used on the command line, when starting the Pipes jar:
+Pipes has several properties that can be used on the command line, when starting the Pipes jar. 
 
-- ```environmentName```
-    
-    If you have multiple environments in your DHF project, you can tell Pipes which one to use.
+Alternatively, you can put these into an application.properties file in the same directory where you've copied the Pipes jar to.
 
-    Example:
-    
-    ```java -jar marklogic-pipes-1.2.jar --environmentName=production```
+### Gradle environment name
+```environmentName```
 
-    will first read gradle.properties of the project and then gradle-production.properties
+If you have multiple environments in your DHF project, you can tell Pipes which one to use.
 
-- ```server.port```
+Example:
 
-    Pipes will run on a first availble port it finds counting from 8000. If you want to specify your own port, use this parmeter
+    java -jar marklogic-pipes-1.2.jar --environmentName=production
 
-- ```mlDhfRoot```
+will first read gradle.properties of the project and then gradle-production.properties
 
-    If you want to run Pipes from another folder (not from the DHF root project folder), you have to use this parameter to tell Pipes where to look for the DHF project.
+### Pipes port
 
-    Example:
+```server.port```
 
-    ```java -jar marklogic-pipes-1.2.jar --mlDhfRoot=/users/user/dev/test-pipes```
+Pipes will run on a first availble port it finds counting from 8000. If you want to specify your own port, use this parmeter
 
-    or, on Windows:
+### DHF Project Root
 
-    ```java -jar marklogic-pipes-1.2.jar --mlDhfRoot=C:/Users/user/dev/test-pipes```
+```mlDhfRoot```
 
+If you want to run Pipes from another folder (i.e. you haven't copied the Pipes jar to the DHF root project folder), you can to use this parameter to tell Pipes where to look for the DHF project.
+
+Example:
+
+    java -jar marklogic-pipes-1.2.jar --mlDhfRoot=/users/user/dev/test-pipes
+
+or, on Windows:
+
+    java -jar marklogic-pipes-1.2.jar --mlDhfRoot=C:/Users/user/dev/test-pipes
+
+### Open a graph automatically on Pipes log-in
+
+You can tell Pipes to load a graph saved in the database by using this parameter
+
+```loadGraph```
+
+Example:
+
+    java -jar marklogic-pipes-1.2.jar --loadGraph=mygraph
+
+will load a graph saved as "mygraph to the database as soon as you log in to Pipes.
 
 #### Backend modules
 
