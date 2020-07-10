@@ -85,13 +85,8 @@ public class BackendModulesManager {
 
     // get the version info from front end
     String javaVersionInfo= null;
-    try {
       javaVersionInfo = versionService.get();
-    } catch (IOException e) {
-      e.printStackTrace();
-      logger.error("Unable to read version information");
-      System.exit(1);
-    }
+
 
     // compare and stop the service if not working
 
