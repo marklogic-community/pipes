@@ -648,7 +648,7 @@
     "description": "Executes an adhoc Javascript block",
     "library": "Advanced",
     "events": {
-      "beforePropSave": "var result=true;try{eval('var var1,var2,var3,var4,var5;'+v)}catch(e){validation.message=e;result=false};return result"
+      "beforePropSave": "var result=true; const regex = /(xdmp\\.(eval|invoke|documentInsert|xqueryEval|xsltEval))/g;const found = v.match(regex);if (found == null) {result=true} else {validation.message='Possible code injection ('+regex+')';result=false};return result"
     },
     "inputs": [
       {
