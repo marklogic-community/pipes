@@ -1206,7 +1206,7 @@
         "name": "nbInputs",
         "default": "5",
         "values": [],
-        "callback": "if (v<this.inputs.length) {this.widgets[0].value=this.inputs.length;} else { for(let i=this.inputs.length;i<parseInt(v);i++) this.addInput('item' + i,null); }"
+        "callback": "if (v<this.inputs.length) {this.widgets[0].value=this.inputs.length;} else { for(let i=this.inputs.length+1;i<parseInt(v)+1;i++) this.addInput('item' + i,null); }"
       }
     ],
     "function": {
