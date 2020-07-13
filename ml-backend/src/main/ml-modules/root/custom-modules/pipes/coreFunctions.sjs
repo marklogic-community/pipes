@@ -8,6 +8,8 @@ module.exports = {
   computeQueryRecursively
 };
 
+const TRACE_ID = "vpp-coreFunctions";
+
 function replaceInputValueQuery (value, block) {
   for (var i = 0; i < block.inputs.length; i++) {
     if (value.includes("${v" + i + "}")) {
@@ -35,7 +37,7 @@ function computeQueryRecursively (queryString, block) {
     } else if (child.type == "query-builder-group") {
       if (child.query.logicalOperator == "all") {
         qArray.push(cts.andQuery(computeQueryRecursively(child.query, block)))
-        console.log(qArray)
+        xdmp.trace(TRACE_ID, qArray)
       } else {
         qArray.push(cts.orQuery(computeQueryRecursively(child.query, block)))
       }

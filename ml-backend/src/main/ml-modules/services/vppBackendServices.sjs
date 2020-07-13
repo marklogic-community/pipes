@@ -6,6 +6,9 @@ const graphsCollection = "marklogic-pipes/type/savedGraph";
 const PIPESVERSION = "@PIPESVERSIONTOKEN@"
 const PIPESBUILD = "@PIPESBUILDTOKEN@"
 
+const TRACE_ID = "pipes-vpp";
+const TRACE_ID_DETAILS = "pipes-vpp-details";
+
 function mapper(item, cfg) {
 
   if (cfg.entities != null) {
@@ -77,10 +80,10 @@ function parseGroup(group) {
 
   if (group.children != null) {
     let queries = []
-    xdmp.log(group)
+    xdmp.trace(TRACE_ID, group)
 
     for (let q of group.children) {
-      xdmp.log(q)
+      xdmp.trace(TRACE_ID, q)
       switch (q.type) {
         case "query-builder-rule":
           if (q.query.rule == "collection")
@@ -99,7 +102,7 @@ function parseGroup(group) {
 
 
     }
-    xdmp.log(queries)
+    xdmp.trace(TRACE_ID, queries)
     switch (group["logicalOperator"]) {
       case "and":
         return cts.andQuery(queries)
@@ -235,21 +238,15 @@ function getCollectionsModels(ctx) {
           })
         })
       } else {
-
         for (let col of fn.subsequence(cts.collections(), 1, 15)) {
           collections[col] = getFieldsByCollection(col, "")
 
         }
-
       }
       // collections[collection] =  getFieldsByCollection(collection)
-
-
       return collections
     }
   }
-
-
 }
 
 function checkDocumentExists(uri) {
@@ -267,10 +264,7 @@ function getCollectionDetails() {
           "sublabel": cts.frequency(collection) + " documents"
 
         }
-
       })
-
-
     }
   }
 }
@@ -347,18 +341,17 @@ function InvokeExecuteGraph(input) {
 
         uri = fn.baseUri(doc)
 
-        console.log("input=", input)
-        console.log("execContext=", execContext)
-        console.log("execContext.collection=", execContext.collection)
-        console.log("execContext[\"collection\"]=", execContext["collection"])
-        console.log("input.collection=", execContext.collection)
-        console.log("uri=", uri);
+        xdmp.trace(TRACE_ID_DETAILS, "input=" + input)
+        xdmp.trace(TRACE_ID, "execContext.collection=" + execContext.collection)
+        xdmp.trace(TRACE_ID, "execContext[\"collection\"]=" + execContext["collection"])
+        xdmp.trace(TRACE_ID, "input.collection=" + execContext.collection)
+        xdmp.trace(TRACE_ID, "uri=" + uri);
 
         var graphResult = []
 
         try {
 
-        console.log("Starting graph execution..")
+          xdmp.trace(TRACE_ID, "Starting graph execution..")
 
         var startTime = new Date();
 
@@ -367,8 +360,8 @@ function InvokeExecuteGraph(input) {
         var endTime = new Date();
         var executionTime = endTime - startTime;
 
-        console.log("Execution completed normally in " + executionTime + "ms")
-        console.log("Result: " + JSON.stringify(graphResult))
+        xdmp.trace(TRACE_ID, "Execution completed normally in " + executionTime + "ms")
+        xdmp.trace(TRACE_ID_DETAILS, "Result: " + JSON.stringify(graphResult))
 
         result = {
           uri: uri,
@@ -378,7 +371,7 @@ function InvokeExecuteGraph(input) {
 
         } catch (e) {
 
-          console.log("Exception occured during graph execution: " + e)
+          xdmp.log( "Exception occured during graph execution: " + e, "error")
 
           result = {
             uri: uri,
@@ -390,7 +383,7 @@ function InvokeExecuteGraph(input) {
 
       } else {
 
-        console.log("No source document found. Nothing to preview for the given context")
+        xdmp.trace(TRACE_ID, "No source document found. Nothing to preview for the given context")
 
         result = {
           uri: previewUri,
@@ -588,7 +581,7 @@ function deleteBlock(URI) {
   xdmp.invokeFunction(() => {
     declareUpdate();
     if (xdmp.documentGetCollections(URI).includes(blocksCollection)) { // security. can only delete blocks
-      console.log("Deleting Pipes block " + URI)
+      xdmp.trace(TRACE_ID, "Deleting Pipes block " + URI)
       xdmp.documentDelete(URI)
     }
   })
@@ -636,7 +629,7 @@ function saveGraph(input, params) {
 }
 
 function verifyUri(params) {
-  console.log("verifyUri " + params)
+  xdmp.trace(TRACE_ID, "verifyUri " + params)
   if ( params.uri === null || params.uri.length < 1 ) return {'documentExists' : false}
   var docExists = (checkDocumentExists(params.uri) !== null)
   var response = {}
@@ -654,14 +647,14 @@ function getBackEndVersion() {
 
 function validateCTSQuery(input, params) {
   var query = JSON.parse(input).query
-  console.log("Validating ctsquery : " + query)
+  xdmp.trace(TRACE_ID, "Validating ctsquery : " + query)
   var testQuery = 'fn.count(' + query + ')'
   var result
   try {
     result = xdmp.eval(testQuery)
     return {"valid" : true}
   } catch (e) {
-    console.log("Not valid: " + e)
+    xdmp.trace(TRACE_ID, "Not valid: " + e)
     return {"valid" : false, "error" : e}
   }
 }

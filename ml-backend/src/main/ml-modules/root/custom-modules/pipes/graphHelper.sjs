@@ -2,8 +2,11 @@
 var LiteGraph = require("/custom-modules/pipes/litegraph").LiteGraph;
 var userBlocks = require("/custom-modules/pipes/user");
 var coreBlocks = require("/custom-modules/pipes/core");
-var registeredNodeType=false
-var graph =null
+var registeredNodeType=false;
+var graph =null;
+
+const TRACE_ID = "pipes-graphHelper";
+const TRACE_ID_DETAILS = "pipes-graphHelper-details";
 
 function extractModelByCollectionMatch(collectionsRoot){
   let models =[]
@@ -152,7 +155,7 @@ function createGraphNodeFromModel(blockDef) {
   }
 
   block.prototype.onExecute = function(){
-    xdmp.log("Exeecuting "+this.title);
+    xdmp.trace(TRACE_ID, "Executing "+this.title);
 
     if (this.blockDef.options.indexOf("nodeInput")>-1) {
 
@@ -223,7 +226,7 @@ function createGraphNodeFromModel(blockDef) {
           v=   docNode.xpath( path + "/string()");
 
 
-        xdmp.log(path)
+        xdmp.trace(TRACE_ID_DETAILS, path)
         this.doc.output[this.blockDef.fields[i].field] =  v
 
 
@@ -315,7 +318,7 @@ function executeGraphStep(doc,uri,config,context){
 function executeGraphFromJson(jsonGraph,uri, input,context){
 
 
-//console.log(context)
+//xdmp.log(context)
   // let markLogicNodes = require("/lib/marklogicNodes")
 
 

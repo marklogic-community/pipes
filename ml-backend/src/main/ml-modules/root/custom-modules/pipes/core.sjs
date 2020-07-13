@@ -13,6 +13,9 @@ const coreFunctions = require("/custom-modules/pipes/coreFunctions.sjs")
 const DataHub = require("/data-hub/5/datahub.sjs");
 const datahub = new DataHub();
 
+const TRACE_ID = "pipes-core";
+const TRACE_ID_DETAILS = "pipes-core-details";
+
 function init (LiteGraph) {
 
   //Input for a subgraph
@@ -165,7 +168,7 @@ function init (LiteGraph) {
     if (xdmp.type(instance) != "object") instance = { "value": instance }
     if (xdmp.type(attachments) != "object") attachments = { "value": attachments }
 
-    xdmp.log(triples)
+    xdmp.trace(TRACE_ID_DETAILS, triples);
     if (this.format.value == "json" && hasAttachments) {
       if (instance) {
         if (instance.toObject) instance = instance.toObject()
@@ -319,7 +322,7 @@ function init (LiteGraph) {
     } else {
       this.setOutputData(0, "")
     }
-    console.log("Returned: " + newVal)
+    xdmp.trace(TRACE_ID, "Returned: " + newVal);
   }
   LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock);
 
@@ -976,7 +979,7 @@ function init (LiteGraph) {
     let code = this.properties.sjsCode;
     let template = "`" + code + "`";
     let result = eval(template);
-    xdmp.log("EXECUTING " + result);
+    xdmp.trace(TRACE_ID_DETAILS, "EXECUTING " + result);
     let output = eval(result);
     this.setOutputData(0, output);
   }

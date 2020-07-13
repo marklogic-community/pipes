@@ -296,23 +296,18 @@ public class BackendModulesManager {
   public void deployMlBackendModulesToModulesDatabase(String patternString, AuthService authService) {
     // ".*/pipes/.*.sjs|.*vppBackendServices.sjs"
     Pattern pattern=Pattern.compile(patternString);
-
     DatabaseClient client = authService.getModulesDatabaseClient();
 
-      AssetFileLoader assetFileLoader = new AssetFileLoader(client); // Uses the REST API to load asset modules
+    AssetFileLoader assetFileLoader = new AssetFileLoader(client); // Uses the REST API to load asset modules
     assetFileLoader.setCollections("pipes-modules");
     DefaultModulesLoader modulesLoader = new DefaultModulesLoader(assetFileLoader);
 
-    //modulesLoader.setIncludeFilenamePattern(pattern);
+    modulesLoader.setIncludeFilenamePattern(pattern);
 
-//    String path= clientConfig.getMlDhfRoot()+"/src/main/ml-modules";
-//    final File dest = new File(clientConfig.getMlDhfRoot() + File.separator+".pipes" + File.separator +CUSTOMSJSNAME);
-    String path=clientConfig.getMlDhfRoot()+ File.separator+".pipes";
+    String path=clientConfig.getMlDhfRoot() + File.separator+".pipes";
     ModulesFinder modulesFinder = new DefaultModulesFinder(); // Allows for adjusting where modules are stored on a filesystem
 
     modulesLoader.loadModules(path, modulesFinder, client);
-
-
   }
 
 }

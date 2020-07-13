@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -89,16 +90,31 @@ public class CustomStepService {
     logger.info(
       String.format("Now copying custom step "+ customStepName +" to your DHF project...")
     );
-    String customStepsAboslutePath = clientConfig.getMlDhfRoot()+ "/src/main/ml-modules/root/custom-modules/custom/";
+    String customStepsAbsolutePath = clientConfig.getMlDhfRoot()+ "/src/main/ml-modules/root/custom-modules/custom/";
 
-      BufferedWriter writer = new BufferedWriter(new FileWriter(
-        customStepsAboslutePath+customStepName+"/main.sjs"));
-      writer.write(customStepDocument);
-      writer.close();
+    BufferedWriter writer = new BufferedWriter(new FileWriter(customStepsAbsolutePath+customStepName+"/main.sjs"));
+    writer.write(customStepDocument);
+    writer.close();
+
+    logger.info(String.format("Custom step has been copied."));
+  };
+
+  private void copyCustomStepForDeployment(String customStepDocument, String customStepName)  throws IOException {
 
     logger.info(
-      String.format("Custom step has been copied."));
+      String.format("Now copying custom step "+ customStepName +" to your .pipes folder...")
+    );
+    File source = new File(clientConfig.getMlDhfRoot() + "/src/main/ml-modules/root/custom-modules/custom/" + customStepName + "/main.sjs");
+    File dest = new File(clientConfig.getMlDhfRoot() + File.separator +".pipes" + "/root/custom-modules/custom/" + customStepName + "/main.sjs");
+    Files.createDirectories(Paths.get(clientConfig.getMlDhfRoot() + File.separator +".pipes" + "/root/custom-modules/custom/"+customStepName));
+    Files.copy(source.toPath(), dest.toPath());
+    logger.info("Copied " + source.getAbsolutePath() + " to " + dest.getAbsolutePath());
   };
+
+  private void cleanup()  throws IOException {
+    final File dest = new File(clientConfig.getMlDhfRoot() + File.separator + ".pipes");
+    dest.delete();
+  }
 
   private StepDefinition getStepDefinition(StepDefinitionManager stepDefinitionManager, String customStepsAbsPath, File dir) throws FileNotFoundException {
     String name = dir.getName().toString();
@@ -134,12 +150,17 @@ public class CustomStepService {
     return path.resolve(more);
   }
 
-
-  public void loadCustomStepToMl(String body, String customStepName) {
+  public void loadCustomStepToMl(String body, String customStepName) throws IOException {
     logger.info(
       String.format("Now loading custom step "+ customStepName +" to your DHF modules database...")
     );
+    
+    copyCustomStepForDeployment(body, customStepName);
+
     backendModulesManager.deployMlBackendModulesToModulesDatabase(".*/"+customStepName+"/.*.sjs", authService);
+    
+    cleanup();
+
     logger.info(
       String.format("Custom step has been loaded."));
 

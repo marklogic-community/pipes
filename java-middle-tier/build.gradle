@@ -106,6 +106,9 @@ task copyDhf(type:Copy) {
 
   from "../ml-backend/src/"
   into "src/main/resources/dhf/src/"
+  outputs.upToDateWhen {
+    false
+  }
   doLast {
     logger.warn('Done copying ml-backend/src')
   }
@@ -161,6 +164,7 @@ bootJar {
 
 task runQuasarDev(type:Exec) {
   dependsOn copyLiteGraphOverride
+  dependsOn runQuasarBuild
   mustRunAfter copyLiteGraphOverride
   doFirst {
     logger.warn('Running quasar dev')
@@ -181,6 +185,8 @@ task runQuasarDev(type:Exec) {
 }
 
 task runLocal(type: JavaExec) {
+  dependsOn copyDhf
+  dependsOn addVersionToBackend
   group = "Execution"
   description = "Run the main class with JavaExecTask"
   classpath = sourceSets.main.runtimeClasspath
