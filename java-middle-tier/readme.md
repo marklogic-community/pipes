@@ -35,3 +35,12 @@ to start up the pipes UI.
 Open a browser and point to http://localhost:9081
 
 After login the pipes core modules and the user defined functions will be reoaded into MarkLogic backend.
+
+## Debugging
+
+Following list of trace events are available:
+
+* pipes-vpp an pipes-vpp-details => all logs for the vppBackendService
+* pipes-graphHelper and pipes-graphHelper-details => all logs for the pipes-graphHelper module
+* pipes-coreFuntions => all logs for the coreFunctions module
+* pipes-core and pipes-core-details => all logs for the core module
