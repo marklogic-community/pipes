@@ -23,6 +23,7 @@ function init (LiteGraph) {
     this.addOutput("input", "");
     this.addOutput("uri", "");
     this.addOutput("collections", "");
+    this.addOutput("permissions", "");
 
     this.name_in_graph = "";
     this.properties = {};
@@ -59,6 +60,9 @@ function init (LiteGraph) {
     if ("output2" in outputVariables) {
       code.push("const " + outputVariables.output2 + " = collections;");
     }
+    if ("output3" in outputVariables) {
+      code.push("const " + outputVariables.output3 + " = permissions;");
+    }
     return code;
   };
 
@@ -69,11 +73,13 @@ function init (LiteGraph) {
     var input = this.graph.inputs["input"];
     var uri = this.graph.inputs["uri"];
     var collections = this.graph.inputs["collections"];
+    var permissions = this.graph.inputs["permissions"];
 
     //put through output
     this.setOutputData(0, input.value);
     this.setOutputData(1, uri.value);
     this.setOutputData(2, collections.value);
+    this.setOutputData(3, permissions.value);
   };
 
   GraphInputDHF.prototype.onRemoved = function () {
@@ -94,6 +100,7 @@ function init (LiteGraph) {
     this.addInput("attachments", null);
     this.addInput("uri", null);
     this.addInput("collections", null);
+    this.addInput("permissions", null);
     this.addOutput("output", null);
     this.name_in_graph = "";
     this.properties = {};
@@ -131,6 +138,7 @@ function init (LiteGraph) {
       code.push(tempVarPrefix + 'result.envelope.attachments  = {};');
     }
     code.push('let ' + tempVarPrefix + 'defaultCollections = ( collections!=null ) ? collections : null;');
+    code.push('let ' + tempVarPrefix + 'defaultPermissions = ( permissions!=null ) ? permissions : null;');
     code.push('let ' + tempVarPrefix + 'defaultUri = ( uri!=null ) ? uri:sem.uuidString();');
     code.push('let ' + tempVarPrefix + 'defaultContext = ( context!=null ) ? JSON.parse(JSON.stringify(context)) : {};');
     if ("input4" in inputVariables) {
@@ -143,11 +151,17 @@ function init (LiteGraph) {
     } else {
       code.push('let ' + tempVarPrefix + 'collections  = ' + tempVarPrefix + 'defaultCollections;');
     }
+    if ("input6" in inputVariables) {
+      code.push('let ' + tempVarPrefix + 'permissions  = ( ' + inputVariables.input6 + ' != undefined ) ? ' + inputVariables.input6 + ' : ' + tempVarPrefix + 'defaultPermissions;');
+    } else {
+      code.push('let ' + tempVarPrefix + 'permissions  = ' + tempVarPrefix + 'defaultPermissions;');
+    }
     code.push('let ' + tempVarPrefix + 'context = ' + tempVarPrefix + 'defaultContext;');
     code.push('let ' + tempVarPrefix + 'content = {};');
     code.push(tempVarPrefix + 'content.value = ' + tempVarPrefix + 'result;');
     code.push(tempVarPrefix + 'content.uri = ' + tempVarPrefix + 'uri;');
     code.push(tempVarPrefix + 'context.collections = ' + tempVarPrefix + 'collections;');
+    code.push(tempVarPrefix + 'context.permissions = ' + tempVarPrefix + 'permissions;');
     code.push(tempVarPrefix + 'content.context = ' + tempVarPrefix + 'context;');
     code.push('const ' + outputVariables.output0 + ' = ' + tempVarPrefix + 'content;');
     return code;
@@ -183,11 +197,13 @@ function init (LiteGraph) {
     let result = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, this.format.value)
 
     let defaultCollections = (this.graph.inputs["collections"] != null) ? this.graph.inputs["collections"].value : null
+    let defaultPermissions = (this.graph.inputs["permissions"] != null) ? this.graph.inputs["permissions"].value : null
     let defaultUri = (this.graph.inputs["uri"] != null) ? this.graph.inputs["uri"].value : sem.uuidString()
     let defaultContext = (this.graph.inputs["context"] != null) ? JSON.parse(JSON.stringify(this.graph.inputs["context"].value)) : {}
 
     let uri = (this.getInputData(4) != undefined) ? this.getInputData(4) : defaultUri;
     let collections = (this.getInputData(5) != undefined) ? this.getInputData(5) : defaultCollections;
+    let permissions = (this.getInputData(6) != undefined) ? this.getInputData(6) : defaultPermissions;
     let context = defaultContext
 
     let content = {}
@@ -195,6 +211,7 @@ function init (LiteGraph) {
     content.uri = uri
 
     context.collections = collections
+    context.permissions = permissions
     content.context = context;
 
     this.setOutputData(0, content)
