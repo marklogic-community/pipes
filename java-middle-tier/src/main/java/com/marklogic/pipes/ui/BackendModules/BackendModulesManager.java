@@ -151,7 +151,7 @@ public class BackendModulesManager {
       logger.info(
         String.format("Now loading Pipes modules to your DHF modules database...")
       );
-      deployMlBackendModulesToModulesDatabase(".*/pipes/.*.(sjs|json)|.*vppBackendServices.sjs", authService);
+      deployMlBackendModulesToModulesDatabase(".*/pipes/.*.(sjs)|.*vppBackendServices.sjs", authService);
       logger.info(
         String.format("MarkLogic backend modules have been loaded."));
 
@@ -204,9 +204,7 @@ public class BackendModulesManager {
 
     Boolean includeCustomUserModule=false;
     final String CUSTOMSJSNAME="user.sjs";
-    final String CUSTOMJSONNAME="user.json";
     final String CUSTOMSJSPATH=clientConfig.getCustomModulesRoot()+File.separator+CUSTOMSJSNAME;
-    final String CUSTOMJSONPATH=clientConfig.getCustomModulesRoot()+File.separator+CUSTOMJSONNAME;
 
 
     if(clientConfig.getCustomModulesRoot()!=null) {
@@ -225,34 +223,25 @@ public class BackendModulesManager {
     if (!includeCustomUserModule) {
       logger.info("Adding " + customModulesPathPrefix+"/user.sjs");
       filePaths.add( customModulesPathPrefix+"/user.sjs");
-      logger.info("Adding " + customModulesPathPrefix+"/user.json");
-      filePaths.add( customModulesPathPrefix+"/user.json");
     }
     // do the same for the custom user module
     else {
       //final InputStream is = Application.class.getResourceAsStream(resourcesDhfRoot + filePath);
       final File sjsSource = new File(CUSTOMSJSPATH);
-      final File jsonSource = new File(CUSTOMJSONPATH);
       logger.info("Adding " + sjsSource.toPath());
-      logger.info("Adding " + jsonSource.toPath());
 
       final File sjsDest = new File(clientConfig.getMlDhfRoot() + File.separator+".pipes" + customModulesPathPrefix + File.separator +CUSTOMSJSNAME);
-      final File jsonDest = new File(clientConfig.getMlDhfRoot() + File.separator+".pipes" + customModulesPathPrefix + File.separator +CUSTOMJSONNAME);
-      
+
       try {
         if (operation== fileOperation.Copy) {
           //FileUtils.copyFile(source,dest, false);
           Files.createDirectories(Paths.get(clientConfig.getMlDhfRoot() + File.separator +".pipes" + customModulesPathPrefix));
           Files.copy(sjsSource.toPath(), sjsDest.toPath());
           logger.info("Copied "+sjsSource.getAbsolutePath()+" to "+sjsDest.getAbsolutePath());
-          Files.copy(jsonSource.toPath(), jsonDest.toPath());
-          logger.info("Copied "+jsonSource.getAbsolutePath()+" to "+jsonDest.getAbsolutePath());
         }
         else if (operation== fileOperation.Remove) {
           sjsDest.delete();
           logger.info("Deleted "+sjsDest.getAbsolutePath());
-          jsonDest.delete();
-          logger.info("Deleted "+jsonDest.getAbsolutePath());
         }
         else {
           throw new Exception("Unsupported operation: "+operation);
