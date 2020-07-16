@@ -67,15 +67,14 @@ public class CustomStepService {
         StepDefinition customStep = getStepDefinition(stepDefinitionManager, clientConfig.getMlDhfRoot()+ customStepsRelativePath, dir);
 
         if (customStep != null) {
-
-          customStepResponse.addStep(new CustomStep(
+          TextNode sourceCollection = (TextNode)customStep.getOptions().get("sourceCollection");
+          customStepResponse.addStep(
+          new CustomStep(
             customStep.getName(),
             clientConfig.getMlDhfRoot()+ customStepsRelativePath+customStep.getName()+"/"+customStep.getName()+stepDefinitionManager.STEP_DEFINITION_FILE_EXTENSION,
             ((TextNode)customStep.getOptions().get("sourceDatabase")).asText(),
-            ((TextNode)customStep.getOptions().get("sourceCollection")).asText()
-            )
-          );
-
+            sourceCollection != null ? sourceCollection.asText() : ""
+          ));
         }
       }
     }
