@@ -1250,7 +1250,7 @@ function init (LiteGraph) {
   FormatDateTime.prototype.onExecute = function () {
     let inputDateTime = this.getInputData(0)
     let format = this.format.value
-    let result = fn.string(moment(inputDateTime, [format]).format('YYYY-MM-DDTkk:mm:ss'))
+    let result = fn.string(moment(inputDateTime, [format]).format())
     if (result == "Invalid date") result = null;
     this.setOutputData(0, result);
   }
