@@ -261,7 +261,7 @@
             id="collectionGroupSummary"
             v-if="isCollectionSelected || isDhfStepSelected"
           >
-            <div>Source Document Collection: <q-chip icon="collections">{{summaryCollectionForPreview}}</q-chip>
+            <div>Source Document Collection (or Query): <q-chip icon="collections">{{summaryCollectionForPreview}}</q-chip>
             </div>
             <div>Random Document:
               <q-toggle
@@ -437,6 +437,7 @@ export default {
       showPreview: false,
       selectedDB: null,     // Preview Database
       collectionForPreview: null,
+      queryForPreview: null,
       selectedTargetDB: null, // Target Database where result will be saved
       selectedStep: null,
       randomDocPreview: false,
@@ -611,6 +612,7 @@ export default {
         let request = {
           jsonGraph: graphDef,
           collection: this.collectionForPreview === null || this.collectionForPreview.value === null ? null : this.collectionForPreview.value,
+          query: this.queryForPreview === null || this.queryForPreview.value === null ? null : this.queryForPreview.value,
           collectionRandom: this.randomDocPreview,
           previewUri: this.docUri
         }
@@ -678,6 +680,7 @@ export default {
       }, {});
       this.selectedDB = { "label": this.dhfSteps[val.label].database, "value": availableDbHash[this.dhfSteps[val.label].database] };
       this.collectionForPreview = { "label": this.dhfSteps[val.label].collection, "value": this.dhfSteps[val.label].collection };
+      this.queryForPreview = { "label": this.dhfSteps[val.label].query, "value": this.dhfSteps[val.label].query };
     }
   },
   computed: {
@@ -718,7 +721,7 @@ export default {
       return (this.selectedTargetDB !== null) ? this.selectedTargetDB.label : ""
     },
     summaryCollectionForPreview: function () {
-      return (this.collectionForPreview !== null) ? this.collectionForPreview.value : ""
+      return (this.collectionForPreview !== null && this.collectionForPreview.value != null) ? this.collectionForPreview.value : this.queryForPreview.value
     },
     isCollectionSelected: function () {
       return (this.previewSource == "collection")

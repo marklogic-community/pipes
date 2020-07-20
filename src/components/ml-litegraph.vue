@@ -866,7 +866,7 @@ export default {
         steps.sort(alphabeticalOrder);
 
         this.dhfSteps = steps.reduce(function (map, obj) {
-          map[obj.name] = { "database": obj.database, "collection": obj.collection };
+          map[obj.name] = { "database": obj.database, "collection": obj.collection, "query": obj.query };
           return map;
         }, {});
 
