@@ -53,6 +53,7 @@ const blockMapping = new Map([
   ["date/FormatDateAuto", FORMAT + "/FormatDateAuto"],
   ["date/FormatDate", FORMAT + "/FormatDate"],
   ["date/FormatDateTimeAuto", FORMAT + "/FormatDateTimeAuto"],
+  ["date/FormatDateTime", FORMAT + "/FormatDateTime"],
   ["feature/LookupCollectionPropertyValue", FIND + "/Lookup by Value"]
 ]);
 

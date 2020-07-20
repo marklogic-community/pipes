@@ -118,6 +118,7 @@ public class CustomStepService {
     );
     File source = new File(clientConfig.getMlDhfRoot() + "/src/main/ml-modules/root/custom-modules/custom/" + customStepName + "/main.sjs");
     File dest = new File(clientConfig.getMlDhfRoot() + File.separator +".pipes" + "/root/custom-modules/custom/" + customStepName + "/main.sjs");
+    dest.delete(); // first delete the file
     Files.createDirectories(Paths.get(clientConfig.getMlDhfRoot() + File.separator +".pipes" + "/root/custom-modules/custom/"+customStepName));
     Files.copy(source.toPath(), dest.toPath());
     logger.info("Copied " + source.getAbsolutePath() + " to " + dest.getAbsolutePath());
@@ -125,6 +126,7 @@ public class CustomStepService {
 
   private void cleanup()  throws IOException {
     final File dest = new File(clientConfig.getMlDhfRoot() + File.separator + ".pipes");
+    logger.info("Cleaning up " + dest.getAbsolutePath());
     dest.delete();
   }
 

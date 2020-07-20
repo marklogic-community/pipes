@@ -459,6 +459,37 @@
     }
   },
   {
+    "functionName": "FormatDateTime",
+    "blockName": "FormatDateTime",
+    "title": "Format DateTime",
+    "library": "Format",
+    "description": "Formats a dateTime to ISO format using the provided format",
+    "inputs": [
+      {
+        "name": "inputDateTime",
+        "type": "xs:string"
+      }
+    ],
+    "widgets": [
+      {
+        "type": "text",
+        "name": "format",
+        "default": "DD/MM/YYYY",
+        "values": []
+      }
+    ],
+    "outputs": [
+      {
+        "name": "IsoDateTime",
+        "type": "xs:string"
+      }
+    ],
+    "function": {
+      "ref": null,
+      "code": null
+    }
+  },
+  {
     "functionName": "CreateTriple",
     "blockName": "CreateTriple",
     "title": "Create Triples",

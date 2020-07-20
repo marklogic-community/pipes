@@ -1212,7 +1212,6 @@ function init (LiteGraph) {
 
   LiteGraph.registerNodeType("Generate/Templating", stringTemplate);
 
-
   function FormatDate () {
     this.addInput("inputDate");
 
@@ -1233,9 +1232,30 @@ function init (LiteGraph) {
     this.setOutputData(0, result);
   }
 
-
   LiteGraph.registerNodeType("Format/FormatDate", FormatDate);
 
+  function FormatDateTime () {
+    this.addInput("inputDateTime");
+
+    this.addOutput("IsoDateTime");
+
+    this.format = this.addWidget("text", "format", "DD/MM/YYYY hh:mm:ss", function (v) { }, {});
+    this.size = [230, 160];
+    this.serialize_widgets = true;
+  }
+
+  FormatDateTime.title = "Format date";
+  FormatDateTime.desc = "Format date with explicit format";
+
+  FormatDateTime.prototype.onExecute = function () {
+    let inputDateTime = this.getInputData(0)
+    let format = this.format.value
+    let result = fn.string(moment(inputDateTime, [format]).format())
+    if (result == "Invalid date") result = null;
+    this.setOutputData(0, result);
+  }
+
+  LiteGraph.registerNodeType("Format/FormatDateTime", FormatDateTime);
 
   function CreateTriple () {
     this.addInput("subject");
