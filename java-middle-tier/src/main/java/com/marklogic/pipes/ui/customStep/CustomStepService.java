@@ -4,16 +4,13 @@ Copyright ©2020 MarkLogic Corporation.
 
 package com.marklogic.pipes.ui.customStep;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.marklogic.hub.StepDefinitionManager;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.impl.StepDefinitionManagerImpl;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.util.json.JSONObject;
-import com.marklogic.pipes.ui.BackendModules.BackendModulesAppRunner;
 import com.marklogic.pipes.ui.BackendModules.BackendModulesManager;
 import com.marklogic.pipes.ui.auth.AuthService;
 import com.marklogic.pipes.ui.config.ClientConfig;
@@ -51,14 +48,12 @@ public class CustomStepService {
   }
 
 
-  public String accessDhfRootAndGetCustomStepsJson() throws IOException {
-
+  public CustomStepResponse accessDhfRootAndGetCustomStepsJson() throws IOException {
 
     File[] directories = new File(clientConfig.getMlDhfRoot()+ customStepsRelativePath).listFiles(File::isDirectory);
 
     CustomStepResponse customStepResponse = new CustomStepResponse();
-    ObjectMapper objectMapper = new ObjectMapper();
-    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
 
 
     if (directories!=null) {
@@ -68,21 +63,38 @@ public class CustomStepService {
 
         if (customStep != null) {
 
-          customStepResponse.addStep(new CustomStep(
-            customStep.getName(),
-            clientConfig.getMlDhfRoot()+ customStepsRelativePath+customStep.getName()+"/"+customStep.getName()+stepDefinitionManager.STEP_DEFINITION_FILE_EXTENSION,
-            ((TextNode)customStep.getOptions().get("sourceDatabase")).asText(),
-            ((TextNode)customStep.getOptions().get("sourceCollection")).asText()
-            )
-          );
+
+          //try to grab the sourceCollection property, if it exists
+          // if not, it will remain null
+          String sourceCollection=null;
+          if ((customStep.getOptions().get("sourceCollection"))!=null &&  ((TextNode)customStep.getOptions().get("sourceCollection")).asText()!="") {
+            sourceCollection = ((TextNode)customStep.getOptions().get("sourceCollection")).asText();
+          }
+
+          // same for sourceQuery
+          String sourceQuery=null;
+          if ((customStep.getOptions().get("sourceQuery"))!=null &&  ((TextNode)customStep.getOptions().get("sourceQuery")).asText()!="") {
+            sourceQuery = ((TextNode)customStep.getOptions().get("sourceQuery")).asText();
+          }
+
+          // check for sourceCollection or sourceQuery - either one of them should be populated
+          // if not, skip this step
+          if (sourceCollection!=null || sourceQuery!=null) {
+            customStepResponse.addStep(new CustomStep(
+                customStep.getName(),
+                clientConfig.getMlDhfRoot()+ customStepsRelativePath+customStep.getName()+"/"+customStep.getName()+stepDefinitionManager.STEP_DEFINITION_FILE_EXTENSION,
+                ((TextNode)customStep.getOptions().get("sourceDatabase")).asText(),
+                sourceCollection, sourceQuery
+              )
+            );
+          }
 
         }
       }
     }
 
+    return customStepResponse;
 
-    String customStepResponseString=objectMapper.writeValueAsString(customStepResponse);
-    return customStepResponseString;
   }
 
   public void copyCustomStepToDhf(String customStepDocument, String customStepName)  throws IOException {
@@ -154,11 +166,11 @@ public class CustomStepService {
     logger.info(
       String.format("Now loading custom step "+ customStepName +" to your DHF modules database...")
     );
-    
+
     copyCustomStepForDeployment(body, customStepName);
 
     backendModulesManager.deployMlBackendModulesToModulesDatabase(".*/"+customStepName+"/.*.sjs", authService);
-    
+
     cleanup();
 
     logger.info(
