@@ -234,12 +234,12 @@ function getCollectionsModels (ctx) {
       if (ctx != null && ctx.collectionIncl != null && ctx.collectionIncl.length > 0) {
         ctx.collectionIncl.map(item => {
           cts.collectionMatch(item).toArray().map(item2 => {
-            collections[item2] = getFieldsByCollection(item2, "")
+            collections[item2] = getFieldsByCollection(item2, "", null)
           })
         })
       } else {
         for (let col of fn.subsequence(cts.collections(), 1, 15)) {
-          collections[col] = getFieldsByCollection(col, "")
+          collections[col] = getFieldsByCollection(col, "", null)
 
         }
       }
@@ -464,7 +464,7 @@ function executeGraph (input, params) {
 }
 
 
-function getFieldsByCollection (collection, customURI) {
+function getFieldsByCollection (collection, customURI, query) {
 
   return {
     FieldsByCollection: function FieldsByCollection () {
@@ -472,12 +472,27 @@ function getFieldsByCollection (collection, customURI) {
       let fields = {}
       let docs = []
       let collectionDocs = fn.count(fn.collection(collection))
+
       if (collection != null && collection != "" && collectionDocs > 0) {
         for (let j = 0; j < 10; j++) {
           docs.push(fn.head(fn.subsequence(fn.collection(collection), xdmp.random(collectionDocs))))
           //let doc = fn.head(fn.collection(collection))
         }
       }
+      else if (query != null && query != "") {
+        let decodedQuery = decodeURI(query)
+
+        let estimateQ = "cts.estimate(" + decodedQuery + ")"
+        let nbDocs = xdmp.eval(estimateQ)
+
+        if (nbDocs > 0) {
+          for (let j = 0; j < 10; j++) {
+            doc = fn.head(xdmp.eval("cts.doc(fn.head(fn.subsequence(cts.uris(null, null, " + query + "), xdmp.random(" + nbDocs + " - 1) + 1)))"))
+            docs.push(doc);
+          }
+        }
+      }
+
       if (customURI != null && customURI != "") {
         customURI = decodeURI(customURI).trim();
         // replace multiple spaces by one so that spliting goes ok
@@ -689,7 +704,7 @@ function get (context, params) {
 
   switch (params.action) {
     case "collectionModel":
-      const invokeGetFieldsByCollection = getFieldsByCollection(params.collection, params.customURI)
+      const invokeGetFieldsByCollection = getFieldsByCollection(params.collection, params.customURI, params.query)
       return xdmp.invokeFunction(invokeGetFieldsByCollection.FieldsByCollection, { database: (params.database != null) ? params.database : xdmp.database() })
     case "collectionDetails":
       const invokeGetCollectionDetails = getCollectionDetails()
