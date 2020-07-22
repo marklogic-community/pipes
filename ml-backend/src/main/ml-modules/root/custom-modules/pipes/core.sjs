@@ -504,7 +504,7 @@ function init (LiteGraph) {
       "properties": [
         {
           name: "separator",
-          type: "xs:string"
+          type: ","
         }
 
       ],
@@ -515,8 +515,8 @@ function init (LiteGraph) {
         }
       ],
       "function": {
-        "ref": "fn.stringJoin",
-        "code": null
+        "ref": null,
+        "code": "let stringJoined = fn.stringJoin(this.getInputData(0), this.properties['separator']);this.setOutputData(0, stringJoined);"
       }
     },
     {
