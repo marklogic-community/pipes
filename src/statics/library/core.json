@@ -941,7 +941,7 @@
     "properties": [
       {
         "name": "separator",
-        "type": "xs:string"
+        "type": ","
       }
     ],
     "outputs": [
@@ -951,8 +951,8 @@
       }
     ],
     "function": {
-      "ref": "fn.stringJoin",
-      "code": null
+      "ref": null,
+      "code": "let stringJoined = fn.stringJoin(this.getInputData(0), this.properties['separator']);this.setOutputData(0, stringJoined);"
     }
   },
   {
@@ -1468,6 +1468,39 @@
       "ref": null,
       "code": ""
     }
+  },
+  {
+      "functionName": "FilterArray", 
+      "blockName": "FilterArray",
+      "library": "Filter",
+      "description": "Returns the filtered Array based on the given pattern (can be an arrray), either inclusive or exclusive",
+      "inputs": [
+          {
+              "name": "unfiltered",
+              "type": "string*"
+          },
+          {
+              "name": "patterns",
+              "type": "string*"
+          }
+      ],
+      "widgets": [
+          {
+              "type": "toggle",
+              "name": "include",
+              "default": "enabled"
+          }
+      ],
+      "outputs": [ 
+          {
+              "name": "filtered",
+              "type": "string*"
+          }
+      ],
+      "function": {
+          "ref": null,
+          "code": ""
+      }  
   },
   {
     "functionName": "selectCase",
