@@ -153,13 +153,27 @@ task addVersionToBackend(type:Copy) {
     }
 }
 
+task addVersionToJar {
+  doLast {
+    (new File("${projectDir}/src/main/resources/version.txt")).text = tasks.getVersion.value() + "\n" + tasks.getBuild.value()
+  }
+}
+
+
+task addVersionToFilename {
+    doLast {
+        ant.move file: "${buildDir}/libs/marklogic-pipes.jar",
+                 todir: "${buildDir}/libs/marklogic-pipes."+tasks.getVersion.value()+".jar"
+    }
+}
+
 bootJar {
   baseName = 'marklogic-pipes'
   dependsOn copyQuasarBuild
   dependsOn copyDhf
   dependsOn addVersionToBackend
+  dependsOn addVersionToJar
   mustRunAfter copyQuasarBuild
-
 }
 
 task runQuasarDev(type:Exec) {
@@ -187,12 +201,24 @@ task runQuasarDev(type:Exec) {
 task runLocal(type: JavaExec) {
   dependsOn copyDhf
   dependsOn addVersionToBackend
+  dependsOn addVersionToJar
   group = "Execution"
   description = "Run the main class with JavaExecTask"
   classpath = sourceSets.main.runtimeClasspath
   main = "com.marklogic.pipes.ui.Application"
 }
 
+
+
 task buildPipes {
   dependsOn bootJar
+}
+
+task buildDevPipes {
+  dependsOn bootJar
+
+      doLast {
+        ant.move file: "${buildDir}/libs/marklogic-pipes.jar",
+                 tofile: "${buildDir}/libs/marklogic-pipes."+tasks.getVersion.value()+".jar"
+    }
 }
