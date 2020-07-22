@@ -1674,6 +1674,31 @@ function init (LiteGraph) {
   }
   LiteGraph.registerNodeType("Filter/DistinctValues", DistinctValues);
 
+  function FilterArray() {
+      this.addInput("unfiltered"); //Add Inputs, same as the one in the json definition
+      this.addInput("patterns"); //Add Inputs, same as the one in the json definition
+      this.addOutput("filtered");//Add Outputs, same as the one in the json definition
+      this.include = this.addWidget("toggle","include", true, function(v){} );
+  }
+  FilterArray.title = "FilterArray";
+  FilterArray.desc = "Returns the filtered Array based on the given pattern(can be an arrray), either inclusive or exclusive";
+
+  FilterArray.prototype.onExecute = function() {
+      xdmp.trace(TRACE_ID, "++++++++++++++++++FilterArray++++++++++++++++++++++++++++++");
+      let unfiltered = this.getInputData(0);
+      let patterns = this.getInputData(1);
+      let include = this.include.value;
+      let filtered = include ? unfiltered.filter(function(item) { return patterns.includes(item); } ) : unfiltered.filter(function(item) { return !(patterns.includes(item)); } );
+      xdmp.trace(TRACE_ID, unfiltered);
+      xdmp.trace(TRACE_ID, patterns);
+      xdmp.trace(TRACE_ID, "include=" + include);
+      xdmp.trace(TRACE_ID, filtered);
+      xdmp.trace(TRACE_ID, "++++++++++++++++++FilterArray++++++++++++++++++++++++++++++");
+      this.setOutputData(0, filtered); //Set output(s) value(s)
+  };
+
+  LiteGraph.registerNodeType("Filter/FilterArray", FilterArray );
+
   function Highlight () {
     this.addInput("string", null);
     this.addInput("query", null);

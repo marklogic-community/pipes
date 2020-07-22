@@ -1470,6 +1470,39 @@
     }
   },
   {
+      "functionName": "FilterArray", 
+      "blockName": "FilterArray",
+      "library": "Filter",
+      "description": "Returns the filtered Array based on the given pattern (can be an arrray), either inclusive or exclusive",
+      "inputs": [
+          {
+              "name": "unfiltered",
+              "type": "string*"
+          },
+          {
+              "name": "patterns",
+              "type": "string*"
+          }
+      ],
+      "widgets": [
+          {
+              "type": "toggle",
+              "name": "include",
+              "default": "enabled"
+          }
+      ],
+      "outputs": [ 
+          {
+              "name": "filtered",
+              "type": "string*"
+          }
+      ],
+      "function": {
+          "ref": null,
+          "code": ""
+      }  
+  },
+  {
     "functionName": "selectCase",
     "blockName": "selectCase",
     "title": "Select Case",
