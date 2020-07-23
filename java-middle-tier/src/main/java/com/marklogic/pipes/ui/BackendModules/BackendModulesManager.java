@@ -30,6 +30,8 @@ import org.springframework.stereotype.Repository;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.regex.Pattern;
@@ -83,13 +85,8 @@ public class BackendModulesManager {
 
     // get the version info from front end
     String javaVersionInfo= null;
-    try {
       javaVersionInfo = versionService.get();
-    } catch (IOException e) {
-      e.printStackTrace();
-      logger.error("Unable to read version information");
-      System.exit(1);
-    }
+
 
     // compare and stop the service if not working
 
@@ -115,8 +112,9 @@ public class BackendModulesManager {
     // output version information
       System.out.println("--------------------\n"+ javaVersionInfo+"--------------------");
 
-
-    if (!javaVersionInfo.contains(version) || !javaVersionInfo.contains(build)) {
+    // it will deploy modules if versions mismatch
+    // and if using custom blocks
+    if (!javaVersionInfo.contains(version) || !javaVersionInfo.contains(build) || clientConfig.getCustomModulesRoot()!=null) {
 
       logger.info("{} missmatch with Pipes backend modules, Version: {} | Build: {}",
         javaVersionInfo, version, build);
@@ -153,7 +151,7 @@ public class BackendModulesManager {
       logger.info(
         String.format("Now loading Pipes modules to your DHF modules database...")
       );
-      deployMlBackendModulesToModulesDatabase(".*/pipes/.*.sjs|.*vppBackendServices.sjs", authService);
+      deployMlBackendModulesToModulesDatabase(".*/pipes/.*.(sjs)|.*vppBackendServices.sjs", authService);
       logger.info(
         String.format("MarkLogic backend modules have been loaded."));
 
@@ -172,9 +170,18 @@ public class BackendModulesManager {
         String.format("Aborting Pipes start-up - Failed to load modules: "+e.getMessage()),e);
       throw e;
     }
+    finally  {
+      try {
+        FileUtils.deleteDirectory(new File(clientConfig.getMlDhfRoot()+File.separator+".pipes"));
+      } catch (IOException ioException) {
+        logger.error("Failed to delete folder "+clientConfig.getMlDhfRoot()+File.separator+".pipes");
+        ioException.printStackTrace();
+      }
+    }
   }
 
   private void manageMarkLogicBackendModules(fileOperation operation) throws Exception {
+    logger.info("Run manageMarkLogicBackendModules");
 
 
     ArrayList<String> filePaths = new ArrayList<String>(
@@ -201,7 +208,7 @@ public class BackendModulesManager {
 
 
     if(clientConfig.getCustomModulesRoot()!=null) {
-
+      logger.info("getCustomModulesRoot is defined: " + clientConfig.getCustomModulesRoot());
 
       if( (new File(CUSTOMSJSPATH)).exists() ) {
         includeCustomUserModule = true;
@@ -214,23 +221,27 @@ public class BackendModulesManager {
     }
 
     if (!includeCustomUserModule) {
+      logger.info("Adding " + customModulesPathPrefix+"/user.sjs");
       filePaths.add( customModulesPathPrefix+"/user.sjs");
     }
     // do the same for the custom user module
     else {
       //final InputStream is = Application.class.getResourceAsStream(resourcesDhfRoot + filePath);
-      final File source = new File(CUSTOMSJSPATH);
+      final File sjsSource = new File(CUSTOMSJSPATH);
+      logger.info("Adding " + sjsSource.toPath());
 
-      final File dest = new File(clientConfig.getMlDhfRoot() + File.separator+".pipes" + File.separator +CUSTOMSJSNAME);
+      final File sjsDest = new File(clientConfig.getMlDhfRoot() + File.separator+".pipes" + customModulesPathPrefix + File.separator +CUSTOMSJSNAME);
+
       try {
         if (operation== fileOperation.Copy) {
-          FileUtils.copyFile(source,dest, false);
-          logger.info("Copied "+source.getAbsolutePath()+" to "+dest.getAbsolutePath());
-
+          //FileUtils.copyFile(source,dest, false);
+          Files.createDirectories(Paths.get(clientConfig.getMlDhfRoot() + File.separator +".pipes" + customModulesPathPrefix));
+          Files.copy(sjsSource.toPath(), sjsDest.toPath());
+          logger.info("Copied "+sjsSource.getAbsolutePath()+" to "+sjsDest.getAbsolutePath());
         }
         else if (operation== fileOperation.Remove) {
-          dest.delete();
-          logger.info("Deleted "+dest.getAbsolutePath());
+          sjsDest.delete();
+          logger.info("Deleted "+sjsDest.getAbsolutePath());
         }
         else {
           throw new Exception("Unsupported operation: "+operation);
@@ -288,23 +299,18 @@ public class BackendModulesManager {
   public void deployMlBackendModulesToModulesDatabase(String patternString, AuthService authService) {
     // ".*/pipes/.*.sjs|.*vppBackendServices.sjs"
     Pattern pattern=Pattern.compile(patternString);
-
     DatabaseClient client = authService.getModulesDatabaseClient();
 
-      AssetFileLoader assetFileLoader = new AssetFileLoader(client); // Uses the REST API to load asset modules
+    AssetFileLoader assetFileLoader = new AssetFileLoader(client); // Uses the REST API to load asset modules
     assetFileLoader.setCollections("pipes-modules");
     DefaultModulesLoader modulesLoader = new DefaultModulesLoader(assetFileLoader);
 
     modulesLoader.setIncludeFilenamePattern(pattern);
 
-//    String path= clientConfig.getMlDhfRoot()+"/src/main/ml-modules";
-//    final File dest = new File(clientConfig.getMlDhfRoot() + File.separator+".pipes" + File.separator +CUSTOMSJSNAME);
-    String path=clientConfig.getMlDhfRoot()+ File.separator+".pipes";
+    String path=clientConfig.getMlDhfRoot() + File.separator+".pipes";
     ModulesFinder modulesFinder = new DefaultModulesFinder(); // Allows for adjusting where modules are stored on a filesystem
 
     modulesLoader.loadModules(path, modulesFinder, client);
-
-
   }
 
 }

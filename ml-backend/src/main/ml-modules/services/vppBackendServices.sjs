@@ -3,26 +3,30 @@
 const blocksCollection = "marklogic-pipes/type/savedBlock";
 const graphsCollection = "marklogic-pipes/type/savedGraph";
 
-const PIPESVERSION = "@PIPESVERSIONTOKEN@"
-const PIPESBUILD = "@PIPESBUILDTOKEN@"
+const PIPESVERSION = "@PIPESVERSIONTOKEN@";
+const PIPESBUILD = "@PIPESBUILDTOKEN@";
 
-function mapper(item, cfg) {
+const TRACE_ID = "pipes-vpp";
+const TRACE_ID_DETAILS = "pipes-vpp-details";
+
+function mapper (item, cfg) {
 
   if (cfg.entities != null) {
-    let cols = xdmp.documentGetCollections(item.uri)
-    const invokeGetTriples = getTriplesByUri(item.uri)
+    let cols = xdmp.documentGetCollections(item.uri);
+    const invokeGetTriples = getTriplesByUri(item.uri);
     let result = {
       index: item.index,
       uri: item.uri,
       score: item.score,
       fitness: item.fitness,
       collections: xdmp.documentGetCollections(item.uri),
+      permissions: xdmp.documentGetPermissions(item.uri),
       triplesFromDocument: invokeGetTriples.getResults().length,
       document: {}
 
     }
 
-    let entity = null
+    let entity = null;
     for (let col of cols)
       if (cfg.entities[col] != null) {
         entity = col;
@@ -60,6 +64,7 @@ function mapper(item, cfg) {
       score: item.score,
       fitness: item.fitness,
       collections: xdmp.documentGetCollections(item.uri),
+      permissions: xdmp.documentGetPermissions(item.uri),
       triplesFromDocument: fn.count(invokeGetTriples.getResults()),
       document: item
 
@@ -73,14 +78,14 @@ function mapper(item, cfg) {
 }
 
 
-function parseGroup(group) {
+function parseGroup (group) {
 
   if (group.children != null) {
     let queries = []
-    xdmp.log(group)
+    xdmp.trace(TRACE_ID, group)
 
     for (let q of group.children) {
-      xdmp.log(q)
+      xdmp.trace(TRACE_ID, q)
       switch (q.type) {
         case "query-builder-rule":
           if (q.query.rule == "collection")
@@ -99,14 +104,12 @@ function parseGroup(group) {
 
 
     }
-    xdmp.log(queries)
+    xdmp.trace(TRACE_ID, queries)
     switch (group["logicalOperator"]) {
       case "and":
         return cts.andQuery(queries)
-        break;
       case "or":
         return cts.orQuery(queries)
-        break;
       default:
         return cts.trueQuery()
     }
@@ -115,10 +118,10 @@ function parseGroup(group) {
 
 }
 
-function search(ctx) {
+function search (ctx) {
 
   return {
-    getResults: function getResults() {
+    getResults: function getResults () {
 
 
       const jsearch = require('/MarkLogic/jsearch.sjs');
@@ -163,28 +166,28 @@ function search(ctx) {
 }
 
 
-function getTriplesByUri(uri) {
+function getTriplesByUri (uri) {
 
   return {
-    getResults: function getResults() {
+    getResults: function getResults () {
       return sem.sparql("SELECT * WHERE{?subject ?predicate ?object} LIMIT 10", null, null, cts.documentQuery(uri)).toArray();
     }
   }
 }
 
-function openDocument(uri) {
+function openDocument (uri) {
 
   return {
-    getResults: function getResults() {
+    getResults: function getResults () {
       return cts.doc(uri);
     }
   }
 }
 
-function getTriplesByIri(iri) {
+function getTriplesByIri (iri) {
 
   return {
-    getResults: function getResults() {
+    getResults: function getResults () {
       return sem.sparql("SELECT DISTINCT ?subject ?predicate ?object  WHERE{\
 {SELECT (?var as ?subject) ?predicate ?object WHERE{\
            ?var ?predicate ?object.\
@@ -200,13 +203,13 @@ function getTriplesByIri(iri) {
            ?subject ?predicate ?var2.\
            }}\
            } LIMIT 100\
-", {var: sem.iri(iri), var2: iri}, null).toArray()
+", { var: sem.iri(iri), var2: iri }, null).toArray()
     }
   }
 }
 
 
-function getDatabases() {
+function getDatabases () {
 
   return xdmp.databases().toArray().map(db => {
 
@@ -222,43 +225,37 @@ function getDatabases() {
 }
 
 
-function getCollectionsModels(ctx) {
+function getCollectionsModels (ctx) {
 
   return {
-    collectionsModel: function getModels() {
+    collectionsModel: function getModels () {
 
       let collections = {}
       if (ctx != null && ctx.collectionIncl != null && ctx.collectionIncl.length > 0) {
         ctx.collectionIncl.map(item => {
           cts.collectionMatch(item).toArray().map(item2 => {
-            collections[item2] = getFieldsByCollection(item2, "")
+            collections[item2] = getFieldsByCollection(item2, "", null)
           })
         })
       } else {
-
         for (let col of fn.subsequence(cts.collections(), 1, 15)) {
-          collections[col] = getFieldsByCollection(col, "")
+          collections[col] = getFieldsByCollection(col, "", null)
 
         }
-
       }
       // collections[collection] =  getFieldsByCollection(collection)
-
-
       return collections
     }
   }
-
-
 }
 
-function checkDocumentExists(uri) {
-      return cts.doc(uri);
+function checkDocumentExists (uri) {
+  return cts.doc(uri);
 }
 
-function getCollectionDetails() {
+function getCollectionDetails () {
   return {
-    CollectionDetails: function CollectionDetails() {
+    CollectionDetails: function CollectionDetails () {
       return cts.values(cts.collectionReference(), null, ["item-frequency", "frequency-order"]).toArray().map(collection => {
         return {
 
@@ -267,15 +264,12 @@ function getCollectionDetails() {
           "sublabel": cts.frequency(collection) + " documents"
 
         }
-
       })
-
-
     }
   }
 }
 
-function getDHFEntities() {
+function getDHFEntities () {
 
   return sem.sparql("PREFIX es: <http://marklogic.com/entity-services#>\
     SELECT DISTINCT ?value ?label ?description WHERE {\
@@ -292,7 +286,7 @@ function getDHFEntities() {
 
 }
 
-function getDHFEntityProperties(entity) {
+function getDHFEntityProperties (entity) {
 
   let entityModel = {
     "label": entity,
@@ -300,7 +294,7 @@ function getDHFEntityProperties(entity) {
   }
 
   entityModel.children = sem.sparql(
-      "PREFIX es: <http://marklogic.com/entity-services#>\
+    "PREFIX es: <http://marklogic.com/entity-services#>\
        SELECT * WHERE {\
         ?entity <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> es:EntityType.\
         ?entity es:property ?property.\
@@ -308,11 +302,11 @@ function getDHFEntityProperties(entity) {
         OPTIONAL {?property es:datatype|es:ref ?type.}\
         OPTIONAL { ?property es:description ?description }\
         }",
-      {"entity": sem.iri(entityModel.label)}).toArray()
+    { "entity": sem.iri(entityModel.label) }).toArray()
   return entityModel
 }
 
-function isIterable(obj) {
+function isIterable (obj) {
   // checks for null and undefined
   if (obj == null) {
     return false;
@@ -320,65 +314,89 @@ function isIterable(obj) {
   return typeof obj[Symbol.iterator] === 'function';
 }
 
-function InvokeExecuteGraph(input) {
+function InvokeExecuteGraph (input) {
 
 
   return {
-    execute: function execute() {
+    execute: function execute () {
       var previewUri = ''
       var result = null
       let gHelper = require("/custom-modules/pipes/graphHelper")
       let execContext = JSON.parse(input)
       let doc = null
       let uri = ''
-      if (execContext.collectionRandom) {
-        let nbDocs = cts.estimate(cts.collectionQuery(execContext.collection))
-        if(nbDocs>0) doc = cts.doc(fn.head(fn.subsequence(cts.uris(null, null, cts.collectionQuery(execContext.collection)), xdmp.random(nbDocs - 1) + 1)))
-      } else {
-        if (execContext.previewUri == null || execContext.previewUri == "")
-          doc = fn.head(fn.collection(execContext.collection))
-        else {
-          previewUri = execContext.previewUri
-          doc = cts.doc(execContext.previewUri)
+
+      if (execContext.previewUri != null && execContext.previewUri != "") {
+        previewUri = execContext.previewUri
+        doc = cts.doc(execContext.previewUri)
+      }
+      else if (execContext.collection != null && execContext.collection != "") {
+        if (execContext.collectionRandom) {
+          let nbDocs = cts.estimate(cts.collectionQuery(execContext.collection))
+          if (nbDocs > 0) doc = cts.doc(fn.head(fn.subsequence(cts.uris(null, null, cts.collectionQuery(execContext.collection)), xdmp.random(nbDocs - 1) + 1)))
         }
+        else {
+          doc = fn.head(fn.collection(execContext.collection))
+        }
+      }
+      else if (execContext.query != null && execContext.query != "") {
+        if (execContext.collectionRandom) {
+          let estimateQ = "cts.estimate(" + execContext.query + ")"
+          let nbDocs = xdmp.eval(estimateQ)
+
+          if (nbDocs > 0) {
+            doc = xdmp.eval("cts.doc(fn.head(fn.subsequence(cts.uris(null, null, " + execContext.query + "), xdmp.random(" + nbDocs + " - 1) + 1)))")
+          }
+        }
+        else {
+          doc = fn.head(xdmp.eval("cts.search(" + execContext.query + ")"))
+        }
+
       }
 
       if (doc !== null) {
 
         uri = fn.baseUri(doc)
 
-        console.log("input=", input)
-        console.log("execContext=", execContext)
-        console.log("execContext.collection=", execContext.collection)
-        console.log("execContext[\"collection\"]=", execContext["collection"])
-        console.log("input.collection=", execContext.collection)
-        console.log("uri=", uri);
+        xdmp.trace(TRACE_ID_DETAILS, "input=" + input)
+        xdmp.trace(TRACE_ID, "execContext.collection=" + execContext.collection)
+        xdmp.trace(TRACE_ID, "execContext.query=" + execContext.query)
+        xdmp.trace(TRACE_ID, "execContext[\"collection\"]=" + execContext["collection"])
+        xdmp.trace(TRACE_ID, "input.collection=" + execContext.collection)
+        xdmp.trace(TRACE_ID, "uri=" + uri);
 
         var graphResult = []
 
         try {
 
-        console.log("Starting graph execution..")
+          xdmp.trace(TRACE_ID, "Starting graph execution..")
 
-        var startTime = new Date();
+          var startTime = new Date();
 
-        graphResult = gHelper.executeGraphFromJson(execContext.jsonGraph, uri, doc, {collections: xdmp.documentGetCollections(uri)})
+          graphResult = gHelper.executeGraphFromJson(
+            execContext.jsonGraph,
+            uri,
+            doc,
+            {
+              collections: xdmp.documentGetCollections(uri),
+              permissions: xdmp.documentGetPermissions(uri)
+            });
 
-        var endTime = new Date();
-        var executionTime = endTime - startTime;
+          var endTime = new Date();
+          var executionTime = endTime - startTime;
 
-        console.log("Execution completed normally in " + executionTime + "ms")
-        console.log("Result: " + JSON.stringify(graphResult))
+          xdmp.trace(TRACE_ID, "Execution completed normally in " + executionTime + "ms")
+          xdmp.trace(TRACE_ID_DETAILS, "Result: " + JSON.stringify(graphResult))
 
-        result = {
-          uri: uri,
-          result: graphResult,
-          execTime: executionTime
-        }
+          result = {
+            uri: uri,
+            result: graphResult,
+            execTime: executionTime
+          }
 
         } catch (e) {
 
-          console.log("Exception occured during graph execution: " + e)
+          xdmp.log("Exception occured during graph execution: " + e, "error")
 
           result = {
             uri: uri,
@@ -390,7 +408,7 @@ function InvokeExecuteGraph(input) {
 
       } else {
 
-        console.log("No source document found. Nothing to preview for the given context")
+        xdmp.trace(TRACE_ID, "No source document found. Nothing to preview for the given context")
 
         result = {
           uri: previewUri,
@@ -406,16 +424,16 @@ function InvokeExecuteGraph(input) {
   }
 }
 
-function executeGraph(input, params) {
+function executeGraph (input, params) {
 
   const invokeExecuteGraph = InvokeExecuteGraph(input)
   let db = (params.database != null) ? xdmp.database(params.database) : xdmp.database()
   let targetDb = (params.toDatabase != null) ? xdmp.database(params.toDatabase) : xdmp.database()
-  let result = xdmp.invokeFunction(invokeExecuteGraph.execute, {database: db})
-  let jsonResults = result
+  let result = fn.head(xdmp.invokeFunction(invokeExecuteGraph.execute, { database: db }))
+  let jsonResults = result.result
   if (params.save == "true") {
 
-    if(jsonResults.toArray) jsonResults = jsonResults.toArray()
+    if (jsonResults.toArray) jsonResults = jsonResults.toArray()
     //let jsonResults = JSON.parse(xdmp.quote(result))
     if (!Array.isArray(jsonResults)) {
 
@@ -432,9 +450,9 @@ function executeGraph(input, params) {
 
       xdmp.invokeFunction(() => {
 
-          xdmp.documentInsert(uri, doc, null, collections)
+        xdmp.documentInsert(uri, doc, xdmp.defaultPermissions(), collections)
 
-        }, {"database": targetDb, "update": "true"}
+      }, { "database": targetDb, "update": "true" }
       )
     }
 
@@ -446,20 +464,35 @@ function executeGraph(input, params) {
 }
 
 
-function getFieldsByCollection(collection, customURI) {
+function getFieldsByCollection (collection, customURI, query) {
 
   return {
-    FieldsByCollection: function FieldsByCollection() {
+    FieldsByCollection: function FieldsByCollection () {
       let i = 0
       let fields = {}
       let docs = []
       let collectionDocs = fn.count(fn.collection(collection))
+
       if (collection != null && collection != "" && collectionDocs > 0) {
         for (let j = 0; j < 10; j++) {
           docs.push(fn.head(fn.subsequence(fn.collection(collection), xdmp.random(collectionDocs))))
           //let doc = fn.head(fn.collection(collection))
         }
       }
+      else if (query != null && query != "") {
+        let decodedQuery = decodeURI(query)
+
+        let estimateQ = "cts.estimate(" + decodedQuery + ")"
+        let nbDocs = xdmp.eval(estimateQ)
+
+        if (nbDocs > 0) {
+          for (let j = 0; j < 10; j++) {
+            doc = fn.head(xdmp.eval("cts.doc(fn.head(fn.subsequence(cts.uris(null, null, " + query + "), xdmp.random(" + nbDocs + " - 1) + 1)))"))
+            docs.push(doc);
+          }
+        }
+      }
+
       if (customURI != null && customURI != "") {
         customURI = decodeURI(customURI).trim();
         // replace multiple spaces by one so that spliting goes ok
@@ -473,7 +506,7 @@ function getFieldsByCollection(collection, customURI) {
       }
 
       docs.map(doc => doc.xpath(".//*").toArray().map(node => {
-        let allnodes =[node]
+        let allnodes = [node]
         node.xpath("./@*").toArray().map(item => allnodes.push(item))
         allnodes.map(node => {
 
@@ -481,41 +514,41 @@ function getFieldsByCollection(collection, customURI) {
           let originalPath = String(xdmp.path(node))
 
           //let path = originalPath.replace(/[A-z]+-node\('([\s]*)'\)/g, "$1").replace(/text\('([\s]+)'\)/g, "$1").replace(/text\('([\s\w]+)'\)/g, "node('$1')").replace(/[A-z]+-node\('([\s]*)'\)/g, "node('$1')")
-          let pathTokens = originalPath.replace(/(\/object-node\(\))/g,"").replace(/(\[\d+\])/g,"").split("/")
+          let pathTokens = originalPath.replace(/(\/object-node\(\)|\/text\(\))/g, "").replace(/(\[\d+\])/g, "").split("/")
 
-          pathTokens = pathTokens.map((item,index)=>{
-            if(item=="") return null
-            if(item.includes("array-node") && item.includes(" "))
-              if(index==pathTokens.length-1)
+          pathTokens = pathTokens.map((item, index) => {
+            if (item == "") return null
+            if (item.includes("array-node") && item.includes(" "))
+              if (index == pathTokens.length - 1)
                 return item + "/*"
               else return item + "/"
 
-            if(item.includes(" ") || item.includes("@"))
+            if (item.includes(" ") || item.includes("@"))
               return item.replace(/[A-z]+-node\('([\s\w@]*)'\)/g, "node('$1')").replace(/text\('([\s\w@]+)'\)/g, "node('$1')")
             else
               return item.replace(/[A-z]+-node\('([\s\w@]*)'\)/g, "$1").replace(/text\('([\s\w@]+)'\)/g, "$1")
           })
 
-          let lastSlash = originalPath.replace(/(\/object-node\(\))/g,"").lastIndexOf("/")
+          let lastSlash = originalPath.replace(/(\/object-node\(\))/g, "").lastIndexOf("/")
           let nodeLastPath = originalPath.substring(lastSlash + 1)
           //if(nodeLastPath.includes("array-node") && path[path.length-1].includes(" "))
           //path[path.length-1]=nodeLastPath
 
           let path = pathTokens.join("/")
-          let parentPath =path.replace(/(\/object-node\(\))/g,"").replace(/\/\*/g,"")
+          let parentPath = path.replace(/(\/object-node\(\))/g, "").replace(/\/\*/g, "")
           parentPath = parentPath.substring(0, parentPath.lastIndexOf("/"))
-          path = path.replace(/(\/object-node\(\))/g,"")
+          path = path.replace(/(\/object-node\(\))/g, "")
           let newParentPath = parentPath//.replace(/array-node\('([\s\w]*)'\)/g, "$1")
 
           pathTokens = path.split("/")
-          let pathKey = pathTokens.splice(0,pathTokens.length-1).join("/")
+          let pathKey = pathTokens.splice(0, pathTokens.length - 1).join("/")
 
-          newParentPath=newParentPath.replace("/*", "").replace(/\/\//,"/").replace(/\/$/,"")
+          newParentPath = newParentPath.replace("/*", "").replace(/\/\//, "/").replace(/\/$/, "")
           if (newParentPath == "") newParentPath = "/"
 
-          let prefix =(path.includes("@"))?"@":""
-          if (fields[path.replace("/*", "").replace(/\/\//,"/")] == null)
-            fields[path.replace("/*", "").replace(/\/\//,"/")] = {
+          let prefix = (path.includes("@")) ? "@" : ""
+          if (fields[path.replace("/*", "").replace(/\/\//, "/")] == null)
+            fields[path.replace("/*", "").replace(/\/\//, "/")] = {
               label: name + " [id" + i++ + "]",
               field: prefix + node.xpath("name(.)"),
               value: prefix + node.xpath("name(.)"),
@@ -526,7 +559,8 @@ function getFieldsByCollection(collection, customURI) {
               parent: newParentPath
             }
 
-        })}))
+        })
+      }))
       // return fields
       let results = []
       Object.keys(fields).map(item => {
@@ -550,12 +584,12 @@ function getFieldsByCollection(collection, customURI) {
   }
 }
 
-function getSavedBlock(params) {
+function getSavedBlock (params) {
   return fn.doc(params.uri)
 
 }
 
-function listSavedBlock(params) {
+function listSavedBlock (params) {
 
   let results = []
   for (let graph of cts.search(cts.andQuery([
@@ -570,31 +604,31 @@ function listSavedBlock(params) {
   return results
 }
 
-function saveBlock(input, params) {
+function saveBlock (input, params) {
   let graph = JSON.parse(input)
   let targetDb = (params.toDatabase != null) ? params.toDatabase : xdmp.database()
   xdmp.invokeFunction(() => {
 
-      xdmp.documentInsert("/marklogic-pipes/savedBlock/" + graph.name + ".json", graph, null
-        , blocksCollection)
+    xdmp.documentInsert("/marklogic-pipes/savedBlock/" + graph.name + ".json", graph, null
+      , blocksCollection)
 
-    }, {"database": targetDb, "update": "true"}
+  }, { "database": targetDb, "update": "true" }
   )
 
 }
 
-function deleteBlock(URI) {
+function deleteBlock (URI) {
 
   xdmp.invokeFunction(() => {
     declareUpdate();
     if (xdmp.documentGetCollections(URI).includes(blocksCollection)) { // security. can only delete blocks
-      console.log("Deleting Pipes block " + URI)
+      xdmp.trace(TRACE_ID, "Deleting Pipes block " + URI)
       xdmp.documentDelete(URI)
     }
   })
 }
 
-function deleteGraph(URI) {
+function deleteGraph (URI) {
 
   xdmp.invokeFunction(() => {
     declareUpdate();
@@ -603,12 +637,12 @@ function deleteGraph(URI) {
   })
 }
 
-function getSavedGraph(params) {
+function getSavedGraph (params) {
   return fn.doc(params.uri)
 
 }
 
-function listSavedGraph(params) {
+function listSavedGraph (params) {
 
   let results = []
   for (let graph of cts.search(cts.andQuery([
@@ -623,21 +657,21 @@ function listSavedGraph(params) {
   return results
 }
 
-function saveGraph(input, params) {
+function saveGraph (input, params) {
   let graph = JSON.parse(input);
   let targetDb = (params.toDatabase != null) ? params.toDatabase : xdmp.database()
   xdmp.invokeFunction(() => {
 
-      xdmp.documentInsert("/marklogic-pipes/savedGraph/" + graph.name + ".json", graph, xdmp.defaultPermissions()
-        , graphsCollection)
+    xdmp.documentInsert("/marklogic-pipes/savedGraph/" + graph.name + ".json", graph, xdmp.defaultPermissions()
+      , graphsCollection)
 
-    }, {"database": targetDb, "update": "true"}
+  }, { "database": targetDb, "update": "true" }
   )
 }
 
-function verifyUri(params) {
-  console.log("verifyUri " + params)
-  if ( params.uri === null || params.uri.length < 1 ) return {'documentExists' : false}
+function verifyUri (params) {
+  xdmp.trace(TRACE_ID, "verifyUri " + params)
+  if (params.uri === null || params.uri.length < 1) return { 'documentExists': false }
   var docExists = (checkDocumentExists(params.uri) !== null)
   var response = {}
   response.documentExists = docExists
@@ -645,72 +679,61 @@ function verifyUri(params) {
 }
 
 // Returns backend version
-function getBackEndVersion() {
+function getBackEndVersion () {
   var info = {}
   info.Version = PIPESVERSION
   info.Build = PIPESBUILD
   return info
 }
 
-function validateCTSQuery(input, params) {
+function validateCTSQuery (input, params) {
   var query = JSON.parse(input).query
-  console.log("Validating ctsquery : " + query)
+  xdmp.trace(TRACE_ID, "Validating ctsquery : " + query)
   var testQuery = 'fn.count(' + query + ')'
   var result
   try {
     result = xdmp.eval(testQuery)
-    return {"valid" : true}
+    return { "valid": true }
   } catch (e) {
-    console.log("Not valid: " + e)
-    return {"valid" : false, "error" : e}
+    xdmp.trace(TRACE_ID, "Not valid: " + e)
+    return { "valid": false, "error": e }
   }
 }
 
-function get(context, params) {
+function get (context, params) {
 
   switch (params.action) {
     case "collectionModel":
-      const invokeGetFieldsByCollection = getFieldsByCollection(params.collection, params.customURI)
-      return xdmp.invokeFunction(invokeGetFieldsByCollection.FieldsByCollection, {database: (params.database != null) ? params.database : xdmp.database()})
-      break;
+      const invokeGetFieldsByCollection = getFieldsByCollection(params.collection, params.customURI, params.query)
+      return xdmp.invokeFunction(invokeGetFieldsByCollection.FieldsByCollection, { database: (params.database != null) ? params.database : xdmp.database() })
     case "collectionDetails":
       const invokeGetCollectionDetails = getCollectionDetails()
-      return xdmp.invokeFunction(invokeGetCollectionDetails.CollectionDetails, {database: (params.database != null) ? params.database : xdmp.database()})
-      break;
+      return xdmp.invokeFunction(invokeGetCollectionDetails.CollectionDetails, { database: (params.database != null) ? params.database : xdmp.database() })
     case "databasesDetails":
       return getDatabases()
-      break;
     case "DHFEntities":
       return getDHFEntities();
-      break;
     case "DHFEntityProperties":
       return getDHFEntityProperties(params.entity);
-      break;
     case "GetSavedBlock":
       return getSavedBlock(params)
-      break;
     case "ListSavedBlock":
       return listSavedBlock(params)
-      break;
     case "GetSavedGraph":
       return getSavedGraph(params)
-      break;
     case "ListSavedGraph":
       return listSavedGraph(params)
-      break;
     case "verifyDocumentUri":
       return verifyUri(params)
-      break;
     case "GetVersion":
       return getBackEndVersion()
-      break;
     default:
   }
 
 
 };
 
-function post(context, params, input) {
+function post (context, params, input) {
 
   let config = {};
 
@@ -726,53 +749,39 @@ function post(context, params, input) {
     case "config":
       config.databases = getDatabases();
       const invokeGetCollectionsModels = getCollectionsModels(ctx);
-      config.collectionsModels = xdmp.invokeFunction(invokeGetCollectionsModels.collectionsModel, {database: (ctx.database != null) ? ctx.database.value : xdmp.database()})//getCollectionsModels(ctx)
+      config.collectionsModels = xdmp.invokeFunction(invokeGetCollectionsModels.collectionsModel, { database: (ctx.database != null) ? ctx.database.value : xdmp.database() })//getCollectionsModels(ctx)
       return config
-      break;
     case "search":
       const invokeSearch = search(ctx);
-      let results = xdmp.invokeFunction(invokeSearch.getResults, {database: (ctx.database != null) ? ctx.database.value : xdmp.database()})//getCollectionsModels(ctx)
+      let results = xdmp.invokeFunction(invokeSearch.getResults, { database: (ctx.database != null) ? ctx.database.value : xdmp.database() })//getCollectionsModels(ctx)
       return results
-      break;
     case "triplesByUri":
       const invokeGetTriples = getTriplesByUri(ctx.currentDocumentUri)
-      return xdmp.invokeFunction(invokeGetTriples.getResults, {database: (ctx.database != null) ? ctx.database.value : xdmp.database()})
-      break;
+      return xdmp.invokeFunction(invokeGetTriples.getResults, { database: (ctx.database != null) ? ctx.database.value : xdmp.database() })
     case "triplesByIri":
       const invokeGetTriplesIri = getTriplesByIri(ctx.currentIri)
-      return xdmp.invokeFunction(invokeGetTriplesIri.getResults, {database: (ctx.database != null) ? ctx.database.value : xdmp.database()})
-      break;
+      return xdmp.invokeFunction(invokeGetTriplesIri.getResults, { database: (ctx.database != null) ? ctx.database.value : xdmp.database() })
     case "Document":
       const invokeOpenDocument = openDocument(ctx.currentDocumentUri)
-      return xdmp.invokeFunction(invokeOpenDocument.getResults, {database: (ctx.database != null) ? ctx.database.value : xdmp.database()})
-      break;
+      return xdmp.invokeFunction(invokeOpenDocument.getResults, { database: (ctx.database != null) ? ctx.database.value : xdmp.database() })
     case "DHFEntities":
       return getDHFEntities();
-      break;
     case "DHFEntityProperties":
       return getDHFEntityProperties(params.entity);
-      break;
     case "ExecuteGraph":
       return executeGraph(input, params)
-      break;
     case "GetSavedBlock":
       return getSavedBlock(params)
-      break;
     case "ListSavedBlock":
       return listSavedBlock(params)
-      break;
     case "SaveBlock":
       return saveBlock(input, params)
-      break;
     case "GetSavedGraph":
       return getSavedGraph(params)
-      break;
     case "ListSavedGraph":
       return listSavedGraph(params)
-      break;
     case "SaveGraph":
       return saveGraph(input, params)
-      break;
     case "ValidateCtsQuery":
       return validateCTSQuery(input, params)
     default:
@@ -781,11 +790,11 @@ function post(context, params, input) {
 
 };
 
-function put(context, params, input) {
+function put (context, params, input) {
   // return at most one document node
 };
 
-function deleteFunction(context, params) {
+function deleteFunction (context, params) {
 
   var response
   context.outputTypes = [];

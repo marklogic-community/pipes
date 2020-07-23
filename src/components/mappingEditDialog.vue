@@ -289,13 +289,13 @@ export default {
 
       console.log("Opening the form: " + isRange)
 
-
+      this.EditForm.block = block
       if ( isCase ) {
 
       this.EditForm.title = "Edit Select Case"
       this.showMappingCasesEdit = true
       this.EditForm.currentProperties = block.properties.mappingCase
-      this.EditForm.block = block
+
       } else if ( isRange ) {
 
       this.EditForm.title = "Edit Mapping Range"

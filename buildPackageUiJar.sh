@@ -4,11 +4,14 @@
 
 #!/bin/sh
 
+# fetch the git tags, they are used for versioning
+git fetch --all
+
 # build the front end SPA UI
 
 echo "Copying overrides..."
 cp node_modules_override/litegraph.js node_modules/litegraph.js/build/litegraph.js
-# quasar build
+# quasar build --modern
 
 # create static resource directory first
 echo "Moving the front-end package to SpringBoot static resources folder..."

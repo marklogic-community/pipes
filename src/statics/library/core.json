@@ -4,21 +4,21 @@
     "blockName": "hashNode",
     "library": "Generate",
     "title": "Create Hash",
-    "description" : "Hashes the contents of a document to produce a unique fingerprint",
+    "description": "Hashes the contents of a document to produce a unique fingerprint",
     "inputs": [
       {
         "name": "node",
         "type": null,
-        "mandatory" : true,
-        "description" : ""
+        "mandatory": true,
+        "description": ""
       }
     ],
     "outputs": [
       {
         "name": "hash",
         "type": null,
-        "mandatory" : true,
-        "description" : ""
+        "mandatory": true,
+        "description": ""
       }
     ],
     "widgets": [
@@ -26,38 +26,45 @@
         "type": "combo",
         "name": "hash function",
         "default": "hash64",
-        "values": ["hash64", "sha1", "sha256", "sha512"]
+        "values": [
+          "hash64",
+          "sha1",
+          "sha256",
+          "sha512"
+        ]
       }
     ],
-    "properties": [
-    ],
+    "properties": [],
     "function": {
       "ref": "fn.doc",
       "code": null
     }
   },
-
   {
     "functionName": "multiConstant",
     "blockName": "multiConstant",
     "title": "Constant",
-    "description" : "Provides a constant",
+    "description": "Provides a constant",
     "library": "Generate",
     "widgets": [
-    {
-      "type": "combo",
-      "name": "Type",
-      "default": "string",
-      "values": ["string","number","NULL"],
-      "callback": "let cval = this.widgets[1].value; if (v == 'number' && isNaN(this.widgets[1].value)) this.widgets[1].value = 0;if (v == 'NULL') this.widgets[1].value = ''"
-    },
-    {
-      "type": "text",
-      "name": "constant",
-      "default": ""
-    }],
-    "inputs": [
+      {
+        "type": "combo",
+        "name": "Type",
+        "default": "string",
+        "values": [
+          "string",
+          "number",
+          "NULL"
+        ],
+        "callback": "let cval = this.widgets[1].value; if (v == 'number' && isNaN(this.widgets[1].value)) this.widgets[1].value = 0;if (v == 'NULL') this.widgets[1].value = ''"
+      },
+      {
+        "type": "text",
+        "name": "constant",
+        "default": ""
+      }
     ],
+    "inputs": [],
     "outputs": [
       {
         "name": "output",
@@ -69,12 +76,11 @@
       "code": null
     }
   },
-
   {
     "functionName": "stringPadding",
     "blockName": "stringPadding",
     "title": "Padding",
-    "description" : "Pads a string out using specified character",
+    "description": "Pads a string out using specified character",
     "library": "Format",
     "widgets": [
       {
@@ -83,17 +89,21 @@
         "default": "10",
         "callback": "let sVal = this.widgets[0].value; let n = Math.floor(Number(sVal));if (!( n !== Infinity && String(n) === sVal && n >= 0 )) { sVal ='0' }; this.widgets[0].value = sVal"
       },
-    {
-      "type": "combo",
-      "name": "Padding Direction",
-      "values": ["left","right"],
-      "default": "left"
-    },
-    {
-      "type": "text",
-      "name": "Padding Character",
-      "default": ""
-    }],
+      {
+        "type": "combo",
+        "name": "Padding Direction",
+        "values": [
+          "left",
+          "right"
+        ],
+        "default": "left"
+      },
+      {
+        "type": "text",
+        "name": "Padding Character",
+        "default": ""
+      }
+    ],
     "inputs": [
       {
         "name": "input",
@@ -111,67 +121,73 @@
       "code": null
     }
   },
-
-{
-  "functionName": "stringCase",
-  "blockName": "stringCase",
-  "title": "String Case",
-  "description" : "Changes the case of a string",
-  "library": "Transform",
-  "widgets": [
   {
-    "type": "combo",
-    "name": "stringOperation",
-    "default": "lowercase",
-    "values": ["lowercase","UPPERCASE","Capitalise"]
-  }],
-  "inputs": [
-    {
-      "name": "input",
-      "type": "xs:string"
+    "functionName": "stringCase",
+    "blockName": "stringCase",
+    "title": "String Case",
+    "description": "Changes the case of a string",
+    "library": "Transform",
+    "widgets": [
+      {
+        "type": "combo",
+        "name": "stringOperation",
+        "default": "lowercase",
+        "values": [
+          "lowercase",
+          "UPPERCASE",
+          "Capitalise"
+        ]
+      }
+    ],
+    "inputs": [
+      {
+        "name": "input",
+        "type": "xs:string"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "output",
+        "type": "xs:string"
+      }
+    ],
+    "function": {
+      "ref": null,
+      "code": null
     }
-  ],
-  "outputs": [
-    {
-      "name": "output",
-      "type": "xs:string"
-    }
-  ],
-  "function": {
-    "ref": null,
-    "code": null
-  }
-},
+  },
   {
     "functionName": "Templating",
     "blockName": "Templating",
     "title": "String Template",
     "library": "Generate",
-    "description" : "Applies values to a template to generate a string",
+    "description": "Applies values to a template to generate a string",
     "inputs": [
       {
         "name": "v1",
         "type": null,
-        "mandatory" : false,
-        "description" : ""
-      },{
+        "mandatory": false,
+        "description": ""
+      },
+      {
         "name": "v2",
         "type": null,
-        "mandatory" : false,
-        "description" : ""
-      },{
+        "mandatory": false,
+        "description": ""
+      },
+      {
         "name": "v3",
         "type": null,
-        "mandatory" : false,
-        "description" : ""
+        "mandatory": false,
+        "description": ""
       }
     ],
     "outputs": [
       {
         "name": "newString",
         "type": null,
-        "mandatory" : false,
-        "description" : ""
+        "mandatory": false,
+        "description": ""
       }
     ],
     "widgets": [
@@ -180,80 +196,81 @@
         "name": "v4",
         "default": "",
         "values": []
-
       },
       {
         "type": "text",
         "name": "v5",
         "default": "",
         "values": []
-
       },
       {
         "type": "text",
         "name": "template",
         "default": "${v1} ${v2} ${v3} ${v4}",
         "values": []
-
       }
     ],
     "function": {
       "ref": "fn.doc",
       "code": null
     }
-
-
   },
   {
     "functionName": "multicast",
     "blockName": "multicast",
     "title": "Change property type",
     "library": "Transform",
-    "description" : "Changes the data type of an input field",
+    "description": "Changes the data type of an input field",
     "inputs": [
       {
         "name": "v1",
         "type": null,
-        "mandatory" : false,
-        "description" : ""
-      },{
+        "mandatory": false,
+        "description": ""
+      },
+      {
         "name": "v2",
         "type": null,
-        "mandatory" : false,
-        "description" : ""
-      },{
+        "mandatory": false,
+        "description": ""
+      },
+      {
         "name": "v3",
         "type": null,
-        "mandatory" : false,
-        "description" : ""
-      },{
+        "mandatory": false,
+        "description": ""
+      },
+      {
         "name": "v4",
         "type": null,
-        "mandatory" : false,
-        "description" : ""
+        "mandatory": false,
+        "description": ""
       }
     ],
     "outputs": [
       {
         "name": "v1",
         "type": null,
-        "mandatory" : false,
-        "description" : ""
-      },{
+        "mandatory": false,
+        "description": ""
+      },
+      {
         "name": "v2",
         "type": null,
-        "mandatory" : false,
-        "description" : ""
-      },{
+        "mandatory": false,
+        "description": ""
+      },
+      {
         "name": "v3",
         "type": null,
-        "mandatory" : false,
-        "description" : ""
-      },{
+        "mandatory": false,
+        "description": ""
+      },
+      {
         "name": "v4",
         "type": null,
-        "mandatory" : false,
-        "description" : ""
+        "mandatory": false,
+        "description": ""
       }
     ],
     "widgets": [
@@ -261,25 +278,41 @@
         "type": "combo",
         "name": "type1",
         "default": "string",
-        "values": ["string", "int", "float"]
+        "values": [
+          "string",
+          "int",
+          "float"
+        ]
       },
       {
         "type": "combo",
         "name": "type2",
         "default": "string",
-        "values": ["string", "int", "float"]
+        "values": [
+          "string",
+          "int",
+          "float"
+        ]
       },
       {
         "type": "combo",
         "name": "type3",
         "default": "string",
-        "values": ["string", "int", "float"]
+        "values": [
+          "string",
+          "int",
+          "float"
+        ]
       },
       {
         "type": "combo",
         "name": "type4",
         "default": "string",
-        "values": ["string", "int", "float"]
+        "values": [
+          "string",
+          "int",
+          "float"
+        ]
       }
     ],
     "function": {
@@ -292,32 +325,32 @@
     "blockName": "GeoReproject",
     "library": "Transform",
     "title": "Re-project geo coordinates",
-    "description" : "Converts geo coordinates from one system to another",
+    "description": "Converts geo coordinates from one system to another",
     "inputs": [
       {
         "name": "srcCoordinateSystem",
         "type": "xs:string",
-        "mandatory" : true,
-        "description" : "Source coordinate system"
+        "mandatory": true,
+        "description": "Source coordinate system"
       },
       {
         "name": "targetCoordinateSystem",
         "type": "xs:string",
-        "mandatory" : true,
-        "description" : "Target coordinate system"
+        "mandatory": true,
+        "description": "Target coordinate system"
       },
       {
         "name": "strWKT",
         "type": "xs:string",
-        "mandatory" : true,
-        "description" : "Geo shape"
+        "mandatory": true,
+        "description": "Geo shape"
       }
     ],
     "outputs": [
       {
         "name": "strWKT",
         "type": "node",
-        "description" : "Converted geo shape"
+        "description": "Converted geo shape"
       }
     ],
     "function": {
@@ -328,9 +361,9 @@
   {
     "functionName": "fn_doc",
     "blockName": "doc",
-    "title" : "Document by URI",
+    "title": "Document by URI",
     "library": "Query",
-    "description" : "Loads a document by URI",
+    "description": "Loads a document by URI",
     "inputs": [
       {
         "name": "uri",
@@ -347,36 +380,12 @@
       "ref": "fn.doc",
       "code": null
     }
-
-  },
-  {
-    "functionName": "fn_collection",
-    "blockName": "collection",
-    "title": "Documents from Collection",
-    "description" : "Loads documents from a specific database collection",
-    "library": "Query",
-    "inputs": [
-      {
-        "name": "collectionName",
-        "type": "xs:string"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "docs",
-        "type": "node()*"
-      }
-    ],
-    "function": {
-      "ref": "fn.collection",
-      "code": null
-    }
   },
   {
     "functionName": "fn_baseUri",
     "blockName": "baseUri",
     "title": "fn.baseUri",
-    "description" : "Returns the URI of a document node",
+    "description": "Returns the URI of a document node",
     "library": "Advanced",
     "inputs": [
       {
@@ -399,7 +408,7 @@
     "functionName": "fn_head",
     "blockName": "head",
     "title": "fn.head",
-    "description" : "fn.head",
+    "description": "fn.head",
     "library": "Advanced",
     "inputs": [
       {
@@ -430,7 +439,6 @@
         "type": "xs:string"
       }
     ],
-
     "widgets": [
       {
         "type": "text",
@@ -442,6 +450,37 @@
     "outputs": [
       {
         "name": "IsoDate",
+        "type": "xs:string"
+      }
+    ],
+    "function": {
+      "ref": null,
+      "code": null
+    }
+  },
+  {
+    "functionName": "FormatDateTime",
+    "blockName": "FormatDateTime",
+    "title": "Format DateTime",
+    "library": "Format",
+    "description": "Formats a dateTime to ISO format using the provided format",
+    "inputs": [
+      {
+        "name": "inputDateTime",
+        "type": "xs:string"
+      }
+    ],
+    "widgets": [
+      {
+        "type": "text",
+        "name": "format",
+        "default": "DD/MM/YYYY",
+        "values": []
+      }
+    ],
+    "outputs": [
+      {
+        "name": "IsoDateTime",
         "type": "xs:string"
       }
     ],
@@ -472,7 +511,6 @@
         "name": "subjectIsIRI",
         "default": true,
         "values": []
-
       },
       {
         "type": "text",
@@ -503,21 +541,21 @@
     "blockName": "Split",
     "title": "Split String",
     "library": "Split",
-    "description" : "Splits a string using a specified character",
+    "description": "Splits a string using a specified character",
     "inputs": [
       {
         "name": "string",
         "type": null
       }
     ],
-
     "widgets": [
       {
         "type": "text",
         "name": "splitChar",
         "default": "/",
         "values": []
-      }],
+      }
+    ],
     "outputs": [
       {
         "name": "v1",
@@ -565,10 +603,10 @@
     }
   },
   {
-    "functionName": "LookupCollectionPropertyValue",
-    "blockName": "LookupCollectionPropertyValue",
+    "functionName": "LookupByValue",
+    "blockName": "LookupByValue",
     "library": "Query",
-    "title": "LookupCollectionPropertyValue",
+    "title": "Lookup by Value",
     "description": "Returns data from documents matching a collection and property value",
     "events": {
       "onConfigure": "console.debug('Lookup block onConfigure event: '+ JSON.stringify(node) + ' widgets.length=' + this.widgets.length + ' inputs:' + this.inputs.length + ' outputs:' + this.outputs.length + ', v:' + this.widgets[0].value);let v = this.widgets[0].value;if (this.widgets.length == (parseInt(v) + 5)) return; this.widgets=this.widgets.slice(0,5);for (let x=0;x < v ;x++) {this.addWidget(\"text\", \"value\" + x + \"Path\" , this.widgets_values[x+5], function (v) {})};return;"
@@ -586,7 +624,7 @@
         "name": "nbOutputValues",
         "default": "1",
         "values": "1",
-		    "callback": "let nb = this.outputs.length;let vInt = parseInt(v);if (vInt < nb) {for (let i=0;i<(nb - vInt);i++){this.removeOutput(this.outputs.length-1);this.widgets.pop()}}else if (vInt > nb) { this.widgets=this.widgets.slice(0,5 + nb);for(let i=nb;i<vInt;i++) {this.addOutput('value' + i,null);this.addWidget(\"text\", \"value\" + i + \"Path\" , '', function (v) {})};}"
+        "callback": "let nb = this.outputs.length;let vInt = parseInt(v);if (vInt < nb) {for (let i=0;i<(nb - vInt);i++){this.removeOutput(this.outputs.length-1);this.widgets.pop()}}else if (vInt > nb) { this.widgets=this.widgets.slice(0,5 + nb);for(let i=nb;i<vInt;i++) {this.addOutput('value' + i,null);this.addWidget(\"text\", \"value\" + i + \"Path\" , '', function (v) {})};}"
       },
       {
         "type": "combo",
@@ -610,16 +648,19 @@
         "type": "combo",
         "name": "dataType",
         "default": "string",
-        "values": ["string","number","bool"]
-
+        "values": [
+          "string",
+          "number",
+          "bool"
+        ]
       },
       {
         "type": "text",
         "name": "value0Path",
         "default": "/path/to/value/string()",
         "values": []
-      }],
-
+      }
+    ],
     "outputs": [
       {
         "name": "value0",
@@ -637,8 +678,8 @@
     "title": "Execute Javascript",
     "description": "Executes an adhoc Javascript block",
     "library": "Advanced",
-    "events" : {
-      "beforePropSave" : "var result=true;try{eval('var var1,var2,var3,var4,var5;'+v)}catch(e){validation.message=e;result=false};return result"
+    "events": {
+      "beforePropSave": "var result=true; const regex = /(xdmp\\.(eval|invoke|documentInsert|xqueryEval|xsltEval))/g;const found = v.match(regex);if (found == null) {result=true} else {validation.message='Possible code injection ('+regex+')';result=false};return result"
     },
     "inputs": [
       {
@@ -648,8 +689,7 @@
       {
         "name": "var2",
         "type": null
-      }
-    ,
+      },
       {
         "name": "var3",
         "type": null
@@ -669,12 +709,12 @@
         "type": "if ( Number(var1) > 100 ) 'BIG'; else 'SMALL';"
       },
       {
-        "name" : "editProp",
-        "type" : "sjsCode"
+        "name": "editProp",
+        "type": "sjsCode"
       },
       {
-        "name" : "editWindowTitle",
-        "type" : "Edit JavaScript"
+        "name": "editWindowTitle",
+        "type": "Edit JavaScript"
       }
     ],
     "widgets": [],
@@ -690,108 +730,51 @@
     }
   },
   {
-    "functionName": "Lookup",
-    "blockName": "Lookup",
-    "title": "Lookup",
-    "description": "Retrieves data from a document matching a query (double click block to configure)",
-	  "library": "Query",
-	  "events": {
-    "onConfigure": "let v = this.widgets[0].value;if (this.widgets.length == (parseInt(v) + 2)) return; this.widgets=this.widgets.slice(0,2);for (let x=0;x < v ;x++) {this.addWidget(\"text\", \"value\" + x + \"Path\" , this.widgets_values[x+2], function (v) {})};return;",
-    "beforePropSave" : "validation.override = true; return ctx.validateCtsQuery(v)"
-			},
-    "inputs": [
-      {
-        "name": "var1",
-        "type": null
-      },
-      {
-        "name": "var2",
-        "type": null
-      }
-    ],
-    "properties": [
-      {
-        "name": "ctsQuery",
-        "type": "cts.collectionQuery(\"${var1}\")"
-      },
-      {
-        "name" : "editProp",
-        "type" : "ctsQuery"
-      },
-      {
-        "name" : "editWindowTitle",
-        "type" : "Edit Query"
-      },
-      {
-        "name" : "hoverText",
-        "type" : "Double click block to edit the lookup query"
-      }
-    ],
-    "widgets": [
-      {
-        "type": "text",
-        "name": "nbOutputValues",
-        "default": "1",
-        "values": "1",
-		    "callback": "let nb = this.outputs.length;let vInt = parseInt(v); if (vInt < nb) {for (let i=0;i<(nb - vInt);i++){this.removeOutput(this.outputs.length-1);this.widgets.pop()}} else if (vInt > nb) { this.widgets=this.widgets.slice(0,2 + nb);for(let i=nb;i<vInt;i++) {this.addOutput('value' + i,null);this.addWidget(\"text\", \"value\" + i + \"Path\" , '', function (v) {})};}"	},
-      {
-        "type": "combo",
-        "name": "database",
-        "default": "#DATABASES#",
-        "values": []
-
-      },
-      {
-        "type": "text",
-        "name": "value0Path",
-        "default": "/path/to/value/string()",
-        "values": []
-
-      }],
-
-    "outputs": [
-      {
-        "name": "value0",
-        "type": null
-      }
-    ],
-    "function": {
-      "ref": null,
-      "code": ""
-    }
-  },
-  {
     "functionName": "ExpertQueryBuilder",
     "blockName": "ExpertQueryBuilder",
-    "title": "Expert Query Builder",
-    "description": "Loads document from database using an adhoc ctsquery",
+    "title": "Lookup by Query",
+    "description": "Build your own query using the query builder",
     "library": "Query",
     "inputs": [
       {
         "name": "v0",
         "type": null
-      },
-      {
-        "name": "v1",
-        "type": null
       }
     ],
     "properties": [
       {
-        "name": "ctsQuery",
-        "type": "cts.collectionQuery(\"${v0}\")"
+        "name": "queryBuilder",
+        "type": {
+          "logicalOperator": "all",
+          "children": []
+        }
+      },
+      {
+        "name": "hoverText",
+        "type": "Double click block to use the query builder"
       }
     ],
     "widgets": [
       {
         "type": "text",
         "name": "nbInputs",
-        "default": "2",
+        "default": "1",
         "values": [],
         "callback": "let nb = this.inputs.length;for(let i=0;i<nb;i++) {this.removeInput(0);};for(let i=0;i<parseInt(v);i++) this.addInput('v' + i,null);"
+      },
+      {
+        "type": "combo",
+        "name": "database",
+        "default": "#DATABASES#",
+        "values": [],
+        "callback": "this.properties.queryBuilder.selectedDB.label=this.widgets[1].value"
       }
-     ],
+    ],
     "outputs": [
+      {
+        "name": "documents",
+        "type": null
+      },
       {
         "name": "ctsQuery",
         "type": null
@@ -807,7 +790,7 @@
     "blockName": "EpochToDateTime",
     "title": "Epoch to dateTime",
     "library": "Format",
-    "description" : "Converts an Epoch number to a dateTime string",
+    "description": "Converts an Epoch number to a dateTime string",
     "inputs": [
       {
         "name": "epoch",
@@ -830,7 +813,7 @@
     "blockName": "FormatDateTimeAuto",
     "title": "Format Date(predfined format)",
     "library": "Format",
-    "description" : "Formats a datetime to ISO format using predefined formats",
+    "description": "Formats a datetime to ISO format using predefined formats",
     "inputs": [
       {
         "name": "inputDateTime",
@@ -852,7 +835,7 @@
     "functionName": "NormalizeSpace",
     "blockName": "NormalizeSpace",
     "title": "Normalize Space",
-    "description" : "Trims a string and reduces extra spaces to one",
+    "description": "Trims a string and reduces extra spaces to one",
     "library": "Clean",
     "inputs": [
       {
@@ -875,7 +858,7 @@
     "functionName": "RegExReplace",
     "blockName": "RegExReplace",
     "title": "Regex Replace",
-    "description" : "Allows replacement of a string using Regex",
+    "description": "Allows replacement of a string using Regex",
     "library": "Transform",
     "inputs": [
       {
@@ -895,17 +878,20 @@
         "name": "regEx",
         "default": "",
         "values": []
-      }, {
+      },
+      {
         "type": "text",
         "name": "replace",
         "default": "",
         "values": []
-      },{
+      },
+      {
         "type": "toggle",
         "name": "global",
         "default": true,
         "values": []
-      },{
+      },
+      {
         "type": "toggle",
         "name": "caseInsensitive",
         "default": true,
@@ -916,14 +902,13 @@
       "ref": null,
       "code": null
     }
-  }
-,
+  },
   {
     "functionName": "fn_count",
     "blockName": "count",
     "library": "Advanced",
     "title": "fn.count",
-    "description" : "Counts the supplied elements",
+    "description": "Counts the supplied elements",
     "inputs": [
       {
         "name": "list",
@@ -942,106 +927,11 @@
     }
   },
   {
-    "functionName": "cts_andQuery",
-    "blockName": "andQuery",
-    "library": "Query",
-    "description" : "Builds a query using cts.Query",
-    "title": "cts.andQuery",
-    "inputs": [
-      {
-        "name": "query1",
-        "type": "cts:query"
-      },
-      {
-        "name": "query2",
-        "type": "cts:query"
-      },
-      {
-        "name": "query3",
-        "type": "cts:query"
-      },
-      {
-        "name": "query4",
-        "type": "cts:query"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "query",
-        "type": "cts:query"
-      }
-    ],
-    "function": {
-      "ref": null,
-      "code": ""
-    }
-
-
-  },
-  {
-    "functionName": "cts_orQuery",
-    "blockName": "orQuery",
-    "library": "Query",
-    "title": "cts.orQuery",
-    "description" : "Builds an or query",
-    "inputs": [
-      {
-        "name": "query1",
-        "type": "cts:query"
-      },
-      {
-        "name": "query2",
-        "type": "cts:query"
-      },
-      {
-        "name": "query3",
-        "type": "cts:query"
-      },
-      {
-        "name": "query4",
-        "type": "cts:query"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "query",
-        "type": "cts:query"
-      }
-    ],
-    "function": {
-      "ref": null,
-      "code": ""
-    }
-  },
-  {
-    "functionName": "cts_search",
-    "blockName": "search",
-    "library": "Query",
-    "title": "cts.search",
-    "description" : "Runs a MarkLogic search",
-    "inputs": [
-      {
-        "name": "query",
-        "type": "cts:query"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "results",
-        "type": ""
-      }
-    ],
-    "function": {
-      "ref": "cts.search",
-      "code": null
-    }
-  },
-  {
     "functionName": "fn_stringJoin",
     "blockName": "String join",
     "library": "Join",
     "title": "String Join",
-    "description" : "Joins the elements of an array into a single string, using the separator character",
+    "description": "Joins the elements of an array into a single string, using the separator character",
     "inputs": [
       {
         "name": "string*",
@@ -1051,7 +941,7 @@
     "properties": [
       {
         "name": "separator",
-        "type": "xs:string"
+        "type": ","
       }
     ],
     "outputs": [
@@ -1061,16 +951,16 @@
       }
     ],
     "function": {
-      "ref": "fn.stringJoin",
-      "code": null
+      "ref": null,
+      "code": "let stringJoined = fn.stringJoin(this.getInputData(0), this.properties['separator']);this.setOutputData(0, stringJoined);"
     }
   },
   {
     "functionName": "mapRangeValues",
     "blockName": "mapRangeValues",
-     "title": "Map Range Values",
+    "title": "Map Range Values",
     "library": "Mapping",
-    "description" : "Maps an input from an range value to another using the given configuration (double click on block)",
+    "description": "Maps an input from an range value to another using the given configuration (double click on block)",
     "inputs": [
       {
         "name": "value",
@@ -1084,13 +974,22 @@
     "properties": [
       {
         "name": "mappingRange",
-        "type": [{"from": "1","to": "3", "target": "100"},
-          {"from": "4","to": "6", "target": "#INPUT#"}
+        "type": [
+          {
+            "from": "1",
+            "to": "3",
+            "target": "100"
+          },
+          {
+            "from": "4",
+            "to": "6",
+            "target": "#INPUT#"
+          }
         ]
       },
       {
-        "name" : "hoverText",
-        "type" : "Double click block to edit the mapping rules"
+        "name": "hoverText",
+        "type": "Double click block to edit the mapping rules"
       }
     ],
     "widgets": [
@@ -1098,7 +997,11 @@
         "type": "combo",
         "name": "castOutput",
         "default": "number",
-        "values": ["number","string","bool"]
+        "values": [
+          "number",
+          "string",
+          "bool"
+        ]
       }
     ],
     "outputs": [
@@ -1111,19 +1014,19 @@
       "ref": null,
       "code": ""
     }
-  }
-,
+  },
   {
     "functionName": "mapValues",
     "blockName": "Map values",
     "title": "Map Values",
     "library": "Mapping",
-    "description" : "Maps an input value to another using the configuration of the block (double click)",
+    "description": "Maps an input value to another using the configuration of the block (double click)",
     "inputs": [
       {
         "name": "value",
         "type": "xs:string"
-      },{
+      },
+      {
         "name": "default",
         "type": "xs:string"
       }
@@ -1131,13 +1034,20 @@
     "properties": [
       {
         "name": "mapping",
-        "type": [{"source": "#NULL#", "target": "#NULL#"},
-          {"source": "#EMPTY#", "target": "#EMPTY#"}
+        "type": [
+          {
+            "source": "#NULL#",
+            "target": "#NULL#"
+          },
+          {
+            "source": "#EMPTY#",
+            "target": "#EMPTY#"
+          }
         ]
       },
       {
-        "name" : "hoverText",
-        "type" : "Double click block to edit the mapping rules"
+        "name": "hoverText",
+        "type": "Double click block to edit the mapping rules"
       }
     ],
     "widgets": [
@@ -1145,14 +1055,16 @@
         "type": "combo",
         "name": "castOutput",
         "default": "string",
-        "values": ["string","bool"]
+        "values": [
+          "string",
+          "bool"
+        ]
       },
       {
         "type": "toggle",
         "name": "wildcarded",
         "default": false,
         "values": []
-
       }
     ],
     "outputs": [
@@ -1164,29 +1076,6 @@
     "function": {
       "ref": null,
       "code": ""
-  }
-},
-  {
-    "functionName": "cts_collectionQuery",
-    "blockName": "collectionQuery",
-    "title": "cts.collectionQuery",
-    "description" : "cts.collectionQuery",
-    "library": "Query",
-    "inputs": [
-      {
-        "name": "collectionName",
-        "type": "xs:string"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "query",
-        "type": "cts:query"
-      }
-    ],
-    "function": {
-      "ref": "cts.collectionQuery",
-      "code": null
     }
   },
   {
@@ -1242,81 +1131,11 @@
     }
   },
   {
-    "functionName": "jsonPropertyValueQuery",
-    "blockName": "jsonPropertyValueQuery",
-    "library": "Query",
-    "title": "cts.jsonPropertyValueQuery",
-    "description": "Loads a JSON document by property value",
-    "inputs": [
-      {
-        "name": "property",
-        "type": "xs:string"
-      },
-      {
-        "name": "value",
-        "type": "xs:string"
-      }
-    ],
-    "widgets": [
-      {
-        "type": "combo",
-        "name": "case",
-        "default": "",
-        "values": ["","case-sensitive","case-insensitive"]
-
-      }, {
-        "type": "combo",
-        "name": "diacritic",
-        "default": "",
-        "values": ["","diacritic-sensitive","diacritic-insensitive"]
-
-      }, {
-        "type": "combo",
-        "name": "punctuation",
-        "default": "",
-        "values": ["","punctuation-sensitive","punctuation-insensitive"]
-
-      }, {
-        "type": "combo",
-        "name": "whitespace",
-        "default": "",
-        "values": [ "","whitespace-sensitive", "whitespace-insensitive"]
-
-      }, {
-        "type": "combo",
-        "name": "stemming",
-        "default": "",
-        "values": [ "","stemmed", "unstemmed"]
-
-      }, {
-        "type": "combo",
-        "name": "wildcard",
-        "default": "",
-        "values": [ "","wildcarded", "unwildcarded"]
-      }, {
-        "type": "combo",
-        "name": "exact",
-        "default": "",
-        "values": [ "","exact"]
-      }
-    ],
-    "outputs": [
-      {
-        "name": "query",
-        "type": "cts:query"
-      }
-    ],
-    "function": {
-      "ref": "cts.jsonPropertyValueQuery",
-      "code": null
-    }
-  },
-  {
     "functionName": "applyXSLT",
     "blockName": "ApplyXSLT",
     "title": "Apply XSLT",
     "library": "Transform",
-    "description" : "Applies an XSLT transformation. Transformation can be a string or URI of a XSL document in the module databases",
+    "description": "Applies an XSLT transformation. Transformation can be a string or URI of a XSL document in the module databases",
     "inputs": [
       {
         "name": "node",
@@ -1341,7 +1160,6 @@
       "ref": null,
       "code": ""
     }
-
   },
   {
     "functionName": "addProperty",
@@ -1366,7 +1184,6 @@
       }
     ],
     "outputs": [
-
       {
         "name": "doc",
         "type": "node"
@@ -1375,36 +1192,52 @@
     "function": {
       "ref": null,
       "code": ""
-  }
-},
+    }
+  },
   {
     "functionName": "array",
     "blockName": "Array",
     "title": "Generate Array",
     "library": "Join",
-    "description" : "Creates an array from individual inputs. If one of the inputs is itself an array then it will be flattened first",
+    "description": "Creates an array from individual inputs. If one of the inputs is itself an array then it will be flattened first",
+    "events": {
+      "onConfigure": "for(let i=this.inputs.length;i<parseInt(this.widgets[0].value);i++) this.addInput('item' + i,null);"
+    },
     "inputs": [
       {
         "name": "item1",
         "type": null
-      }, {
+      },
+      {
         "name": "item2",
         "type": null
-      }, {
+      },
+      {
         "name": "item3",
         "type": null
-      }, {
+      },
+      {
         "name": "item4",
         "type": null
-      }, {
+      },
+      {
         "name": "item5",
-        "type" :null
+        "type": null
       }
     ],
     "outputs": [
       {
         "name": "array",
         "type": null
+      }
+    ],
+    "widgets": [
+      {
+        "type": "text",
+        "name": "nbInputs",
+        "default": "5",
+        "values": [],
+        "callback": "if (v<this.inputs.length) {this.widgets[0].value=this.inputs.length;} else { for(let i=this.inputs.length+1;i<parseInt(v)+1;i++) this.addInput('item' + i,null); }"
       }
     ],
     "function": {
@@ -1417,9 +1250,8 @@
     "blockName": "declarativeMapper",
     "library": "DHF",
     "title": "Declarative Mapper",
-    "description" : "Applies DHF Custom Mapping step to the input node",
+    "description": "Applies DHF Custom Mapping step to the input node",
     "inputs": [
-
       {
         "name": "node",
         "type": null
@@ -1431,13 +1263,14 @@
         "name": "MappingName",
         "default": "",
         "values": []
-      },{
+      },
+      {
         "type": "text",
         "name": "MappingVersion",
         "default": "",
         "values": []
-
-      },{
+      },
+      {
         "type": "toggle",
         "name": "WithInstanceRoot",
         "default": true,
@@ -1460,9 +1293,8 @@
     "blockName": "uuid",
     "title": "Unique ID",
     "library": "Generate",
-    "description" : "Generates a unique ID string to use as a URI",
+    "description": "Generates a unique ID string to use as a URI",
     "inputs": [],
-
     "widgets": [
       {
         "type": "text",
@@ -1471,7 +1303,6 @@
         "values": [],
         "description": "This value can be added as a prefix to the UUID"
       }
-
     ],
     "properties": [],
     "outputs": [
@@ -1490,43 +1321,43 @@
     "blockName": "PROV-O structure",
     "title": "PROV-O Structure",
     "library": "Enrich",
-    "description" : "Generates PROVO triples using the provided inputs",
+    "description": "Generates PROVO triples using the provided inputs",
     "inputs": [
       {
         "name": "uri",
         "type": null,
         "mandatory": true,
-        "description" : "URI of the source"
+        "description": "URI of the source"
       },
       {
         "name": "DerivedFrom1",
         "type": null,
         "mandatory": false,
-        "description" : "Optional derived from URI"
+        "description": "Optional derived from URI"
       },
       {
         "name": "DerivedFrom2",
         "type": null,
         "mandatory": false,
-        "description" : "Optional derived from URI"
+        "description": "Optional derived from URI"
       },
       {
         "name": "DerivedFrom3",
         "type": null,
         "mandatory": false,
-        "description" : "Optional derived from URI"
+        "description": "Optional derived from URI"
       },
       {
         "name": "GeneratedBy",
         "type": null,
         "mandatory": false,
-        "description" : "Optional generated by URI"
+        "description": "Optional generated by URI"
       },
       {
         "name": "createdOn",
         "type": null,
         "mandatory": false,
-        "description" : "Optional date"
+        "description": "Optional date"
       }
     ],
     "properties": [],
@@ -1546,19 +1377,19 @@
     "blockName": "EntityEnrichment",
     "title": "Entity Enrichment",
     "library": "Enrich",
-    "description" : "Performs entity enrichment on an input string using a dictionary",
+    "description": "Performs entity enrichment on an input string using a dictionary",
     "inputs": [
       {
         "name": "string",
         "type": null,
-        "mandatory" : true,
-        "description" : "String to enrich"
+        "mandatory": true,
+        "description": "String to enrich"
       },
       {
         "name": "dictionary",
         "type": null,
-        "mandatory" : true,
-        "description" : "URI of a SKOS dictionary"
+        "mandatory": true,
+        "description": "URI of a SKOS dictionary"
       }
     ],
     "properties": [],
@@ -1566,7 +1397,7 @@
       {
         "name": "enrichedString",
         "type": null,
-        "description" : "Enriched string"
+        "description": "Enriched string"
       }
     ],
     "function": {
@@ -1579,7 +1410,7 @@
     "blockName": "Highlight",
     "title": "Highlight String",
     "library": "Enrich",
-    "description" : "Applies the MarkLogic highlight function to a string",
+    "description": "Applies the MarkLogic highlight function to a string",
     "inputs": [
       {
         "name": "string",
@@ -1611,7 +1442,7 @@
     "blockName": "DistinctValues",
     "title": "Distinct Values",
     "library": "Filter",
-    "description" : "Returns the distinct values from an input array or sequence",
+    "description": "Returns the distinct values from an input array or sequence",
     "inputs": [
       {
         "name": "array",
@@ -1639,11 +1470,44 @@
     }
   },
   {
+      "functionName": "FilterArray", 
+      "blockName": "FilterArray",
+      "library": "Filter",
+      "description": "Returns the filtered Array based on the given pattern (can be an arrray), either inclusive or exclusive",
+      "inputs": [
+          {
+              "name": "unfiltered",
+              "type": "string*"
+          },
+          {
+              "name": "patterns",
+              "type": "string*"
+          }
+      ],
+      "widgets": [
+          {
+              "type": "toggle",
+              "name": "include",
+              "default": "enabled"
+          }
+      ],
+      "outputs": [ 
+          {
+              "name": "filtered",
+              "type": "string*"
+          }
+      ],
+      "function": {
+          "ref": null,
+          "code": ""
+      }  
+  },
+  {
     "functionName": "selectCase",
     "blockName": "selectCase",
     "title": "Select Case",
     "library": "Mapping",
-    "description" : "Returns a value based on the value2Test input. Double click the block to configure the test",
+    "description": "Returns a value based on the value2Test input. Double click the block to configure the test",
     "inputs": [
       {
         "name": "value2Test",
@@ -1667,17 +1531,27 @@
       }
     ],
     "properties": [
-        {
-            "name": "mappingCase",
-            "type": [{"value": "V0", "input": "0"},
-              {"value": "V1", "input": "1"},
-              {"value": "V2", "input": "2"}
-            ]
+      {
+        "name": "mappingCase",
+        "type": [
+          {
+            "value": "V0",
+            "input": "0"
           },
           {
-            "name" : "hoverText",
-            "type" : "Double click block to edit the Case rules"
+            "value": "V1",
+            "input": "1"
+          },
+          {
+            "value": "V2",
+            "input": "2"
           }
+        ]
+      },
+      {
+        "name": "hoverText",
+        "type": "Double click block to edit the Case rules"
+      }
     ],
     "widgets": [
       {
@@ -1704,17 +1578,17 @@
     "blockName": "CheckPhoneNumber",
     "title": "Validate Phone Number",
     "library": "Validate",
-    "description" : "Checks a phone number. Returns the re-formatted number and validation status",
+    "description": "Checks a phone number. Returns the re-formatted number and validation status",
     "inputs": [
       {
         "name": "phoneNumber",
         "type": null,
-        "mandatory" : true
+        "mandatory": true
       },
       {
         "name": "countryISO2",
         "type": null,
-        "mandatory" : true
+        "mandatory": true
       },
       {
         "name": "Uri",
@@ -1727,7 +1601,11 @@
         "type": "combo",
         "name": "outputFormat",
         "default": "INTERNATIONAL",
-        "values": ["NATIONAL","INTERNATIONAL","E164"]
+        "values": [
+          "NATIONAL",
+          "INTERNATIONAL",
+          "E164"
+        ]
       },
       {
         "type": "text",
@@ -1741,7 +1619,6 @@
         "default": true,
         "values": null
       }
-
     ],
     "outputs": [
       {
@@ -1771,9 +1648,9 @@
     "blockName": "xpath",
     "library": "Transform",
     "title": "Apply Xpath",
-    "description" : "Returns values from a document based on an XPath expression",
-    "height" :180 ,
-    "width" : 230,
+    "description": "Returns values from a document based on an XPath expression",
+    "height": 180,
+    "width": 230,
     "inputs": [
       {
         "name": "node",
@@ -1783,17 +1660,17 @@
     "widgets": [
       {
         "type": "text",
-        "name" : "xpath",
-        "default" : "",
-        "description" : "",
-        "values" : []
+        "name": "xpath",
+        "default": "",
+        "description": "",
+        "values": []
       },
       {
         "type": "text",
-        "name" : "namespaces",
-        "default" : "",
-        "description" : "",
-        "values" : []
+        "name": "namespaces",
+        "default": "",
+        "description": "",
+        "values": []
       }
     ],
     "outputs": [

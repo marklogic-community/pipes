@@ -121,7 +121,10 @@ module.exports = function (ctx) {
     devServer: {
       // https: true,
       port: 9085,
-      open: true, // opens browser window automatically
+      open: true, // opens browser window automatically,
+      headers: {
+        'Cache-Control': 'no-cache'
+      },
       proxy: {
         // proxy all requests starting with /api to jsonplaceholder
         '/v1': {

@@ -5,6 +5,9 @@ Copyright ©2020 MarkLogic Corporation.
 package com.marklogic.pipes.ui.customStep;
 
   public class CustomStep {
+
+
+    private  String query;
     private String name;
     private String path;
     private String collection;
@@ -43,11 +46,21 @@ package com.marklogic.pipes.ui.customStep;
       this.path = path;
     }
 
-    public CustomStep(String name, String path, String database, String collection){
+    public String getQuery() {
+      return query;
+    }
+
+
+    public void setQuery(String query) {
+      this.query = query;
+    }
+
+    public CustomStep(String name, String path, String database, String collection, String query){
       this.name=name;
       this.path=path;
       this.database=database;
       this.collection=collection;
+      this.query=query;
     }
   }
 

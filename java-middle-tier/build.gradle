@@ -24,12 +24,13 @@ dependencies {
   implementation 'org.apache.httpcomponents:httpclient:4.5.10'
 
   implementation 'com.marklogic:ml-app-deployer:3.17.0'
-  implementation 'com.marklogic:marklogic-data-hub:5.2.0'
+  implementation 'com.marklogic:marklogic-data-hub:5.2.2'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.session:spring-session-core'
 	implementation 'commons-io:commons-io:2.5'
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    exclude group: "com.vaadin.external.google", module:"android-json"
 	}
   testCompile group: 'org.springframework.security', name: 'spring-security-test', version: '5.3.0.RELEASE'
   annotationProcessor group: 'org.springframework.boot', name: 'spring-boot-configuration-processor'
@@ -73,7 +74,7 @@ task runQuasarBuild(type:Exec) {
     commandLine 'cmd', '/c', 'quasar build'
   } else {
     executable "quasar"
-    args "build"
+    args 'build','--modern'
   }
 
   doLast {
@@ -105,6 +106,9 @@ task copyDhf(type:Copy) {
 
   from "../ml-backend/src/"
   into "src/main/resources/dhf/src/"
+  outputs.upToDateWhen {
+    false
+  }
   doLast {
     logger.warn('Done copying ml-backend/src')
   }
@@ -149,17 +153,32 @@ task addVersionToBackend(type:Copy) {
     }
 }
 
+task addVersionToJar {
+  doLast {
+    (new File("${projectDir}/src/main/resources/version.txt")).text = tasks.getVersion.value() + "\n" + tasks.getBuild.value()
+  }
+}
+
+
+task addVersionToFilename {
+    doLast {
+        ant.move file: "${buildDir}/libs/marklogic-pipes.jar",
+                 todir: "${buildDir}/libs/marklogic-pipes."+tasks.getVersion.value()+".jar"
+    }
+}
+
 bootJar {
   baseName = 'marklogic-pipes'
   dependsOn copyQuasarBuild
   dependsOn copyDhf
   dependsOn addVersionToBackend
+  dependsOn addVersionToJar
   mustRunAfter copyQuasarBuild
-
 }
 
 task runQuasarDev(type:Exec) {
   dependsOn copyLiteGraphOverride
+  dependsOn runQuasarBuild
   mustRunAfter copyLiteGraphOverride
   doFirst {
     logger.warn('Running quasar dev')
@@ -171,7 +190,7 @@ task runQuasarDev(type:Exec) {
     commandLine 'cmd', '/c', 'quasar dev;'
   } else {
     executable "quasar"
-    args "dev"
+    args "dev", "--modern"
   }
 
   doLast {
@@ -180,12 +199,26 @@ task runQuasarDev(type:Exec) {
 }
 
 task runLocal(type: JavaExec) {
+  dependsOn copyDhf
+  dependsOn addVersionToBackend
+  dependsOn addVersionToJar
   group = "Execution"
   description = "Run the main class with JavaExecTask"
   classpath = sourceSets.main.runtimeClasspath
   main = "com.marklogic.pipes.ui.Application"
 }
 
+
+
 task buildPipes {
   dependsOn bootJar
+}
+
+task buildDevPipes {
+  dependsOn bootJar
+
+      doLast {
+        ant.move file: "${buildDir}/libs/marklogic-pipes.jar",
+                 tofile: "${buildDir}/libs/marklogic-pipes."+tasks.getVersion.value()+".jar"
+    }
 }
