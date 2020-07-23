@@ -16,7 +16,8 @@
     "context": {
       "collections": [
         "ingest-unit-test"
-      ]
+      ],
+      "permissions":[]
     }
   },
   {
@@ -34,7 +35,8 @@
     "context": {
       "collections": [
         "ingest-unit-test"
-      ]
+      ],
+      "permissions":[]
     }
   }
 ]
