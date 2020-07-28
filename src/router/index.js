@@ -32,8 +32,12 @@ export default function (/* { store, ssrContext } */) {
   Router.beforeEach((to, from, next) => {
     console.log('store.state.authenticated.auth=', store.state.authenticated.auth)
     console.log("to=", to, " from=", from, " next=", next)
+    console.log("to.name=", to.name)
     if (to.name !== 'login' && !store.state.authenticated.auth) {
       next({ name: 'login' })
+    }
+    else if (to.name == null) {
+      next({ name: 'home' })
     }
     else next()
   })
