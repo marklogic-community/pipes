@@ -87,7 +87,7 @@ export default {
       })
         .catch((error) => {
           this.$q.loading.hide()
-          this.$store.commit('authenticated', false)
+          this.$store.dispatch('authenticated', { auth: false })
           this.$q.notify({
             color: 'negative',
             position: 'center',

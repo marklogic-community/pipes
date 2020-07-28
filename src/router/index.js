@@ -3,7 +3,7 @@ import VueRouter from 'vue-router'
 import { sync } from 'vuex-router-sync';
 
 import routes from './routes'
-import store from '../store'
+import store from '../store/index.js'
 
 
 Vue.use(VueRouter)
@@ -30,8 +30,9 @@ export default function (/* { store, ssrContext } */) {
   // sync(store, Router);
 
   Router.beforeEach((to, from, next) => {
-
-    if (to.name !== 'login' && !store.state.authenticated) {
+    console.log('store.state.authenticated.auth=', store.state.authenticated.auth)
+    console.log("to=", to, " from=", from, " next=", next)
+    if (to.name !== 'login' && !store.state.authenticated.auth) {
       next({ name: 'login' })
     }
     else next()

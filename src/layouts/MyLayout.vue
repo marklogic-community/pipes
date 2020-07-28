@@ -365,7 +365,7 @@ export default {
 
       }).onOk(() => {
         this.$axios.post('/logout').then(response => {
-          this.$store.commit('authenticated', false)
+          this.$store.commit('authenticated', { auth: false })
           this.$q.notify({
             color: 'positive',
             position: 'center',

@@ -9,7 +9,7 @@ const store = new Vuex.Store({
   state: {
     models: [],
     helpMode: false,
-    authenticated: false,
+    authenticated: { auth: false },
     databases: [],
     databasesMap: {},
     graphTitle: 'My Graph',
