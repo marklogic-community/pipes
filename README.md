@@ -50,3 +50,4 @@ Most of the content is located in `_pages` with screenshots in `images`. Making 
 
 ### Updating the Live website
 There is a travis job that builds and deploys the website every time a push is made to the **docs** branch.
+https://travis-ci.org/github/marklogic-community/pipes
