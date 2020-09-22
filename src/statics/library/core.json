@@ -786,6 +786,66 @@
     }
   },
   {
+    "functionName": "AdvancedQuery",
+    "blockName": "AdvancedQuery",
+    "title": "Advanced Query",
+    "description": "Specify a free text query",
+    "library": "Advanced",
+    "events": {
+      "beforePropSave": "var result=true; if (v.trim().startsWith('cts.')) {result=true} else {validation.message='Query is not a valid cts.query.';result=false};return result"
+    },
+    "inputs": [
+      {
+        "name": "v0",
+        "type": null
+      }
+    ],
+    "properties": [
+      {
+        "name": "query",
+        "type": "cts.collectionQuery(v0)"
+      }
+      ,
+      {
+        "name": "editProp",
+        "type": "query"
+      },
+      {
+        "name": "editWindowTitle",
+        "type": "Edit Query"
+      }
+    ],
+    "widgets": [
+      {
+        "type": "text",
+        "name": "nbInputs",
+        "default": "1",
+        "values": [],
+        "callback": "let nb = this.inputs.length;for(let i=0;i<nb;i++) {this.removeInput(0);};for(let i=0;i<parseInt(v);i++) this.addInput('v' + i,null);"
+      },
+      {
+        "type": "combo",
+        "name": "database",
+        "default": "#DATABASES#",
+        "values": []
+      }
+    ],
+    "outputs": [
+      {
+        "name": "documents",
+        "type": null
+      },
+      {
+        "name": "ctsQuery",
+        "type": null
+      }
+    ],
+    "function": {
+      "ref": null,
+      "code": ""
+    }
+  },
+  {
     "functionName": "EpochToDateTime",
     "blockName": "EpochToDateTime",
     "title": "Epoch to dateTime",

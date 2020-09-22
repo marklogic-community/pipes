@@ -25,7 +25,7 @@ echo "Moving the back-end modules to SpringBoot dhf resources folder..."
 mkdir -p java-middle-tier/src/main/resources/dhf/src
 
 # deploy backend modules to be picked up by jar builder
-#cp -r ml-backend/src/* java-middle-tier/src/main/resources/dhf/src/.
+cp -r ml-backend/src/* java-middle-tier/src/main/resources/dhf/src/.
 
 echo "Deleting existing builds in java-middle-tier/build/libs..."
 rm -f java-middle-tier/build/libs/*
@@ -33,9 +33,7 @@ rm -f java-middle-tier/build/libs/*
 echo "Adding version"
 version=$(git describe --tags)
 build=$(git rev-parse --verify --short HEAD)
-
-echo "Pipes version:" $version >java-middle-tier/src/main/resources/version.txt
-echo "Build:" $build >>java-middle-tier/src/main/resources/version.txt
+timestamp=$(date +%FT%T) 
 
 # Add build version to VPPBackendservices
 #VPPBACKEND=java-middle-tier/src/main/resources/dhf/src/main/ml-modules/services/vppBackendServices.sjs
