@@ -33,7 +33,6 @@ rm -f java-middle-tier/build/libs/*
 echo "Adding version"
 version=$(git describe --tags)
 build=$(git rev-parse --verify --short HEAD)
-timestamp=$(date +%FT%T) 
 
 # Add build version to VPPBackendservices
 #VPPBACKEND=java-middle-tier/src/main/resources/dhf/src/main/ml-modules/services/vppBackendServices.sjs
