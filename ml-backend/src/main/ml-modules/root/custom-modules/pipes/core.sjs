@@ -838,7 +838,7 @@ function init (LiteGraph) {
     }
 
     let result = xdmp.invokeFunction(() => {
-      return cts.search(computedQuery);
+      return cts.search(computedQuery,["unfiltered","score-zero"],0);
     }, { database: xdmp.database(query.selectedDB.label) });
 
     if (result != null) {
@@ -1002,6 +1002,38 @@ function init (LiteGraph) {
   }
 
   LiteGraph.registerNodeType("Advanced/EvalJavaScript", EvalJavaScriptBlock);
+
+  function AdvancedQueryBlock () {
+      this.addInput("v0");
+      this.addOutput("documents");
+      this.addOutput("ctsQuery");
+       this.addProperty("query");
+      this.nbInputs = this.addWidget("text", "nbInputs", "string", function (v) { }, {});
+      this.database = this.addWidget("text", "database", "string", function (v) { }, {});
+  }
+
+  AdvancedQueryBlock.title = "AdvancedQuery";
+
+  AdvancedQueryBlock.prototype.onExecute = function () {
+    let query = this.properties.query;
+    let code = "";
+    const nrOfInputs = parseInt(this.nbInputs.value);
+    for ( let i = 0 ; i < nrOfInputs ; i++ )  {
+      code += "const v" + i + " = this.getInputData(" + i + ");"
+    }
+    code += query;
+    let computedQuery = eval(code);
+    let result = xdmp.invokeFunction(() => {
+      return cts.search(computedQuery,["unfiltered","score-zero"],0);
+    }, { database: xdmp.database(this.database.value) });
+
+    if (result != null) {
+      this.setOutputData(0, result);
+    }
+    this.setOutputData(1, computedQuery);
+  }
+
+  LiteGraph.registerNodeType("Advanced/AdvancedQuery", AdvancedQueryBlock);
 
   function currentDate () {
     this.size = [300, 300];
@@ -1888,10 +1920,25 @@ function init (LiteGraph) {
     }
     const xpath = this.xpath.value;
     xdmp.trace(BLOCK_RUNTIME_DEBUG_TRACE, Sequence.from(["Xpath: Input", input, "NS", ns]));
-    //xdmp.log(Sequence.from(["Namespaces",ns,"Xpath",xpath]))
-    const output = (input instanceof Array ? input[0] : input).xpath(xpath, ns);
-    xdmp.trace(BLOCK_RUNTIME_DEBUG_TRACE, Sequence.from(["Xpath: Output", output]));
-    this.setOutputData(0, output)
+    if (typeof(input) != "undefined" && input != null ) {
+      let output = null;
+      if ( input instanceof Array) {
+        output = [];
+        for ( const i of input) {
+          output.push(i.xpath(xpath, ns));
+        }
+      } else if ( input instanceof Sequence ) {
+        let arr = [];
+        for ( const i of input ) {
+          arr.push(i.xpath(xpath, ns));
+        }
+        output = Sequence.from(arr);
+      } else {
+        output = input.xpath(xpath,ns);
+      }
+      xdmp.trace(BLOCK_RUNTIME_DEBUG_TRACE, Sequence.from(["Xpath: Output", output]));
+      this.setOutputData(0, output)
+    }
   }
 
   xpathBlock.prototype.onCodeGeneration = function (tempVarPrefix, inputVariables, outputVariables, propertiesWidgets) {

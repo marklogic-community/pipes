@@ -155,7 +155,7 @@ task addVersionToBackend(type:Copy) {
 
 task addVersionToJar {
   doLast {
-    (new File("${projectDir}/src/main/resources/version.txt")).text = tasks.getVersion.value() + "\n" + tasks.getBuild.value()
+    (new File("${projectDir}/src/main/resources/version.txt")).text = tasks.getVersion.value() + "\n" + tasks.getBuild.value() + "\n" + new Date().format('yyyy-MMd-dd HH:mm:ss')
   }
 }
 
