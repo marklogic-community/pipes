@@ -1,7 +1,8 @@
 ## Running the Unit Test
 
+* cd `java-middle-tier`
 * `cd test-dhf-project` 
-* Edit the ports/database name/userid/pwd in `gradle.properties`
+* Edit the ports/database name/userid/pwd in `gradle.properties` to free ports/names
 * `./gradlew mlDeploy`
 * `cd ..`
 * `gradle clean test`
