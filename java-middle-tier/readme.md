@@ -1,3 +1,13 @@
+## Running the Unit Test
+
+* cd `java-middle-tier`
+* `cd test-dhf-project` 
+* Edit the ports/database name/userid/pwd in `gradle.properties` to free ports/names
+* `./gradlew mlDeploy`
+* `cd ..`
+* `gradle clean test`
+* Please note, that the version number will fail until you run `buildPackageUiJar.sh`
+
 ## Running pipes locally
 
 cd into java-middle-tier folder

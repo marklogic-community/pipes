@@ -49,10 +49,11 @@ import static org.springframework.test.util.AssertionErrors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import org.springframework.beans.factory.annotation.Value;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-@TestPropertySource(locations = "/test.properties")
+@TestPropertySource({"/test.properties", "file:${user.dir}/test-dhf-project/gradle.properties" })
 class MarkLogicControllerTest {
 
 
@@ -67,11 +68,10 @@ class MarkLogicControllerTest {
   protected final static String SESSION_SERVICE = "pipes-service";
   protected final static String SESSION_USERNAME_KEY = "pipes-username";
 
-  private final static String MLUSERNAME="admin";
-  private final static String MLPASSWORD="admin";
-  private final static String MLTESTDATABASE="data-hub-STAGING";
-  private final static String MLTESTHOST="localhost";
-  private final static int MLTESTPORT=8035;
+  @Value("${mlUsername}")
+  private  String MLUSERNAME;
+  @Value("${mlPassword}")
+  private  String MLPASSWORD;
 
   static MockHttpSession session;
 
@@ -87,28 +87,6 @@ class MarkLogicControllerTest {
   @Autowired
   HubConfigImpl hubConfig;
 
-  void addCustomerSourceDocument(String s) throws Exception {
-    DatabaseClient client = getDatabaseClient();
-
-    JSONDocumentManager jsonDocumentManager = client.newJSONDocumentManager();
-
-    // will create a customer document
-
-    // get the doc from resources
-    InputStreamHandle handle = getInputStreamHandle(s);
-
-    //Get the set of collections the document belongs to and put in array.
-    DocumentMetadataHandle metadataHandle = new DocumentMetadataHandle();
-    DocumentMetadataHandle.DocumentCollections collections = metadataHandle.getCollections();
-
-    collections.add(TEST_SOURCE_COLLECTION);
-
-    // write
-    jsonDocumentManager.write(TEST_INPUT_JSON, metadataHandle, handle);
-
-    // release client
-    client.release();
-  }
 
   private static InputStreamHandle getInputStreamHandle(String path) {
     final InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
@@ -119,12 +97,7 @@ class MarkLogicControllerTest {
     return hubConfig.newStagingClient();
   }
 
-  void removeCustomerSource() throws Exception {
-    DatabaseClient client = getDatabaseClient();
-    JSONDocumentManager jsonDocumentManager = client.newJSONDocumentManager();
 
-    jsonDocumentManager.delete(TEST_INPUT_JSON);
-  }
 
   void deleteGraph() throws Exception {
     DatabaseClient client = getDatabaseClient();
@@ -187,65 +160,6 @@ class MarkLogicControllerTest {
     session.setAttribute(SESSION_USERNAME_KEY, MLUSERNAME);
     session.setAttribute(SESSION_SERVICE, authService.getService());
   }
-
-
-  @ParameterizedTest(name = "#{index} : {0}")
-  @MethodSource("getDirectoryNames")
-  void genericGraphTests(String argument) throws Exception {
-    try {
-
-      addCustomerSourceDocument("ExecuteGraphTests/"+argument+"/input.json");
-
-      InputStreamHandle graphHandle = getInputStreamHandle("ExecuteGraphTests/"+argument+"/graph.json");
-      JSONObject graphJO = new JSONObject(graphHandle.toString()
-      );
-
-      JSONObject payloadJO= new JSONObject();
-      payloadJO.put("jsonGraph", graphJO);
-      payloadJO.put("collectionRandom", false);
-      payloadJO.put("previewUri",TEST_INPUT_JSON);
-
-
-      InputStreamHandle expectedResponseHandle = getInputStreamHandle("ExecuteGraphTests/"+argument+"/expectedResponse.json");
-
-      JSONObject expectedJO=new JSONObject();
-      expectedJO.put("result", new JSONObject(expectedResponseHandle.toString()));
-      expectedJO.put("uri",TEST_INPUT_JSON);
-
-      //extract the value part only from the expected returned graph
-      JsonNode expectedResultJson= expectedJO.getNode("result");
-
-      String request="/v1/resources/vppBackendServices?rs:action=ExecuteGraph&rs:database="+MLTESTDATABASE;
-
-      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(request).content(payloadJO.toString())
-        .session(session);
-
-      ResultActions resultActions = this.mockMvc.perform(builder)
-        .andExpect(status().isOk());
-
-      MvcResult result = resultActions.andReturn();
-
-      JSONObject responseJson=new JSONObject(result.getResponse().getContentAsString());
-      JsonNode actualResponseResultJson= responseJson.getNode("result");
-
-      // compare strings as JSON objects using Jackson ObjectMapper
-      ObjectMapper mapper = new ObjectMapper();
-      assertEquals("Response doesn't match expected",mapper.readTree(expectedResultJson.toString()), mapper.readTree(actualResponseResultJson.toString()));
-
-
-
-    } finally {
-      removeCustomerSource();
-    }
-  }
-
-  private static Stream<String> getDirectoryNames() {
-    InputStreamHandle ism= getInputStreamHandle("ExecuteGraphTests");
-
-    String dirs[]=ism.toString().split("\n");
-    return Arrays.stream(dirs);
-  }
-
 
   /**
    * Tests saving of a graph
