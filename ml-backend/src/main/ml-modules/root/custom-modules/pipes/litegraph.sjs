@@ -215,34 +215,21 @@
       properties
     ) {
       var params = Array(func.length);
-      var code = "";
       var names = LiteGraph.getParameterNames(func);
-      for (var i = 0; i < names.length; ++i) {
-        code +=
-          "this.addInput('" +
-          names[i] +
-          "'," +
-          (param_types && param_types[i]
-            ? "'" + param_types[i] + "'"
-            : "0") +
-          ");\n";
-      }
-      code +=
-        "this.addOutput('out'," +
-        (return_type ? "'" + return_type + "'" : 0) +
-        ");\n";
-      if (properties) {
-        code +=
-          "this.properties = " + JSON.stringify(properties) + ";\n";
-      }
-      var classobj = Function(code);
+      let classobj = function() {};
       classobj.title = name.split("/").pop();
       classobj.desc = "Generated from " + func.name;
       classobj.prototype.onExecute = function onExecute() {
         for (var i = 0; i < params.length; ++i) {
           params[i] = this.getInputData(i);
         }
-        var r = func.apply(this, params);
+        for (var i = 0; i < names.length; ++i) {
+          this.addInput(names[i], param_types && param_types[i] ? param_types[i] : 0);
+        }
+        this.addOutput('out', (return_type ? return_type : 0));
+        if (properties) {
+          this.properties = JSN.parse(JSON.stringify(properties));
+        }
         this.setOutputData(0, r);
       };
       this.registerNodeType(name, classobj);
