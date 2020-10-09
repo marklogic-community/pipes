@@ -1,0 +1,307 @@
+{
+  "pipesFileVersion": 2,
+  "models": [],
+  "executionGraph": {
+    "last_node_id": 8,
+    "last_link_id": 13,
+    "nodes": [
+      {
+        "id": 2,
+        "type": "DHF/output",
+        "pos": [
+          1308,
+          434
+        ],
+        "size": [
+          180,
+          60
+        ],
+        "flags": {},
+        "order": 6,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "output",
+            "type": 0,
+            "link": 13
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 3,
+        "type": "Generate/multiConstant",
+        "pos": [
+          538,
+          235.5
+        ],
+        "size": {
+          "0": 255,
+          "1": 82
+        },
+        "flags": {},
+        "order": 0,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "output",
+            "links": [
+              1
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "string",
+          "TEST"
+        ]
+      },
+      {
+        "id": 4,
+        "type": "Generate/multiConstant",
+        "pos": [
+          539,
+          362
+        ],
+        "size": {
+          "0": 255,
+          "1": 82
+        },
+        "flags": {},
+        "order": 1,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "output",
+            "links": [
+              2
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "string",
+          "TEST2"
+        ]
+      },
+      {
+        "id": 5,
+        "type": "Generate/Templating",
+        "pos": [
+          897,
+          347.5
+        ],
+        "size": {
+          "0": 255,
+          "1": 146
+        },
+        "flags": {},
+        "order": 3,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "v1",
+            "type": 0,
+            "link": 1
+          },
+          {
+            "name": "v2",
+            "type": 0,
+            "link": 2
+          },
+          {
+            "name": "v3",
+            "type": 0,
+            "link": null
+          }
+        ],
+        "outputs": [
+          {
+            "name": "newString",
+            "links": [
+              3
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "",
+          "",
+          "${v1}-${v2}"
+        ]
+      },
+      {
+        "id": 6,
+        "type": "Transform/stringCase",
+        "pos": [
+          1133,
+          240
+        ],
+        "size": {
+          "0": 255,
+          "1": 58
+        },
+        "flags": {},
+        "order": 4,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "input",
+            "type": 0,
+            "link": 3
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output",
+            "links": [
+              11
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "lowercase"
+        ]
+      },
+      {
+        "id": 1,
+        "type": "DHF/input",
+        "pos": [
+          248,
+          489
+        ],
+        "size": [
+          180,
+          100
+        ],
+        "flags": {},
+        "order": 2,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "input",
+            "type": "",
+            "links": [
+              12
+            ]
+          },
+          {
+            "name": "uri",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "collections",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "permissions",
+            "type": "",
+            "links": null
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 8,
+        "type": "Enrich/AddProperty",
+        "pos": [
+          1098,
+          599.5
+        ],
+        "size": {
+          "0": 170,
+          "1": 46
+        },
+        "flags": {},
+        "order": 5,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "doc",
+            "type": 0,
+            "link": 12
+          },
+          {
+            "name": "value",
+            "type": 0,
+            "link": 11
+          }
+        ],
+        "outputs": [
+          {
+            "name": "doc",
+            "links": [
+              13
+            ]
+          }
+        ],
+        "properties": {
+          "propertyName": "AddedProperty"
+        }
+      }
+    ],
+    "links": [
+      [
+        1,
+        3,
+        0,
+        5,
+        0,
+        0
+      ],
+      [
+        2,
+        4,
+        0,
+        5,
+        1,
+        0
+      ],
+      [
+        3,
+        5,
+        0,
+        6,
+        0,
+        0
+      ],
+      [
+        11,
+        6,
+        0,
+        8,
+        1,
+        0
+      ],
+      [
+        12,
+        1,
+        0,
+        8,
+        0,
+        0
+      ],
+      [
+        13,
+        8,
+        0,
+        2,
+        0,
+        0
+      ]
+    ],
+    "groups": [],
+    "config": {},
+    "version": 0.4
+  },
+  "name": "StringConstantTemplateCaseAddProperty",
+  "metadata": {
+    "version": "00.01",
+    "author": "Jos van Roosmalen",
+    "title": "StringConstantTemplateCaseAddProperty",
+    "dateExported": "09/10/2020, 11:34:42"
+  }
+}

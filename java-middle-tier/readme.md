@@ -5,6 +5,7 @@
 * Edit the ports/database name/userid/pwd in `gradle.properties` to free ports/names
 * `./gradlew mlDeploy`
 * `cd ..`
+* `cp -v -r ../ml-backend/src/* src/main/resources/dhf/src/.`
 * `gradle clean test`
 * Please note, that the version number will fail until you run `buildPackageUiJar.sh`
 
