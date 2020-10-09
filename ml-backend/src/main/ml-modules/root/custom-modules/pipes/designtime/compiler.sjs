@@ -72,7 +72,7 @@ function allNodesSupportCodeGeneration(LiteGraph,jsonGraph,nodeGenerationOrder,e
 function compileGraphToJavaScriptWithOptions(jsonGraph,options) {
   let errors = []
   // STEP 0: Init litegraph
-  const LiteGraph = require("/custom-modules/pipes/litegraph").LiteGraph;
+  const LiteGraph = require("/custom-modules/pipes/designtime/litegraph").LiteGraph;
   initLiteGraph(jsonGraph);
   // STEP 1: Check the start node
   const startNodes = findStartNode(jsonGraph);
