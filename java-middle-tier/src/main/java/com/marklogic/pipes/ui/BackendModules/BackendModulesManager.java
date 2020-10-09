@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,7 +53,8 @@ public class BackendModulesManager {
 
   final String resourcesDhfRoot = "/dhf/src/main/ml-modules";
   final String destinationDhfRoot = "/src/main/ml-modules";
-  final String customModulesPathPrefix = "/root/custom-modules/pipes";
+  final String customModulesPipesDesigntimePathPrefix = "/root/custom-modules/pipes/designtime";
+  final String customModulesPipesRuntimePathPrefix = "/root/custom-modules/pipes/runtime";
 
   private enum fileOperation {
     Copy,
@@ -186,17 +188,19 @@ public class BackendModulesManager {
 
     ArrayList<String> filePaths = new ArrayList<String>(
       Arrays.asList(
-        customModulesPathPrefix+"/core.sjs",
-        customModulesPathPrefix+"/coreFunctions.sjs",
-        customModulesPathPrefix+"/compiler.sjs",
-        customModulesPathPrefix+"/compilerFlowControlGraph.sjs",
-        customModulesPathPrefix+"/entity-services-lib-vpp.sjs",
-        customModulesPathPrefix+"/google-libphonenumber.sjs",
-        customModulesPathPrefix+"/graphHelper.sjs",
-        customModulesPathPrefix+"/litegraph.sjs",
-        customModulesPathPrefix+"/moment-with-locales.min.sjs",
-//        customModulesPathPrefix+"/user.sjs",
+        customModulesPipesDesigntimePathPrefix+"/compiler.sjs",
+        customModulesPipesDesigntimePathPrefix+"/compilerFlowControlGraph.sjs",
+        customModulesPipesDesigntimePathPrefix+"/graphHelper.sjs",
+        customModulesPipesDesigntimePathPrefix+"/litegraph.sjs",
+        customModulesPipesDesigntimePathPrefix+"/core.sjs",
+
+        customModulesPipesRuntimePathPrefix+"/entity-services-lib-vpp.sjs",
+        customModulesPipesRuntimePathPrefix+"/google-libphonenumber.sjs",
+        customModulesPipesRuntimePathPrefix+"/moment-with-locales.min.sjs",
+        customModulesPipesRuntimePathPrefix+"/coreFunctions.sjs",
+
         "/services/vppBackendServices.sjs"
+
       ));
 
 
@@ -221,8 +225,8 @@ public class BackendModulesManager {
     }
 
     if (!includeCustomUserModule) {
-      logger.info("Adding " + customModulesPathPrefix+"/user.sjs");
-      filePaths.add( customModulesPathPrefix+"/user.sjs");
+      logger.info("Adding " + customModulesPipesRuntimePathPrefix+"/user.sjs");
+      filePaths.add( customModulesPipesRuntimePathPrefix+"/user.sjs");
     }
     // do the same for the custom user module
     else {
@@ -230,13 +234,13 @@ public class BackendModulesManager {
       final File sjsSource = new File(CUSTOMSJSPATH);
       logger.info("Adding " + sjsSource.toPath());
 
-      final File sjsDest = new File(clientConfig.getMlDhfRoot() + File.separator+".pipes" + customModulesPathPrefix + File.separator +CUSTOMSJSNAME);
+      final File sjsDest = new File(clientConfig.getMlDhfRoot() + File.separator+".pipes" + customModulesPipesRuntimePathPrefix + File.separator +CUSTOMSJSNAME);
 
       try {
         if (operation== fileOperation.Copy) {
           //FileUtils.copyFile(source,dest, false);
-          Files.createDirectories(Paths.get(clientConfig.getMlDhfRoot() + File.separator +".pipes" + customModulesPathPrefix));
-          Files.copy(sjsSource.toPath(), sjsDest.toPath());
+          Files.createDirectories(Paths.get(clientConfig.getMlDhfRoot() + File.separator +".pipes" + customModulesPipesRuntimePathPrefix));
+          Files.copy(sjsSource.toPath(), sjsDest.toPath(),StandardCopyOption.REPLACE_EXISTING);
           logger.info("Copied "+sjsSource.getAbsolutePath()+" to "+sjsDest.getAbsolutePath());
         }
         else if (operation== fileOperation.Remove) {
@@ -256,6 +260,9 @@ public class BackendModulesManager {
 
     for (final String filePath : filePaths) {
       final InputStream is = Application.class.getResourceAsStream(resourcesDhfRoot + filePath);
+      if ( is == null ) {
+        throw new IOException("Could not find " + filePath);
+      }
       final File dest = new File(clientConfig.getMlDhfRoot() +  File.separator+".pipes" + File.separator + filePath);
 
       try {
@@ -282,16 +289,17 @@ public class BackendModulesManager {
 
     // also delete the pipes folder
     if (operation== fileOperation.Remove) {
-      String folderPath=clientConfig.getMlDhfRoot() + destinationDhfRoot + customModulesPathPrefix;
+      String folderPath=clientConfig.getMlDhfRoot() + destinationDhfRoot + customModulesPipesRuntimePathPrefix;
       FileUtils.deleteDirectory(new File(folderPath));
 
-      logger.info(
-        String.format("Deleted folder "+folderPath));
+      logger.info( String.format("Deleted folder "+folderPath));
+      folderPath=clientConfig.getMlDhfRoot() + destinationDhfRoot + customModulesPipesDesigntimePathPrefix;
+      FileUtils.deleteDirectory(new File(folderPath));
+      logger.info( String.format("Deleted folder "+folderPath));
     }
 
     else if (operation== fileOperation.Copy) {
-      logger.info(
-        String.format("MarkLogic backend modules copied to your DHF project."));
+      logger.info(String.format("MarkLogic backend modules copied to your DHF project."));
     }
 
   }

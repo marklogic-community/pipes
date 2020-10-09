@@ -38,9 +38,9 @@ function validateFinalNode(finalNodes,errors) {
   return true;
 }
 function initLiteGraph(jsonGraph) {
-  const userBlocks = require("/custom-modules/pipes/user");
-  const coreBlocks = require("/custom-modules/pipes/core");
-  const gHelper  = require("/custom-modules/pipes/graphHelper");
+  const userBlocks = require("/custom-modules/pipes/runtime/user.sjs");
+  const coreBlocks = require("/custom-modules/pipes/runtime/core.sjs");
+  const gHelper  = require("/custom-modules/pipes/designtime/graphHelper.sjs");
   for (let model of jsonGraph.models || []) {
     LiteGraph.registerNodeType(model.source + "/" + model.collection, gHelper.createGraphNodeFromModel(model));
   }
@@ -93,7 +93,7 @@ function compileGraphToJavaScriptWithOptions(jsonGraph,options) {
   }
   const finalNode = finalNodes[0];
   // STEP 3: Build the flow graph
-  const PipesFlowControlGraph = require("/custom-modules/pipes/compilerFlowControlGraph.sjs")
+  const PipesFlowControlGraph = require("/custom-modules/pipes/designtime/compilerFlowControlGraph.sjs")
   const flowGraph = new PipesFlowControlGraph();
   flowGraph.initFromLiteGraph(LiteGraph,startNode,jsonGraph);
   // STEP 4: Check there is a path between start node and end node
