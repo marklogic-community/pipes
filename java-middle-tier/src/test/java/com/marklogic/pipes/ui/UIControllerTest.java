@@ -146,8 +146,6 @@ class MarkLogicControllerTest {
 
   @BeforeEach
   void setup() throws Exception {
-    System.out.println("BeforeAll init() method called");
-
 
     String loginPayload="{\"username\":\""+MLUSERNAME+"\",\"password\":\""+MLPASSWORD+"\"}";
 
@@ -196,7 +194,6 @@ class MarkLogicControllerTest {
     StringHandle output = new StringHandle();
     output = services.post(params,new StringHandle().withMimetype("text/plain").with(payload), new StringHandle());
 
-    System.out.println(output);
   }
 
   /**

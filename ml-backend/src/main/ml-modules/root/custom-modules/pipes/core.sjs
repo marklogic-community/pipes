@@ -559,50 +559,6 @@ function init (LiteGraph) {
       }
 
     }
-    ,
-    {
-      "functionName": "addProperty",
-      "blockName": "Add property",
-      "library": "Enrich",
-      "inputs": [
-        {
-          "name": "doc",
-          "type": "node"
-        },
-        {
-          "name": "value",
-          "type": null
-        }
-
-      ],
-
-      "properties": [
-        {
-          name: "propertyName",
-          type: "Property name"
-        }
-
-      ],
-      "outputs": [
-
-        {
-          name: "doc",
-          type: "node"
-        }
-      ],
-      "function": {
-        "ref": null,
-        "code": "let doc = (this.getInputData(0)!=undefined)?this.getInputData(0):{}; \
-                        let val = (this.getInputData(1)!=undefined)?this.getInputData(1):'';\
-                        let propertyName = this.properties['propertyName'];\
-                        if (xdmp.nodeKind(doc) == 'document' && doc.documentFormat == 'JSON') {\
-                              doc=doc.toObject();\
-                        }\
-                        doc[propertyName] = val;\
-                        this.setOutputData( 0, doc);"
-      }
-
-    }
   ]
 
   let code = ""
@@ -631,9 +587,8 @@ function init (LiteGraph) {
     code += "};"
     //register in the syst em
     code += "LiteGraph.registerNodeType('" + config.library + "/" + config.blockName + "', " + config.functionName + " );"
-  }
-
-  //xdmp.log(code)
+  } 
+ // xdmp.log(code)
   eval(code)
 
   //Output for a subgraph
@@ -1288,6 +1243,29 @@ function init (LiteGraph) {
   }
 
   LiteGraph.registerNodeType("Format/FormatDateTime", FormatDateTime);
+
+
+  function addPropertyBlock() {
+    xdmp.log("JOS TEST");
+    this.addInput('doc', 'node');
+    this.addInput('value');
+    this.addOutput('doc', 'node');
+    this.addProperty('propertyName', 'Property name');
+  };
+  addPropertyBlock.title = 'Add property';
+  addPropertyBlock.prototype.onExecute = function() {
+    let doc = (this.getInputData(0) != undefined) ? this.getInputData(0) : {};
+    let val = this.getInputData(1);
+    xdmp.log(Sequence.from(["JOSInput",doc,"Val",val]));
+    let propertyName = this.properties['propertyName'];
+    if (xdmp.nodeKind(doc) == 'document' && doc.documentFormat == 'JSON') {
+      doc = doc.toObject();
+    }
+    doc[propertyName] = val;
+    xdmp.log(Sequence.from(["JOSResults",doc]));
+    this.setOutputData(0, doc);
+  };
+  LiteGraph.registerNodeType('Enrich/AddProperty', addPropertyBlock);
 
   function CreateTriple () {
     this.addInput("subject");
@@ -2019,7 +1997,6 @@ function init (LiteGraph) {
     this.setOutputData(0, outputval)
   }
   LiteGraph.registerNodeType("Format/stringPadding", StringPadding);
-
 }
 
 module.exports = {

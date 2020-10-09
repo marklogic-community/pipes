@@ -110,7 +110,7 @@ public class BackendModulesManager {
     }
 
     // output version information
-      System.out.println("--------------------\n"+ javaVersionInfo+"--------------------");
+      logger.info("--------------------\n"+ javaVersionInfo+"--------------------");
 
     // it will deploy modules if versions mismatch
     // and if using custom blocks

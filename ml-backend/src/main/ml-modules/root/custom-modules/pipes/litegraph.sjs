@@ -1,3 +1,5 @@
+const TRACE_ID = "pipes-litegraph";
+
 (function(global) {
   // *************************************************************
   //   LiteGraph CLASS                                     *******
@@ -102,6 +104,7 @@
      */
 
     registerNodeType: function(type, base_class) {
+      xdmp.trace(TRACE_ID,"Registering block "+type);
       if (!base_class.prototype) {
         throw "Cannot register a simple object, it must be a class with a prototype";
       }
@@ -744,6 +747,7 @@
       for (var i = 0; i < num; i++) {
         for (var j = 0; j < limit; ++j) {
           var node = nodes[j];
+       xdmp.log(Sequence.from(["GOING TO EXECUTE",node.title,node.onExecute]));
           if (node.mode == LiteGraph.ALWAYS && node.onExecute) {
             node.onExecute(); //hard to send elapsed time
           }
@@ -764,6 +768,7 @@
         for (var i = 0; i < num; i++) {
           for (var j = 0; j < limit; ++j) {
             var node = nodes[j];
+           xdmp.log(Sequence.from(["GOING TO EXECUTE",node.title,node.onExecute]));
             if (node.mode == LiteGraph.ALWAYS && node.onExecute) {
               node.onExecute();
             }
@@ -1850,7 +1855,7 @@
    * Configure a graph from a JSON string
    * @method configure
    * @param {String} str configure a graph from a JSON string
-   * @param {Boolean} returns if there was any error parsing
+   * @param {Array} returns node types in case of errors
    */
   LGraph.prototype.configure = function(data, keep_old) {
     if (!data) {
@@ -1880,7 +1885,7 @@
       this[i] = data[i];
     }
 
-    var error = false;
+    var errors =[];
 
     //create nodes
     this._nodes = [];
@@ -1888,7 +1893,7 @@
       for (var i = 0, l = nodes.length; i < l; ++i) {
         var n_info = nodes[i]; //stored info
         var node = LiteGraph.createNode(n_info.type, n_info.title);
-        if (!node) {
+        if (!node || !node.onExecute) {
           if (LiteGraph.debug) {
             console.log(
               "Node not found or has errors: " + n_info.type
@@ -1899,7 +1904,7 @@
           node = new LGraphNode();
           node.last_serialization = n_info;
           node.has_errors = true;
-          error = true;
+          errors.push(n_info.type);
           //continue;
         }
 
@@ -1930,7 +1935,7 @@
     this.updateExecutionOrder();
     this._version++;
     this.setDirtyCanvas(true, true);
-    return error;
+    return errors;
   };
 
   LGraph.prototype.load = function(url) {
