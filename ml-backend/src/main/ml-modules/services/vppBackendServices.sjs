@@ -395,13 +395,11 @@ function InvokeExecuteGraph (input) {
           }
 
         } catch (e) {
-
-          xdmp.log("Exception occured during graph execution: " + e, "error")
-
+          xdmp.log(Sequence.from(["Exception occured during graph execution: " + e.message,e.stack,"End"]), "error")
           result = {
             uri: uri,
             result: graphResult,
-            error: e
+            error: "Error during graph execution. Check the log for details: "+e.message
           }
 
         }

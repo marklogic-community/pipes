@@ -10,7 +10,7 @@ git fetch --all
 # build the front end SPA UI
 
 echo "Copying overrides..."
-cp node_modules_override/litegraph.js node_modules/litegraph.js/build/litegraph.js
+cp ml-backend/src/main/ml-modules/root/custom-modules/pipes/litegraph.sjs node_modules/litegraph.js/build/litegraph.js
 # quasar build --modern
 
 # create static resource directory first

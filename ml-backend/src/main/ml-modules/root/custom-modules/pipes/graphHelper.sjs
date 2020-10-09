@@ -319,24 +319,7 @@ function executeGraphStep(doc,uri,config,context){
 
 
 function executeGraphFromJson(jsonGraph,uri, input,context){
-
-
-//xdmp.log(context)
-  // let markLogicNodes = require("/lib/marklogicNodes")
-
-
-
-  /*
-  Library refactoring
-  var core = require("/custom-modules/core");
-  var user = require("/custom-modules/user");
-  core
-  user.init(LiteGraph);
-  */
-
-
-
-  if(registeredNodeType==false) {
+  if( registeredNodeType === false ) {
     for (let model of jsonGraph.models)
       LiteGraph.registerNodeType(model.source + "/" + model.collection, createGraphNodeFromModel(model));
     //userBlocks.initUserBlocks(LiteGraph);
@@ -346,14 +329,18 @@ function executeGraphFromJson(jsonGraph,uri, input,context){
     // graph.configure(jsonGraph.executionGraph)
     registeredNodeType=true
   }
+  let arr = Object.keys(LiteGraph.registered_node_types)
+  arr.unshift("Start registered blocks:")
+  arr.push("End registered blocks")
+  xdmp.log(Sequence.from(arr))
+  xdmp.trace(TRACE_ID_DETAILS,Sequence.from(arr));
 
-
-  // graph.stop()
-
-  graph.configure(jsonGraph.executionGraph)
-
-
-
+  const errors = graph.configure(jsonGraph.executionGraph)
+  if ( errors.length > 0 ) {
+    const str = "The following blocks are not found: "+errors.join()
+    xdmp.trace(TRACE_ID_DETAILS,str);
+    throw Error(str);
+  }
   graph.addInput("input", "");
   graph.addInput("uri", "");
   graph.addInput("collections", "");
@@ -368,8 +355,7 @@ function executeGraphFromJson(jsonGraph,uri, input,context){
   graph.start();
 
   return graph.getOutputData("output")
-}//graph.global_outputs
-
+}
 
 module.exports = {
   extractModelByCollectionMatch,

@@ -401,6 +401,7 @@
 
         <div class="q-py-xs">
           <vue-json-pretty
+            v-show="!errorOccured"
             id="prettyJSON"
             :data="jsonPreview"
           >
@@ -628,20 +629,9 @@ export default {
             }
 
             if (response.data.error) {
-
               this.executionTime = null
-
-              if (response.data.error.stack) {
-                console.log("Error executing graph")
-                this.errorOccured = true
-                var error = JSON.stringify(response.data.error.stack);
-                error = (error.split("in "))[0]
-                if (error.length > 50) error = error.substring(0, 50) // if we don't capture message correctly truncate
-                this.errorMessage = error
-              } else {
-                this.errorOccured = true
-                this.errorMessage = response.data.error
-              }
+              this.errorOccured = true
+              this.errorMessage = response.data.error
             }
 
           })

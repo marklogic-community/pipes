@@ -1,6 +1,7 @@
 
 echo Packaging the front end...
-copy /Y node_modules_override\litegraph.js node_modules\litegraph.js\build\litegraph.js
+copy /Y cp ml-backend\src\main\ml-modules\root\custom-modules\pipes\litegraph.sjs node_modules/litegraph.js/build/litegraph.js
+ node_modules\litegraph.js\build\litegraph.js
 call quasar build
 
 echo Moving the front-end package to SpringBoot static resources folder...
