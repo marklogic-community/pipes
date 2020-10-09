@@ -1,14 +1,14 @@
 //Copyright ©2020 MarkLogic Corporation.
-const moment = require("/custom-modules/pipes/moment-with-locales.min.sjs")
+const moment = require("/custom-modules/pipes/runtime/moment-with-locales.min.sjs")
 const entity = require('/MarkLogic/entity');
 const lib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
 //const lib2 = require('/data-hub/5/builtins/steps/mapping/entity-services/lib.sjs')
-const lib2 = require("/custom-modules/pipes/entity-services-lib-vpp.sjs")
-const PNF = require('/custom-modules/pipes/google-libphonenumber.sjs').PhoneNumberFormat;
-const phoneUtil = require('/custom-modules/pipes/google-libphonenumber.sjs').PhoneNumberUtil.getInstance();
+const lib2 = require("/custom-modules/pipes/runtime/entity-services-lib-vpp.sjs")
+const PNF = require('/custom-modules/pipes/runtime/google-libphonenumber.sjs').PhoneNumberFormat;
+const phoneUtil = require('/custom-modules/pipes/runtime/google-libphonenumber.sjs').PhoneNumberUtil.getInstance();
 const BLOCK_RUNTIME_DEBUG_TRACE = "pipesBlockRuntimeDebug";
 
-const coreFunctions = require("/custom-modules/pipes/coreFunctions.sjs")
+const coreFunctions = require("/custom-modules/pipes/runtime/coreFunctions.sjs")
 
 const DataHub = require("/data-hub/5/datahub.sjs");
 const datahub = new DataHub();

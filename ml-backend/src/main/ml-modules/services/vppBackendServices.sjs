@@ -321,7 +321,7 @@ function InvokeExecuteGraph (input) {
     execute: function execute () {
       var previewUri = ''
       var result = null
-      let gHelper = require("/custom-modules/pipes/graphHelper")
+      let gHelper = require("/custom-modules/pipes/designtime/graphHelper.sjs")
       let execContext = JSON.parse(input)
       let doc = null
       let uri = ''
@@ -740,7 +740,7 @@ function post (context, params, input) {
 
   switch (params.action) {
     case "compile":
-      let compiler = require("/custom-modules/pipes/compiler.sjs");
+      let compiler = require("/custom-modules/pipes/designtime/compiler.sjs");
       let output = compiler.compileGraphToJavaScript(ctx);
       //xdmp.log(Sequence.from(["COMPILER OUTPUT", output]));
       return output;

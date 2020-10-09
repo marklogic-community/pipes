@@ -9,6 +9,8 @@
 * `gradle clean test`
 * Please note, that the version number will fail until you run `buildPackageUiJar.sh`
 
+Or run `run_unit_tests` in `java-middle-tier`
+
 ## Running pipes locally
 
 cd into java-middle-tier folder
