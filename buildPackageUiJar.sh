@@ -25,6 +25,7 @@ echo "Moving the back-end modules to SpringBoot dhf resources folder..."
 mkdir -p java-middle-tier/src/main/resources/dhf/src
 
 # deploy backend modules to be picked up by jar builder
+rm -rf java-middle-tier/src/main/resources/dhf/src/*
 cp -r ml-backend/src/* java-middle-tier/src/main/resources/dhf/src/.
 
 echo "Deleting existing builds in java-middle-tier/build/libs..."

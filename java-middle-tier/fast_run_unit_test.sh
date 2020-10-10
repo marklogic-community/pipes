@@ -1,3 +1,4 @@
+rm -rf src/main/resources/dhf/src/*
 cp -v -r ../ml-backend/src/* src/main/resources/dhf/src/.
 echo Running unit tests
 gradle clean test
