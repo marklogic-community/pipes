@@ -425,171 +425,50 @@ function init (LiteGraph) {
 
   LiteGraph.registerNodeType("basic/script", NodeScript);
 
-  let configs = [
-    {
-      "functionName": "fn_doc",
-      "blockName": "doc",
-      "library": "Query",
-      "inputs": [
-        {
-          name: "uri",
-          type: "xs:string"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "doc",
-          "type": "node"
-        }
-      ],
-      "function": {
-        "ref": "fn.doc",
-        "code": null
-      }
+  function fn_doc() {
+    this.addInput('uri', 'xs:string');
+    this.addOutput('doc', 'node');
+    null
+  };
+  fn_doc.title = 'doc';
+  fn_doc.prototype.onExecute = function() {
+    this.setOutputData(0, fn.doc(this.getInputData(0)));
+  };
+  LiteGraph.registerNodeType('Query/doc', fn_doc);
 
+  function fn_baseUri() {
+    this.addInput('node', 'node');
+    this.addOutput('uri', 'xs:string');
+    null
+  };
+  fn_baseUri.title = 'baseUri';
+  fn_baseUri.prototype.onExecute = function() {
+    this.setOutputData(0, fn.baseUri(this.getInputData(0)));
+  };
+  LiteGraph.registerNodeType('Advanced/baseUri', fn_baseUri);
 
-    },
-    {
-      "functionName": "fn_baseUri",
-      "blockName": "baseUri",
-      "library": "Advanced",
-      "inputs": [
-        {
-          name: "node",
-          type: "node"
-        }
-      ],
-      "outputs": [
-        {
-          "name": "uri",
-          "type": "xs:string"
-        }
-      ],
-      "function": {
-        "ref": "fn.baseUri",
-        "code": null
-      }
-    },
-    {
-      "functionName": "fn_count",
-      "blockName": "count",
-      "library": "Advanced",
-      "inputs": [
-        {
-          name: "list",
-          type: null
-        }
-      ],
-      "outputs": [
-        {
-          "name": "nbItems",
-          "type": "number"
-        }
-      ],
-      "function": {
-        "ref": "fn.count",
-        "code": null
-      }
-    },
-    {
-      "functionName": "fn_stringJoin",
-      "blockName": "String join",
-      "library": "Join",
-      "inputs": [
-        {
-          name: "string*",
-          type: "xs:string*"
-        }
-      ],
-      "properties": [
-        {
-          name: "separator",
-          type: ","
-        }
+  function fn_count() {
+    this.addInput('list');
+    this.addOutput('nbItems', 'number');
+    null
+  };
+  fn_count.title = 'count';
+  fn_count.prototype.onExecute = function() {
+    this.setOutputData(0, fn.count(this.getInputData(0)));
+  };
+  LiteGraph.registerNodeType('Advanced/count', fn_count);
 
-      ],
-      "outputs": [
-        {
-          "name": "joinedString",
-          "type": "xs:string"
-        }
-      ],
-      "function": {
-        "ref": null,
-        "code": "let stringJoined = fn.stringJoin(this.getInputData(0), this.properties['separator']);this.setOutputData(0, stringJoined);"
-      }
-    },
-    {
-      "functionName": "toEnvelope",
-      "blockName": "to Envelope",
-      "library": "dhf",
-      "inputs": [
-        {
-          name: "headers",
-          type: "node"
-        },
-        {
-          name: "triples",
-          type: "node"
-        },
-        {
-          name: "instance",
-          type: "node"
-        },
-        {
-          name: "attachments",
-          type: "node"
-        }
-
-      ],
-      "outputs": [
-        {
-          "name": "doc",
-          "type": "node"
-        }
-      ],
-      "function": {
-        "ref": null,
-        "code": "let result = {'envelope' : {}} ;" +
-          "    if(this.getInputData(0)!=undefined) result.envelope.headers = this.getInputData(0);" +
-          "    if(this.getInputData(1)!=undefined) result.envelope.triples = this.getInputData(1);" +
-          "    if(this.getInputData(2)!=undefined) result.envelope.instance = this.getInputData(2);" +
-          "    if(this.getInputData(3)!=undefined) result.envelope.attachments  = this.getInputData(3);" +
-          "    this.setOutputData( 0, result);"
-      }
-
-    }
-  ]
-
-  let code = ""
-  for (let config of configs) {
-
-    code += "function " + config.functionName + "(){"
-    code += config.inputs.map((input) => { return "this.addInput('" + input.name + ((input.type) ? "','" + input.type + "');" : "');") }).join("")
-    code += config.outputs.map((output) => { return "this.addOutput('" + output.name + ((output.type) ? "','" + output.type + "');" : "');") }).join("")
-    code += (config.properties != null) ? config.properties.map((property) => { return "this.addProperty('" + property.name + ((property.type) ? "','" + property.type + "');" : "');") }).join("") : null;
-    code += (config.widgets != null) ? config.widgets.map((widget) => { return "this.addWidget('" + widget.type + "','" + widget.name + "','" + widget.default + "', function(v){}, { values:" + JSON.stringify(widget.values) + "} );" }).join("") : "";
-
-    //code += "    this.serialize_widgets = true;"
-
-    //code += (config.properties)?"config.properties = " +  config.properties +";":"";
-    code += "};"
-    code += config.functionName + ".title = '" + config.blockName + "';";
-    code += config.functionName + ".prototype.onExecute = function(){ ";
-
-    if (config.function.ref != null) {
-      let i = 0;
-      code += "this.setOutputData( 0, " + config.function.ref + "(" + config.inputs.map((input) => { return "this.getInputData(" + i++ + ")" }).join(",") + "));"
-    } else {
-      code += config.function.code;
-
-    }
-    code += "};"
-    //register in the syst em
-    code += "LiteGraph.registerNodeType('" + config.library + "/" + config.blockName + "', " + config.functionName + " );"
-  } 
- // xdmp.log(code)
-  eval(code)
+  function fn_stringJoin() {
+    this.addInput('string*', 'xs:string*');
+    this.addOutput('joinedString', 'xs:string');
+    this.addProperty('separator', ',');
+  };
+  fn_stringJoin.title = 'String join';
+  fn_stringJoin.prototype.onExecute = function() {
+    let stringJoined = fn.stringJoin(this.getInputData(0), this.properties['separator']);
+    this.setOutputData(0, stringJoined);
+  };
+  LiteGraph.registerNodeType('Join/String join', fn_stringJoin);
 
   //Output for a subgraph
   function GlobalEnvelopeOutput () {
@@ -1246,7 +1125,6 @@ function init (LiteGraph) {
 
 
   function addPropertyBlock() {
-    xdmp.log("JOS TEST");
     this.addInput('doc', 'node');
     this.addInput('value');
     this.addOutput('doc', 'node');
@@ -1256,13 +1134,11 @@ function init (LiteGraph) {
   addPropertyBlock.prototype.onExecute = function() {
     let doc = (this.getInputData(0) != undefined) ? this.getInputData(0) : {};
     let val = this.getInputData(1);
-    xdmp.log(Sequence.from(["JOSInput",doc,"Val",val]));
     let propertyName = this.properties['propertyName'];
     if (xdmp.nodeKind(doc) == 'document' && doc.documentFormat == 'JSON') {
       doc = doc.toObject();
     }
     doc[propertyName] = val;
-    xdmp.log(Sequence.from(["JOSResults",doc]));
     this.setOutputData(0, doc);
   };
   LiteGraph.registerNodeType('Enrich/AddProperty', addPropertyBlock);

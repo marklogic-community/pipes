@@ -1,0 +1,304 @@
+{
+  "pipesFileVersion": 2,
+  "models": [],
+  "executionGraph": {
+    "last_node_id": 7,
+    "last_link_id": 6,
+    "nodes": [
+      {
+        "id": 2,
+        "type": "DHF/output",
+        "pos": [
+          1308,
+          434
+        ],
+        "size": [
+          180,
+          60
+        ],
+        "flags": {},
+        "order": 6,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "output",
+            "type": 0,
+            "link": 6
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 1,
+        "type": "DHF/input",
+        "pos": [
+          248,
+          489
+        ],
+        "size": [
+          180,
+          100
+        ],
+        "flags": {},
+        "order": 0,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "input",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "uri",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "collections",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "permissions",
+            "type": "",
+            "links": null
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 4,
+        "type": "Generate/multiConstant",
+        "pos": [
+          528,
+          320
+        ],
+        "size": {
+          "0": 255,
+          "1": 82
+        },
+        "flags": {},
+        "order": 1,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "output",
+            "links": [
+              1
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "string",
+          "A"
+        ]
+      },
+      {
+        "id": 5,
+        "type": "Generate/multiConstant",
+        "pos": [
+          530,
+          454
+        ],
+        "size": {
+          "0": 255,
+          "1": 82
+        },
+        "flags": {},
+        "order": 2,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "output",
+            "links": [
+              2
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "string",
+          "B"
+        ]
+      },
+      {
+        "id": 6,
+        "type": "Join/Array",
+        "pos": [
+          835,
+          471
+        ],
+        "size": {
+          "0": 255,
+          "1": 138
+        },
+        "flags": {},
+        "order": 3,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "item1",
+            "type": 0,
+            "link": 1
+          },
+          {
+            "name": "item2",
+            "type": 0,
+            "link": 2
+          },
+          {
+            "name": "item3",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "item4",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "item5",
+            "type": 0,
+            "link": null
+          }
+        ],
+        "outputs": [
+          {
+            "name": "array",
+            "links": [
+              3
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "5"
+        ]
+      },
+      {
+        "id": 3,
+        "type": "Join/String join",
+        "pos": [
+          1102,
+          351
+        ],
+        "size": {
+          "0": 170,
+          "1": 26
+        },
+        "flags": {},
+        "order": 4,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "string*",
+            "type": 0,
+            "link": 3
+          }
+        ],
+        "outputs": [
+          {
+            "name": "joinedString",
+            "links": [
+              5
+            ]
+          }
+        ],
+        "properties": {
+          "separator": "#"
+        }
+      },
+      {
+        "id": 7,
+        "type": "Enrich/AddProperty",
+        "pos": [
+          986,
+          661
+        ],
+        "size": {
+          "0": 170,
+          "1": 46
+        },
+        "flags": {},
+        "order": 5,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "doc",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "value",
+            "type": 0,
+            "link": 5
+          }
+        ],
+        "outputs": [
+          {
+            "name": "doc",
+            "links": [
+              6
+            ]
+          }
+        ],
+        "properties": {
+          "propertyName": "result"
+        }
+      }
+    ],
+    "links": [
+      [
+        1,
+        4,
+        0,
+        6,
+        0,
+        0
+      ],
+      [
+        2,
+        5,
+        0,
+        6,
+        1,
+        0
+      ],
+      [
+        3,
+        6,
+        0,
+        3,
+        0,
+        0
+      ],
+      [
+        5,
+        3,
+        0,
+        7,
+        1,
+        0
+      ],
+      [
+        6,
+        7,
+        0,
+        2,
+        0,
+        0
+      ]
+    ],
+    "groups": [],
+    "config": {},
+    "version": 0.4
+  },
+  "name": "My Graph",
+  "metadata": {
+    "version": "00.01",
+    "author": "",
+    "title": "My Graph",
+    "dateExported": "10/10/2020, 07:05:12"
+  }
+}
