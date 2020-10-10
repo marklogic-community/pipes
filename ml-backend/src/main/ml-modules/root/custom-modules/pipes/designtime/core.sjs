@@ -49,22 +49,6 @@ function init (LiteGraph) {
     }
   };
 
-  GraphInputDHF.prototype.onCodeGeneration = function (tempVarPrefix, inputVariables, outputVariables, propertiesWidgets) {
-    let code = [];
-    if ("output0" in outputVariables) {
-      code.push("const " + outputVariables.output0 + " = input;");
-    }
-    if ("output1" in outputVariables) {
-      code.push("const " + outputVariables.output1 + " = uri;");
-    }
-    if ("output2" in outputVariables) {
-      code.push("const " + outputVariables.output2 + " = collections;");
-    }
-    if ("output3" in outputVariables) {
-      code.push("const " + outputVariables.output3 + " = permissions;");
-    }
-    return code;
-  };
 
   GraphInputDHF.prototype.onExecute = function () {
     //var name = this.properties.name;
@@ -114,58 +98,6 @@ function init (LiteGraph) {
   GraphOutputObjectDHF.title = "Output Object";
   GraphOutputObjectDHF.desc = "DHF output object";
 
-  GraphOutputObjectDHF.prototype.onCodeGeneration = function (tempVarPrefix, inputVariables, outputVariables, propertiesWidgets) {
-    let code = [];
-    code.push("let " + tempVarPrefix + "result = {'envelope' : {}};");
-    if ("input0" in inputVariables) {
-      code.push(tempVarPrefix + 'result.envelope.headers = (' + inputVariables.input0 + ' != undefined) ?' + inputVariables.input0 + ' : {};');
-    } else {
-      code.push(tempVarPrefix + 'result.envelope.headers = {};');
-    }
-    if ("input1" in inputVariables) {
-      code.push(tempVarPrefix + 'result.envelope.triples = (' + inputVariables.input1 + ' != undefined) ? ' + inputVariables.input1 + ' : {};');
-    } else {
-      code.push(tempVarPrefix + 'result.envelope.triples = {};');
-    }
-    if ("input2" in inputVariables) {
-      code.push(tempVarPrefix + 'result.envelope.instance = (' + inputVariables.input2 + ' != undefined) ? ' + inputVariables.input2 + ' : {};');
-    } else {
-      code.push(tempVarPrefix + 'result.envelope.instance = {};');
-    }
-    if ("input3" in inputVariables) {
-      code.push(tempVarPrefix + 'result.envelope.attachments  = (' + inputVariables.input3 + ' != undefined) ? ' + inputVariables.input3 + ' : {};');
-    } else {
-      code.push(tempVarPrefix + 'result.envelope.attachments  = {};');
-    }
-    code.push('let ' + tempVarPrefix + 'defaultCollections = ( collections!=null ) ? collections : null;');
-    code.push('let ' + tempVarPrefix + 'defaultPermissions = ( permissions!=null ) ? permissions : null;');
-    code.push('let ' + tempVarPrefix + 'defaultUri = ( uri!=null ) ? uri:sem.uuidString();');
-    code.push('let ' + tempVarPrefix + 'defaultContext = ( context!=null ) ? JSON.parse(JSON.stringify(context)) : {};');
-    if ("input4" in inputVariables) {
-      code.push('let ' + tempVarPrefix + 'uri  = ( ' + inputVariables.input4 + '!=undefined ) ? ' + inputVariables.input4 + ' : ' + tempVarPrefix + 'defaultUri;');
-    } else {
-      code.push('let ' + tempVarPrefix + 'uri  = ' + tempVarPrefix + 'defaultUri;');
-    }
-    if ("input5" in inputVariables) {
-      code.push('let ' + tempVarPrefix + 'collections  = ( ' + inputVariables.input5 + ' != undefined ) ? ' + inputVariables.input5 + ' : ' + tempVarPrefix + 'defaultCollections;');
-    } else {
-      code.push('let ' + tempVarPrefix + 'collections  = ' + tempVarPrefix + 'defaultCollections;');
-    }
-    if ("input6" in inputVariables) {
-      code.push('let ' + tempVarPrefix + 'permissions  = ( ' + inputVariables.input6 + ' != undefined ) ? ' + inputVariables.input6 + ' : ' + tempVarPrefix + 'defaultPermissions;');
-    } else {
-      code.push('let ' + tempVarPrefix + 'permissions  = ' + tempVarPrefix + 'defaultPermissions;');
-    }
-    code.push('let ' + tempVarPrefix + 'context = ' + tempVarPrefix + 'defaultContext;');
-    code.push('let ' + tempVarPrefix + 'content = {};');
-    code.push(tempVarPrefix + 'content.value = ' + tempVarPrefix + 'result;');
-    code.push(tempVarPrefix + 'content.uri = ' + tempVarPrefix + 'uri;');
-    code.push(tempVarPrefix + 'context.collections = ' + tempVarPrefix + 'collections;');
-    code.push(tempVarPrefix + 'context.permissions = ' + tempVarPrefix + 'permissions;');
-    code.push(tempVarPrefix + 'content.context = ' + tempVarPrefix + 'context;');
-    code.push('const ' + outputVariables.output0 + ' = ' + tempVarPrefix + 'content;');
-    return code;
-  };
 
   GraphOutputObjectDHF.prototype.onExecute = function () {
 
@@ -261,18 +193,6 @@ function init (LiteGraph) {
     else
       this.graph.setOutputData("output", output)
     // }
-  };
-
-  GraphOutputDHF.prototype.onCodeGeneration = function (tempVarPrefix, inputVariables, outputVariables, propertiesWidgets) {
-    let code = [];
-    code.push("let " + tempVarPrefix + "output = " + inputVariables.input0 + ";");
-    code.push("if (" + tempVarPrefix + "output.constructor === Array){");
-    code.push("  let " + tempVarPrefix + "globalArray = [];");
-    code.push("  flattenArray(" + tempVarPrefix + "globalArray," + tempVarPrefix + "output);");
-    code.push("  " + tempVarPrefix + "output = " + tempVarPrefix + "globalArray;");
-    code.push("}");
-    code.push("const " + outputVariables.output0 + " = " + tempVarPrefix + 'output;');
-    return code;
   };
 
   function flattenArray (globalArray, value) {
@@ -581,16 +501,6 @@ function init (LiteGraph) {
     this.setOutputData(0, this.string.value);
   }
 
-  StringConstant.prototype.onCodeGeneration = function (tempVarPrefix, inputVariables, outputVariables, propertiesWidgets) {
-    let code = [];
-    if (propertiesWidgets.widgets && "string" in propertiesWidgets.widgets) {
-      code.push("const " + outputVariables.output0 + " = '" + propertiesWidgets.widgets.string + "';");
-    } else {
-      code.push("const " + outputVariables.output0 + " = '';");
-    }
-    return code;
-  }
-
   LiteGraph.registerNodeType("Generate/constant", StringConstant);
 
 
@@ -691,38 +601,6 @@ function init (LiteGraph) {
     this.wildcarded = this.addWidget("toggle", "wildcarded", false, function (v) { }, {});
   }
   mapValueBlock.title = "mapValues";
-
-  mapValueBlock.prototype.onCodeGeneration = function (tempVarPrefix, inputVariables, outputVariables, propertiesWidgets) {
-    let code = [];
-    code.push('let ' + tempVarPrefix + 'val = ' + inputVariables.input0 + ';');
-    code.push('if(' + tempVarPrefix + 'val==undefined) {');
-    code.push(' ' + tempVarPrefix + 'val ="#NULL#"; }');
-    code.push('if(' + tempVarPrefix + 'val==null) { ');
-    code.push(' ' + tempVarPrefix + 'val ="#NULL#"; }');
-    code.push('if(' + tempVarPrefix + 'val=="") { ');
-    code.push(' ' + tempVarPrefix + 'val ="#EMPTY#"; }');
-    code.push('let ' + tempVarPrefix + 'mappedValue = ' + JSON.stringify(propertiesWidgets.properties.mapping) + '.filter(item => {return item.source==' + tempVarPrefix + 'val});');
-    code.push('let ' + tempVarPrefix + 'output= ' + tempVarPrefix + 'val;');
-    code.push('if(' + tempVarPrefix + 'mappedValue!=null && ' + tempVarPrefix + 'mappedValue.length>0) {');
-    code.push(' ' + tempVarPrefix + 'output=' + tempVarPrefix + 'mappedValue[0].target;');
-    code.push('}');
-    code.push('if ("' + propertiesWidgets.widgets.castOutput + '"=="bool"){');
-    code.push(' if(' + tempVarPrefix + 'output=="true") {');
-    code.push('  ' + tempVarPrefix + 'output=true;');
-    code.push(' }');
-    code.push(' if(' + tempVarPrefix + 'output=="false") {');
-    code.push('  ' + tempVarPrefix + 'output=false;');
-    code.push(' }');
-    code.push('}');
-    code.push('if(' + tempVarPrefix + 'output=="#NULL#") {');
-    code.push('  ' + tempVarPrefix + 'output = null;');
-    code.push('}');
-    code.push('if(' + tempVarPrefix + 'output=="#EMPTY#") {');
-    code.push(' ' + tempVarPrefix + 'output ="";');
-    code.push('}');
-    code.push('const ' + outputVariables.output0 + ' = ' + tempVarPrefix + "output;");
-    return code;
-  };
 
   mapValueBlock.prototype.onExecute = function () {
     let val = String(this.getInputData(0));
@@ -897,12 +775,6 @@ function init (LiteGraph) {
     }
   }
 
-  currentDate.prototype.onCodeGeneration = function (tempVarPrefix, inputVariables, outputVariables, propertiesWidgets) {
-    let code = [];
-    code.push("const " + outputVariables.output0 + " = coreFunctions.getCurrentDate('" + propertiesWidgets.properties.currentDate + "')");
-    return code;
-  }
-
   currentDate.prototype.onDrawBackground = function (ctx) {
     if (this.flags.collapsed)
       return;
@@ -1051,31 +923,6 @@ function init (LiteGraph) {
     this.setOutputData(0, result);
   }
 
-  stringTemplate.prototype.onCodeGeneration = function (tempVarPrefix, inputVariables, outputVariables, propertiesWidgets) {
-    let code = [];
-    let template = propertiesWidgets.widgets.template;
-    if ("input0" in inputVariables) {
-      template = template.replace("v1", inputVariables.input0);
-    }
-    if ("input1" in inputVariables) {
-      template = template.replace("v2", inputVariables.input1);
-    }
-    if ("input2" in inputVariables) {
-      template = template.replace("v3", inputVariables.input2);
-    }
-    if ("v4" in propertiesWidgets.widgets) {
-      code.push("const " + tempVarPrefix + "v4='" + propertiesWidgets.widgets.v4 + "';");
-      template = template.replace("v4", tempVarPrefix + "v4")
-    }
-    if ("v5" in propertiesWidgets.widgets) {
-      code.push("const " + tempVarPrefix + "v5='" + propertiesWidgets.widgets.v5 + "';");
-      template = template.replace("v4", tempVarPrefix + "v5")
-    }
-    code.push("const " + outputVariables.output0 + " = eval(`'" + template + "'`);");
-    return code;
-  };
-
-
   LiteGraph.registerNodeType("Generate/Templating", stringTemplate);
 
   function FormatDate () {
@@ -1197,13 +1044,6 @@ function init (LiteGraph) {
   uuidString.prototype.onExecute = function () {
     let prefix = this.prefix.value
     this.setOutputData(0, prefix + sem.uuidString());
-  }
-
-
-  uuidString.prototype.onCodeGeneration = function (tempVarPrefix, inputVariables, outputVariables, propertiesWidgets) {
-    let code = [];
-    code.push("const " + outputVariables.output0 + " = '" + propertiesWidgets.widgets.prefix + "'+sem.uuidString()");
-    return code;
   }
 
   LiteGraph.registerNodeType("Generate/uuid", uuidString);
@@ -1375,15 +1215,6 @@ function init (LiteGraph) {
     this.setOutputData(3, result)
   }
 
-  split.prototype.onCodeGeneration = function (tempVarPrefix, inputVariables, outputVariables, propertiesWidgets) {
-    let code = [];
-    code.push("const " + tempVarPrefix + "splitValues = coreFunctions.split(" + inputVariables.input0 + ",'" + propertiesWidgets.widgets.splitChar + "');")
-    code.push("const " + outputVariables.output0 + " = " + tempVarPrefix + "splitValues[0]");
-    code.push("const " + outputVariables.output1 + " = " + tempVarPrefix + "splitValues[1]");
-    code.push("const " + outputVariables.output2 + " = " + tempVarPrefix + "splitValues[2]");
-    code.push("const " + outputVariables.output3 + " = " + tempVarPrefix + "splitValues");
-    return code;
-  }
   LiteGraph.registerNodeType("Split/Split", split);
 
   function selectCase () {
@@ -1794,23 +1625,6 @@ function init (LiteGraph) {
       this.setOutputData(0, output)
     }
   }
-
-  xpathBlock.prototype.onCodeGeneration = function (tempVarPrefix, inputVariables, outputVariables, propertiesWidgets) {
-    let code = [];
-    let namespaces = propertiesWidgets.widgets.namespaces;
-    let ns = {};
-    if (namespaces && namespaces.trim().length > 0) {
-      const nstokens = namepaces.trim().split(",");
-      if (nstokens.length % 2 === 0) {
-        for (let i = 0; i < nstokens.length; i += 2) {
-          ns[nstokens[i].trim()] = nstokens[i + 1].trim();
-        }
-      }
-    }
-    let nsString = JSON.stringify(ns);
-    code.push("const " + outputVariables.output0 + " = (" + inputVariables.input0 + " instanceof Array ? " + inputVariables.input0 + "[0] : " + inputVariables.input0 + ").xpath('" + propertiesWidgets.widgets.xpath + "'," + nsString + ");");
-    return code;
-  };
 
   LiteGraph.registerNodeType("Transform/xpath", xpathBlock);
 
