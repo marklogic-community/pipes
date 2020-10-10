@@ -377,7 +377,7 @@
       }
     ],
     "function": {
-      "ref": "fn.doc",
+      "ref": null,
       "code": null
     }
   },
@@ -1012,7 +1012,7 @@
     ],
     "function": {
       "ref": null,
-      "code": "let stringJoined = fn.stringJoin(this.getInputData(0), this.properties['separator']);this.setOutputData(0, stringJoined);"
+      "code": null
     }
   },
   {
