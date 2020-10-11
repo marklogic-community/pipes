@@ -1637,23 +1637,12 @@ function init (LiteGraph) {
 
   MultipurposeConstant.title = "multiconstant";
 
-  MultipurposeConstant.prototype.onExecute = function () {
-    let dataType = this.Type.value
-    let value = this.constant.value
-    let outputval = null
-    switch (dataType) {
-      case "string":
-        this.setOutputData(0, value)
-        break
-      case "number":
-        this.setOutputData(0, parseFloat(value))
-        break
-      case "NULL":
-        this.setOutputData(0, null)
-      default:
-        break
-    }
+  MultipurposeConstant.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeMultiPurposeConstant";
+  }
 
+  MultipurposeConstant.prototype.onExecute = function () {
+    return coreFunctions.executeBlock(this);
   }
   LiteGraph.registerNodeType("Generate/multiConstant", MultipurposeConstant);
 
