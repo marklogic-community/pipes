@@ -4,7 +4,7 @@ module.exports = class PipesFlowControlGraph {
     this.allPaths = []
   }
 
-  initFromLiteGraph(LiteGraph,startNode,litegraphJSON) {
+  initFromLiteGraph(LiteGraph,startNode,finalNode,litegraphJSON) {
     let arr = [];
     this.graph.clear();
     for ( const node of litegraphJSON.executionGraph.nodes || [] ){
@@ -16,10 +16,15 @@ module.exports = class PipesFlowControlGraph {
           this.addEdge(fromNode,toNode);
         }
       }
-      let bc = new LiteGraph.registered_node_types[node.type]();
-      if ( ( "onDeadNodeRemoval" in bc  && bc.onDeadNodeRemoval() === false ) ) {
-        // artificial add a depedency
-        this.addEdge(startNode,fromNode)
+      if ( !node.inputs || node.inputs.length === 0 ) {
+        if (node.id != startNode && node.id != finalNode ) {
+          // for nodes without inputs (such as constants) we add
+          // a link from the startnode to this node
+          // to get this picked up by the path analysis.
+          xdmp.log("ADD PROT ");
+          xdmp.log(node);
+          this.addEdge(startNode, fromNode)
+        }
       }
     }
     return arr;

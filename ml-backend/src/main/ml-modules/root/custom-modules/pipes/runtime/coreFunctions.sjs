@@ -1,10 +1,12 @@
 module.exports = {
+  executeGraphInputDHF,
+  executeGraphOutputDHF,
   executeAddProperty,
   executeStringCase,
   executeTemplating,
   executeMultiPurposeConstant,
   executeBlock,
-
+  flattenArray,
 
   // OLD
   getCurrentDate,
@@ -161,6 +163,21 @@ function regExpReplace (block, regEx, replace, global, caseInsensitive) {
 
 // NEW
 
+function executeGraphInputDHF(propertiesAndWidgets,input,uri,collections,permissions) {
+  return [input,uri,collections,permissions];
+}
+
+function executeGraphOutputDHF(propertiesAndWidgets,output) {
+    if (output && output.constructor === Array) {
+      let globalArray = [];
+      flattenArray(globalArray, output);
+      return globalArray;
+    }
+    else {
+      return output;
+    }
+}
+
 function executeAddProperty(propertiesAndWidgets,doc,value) {
   let propertyName = propertiesAndWidgets.properties['propertyName'];
   if ( !doc ) {
@@ -170,7 +187,7 @@ function executeAddProperty(propertiesAndWidgets,doc,value) {
     doc = doc.toObject();
   }
   doc[propertyName] = value;
-  return [doc];
+  return doc;
 };
 
 function executeStringCase(propertiesAndWidgets,input) {
@@ -190,9 +207,9 @@ function executeStringCase(propertiesAndWidgets,input) {
         default:
           newVal = inputVal;
       }
-      return [newVal];
+      return newVal;
     }
-    return [""];
+    return "";
 }
 
 function executeTemplating(propertiesAndWidgets,v1,v2,v3) {
@@ -200,7 +217,7 @@ function executeTemplating(propertiesAndWidgets,v1,v2,v3) {
     let v5 = propertiesAndWidgets.widgets.v5;
     let template = "`" + propertiesAndWidgets.widgets.template + "`";
     let result = eval(template);
-    return [result];
+    return result;
 }
 
 function executeMultiPurposeConstant(propertiesAndWidgets) {
@@ -209,9 +226,9 @@ function executeMultiPurposeConstant(propertiesAndWidgets) {
   let outputval = null
   switch (dataType) {
     case "string":
-      return [value];
+      return value;
     case "number":
-      return [parseFloat(value)];
+      return parseFloat(value);
     case "NULL":
       return[null];
     default:
@@ -224,14 +241,13 @@ function executeBlock(block) {
     throw Error("Block does not implement getRuntimeLibraryFunctionName. Check blockType "+block.type)
   }
   const functionName = block.getRuntimeLibraryFunctionName();
-  const library = "getRuntimeLibraryPath" in  block ? block.getRuntimeLibraryPath() : null;
+  const library = "getRuntimeLibraryPath" in  block ? "/custom-modules/pipes/runtime/"+block.getRuntimeLibraryPath() : "/custom-modules/pipes/runtime/coreFunctions.sjs";
   const inputs = getInputs(block);
   const propertiesAndWidgets = getPropertiesAndWidgets(block);
-  const lib = library !== null ? require(library) : this;
+  const lib = require(library)
   const func = lib[functionName];
   if ( typeof func !== "function") {
-    const libraryString = library === null ? "/custom-modules/pipes/runtime/coreFunctions.sjs" : library;
-    throw Error("Function '"+functionName+"' not found in '"+libraryString+"'")
+    throw Error("Function '"+functionName+"' not found in '"+library+"'")
   }
   const doLog = xdmp.traceEnabled(TRACE_ID_PIPES_EXECUTION);
   let startTime = 0;
@@ -276,8 +292,25 @@ function executeBlock(block) {
     }
     xdmp.trace(TRACE_ID_PIPES_EXECUTION,Sequence.from(arr));
   }
-  outputValues.map((v,index) => { if ( typeof  v !== "undefined" ) { block.setOutputData(index,v) }  } );
+  if ( block.outputs.length > 1 ) {
+    outputValues.map((v, index) => {
+      if (typeof v !== "undefined") {
+        block.setOutputData(index, v)
+      }
+    });
+  } else {
+      block.setOutputData(0,outputValues);
+  }
   return outputValues;
+}
+
+
+function flattenArray (globalArray, value) {
+  for (let v of value)
+    if (v.constructor === Array)
+      flattenArray(globalArray, v);
+    else
+      globalArray.push(v);
 }
 
 function getPropertiesAndWidgets(block) {

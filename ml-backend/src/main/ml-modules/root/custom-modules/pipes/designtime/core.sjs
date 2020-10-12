@@ -71,6 +71,10 @@ function init (LiteGraph) {
     }
   };
 
+  GraphInputDHF.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeGraphInputDHF";
+  }
+
   LiteGraph.GraphInput = GraphInputDHF;
   LiteGraph.registerNodeType("DHF/input", GraphInputDHF);
 
@@ -181,12 +185,15 @@ function init (LiteGraph) {
   GraphOutputDHF.title = "Output";
   GraphOutputDHF.desc = "Output of the graph";
 
-  GraphOutputDHF.prototype.onExecute = function () {
+  GraphOutputDHF.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeGraphOutputDHF";
+  }
 
+  GraphOutputDHF.prototype.onExecute = function () {
     let output = this.getInputData(0)
     if (output && output.constructor === Array) {
       let globalArray = []
-      flattenArray(globalArray, output)
+      coreFunctions.flattenArray(globalArray, output)
       this.graph.setOutputData("output", globalArray)
     }
     else
@@ -194,13 +201,6 @@ function init (LiteGraph) {
     // }
   };
 
-  function flattenArray (globalArray, value) {
-    for (let v of value)
-      if (v.constructor === Array)
-        flattenArray(globalArray, v)
-      else
-        globalArray.push(v)
-  }
 
   GraphOutputDHF.prototype.onAction = function (action, param) {
     if (this.properties.type == LiteGraph.ACTION) {
