@@ -49,7 +49,6 @@ function init (LiteGraph) {
     }
   };
 
-
   GraphInputDHF.prototype.onExecute = function () {
     //var name = this.properties.name;
 
@@ -232,35 +231,19 @@ function init (LiteGraph) {
   function stringCaseBlock () {
     this.addInput("value", "xs:string");
     this.addOutput("nsValue", "xs:string");
-    this.stringOperation = this.addWidget("combo", "lowercase", "stringOperation", function (v) { }, { values: ["lowercase", "uppercase", "Capitalise"] });
+    this.stringOperation = this.addWidget("combo", "stringOperation", "string", function (v) { }, { values: ["lowercase", "uppercase", "Capitalise"] });
   }
 
   stringCaseBlock.title = "String Case";
 
-  stringCaseBlock.prototype.onExecute = function () {
-    let input = this.getInputData(0);
-    let newVal = ''
-    if (input) {
-      let inputVal = String(input)
-      switch (this.stringOperation.value) {
-        case 'lowercase':
-          newVal = inputVal.toLowerCase()
-          break;
-        case 'UPPERCASE':
-          newVal = inputVal.toUpperCase()
-          break;
-        case 'Capitalise':
-          newVal = inputVal.split(' ').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ')
-          break;
-        default:
-          newVal = inputVal
-      }
-      this.setOutputData(0, newVal);
-    } else {
-      this.setOutputData(0, "")
-    }
-    xdmp.trace(TRACE_ID, "Returned: " + newVal);
+  stringCaseBlock.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeStringCase";
   }
+
+  stringCaseBlock.prototype.onExecute = function () {
+    return coreFunctions.executeBlock(this);
+  }
+
   LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock);
 
   //Show value inside the debug console
@@ -912,15 +895,12 @@ function init (LiteGraph) {
   stringTemplate.title = "String Templating";
   stringTemplate.desc = "Apply string template on inputs";
 
+  stringTemplate.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeTemplating";
+  }
+
   stringTemplate.prototype.onExecute = function () {
-    let v1 = this.getInputData(0)
-    let v2 = this.getInputData(1)
-    let v3 = this.getInputData(2)
-    let v4 = this.v4.value
-    let v5 = this.v5.value
-    let template = "`" + this.template.value + "`"
-    let result = eval(template)
-    this.setOutputData(0, result);
+    return coreFunctions.executeBlock(this);
   }
 
   LiteGraph.registerNodeType("Generate/Templating", stringTemplate);
@@ -978,16 +958,15 @@ function init (LiteGraph) {
     this.addProperty('propertyName', 'Property name');
   };
   addPropertyBlock.title = 'Add property';
-  addPropertyBlock.prototype.onExecute = function() {
-    let doc = (this.getInputData(0) != undefined) ? this.getInputData(0) : {};
-    let val = this.getInputData(1);
-    let propertyName = this.properties['propertyName'];
-    if (xdmp.nodeKind(doc) == 'document' && doc.documentFormat == 'JSON') {
-      doc = doc.toObject();
-    }
-    doc[propertyName] = val;
-    this.setOutputData(0, doc);
-  };
+
+  addPropertyBlock.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeAddProperty";
+  }
+
+  addPropertyBlock.prototype.onExecute = function () {
+    return coreFunctions.executeBlock(this);
+  }
+
   LiteGraph.registerNodeType('Enrich/AddProperty', addPropertyBlock);
 
   function CreateTriple () {

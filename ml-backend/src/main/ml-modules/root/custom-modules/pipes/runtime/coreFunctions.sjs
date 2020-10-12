@@ -1,4 +1,7 @@
 module.exports = {
+  executeAddProperty,
+  executeStringCase,
+  executeTemplating,
   executeMultiPurposeConstant,
   executeBlock,
 
@@ -158,7 +161,49 @@ function regExpReplace (block, regEx, replace, global, caseInsensitive) {
 
 // NEW
 
-function executeMultiPurposeConstant(propertiesAndWidgets,inputs) {
+function executeAddProperty(propertiesAndWidgets,doc,value) {
+  let propertyName = propertiesAndWidgets.properties['propertyName'];
+  if ( !doc ) {
+    doc = {};
+  }
+  if (xdmp.nodeKind(doc) == 'document' && doc.documentFormat == 'JSON') {
+    doc = doc.toObject();
+  }
+  doc[propertyName] = value;
+  return [doc];
+};
+
+function executeStringCase(propertiesAndWidgets,input) {
+    let newVal = '';
+    if (input) {
+      let inputVal = String(input);
+      switch (propertiesAndWidgets.widgets.stringOperation) {
+        case 'lowercase':
+          newVal = inputVal.toLowerCase();
+          break;
+        case 'UPPERCASE':
+          newVal = inputVal.toUpperCase();
+          break;
+        case 'Capitalise':
+          newVal = inputVal.split(' ').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
+          break;
+        default:
+          newVal = inputVal;
+      }
+      return [newVal];
+    }
+    return [""];
+}
+
+function executeTemplating(propertiesAndWidgets,v1,v2,v3) {
+    let v4 = propertiesAndWidgets.widgets.v4;
+    let v5 = propertiesAndWidgets.widgets.v5;
+    let template = "`" + propertiesAndWidgets.widgets.template + "`";
+    let result = eval(template);
+    return [result];
+}
+
+function executeMultiPurposeConstant(propertiesAndWidgets) {
   let dataType = propertiesAndWidgets.widgets.Type;
   let value = propertiesAndWidgets.widgets.constant;
   let outputval = null
@@ -208,7 +253,6 @@ function executeBlock(block) {
     } else {
       arr.push("<no widgets>");
     }
-    arr.push(propertiesAndWidgets.widgets)
     arr.push("Inputs:");
     if ( (inputs || [] ).length == 0 ) {
       arr.push("<No inputs>")
@@ -241,7 +285,7 @@ function getPropertiesAndWidgets(block) {
     properties : block.properties,
     widgets : {}
   }
-  for ( widget of block.widgets ) {
+  for ( widget of block.widgets || [] ) {
     const name = widget.name;
     const value = block[widget.name].value;
     propertiesWidgets.widgets[name] = value;
