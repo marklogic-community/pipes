@@ -747,7 +747,6 @@ const TRACE_ID = "pipes-litegraph";
       for (var i = 0; i < num; i++) {
         for (var j = 0; j < limit; ++j) {
           var node = nodes[j];
-       xdmp.log(Sequence.from(["GOING TO EXECUTE",node.title,node.onExecute]));
           if (node.mode == LiteGraph.ALWAYS && node.onExecute) {
             node.onExecute(); //hard to send elapsed time
           }
@@ -768,7 +767,6 @@ const TRACE_ID = "pipes-litegraph";
         for (var i = 0; i < num; i++) {
           for (var j = 0; j < limit; ++j) {
             var node = nodes[j];
-           xdmp.log(Sequence.from(["GOING TO EXECUTE",node.title,node.onExecute]));
             if (node.mode == LiteGraph.ALWAYS && node.onExecute) {
               node.onExecute();
             }

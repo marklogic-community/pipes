@@ -122,7 +122,7 @@
         "properties": {},
         "widgets_values": [
           "string",
-          "/test.json"
+          "/test/input.json"
         ]
       }
     ],

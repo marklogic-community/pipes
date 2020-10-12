@@ -1,5 +1,12 @@
 module.exports = {
+  executeAddProperty,
+  executeStringCase,
+  executeTemplating,
+  executeMultiPurposeConstant,
+  executeBlock,
 
+
+  // OLD
   getCurrentDate,
   LookupByValue,
   split,
@@ -8,7 +15,8 @@ module.exports = {
   computeQueryRecursively
 };
 
-const TRACE_ID = "vpp-coreFunctions";
+const TRACE_ID = "pipes-coreFunctions";
+const TRACE_ID_PIPES_EXECUTION = "pipes-execution";
 
 function replaceInputValueQuery (value, block) {
   for (var i = 0; i < block.inputs.length; i++) {
@@ -149,4 +157,151 @@ function regExpReplace (block, regEx, replace, global, caseInsensitive) {
       block.setOutputData(0, input.toString().replace(regExObj, replace));
     }
   }
+}
+
+// NEW
+
+function executeAddProperty(propertiesAndWidgets,doc,value) {
+  let propertyName = propertiesAndWidgets.properties['propertyName'];
+  if ( !doc ) {
+    doc = {};
+  }
+  if (xdmp.nodeKind(doc) == 'document' && doc.documentFormat == 'JSON') {
+    doc = doc.toObject();
+  }
+  doc[propertyName] = value;
+  return [doc];
+};
+
+function executeStringCase(propertiesAndWidgets,input) {
+    let newVal = '';
+    if (input) {
+      let inputVal = String(input);
+      switch (propertiesAndWidgets.widgets.stringOperation) {
+        case 'lowercase':
+          newVal = inputVal.toLowerCase();
+          break;
+        case 'UPPERCASE':
+          newVal = inputVal.toUpperCase();
+          break;
+        case 'Capitalise':
+          newVal = inputVal.split(' ').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
+          break;
+        default:
+          newVal = inputVal;
+      }
+      return [newVal];
+    }
+    return [""];
+}
+
+function executeTemplating(propertiesAndWidgets,v1,v2,v3) {
+    let v4 = propertiesAndWidgets.widgets.v4;
+    let v5 = propertiesAndWidgets.widgets.v5;
+    let template = "`" + propertiesAndWidgets.widgets.template + "`";
+    let result = eval(template);
+    return [result];
+}
+
+function executeMultiPurposeConstant(propertiesAndWidgets) {
+  let dataType = propertiesAndWidgets.widgets.Type;
+  let value = propertiesAndWidgets.widgets.constant;
+  let outputval = null
+  switch (dataType) {
+    case "string":
+      return [value];
+    case "number":
+      return [parseFloat(value)];
+    case "NULL":
+      return[null];
+    default:
+      throw new Error("Invalid dataType ["+dataType+"]");
+  }
+}
+
+function executeBlock(block) {
+  if (! ("getRuntimeLibraryFunctionName" in block) ) {
+    throw Error("Block does not implement getRuntimeLibraryFunctionName. Check blockType "+block.type)
+  }
+  const functionName = block.getRuntimeLibraryFunctionName();
+  const library = "getRuntimeLibraryPath" in  block ? block.getRuntimeLibraryPath() : null;
+  const inputs = getInputs(block);
+  const propertiesAndWidgets = getPropertiesAndWidgets(block);
+  const lib = library !== null ? require(library) : this;
+  const func = lib[functionName];
+  if ( typeof func !== "function") {
+    const libraryString = library === null ? "/custom-modules/pipes/runtime/coreFunctions.sjs" : library;
+    throw Error("Function '"+functionName+"' not found in '"+libraryString+"'")
+  }
+  const doLog = xdmp.traceEnabled(TRACE_ID_PIPES_EXECUTION);
+  let startTime = 0;
+  if ( doLog ) {
+    let arr = [];
+    arr.push("Start executing "+block.title);
+    arr.push("Properties:")
+    arr.push(propertiesAndWidgets.properties);
+    arr.push("Widgets:")
+    if ( propertiesAndWidgets.widgets ) {
+      const keys = Object.keys(propertiesAndWidgets.widgets);
+      if ( keys.length === 0 ) {
+        arr.push("<no widgets>");
+      } else {
+        for ( const k of keys ) {
+          arr.push("Widget "+k+" = "+JSON.stringify(propertiesAndWidgets.widgets[k]))
+        }
+      }
+    } else {
+      arr.push("<no widgets>");
+    }
+    arr.push("Inputs:");
+    if ( (inputs || [] ).length == 0 ) {
+      arr.push("<No inputs>")
+    }
+    else {
+      for (let i = 0; i < inputs.length; i++) {
+        arr.push("input" + i + "=" + JSON.stringify(inputs[i]))
+      }
+    }
+    xdmp.trace(TRACE_ID_PIPES_EXECUTION,Sequence.from(arr));
+    startTime = Date.now();
+  }
+  const outputValues = func(propertiesAndWidgets, ...inputs);
+  if ( doLog ) {
+    const runTime = Date.now() - startTime;
+    let arr = [];
+    arr.push("End executing "+block.title);
+    arr.push("Execution runtime: "+runTime);
+    for ( let i = 0 ; i < (outputValues || []).length ; i++ ) {
+      arr.push("Output"+i+"="+JSON.stringify(outputValues[i]));
+    }
+    xdmp.trace(TRACE_ID_PIPES_EXECUTION,Sequence.from(arr));
+  }
+  outputValues.map((v,index) => { if ( typeof  v !== "undefined" ) { block.setOutputData(index,v) }  } );
+  return outputValues;
+}
+
+function getPropertiesAndWidgets(block) {
+  let propertiesWidgets ={
+    properties : block.properties,
+    widgets : {}
+  }
+  for ( widget of block.widgets || [] ) {
+    const name = widget.name;
+    const value = block[widget.name].value;
+    propertiesWidgets.widgets[name] = value;
+  }
+  return propertiesWidgets;
+}
+
+function getInputs(block) {
+  // flatten the inputs
+  let inputs = [];
+  if ( block.inputs && block.inputs.length > 0 ) {
+    for ( let i = 0 ; i <= block.inputs.length ; i++ ) {
+      inputs.push(block.getInputData(i));
+    }
+  } else {
+    inputs = []
+  }
+  return inputs;
 }

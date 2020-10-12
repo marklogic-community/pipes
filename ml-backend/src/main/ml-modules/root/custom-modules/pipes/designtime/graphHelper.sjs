@@ -256,9 +256,8 @@ function executeGraphFromJson(jsonGraph,uri, input,context){
     registeredNodeType=true
   }
   let arr = Object.keys(LiteGraph.registered_node_types)
-  arr.unshift("Start registered blocks:")
-  arr.push("End registered blocks")
-  xdmp.log(Sequence.from(arr))
+  arr.unshift("Start registered blocks:");
+  arr.push("End registered blocks");
   xdmp.trace(TRACE_ID_DETAILS,Sequence.from(arr));
 
   const errors = graph.configure(jsonGraph.executionGraph)
