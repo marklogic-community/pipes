@@ -1,5 +1,7 @@
 'use strict';
 
+const cf = require('/custom-modules/pipes/runtime/coreFunctions.sjs');
+
 function findStartNode(graph) {
   let startNode = graph.executionGraph == null || graph.executionGraph.nodes == null ? null : graph.executionGraph.nodes.filter(x=>x.type==='DHF/input').map(x=>x.id);
   startNode = startNode == null || startNode.length === 0 ? null : startNode;
@@ -285,7 +287,18 @@ function generateCode(options,jsonGraph,node,ins,outs,lib) {
     if ( dataOut.length == 1) {
       out = "const "+dataOut[0];
     }
-    code.push(out + " = "+prefix+"."+bc.getRuntimeLibraryFunctionName()+"("+JSON.stringify(propertiesWidgets)+inputString+");");
+    const typeExecutorFunction =  bc.getRuntimeLibraryFunctionName() + "ExecutorType";
+    const req = require("/custom-modules/pipes/runtime/"+library);
+    const doesFunctionExist =  typeExecutorFunction in req && typeof req[typeExecutorFunction] === "function";
+    const executorType = doesFunctionExist ? req[typeExecutorFunction]() : cf.BLOCK_EXECUTOR_DELEGATOR;
+    xdmp.log("TYPE "+typeExecutorFunction);
+    xdmp.log("REQ "+req);
+    if ( executorType === cf.BLOCK_EXECUTOR_DELEGATOR ) {
+      code.push(out + " = " + prefix + "." + bc.getRuntimeLibraryFunctionName() + "(" + JSON.stringify(propertiesWidgets) + inputString + ");");
+    } else {
+      const genCode = req[bc.getRuntimeLibraryFunctionName()](propertiesWidgets,dataIn,dataOut);
+      code.push(genCode);
+    }
     return code;
 }
 

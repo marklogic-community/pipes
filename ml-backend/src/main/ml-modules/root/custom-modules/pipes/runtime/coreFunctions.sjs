@@ -5,6 +5,7 @@ module.exports = {
   executeStringCase,
   executeTemplating,
   executeMultiPurposeConstant,
+  executeMultiPurposeConstantExecutorType,
   executeBlock,
   flattenArray,
 
@@ -14,7 +15,9 @@ module.exports = {
   split,
   lookUp,
   regExpReplace,
-  computeQueryRecursively
+  computeQueryRecursively,
+  BLOCK_EXECUTOR_DELEGATOR : 1,
+  BLOCK_EXECUTOR_GENERATOR : 2
 };
 
 const TRACE_ID = "pipes-coreFunctions";
@@ -220,17 +223,21 @@ function executeTemplating(propertiesAndWidgets,v1,v2,v3) {
     return result;
 }
 
-function executeMultiPurposeConstant(propertiesAndWidgets) {
+function executeMultiPurposeConstantExecutorType() {
+  return this.BLOCK_EXECUTOR_GENERATOR;
+}
+
+function executeMultiPurposeConstant(propertiesAndWidgets,inputs,outputs) {
   let dataType = propertiesAndWidgets.widgets.Type;
   let value = propertiesAndWidgets.widgets.constant;
   let outputval = null
   switch (dataType) {
     case "string":
-      return value;
+      return "const "+outputs[0]+" = "+'"'+ value + '";';
     case "number":
-      return parseFloat(value);
+      return "const "+outputs[0]+" = "+parseFloat(value)+";";
     case "NULL":
-      return[null];
+      return "const "+outputs[0]+" = null;";
     default:
       throw new Error("Invalid dataType ["+dataType+"]");
   }
@@ -249,6 +256,9 @@ function executeBlock(block) {
   if ( typeof func !== "function") {
     throw Error("Function '"+functionName+"' not found in '"+library+"'")
   }
+  const typeExecutorFunction = functionName + "ExecutorType";
+  const doesFunctionExist =  typeExecutorFunction in lib && typeof lib[typeExecutorFunction] === "function";
+  const executorType = doesFunctionExist ? lib[typeExecutorFunction]() : this.BLOCK_EXECUTOR_DELEGATOR;
   const doLog = xdmp.traceEnabled(TRACE_ID_PIPES_EXECUTION);
   let startTime = 0;
   if ( doLog ) {
@@ -281,25 +291,63 @@ function executeBlock(block) {
     xdmp.trace(TRACE_ID_PIPES_EXECUTION,Sequence.from(arr));
     startTime = Date.now();
   }
-  const outputValues = func(propertiesAndWidgets, ...inputs);
-  if ( doLog ) {
-    const runTime = Date.now() - startTime;
-    let arr = [];
-    arr.push("End executing "+block.title);
-    arr.push("Execution runtime: "+runTime);
-    for ( let i = 0 ; i < (outputValues || []).length ; i++ ) {
-      arr.push("Output"+i+"="+JSON.stringify(outputValues[i]));
+  let outputValues;
+  if (  executorType === this.BLOCK_EXECUTOR_DELEGATOR ) {
+    outputValues = func(propertiesAndWidgets, ...inputs);
+    if (doLog) {
+      const runTime = Date.now() - startTime;
+      let arr = [];
+      arr.push("End executing " + block.title);
+      arr.push("Execution runtime: " + runTime);
+      if (block.outputs.length > 1) {
+        for (let i = 0; i < (outputValues || []).length; i++) {
+          arr.push("Output" + i + "=" + JSON.stringify(outputValues[i]));
+        }
+      } else {
+        arr.push("Output0="+JSON.stringify(outputValues));
+      }
+      xdmp.trace(TRACE_ID_PIPES_EXECUTION, Sequence.from(arr));
     }
-    xdmp.trace(TRACE_ID_PIPES_EXECUTION,Sequence.from(arr));
-  }
-  if ( block.outputs.length > 1 ) {
+    if (block.outputs.length > 1) {
+      outputValues.map((v, index) => {
+        if (typeof v !== "undefined") {
+          block.setOutputData(index, v)
+        }
+      });
+    } else {
+      block.setOutputData(0, outputValues);
+    }
+  } else {
+    // generator
+    let inputCode = "";
+    let generatorInputs = [];
+    for ( let i = 0 ; i < (inputs || []).length; i++ ) {
+      inputCode += "const input"+i+" = "+inputs[i]+";\n";
+      generatorInputs.push("input"+i);
+    }
+    let generatorOutputs = [];
+    let outputCode = "";
+    for ( let i = 0 ; i < ( block.outputs || []).length; i++ ) {
+      generatorOutputs.push("output"+i);
+    }
+    const returnCode = "\n[" + generatorOutputs.join(",") + "];\n"
+    const genCode = inputCode + func(propertiesAndWidgets,generatorInputs,generatorOutputs) + returnCode;
+    const outputValues = eval(genCode);
+    if (doLog) {
+      const runTime = Date.now() - startTime;
+      let arr = [];
+      arr.push("End executing " + block.title);
+      arr.push("Execution runtime: " + runTime);
+      for (let i = 0; i < (outputValues || []).length; i++) {
+        arr.push("Output" + i + "=" + JSON.stringify(outputValues[i]));
+      }
+      xdmp.trace(TRACE_ID_PIPES_EXECUTION, Sequence.from(arr));
+    }
     outputValues.map((v, index) => {
       if (typeof v !== "undefined") {
         block.setOutputData(index, v)
       }
     });
-  } else {
-      block.setOutputData(0,outputValues);
   }
   return outputValues;
 }
