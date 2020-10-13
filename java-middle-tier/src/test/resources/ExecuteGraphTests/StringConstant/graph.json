@@ -1,0 +1,165 @@
+{
+  "pipesFileVersion": 2,
+  "models": [],
+  "executionGraph": {
+    "last_node_id": 4,
+    "last_link_id": 3,
+    "nodes": [
+      {
+        "id": 2,
+        "type": "DHF/output",
+        "pos": [
+          1308,
+          434
+        ],
+        "size": [
+          180,
+          60
+        ],
+        "flags": {},
+        "order": 3,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "output",
+            "type": 0,
+            "link": 2
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 1,
+        "type": "DHF/input",
+        "pos": [
+          632,
+          394
+        ],
+        "size": [
+          180,
+          100
+        ],
+        "flags": {},
+        "order": 0,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "input",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "uri",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "collections",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "permissions",
+            "type": "",
+            "links": null
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 4,
+        "type": "Enrich/AddProperty",
+        "pos": [
+          994,
+          544.5
+        ],
+        "size": {
+          "0": 170,
+          "1": 46
+        },
+        "flags": {},
+        "order": 2,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "doc",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "value",
+            "type": 0,
+            "link": 3
+          }
+        ],
+        "outputs": [
+          {
+            "name": "doc",
+            "links": [
+              2
+            ]
+          }
+        ],
+        "properties": {
+          "propertyName": "test"
+        }
+      },
+      {
+        "id": 3,
+        "type": "Generate/multiConstant",
+        "pos": [
+          856,
+          284
+        ],
+        "size": {
+          "0": 255,
+          "1": 82
+        },
+        "flags": {},
+        "order": 1,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "output",
+            "links": [
+              3
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "string",
+          "TEST"
+        ]
+      }
+    ],
+    "links": [
+      [
+        2,
+        4,
+        0,
+        2,
+        0,
+        0
+      ],
+      [
+        3,
+        3,
+        0,
+        4,
+        1,
+        0
+      ]
+    ],
+    "groups": [],
+    "config": {},
+    "version": 0.4
+  },
+  "name": "StringConstant",
+  "metadata": {
+    "version": "00.01",
+    "author": "",
+    "title": "StringConstant",
+    "dateExported": "13/10/2020, 19:01:45"
+  }
+}

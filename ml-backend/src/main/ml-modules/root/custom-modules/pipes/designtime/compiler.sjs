@@ -148,7 +148,7 @@ function createSourceCodeOutput(options,sourceCodeArray,identSpace,lib) {
     libs.push("const u = require('/custom-modules/pipes/runtime/user.sjs');");
   }
   return [
-    "function executeCustomStep(input,uri,collections,context) {",
+    "function executeCustomStep(input,uri,collections,context,permissions) {",
     ...ident(libs,identSpace),
     ...ident(sourceCodeArray,identSpace),
     ...ident(["return output;"],identSpace),
@@ -209,6 +209,8 @@ function determineInputVariables(graph,node) {
     const link = input.link;
     if ( link != null ) {
       arr.push({ name: getNodeWithOutputLink(graph,link).variableName, index: i});
+    } else {
+      arr.push({ name: "undefined", index: i});
     }
     i++;
   }
@@ -223,7 +225,7 @@ function generateCode(options,jsonGraph,node,ins,outs,lib) {
     input["input"+inp.index] = inp.name;
   }
   if ( node.type === "DHF/input") {
-    input = { input0 : "input" , input1 : "uri", input2: "collections" }
+    input = { input0 : "input" , input1 : "uri", input2: "collections", input3: "permissions" }
   }
   for ( const outp of outs ) {
     output["output"+outp.index] = outp.name;
@@ -261,6 +263,7 @@ function generateCode(options,jsonGraph,node,ins,outs,lib) {
     for ( const i of inputKeys ) {
       dataIn.push(input[i])
     }
+    xdmp.log(Sequence.from(["TESTER",dataIn,ins]));
     if (node.type === "dhf/envelope") {
       dataIn.push(...["collections","uri", "context"])
     }
@@ -291,8 +294,6 @@ function generateCode(options,jsonGraph,node,ins,outs,lib) {
     const req = require("/custom-modules/pipes/runtime/"+library);
     const doesFunctionExist =  typeExecutorFunction in req && typeof req[typeExecutorFunction] === "function";
     const executorType = doesFunctionExist ? req[typeExecutorFunction]() : cf.BLOCK_EXECUTOR_DELEGATOR;
-    xdmp.log("TYPE "+typeExecutorFunction);
-    xdmp.log("REQ "+req);
     if ( executorType === cf.BLOCK_EXECUTOR_DELEGATOR ) {
       code.push(out + " = " + prefix + "." + bc.getRuntimeLibraryFunctionName() + "(" + JSON.stringify(propertiesWidgets) + inputString + ");");
     } else {

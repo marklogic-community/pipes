@@ -334,8 +334,14 @@ function init (LiteGraph) {
     null
   };
   fn_doc.title = 'doc';
+
+  fn_doc.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeQueryDoc";
+  }
+
+
   fn_doc.prototype.onExecute = function() {
-    this.setOutputData(0, fn.doc(this.getInputData(0)));
+    coreFunctions.executeBlock(this);
   };
   LiteGraph.registerNodeType('Query/doc', fn_doc);
 
@@ -348,6 +354,16 @@ function init (LiteGraph) {
   fn_baseUri.prototype.onExecute = function() {
     this.setOutputData(0, fn.baseUri(this.getInputData(0)));
   };
+
+  fn_baseUri.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeBaseUri";
+  }
+
+  fn_baseUri.prototype.onExecute = function () {
+    return coreFunctions.executeBlock(this);
+  }
+
+
   LiteGraph.registerNodeType('Advanced/baseUri', fn_baseUri);
 
   function fn_count() {
@@ -367,9 +383,13 @@ function init (LiteGraph) {
     this.addProperty('separator', ',');
   };
   fn_stringJoin.title = 'String join';
+
+  fn_stringJoin.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeStringJoin";
+  }
+
   fn_stringJoin.prototype.onExecute = function() {
-    let stringJoined = fn.stringJoin(this.getInputData(0), this.properties['separator']);
-    this.setOutputData(0, stringJoined);
+    coreFunctions.executeBlock(this);
   };
   LiteGraph.registerNodeType('Join/String join', fn_stringJoin);
 
@@ -1161,16 +1181,12 @@ function init (LiteGraph) {
   Array.title = "Array";
   Array.desc = "Array";
 
+  Array.prototype.getRuntimeLibraryFunctionName = function() {
+    return "excuteJoinArray";
+  }
+
   Array.prototype.onExecute = function () {
-    let result = []
-    for (let i = 0; i < this.widgets[0].value; i++) {
-      let value = this.getInputData(i)
-      if (value != null)
-        result = result.concat(value)
-    }
-
-    this.setOutputData(0, result)
-
+    coreFunctions.executeBlock(this);
   }
   LiteGraph.registerNodeType("Join/Array", Array);
 

@@ -1,8 +1,16 @@
 module.exports = {
+  executeStringJoin,
+  executeStringJoinExecutorType,
+  executeBaseUri,
+  executeJoinArrayInputAsList,
+  executeJoinArray,
+  executeQueryDocExecutorType,
+  executeQueryDoc,
   executeGraphInputDHFExecutorType,
   executeGraphInputDHF,
   executeGraphOutputDHF,
   executeAddProperty,
+  executeStringCaseExecutorType,
   executeStringCase,
   executeTemplating,
   executeMultiPurposeConstant,
@@ -23,6 +31,7 @@ module.exports = {
 
 const TRACE_ID = "pipes-coreFunctions";
 const TRACE_ID_PIPES_EXECUTION = "pipes-execution";
+const TRACE_ID_PIPES_EXECUTION_DETAILS = "pipes-execution-detasils";
 
 function replaceInputValueQuery (value, block) {
   for (var i = 0; i < block.inputs.length; i++) {
@@ -192,6 +201,46 @@ function executeGraphOutputDHF(propertiesAndWidgets,output) {
     }
 }
 
+function executeStringJoinExecutorType() {
+  return this.BLOCK_EXECUTOR_GENERATOR;
+}
+
+function executeStringJoin(propertiesAndWidgets,inputs,outputs) {
+  return [
+    "const " + outputs[0] + " = "+inputs[0]+" ? fn.stringJoin("+inputs[0]+",'"+propertiesAndWidgets.properties.seperator+"') : '';"
+  ];
+}
+
+function executeBaseUri(propertiesAndWidgets,doc) {
+  return fn.baseUri(doc);
+}
+
+function executeQueryDocExecutorType() {
+  return this.BLOCK_EXECUTOR_GENERATOR;
+}
+
+function executeQueryDoc(propertiesAndWidgets,inputs,outputs) {
+  return [
+    "const " + outputs[0] + " = fn.doc(" + inputs[0] + ");"
+  ];
+}
+
+function executeJoinArrayInputAsList() {
+    return true;
+}
+
+function executeJoinArray(propertiesAndWidgets,inputs) {
+  let result = []
+  xdmp.log("DATAJOS");
+  xdmp.log(propertiesAndWidgets.widgets);
+  for (let i = 0; i < propertiesAndWidgets.widgets.w; i++) {
+    let value = i < inputs.length ? inputs[i] : null
+    if (value != null)
+      result = result.concat(value)
+  }
+  return result;
+}
+
 function executeAddProperty(propertiesAndWidgets,doc,value) {
   let propertyName = propertiesAndWidgets.properties['propertyName'];
   if ( !doc ) {
@@ -204,26 +253,21 @@ function executeAddProperty(propertiesAndWidgets,doc,value) {
   return doc;
 };
 
-function executeStringCase(propertiesAndWidgets,input) {
-    let newVal = '';
-    if (input) {
-      let inputVal = String(input);
+function executeStringCaseExecutorType() {
+  return this.BLOCK_EXECUTOR_GENERATOR;
+}
+
+function executeStringCase(propertiesAndWidgets,inputs,outputs) {
       switch (propertiesAndWidgets.widgets.stringOperation) {
         case 'lowercase':
-          newVal = inputVal.toLowerCase();
-          break;
+          return ["const "+outputs[0]+" = "+inputs[0] +" ? String("+inputs[0]+").toLowerCase() : '';"];
         case 'UPPERCASE':
-          newVal = inputVal.toUpperCase();
-          break;
+          return ["const "+outputs[0]+" = "+inputs[0] +" ? String("+inputs[0]+").toUpperCase() : '';"];
         case 'Capitalise':
-          newVal = inputVal.split(' ').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
-          break;
+          return ["const "+outputs[0]+" = "+inputs[0] +" ? "+inputs[0]+".split(' ').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ') : '';"];
         default:
-          newVal = inputVal;
+         return ["const "+outputs[0]+" = "+inputs[0] + " ? String("+inputs[0]+") : '';"];
       }
-      return newVal;
-    }
-    return "";
 }
 
 function executeTemplating(propertiesAndWidgets,v1,v2,v3) {
@@ -271,6 +315,8 @@ function executeBlock(block) {
   const doesFunctionExist =  typeExecutorFunction in lib && typeof lib[typeExecutorFunction] === "function";
   const executorType = doesFunctionExist ? lib[typeExecutorFunction]() : this.BLOCK_EXECUTOR_DELEGATOR;
   const doLog = xdmp.traceEnabled(TRACE_ID_PIPES_EXECUTION);
+  const inputAsListFunction = functionName + "nInputAsList"
+  const inputAsList = inputAsListFunction in lib && typeof lib[inputAsListFunction] === "function" ? lib[inputAsListFunction]() : false;
   let startTime = 0;
   if ( doLog ) {
     let arr = [];
@@ -304,7 +350,11 @@ function executeBlock(block) {
   }
   let outputValues;
   if (  executorType === this.BLOCK_EXECUTOR_DELEGATOR ) {
-    outputValues = func(propertiesAndWidgets, ...inputs);
+    if ( inputAsList ) {
+      outputValues = func(propertiesAndWidgets, ...inputs);
+    } else {
+      outputValues = func(propertiesAndWidgets, inputs);
+    }
     if (doLog) {
       const runTime = Date.now() - startTime;
       let arr = [];
@@ -333,7 +383,7 @@ function executeBlock(block) {
     let inputCode = "";
     let generatorInputs = [];
     for ( let i = 0 ; i < (inputs || []).length; i++ ) {
-      inputCode += "const input"+i+" = "+inputs[i]+";\n";
+      inputCode += "const input"+i+" = "+JSON.stringify(inputs[i])+";\n";
       generatorInputs.push("input"+i);
     }
     let generatorOutputs = [];
@@ -341,9 +391,16 @@ function executeBlock(block) {
     for ( let i = 0 ; i < ( block.outputs || []).length; i++ ) {
       generatorOutputs.push("output"+i);
     }
-    const returnCode = "\n[" + generatorOutputs.join(",") + "];\n"
+    const returnCode = "\n[" + generatorOutputs.join(",") + "];"
     const genCode = inputCode + func(propertiesAndWidgets,generatorInputs,generatorOutputs).join("\n") + returnCode;
-    const outputValues = eval(genCode);
+    let outputValues = null;
+    xdmp.trace(TRACE_ID_PIPES_EXECUTION_DETAILS,Sequence.from(["-- Start code --",genCode,"-- End code ---"]));
+    try {
+      outputValues = eval(genCode);
+    } catch (e) {
+      xdmp.log(Sequence.from(["Error executing code","code:",genCode,"Exception",e]),"error");
+      throw e;
+    }
     if (doLog) {
       const runTime = Date.now() - startTime;
       let arr = [];
@@ -354,11 +411,13 @@ function executeBlock(block) {
       }
       xdmp.trace(TRACE_ID_PIPES_EXECUTION, Sequence.from(arr));
     }
-    outputValues.map((v, index) => {
-      if (typeof v !== "undefined") {
-        block.setOutputData(index, v)
-      }
-    });
+    if ( outputValues != null ) {
+      outputValues.map((v, index) => {
+        if (typeof v !== "undefined") {
+          block.setOutputData(index, v)
+        }
+      });
+    }
   }
   return outputValues;
 }

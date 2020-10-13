@@ -21,8 +21,6 @@ module.exports = class PipesFlowControlGraph {
           // for nodes without inputs (such as constants) we add
           // a link from the startnode to this node
           // to get this picked up by the path analysis.
-          xdmp.log("ADD PROT ");
-          xdmp.log(node);
           this.addEdge(startNode, fromNode)
         }
       }

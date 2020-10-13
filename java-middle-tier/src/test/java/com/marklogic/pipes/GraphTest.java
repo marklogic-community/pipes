@@ -150,9 +150,19 @@ class GraphTest {
   }
 
 
-  @ParameterizedTest(name = "#{index} : {0}")
+  @ParameterizedTest(name = "Interpreter: #{index} : {0}")
   @MethodSource("getDirectoryNames")
-  void genericGraphTests(String argument) throws Exception {
+  void genericGraphTestsInterpreter(String argument) throws Exception {
+    runGrahTests(argument,false);
+  }
+
+  @ParameterizedTest(name = "Compiler: #{index} : {0}")
+  @MethodSource("getDirectoryNames")
+  void genericGraphTestsCompiler(String argument) throws Exception {
+    runGrahTests(argument,true);
+  }
+
+  private void runGrahTests(String argument,boolean compiler) throws Exception {
     try {
 
       addCustomerSourceDocument("ExecuteGraphTests/"+argument+"/input.json");
@@ -176,7 +186,7 @@ class GraphTest {
       //extract the value part only from the expected returned graph
       JsonNode expectedResultJson= expectedJO.getNode("result");
 
-      String request="/v1/resources/vppBackendServices?rs:action=ExecuteGraph&rs:database="+MLTESTDATABASE;
+      String request="/v1/resources/vppBackendServices?rs:action=ExecuteGraph&rs:compiler="+compiler+"&rs:database="+MLTESTDATABASE;
 
       MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(request).content(payloadJO.toString())
         .session(session);
@@ -206,7 +216,7 @@ class GraphTest {
     InputStreamHandle ism= getInputStreamHandle("ExecuteGraphTests");
     String dirs[]=ism.toString().split("\n");
     // limit the test set
-    // dirs=Arrays.stream(dirs).filter(x->x.equals("MinimalGraph")).toArray(String[]::new);
+    // dirs=Arrays.stream(dirs).filter(x->x.equals("StringConstantTemplateCaseAddProperty")).toArray(String[]::new);
     return Arrays.stream(dirs);
   }
 

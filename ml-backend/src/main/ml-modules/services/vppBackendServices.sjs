@@ -314,7 +314,7 @@ function isIterable (obj) {
   return typeof obj[Symbol.iterator] === 'function';
 }
 
-function InvokeExecuteGraph (input) {
+function InvokeExecuteGraph (input,compiler) {
 
 
   return {
@@ -373,14 +373,37 @@ function InvokeExecuteGraph (input) {
 
           var startTime = new Date();
 
-          graphResult = gHelper.executeGraphFromJson(
-            execContext.jsonGraph,
-            uri,
-            doc,
-            {
-              collections: xdmp.documentGetCollections(uri),
-              permissions: xdmp.documentGetPermissions(uri)
-            });
+          const collections =  xdmp.documentGetCollections(uri);
+          const permissions = xdmp.documentGetPermissions(uri);
+          const context = {
+            collections,
+            permissions,
+          }
+          if ( compiler ) {
+            const compiler =require("/custom-modules/pipes/designtime/compiler.sjs")
+            const compiled = compiler.compileGraphToJavaScript(execContext.jsonGraph,{identSpaceCount : 1 })
+            if ( compiled.errors && compiled.errors.length > 0 ) {
+              xdmp.log(Sequence.from(["Error while compiling",compiled.errors]),"error");
+              throw new Error("Compiler error: "+JSON.stringify(compiled.errors));
+            }
+            let code = "const uri = "+JSON.stringify(uri)+";\n";
+            code += "const input = cts.doc(uri);\n";
+            code += "const collections = "+JSON.stringify(collections)+";\n";
+            code += "const permissions = "+JSON.stringify(permissions)+";\n";
+            code += "const context = "+JSON.stringify(context)+";\n";
+            code += compiled.sourceCode.join("\n");
+            code += "executeCustomStep(input,uri,collections,context,permissions);"
+            xdmp.log("EXECUTE CODE");
+            xdmp.log(code)
+            graphResult = eval(code);
+          } else {
+            graphResult = gHelper.executeGraphFromJson(
+              execContext.jsonGraph,
+              uri,
+              doc,
+              context
+              );
+          }
 
           var endTime = new Date();
           var executionTime = endTime - startTime;
@@ -423,8 +446,8 @@ function InvokeExecuteGraph (input) {
 }
 
 function executeGraph (input, params) {
-
-  const invokeExecuteGraph = InvokeExecuteGraph(input)
+  const compiler = (params.compiler != null) ? params.compiler.toString().trim().toLowerCase() === "true" : false;
+  const invokeExecuteGraph = InvokeExecuteGraph(input,compiler)
   let db = (params.database != null) ? xdmp.database(params.database) : xdmp.database()
   let targetDb = (params.toDatabase != null) ? xdmp.database(params.toDatabase) : xdmp.database()
   let result = fn.head(xdmp.invokeFunction(invokeExecuteGraph.execute, { database: db }))
