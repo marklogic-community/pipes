@@ -297,7 +297,7 @@ function generateCode(options,jsonGraph,node,ins,outs,lib) {
       code.push(out + " = " + prefix + "." + bc.getRuntimeLibraryFunctionName() + "(" + JSON.stringify(propertiesWidgets) + inputString + ");");
     } else {
       const genCode = req[bc.getRuntimeLibraryFunctionName()](propertiesWidgets,dataIn,dataOut);
-      code.push(genCode);
+      code.push(...genCode);
     }
     return code;
 }

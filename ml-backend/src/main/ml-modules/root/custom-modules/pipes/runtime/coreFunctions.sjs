@@ -1,4 +1,5 @@
 module.exports = {
+  executeGraphInputDHFExecutorType,
   executeGraphInputDHF,
   executeGraphOutputDHF,
   executeAddProperty,
@@ -166,8 +167,18 @@ function regExpReplace (block, regEx, replace, global, caseInsensitive) {
 
 // NEW
 
-function executeGraphInputDHF(propertiesAndWidgets,input,uri,collections,permissions) {
-  return [input,uri,collections,permissions];
+function executeGraphInputDHFExecutorType() {
+  return this.BLOCK_EXECUTOR_GENERATOR;
+}
+
+
+function executeGraphInputDHF(propertiesAndWidgets,inputs,outputs) {
+  return  [
+    "const "+outputs[0]+" = "+inputs[0]+";",
+    "const "+outputs[1]+" = "+inputs[1]+";",
+    "const "+outputs[2]+" = "+inputs[2]+";",
+    "const "+outputs[3]+" = "+inputs[3]+";"
+  ]
 }
 
 function executeGraphOutputDHF(propertiesAndWidgets,output) {
@@ -233,11 +244,11 @@ function executeMultiPurposeConstant(propertiesAndWidgets,inputs,outputs) {
   let outputval = null
   switch (dataType) {
     case "string":
-      return "const "+outputs[0]+" = "+'"'+ value + '";';
+      return ["const "+outputs[0]+" = "+'"'+ value + '";'];
     case "number":
-      return "const "+outputs[0]+" = "+parseFloat(value)+";";
+      return ["const "+outputs[0]+" = "+parseFloat(value)+";"];
     case "NULL":
-      return "const "+outputs[0]+" = null;";
+      return ["const "+outputs[0]+" = null;"];
     default:
       throw new Error("Invalid dataType ["+dataType+"]");
   }
@@ -331,7 +342,7 @@ function executeBlock(block) {
       generatorOutputs.push("output"+i);
     }
     const returnCode = "\n[" + generatorOutputs.join(",") + "];\n"
-    const genCode = inputCode + func(propertiesAndWidgets,generatorInputs,generatorOutputs) + returnCode;
+    const genCode = inputCode + func(propertiesAndWidgets,generatorInputs,generatorOutputs).join("\n") + returnCode;
     const outputValues = eval(genCode);
     if (doLog) {
       const runTime = Date.now() - startTime;

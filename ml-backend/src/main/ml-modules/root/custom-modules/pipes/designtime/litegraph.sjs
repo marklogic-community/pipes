@@ -10801,6 +10801,7 @@ LGraphNode.prototype.executeAction = function(action)
   };
 
   Subgraph.prototype.onSubgraphNewInput = function(name, type) {
+    throw new Error("ERR")
     var slot = this.findInputSlot(name);
     if (slot == -1) {
       //add input to the node
