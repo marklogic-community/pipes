@@ -738,6 +738,7 @@ export default {
       selectedStep: null,           // DHF custom step currently selected
       selectedDatabase: null,        // Currently selected database
       selectedCollection: null,     // Currently selected collection
+      selectedQuery: null,          // The sourc query from the selected DHF step
       selectedFields: [],           // Nodes selected in the collectionModel field tree
       blockDBName: '',              // db name when reloading a block to them form
       blockCollectionName: '',      // collection name when reloading a block to the form
@@ -769,11 +770,13 @@ export default {
 
         this.selectedDatabase = { "label": this.dhfSteps[val.label].database, "value": availableDbHash[this.dhfSteps[val.label].database] };
         this.selectedCollection = { "label": this.dhfSteps[val.label].collection, "value": this.dhfSteps[val.label].collection };
+        this.selectedQuery = { "label": this.dhfSteps[val.label].query, "value": this.dhfSteps[val.label].query };
         this.collectionChanged() // populate field tree, includes any custom URIs
 
       } else {
         this.selectedDatabase = null
         this.selectedCollection = null
+        this.selectedQuery = null
         this.resetFieldSelectionTree()
       }
     }
@@ -1171,7 +1174,7 @@ export default {
     },
     collectionChanged () {
       this.resetFieldSelectionTree()
-      this.discoverModel(this.selectedDatabase, this.selectedCollection, this.userDocumentURIs, this.reloadBlockFields)
+      this.discoverModel(this.selectedDatabase, this.selectedCollection, this.selectedQuery, this.userDocumentURIs, this.reloadBlockFields)
     },
     // Reset block create form to default values
     resetBlockFormFields () {
@@ -1276,7 +1279,8 @@ export default {
         steps.sort(alphabeticalOrder);
 
         this.dhfSteps = response.data.customSteps.reduce(function (map, obj) {
-          map[obj.name] = { "database": obj.database, "collection": obj.collection };
+          map[obj.name] = { "database": obj.database, "collection": obj.collection, "query": obj.query };
+
           return map;
         }, {});
 
@@ -1412,10 +1416,10 @@ export default {
     populateModelBlockRestore (db, collection) {
       this.selectedDatabase = db
       this.selectedCollection = collection
-      this.discoverModel(this.selectedDatabase, this.selectedCollection, this.customURIs, this.reloadBlockFields)
+      this.discoverModel(this.selectedDatabase, this.selectedCollection, this.selectedQuery, this.customURIs, this.reloadBlockFields)
     },
     // Discover fields and populate the tree view
-    discoverModel (database, collection, custURIs, reloadBlockFields) {
+    discoverModel (database, collection, query, custURIs, reloadBlockFields) {
 
       var self = this
       this.emptyCollection = false
@@ -1435,6 +1439,9 @@ export default {
       if (custURIs !== null && custURIs != '')
         dbOption += "&rs:customURI=" + custURIs
 
+      if (query !== null && query.value != null)
+        dbOption += "&rs:query=" + encodeURIComponent(query.value)
+
       if (!this.emptyDatabase) {
 
         this.$axios.get('/v1/resources/vppBackendServices?rs:action=collectionModel' + dbOption)
@@ -1442,7 +1449,7 @@ export default {
             this.collectionModel[0].children = response.data
             if (reloadBlockFields !== null && reloadBlockFields.length > 0) {
               self.restoreFields(reloadBlockFields, false)            }
-        //    else console.log("No fields found in block to restore: ")
+            //    else console.log("No fields found in block to restore: ")
             if (response.data !== null && response.data.length > 0) {
               this.collectionModelPopulated = true
               this.emptyCollection = false

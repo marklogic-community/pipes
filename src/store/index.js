@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import createPersistedState from 'vuex-persistedstate'
 
 Vue.use(Vuex)
 
@@ -9,13 +10,14 @@ const store = new Vuex.Store({
   state: {
     models: [],
     helpMode: false,
-    authenticated: false,
+    authenticated: { auth: false },
     databases: [],
     databasesMap: {},
     graphTitle: 'My Graph',
     graphVersion: "00.01",
     graphAuthor: "",
     graphDescription: "",
+    queryBuilderDB: null
   },
   getters: {
     user: state => { return state.user },
@@ -23,6 +25,7 @@ const store = new Vuex.Store({
     database: state => { return state.database },
     port: state => { return state.port },
     host: state => { return state.host },
+    graphToLoad: state => { return state.graphToLoad },
     availableDatabases: state => { return state.databases },
     authenticated: state => { return state.authenticated },
     models: state => { return state.models },
@@ -30,6 +33,7 @@ const store = new Vuex.Store({
     graphVersion: state => { return state.graphVersion },
     graphAuthor: state => { return state.graphAuthor },
     graphDescription: state => { return state.graphDescription },
+    queryBuilderDB: state => { return state.queryBuilderDB },
     helpMode: state => { return state.helpMode },
     sourceBlocks: state => {
       return this.$store.state.models.filter(function (block) {
@@ -38,13 +42,14 @@ const store = new Vuex.Store({
     }
   },
   actions: {
-    authenticated ({ commit }, { auth, user, environment, port, database, host }) {
+    authenticated ({ commit }, { auth, user, environment, port, database, host, graphToLoad }) {
       commit('authenticated', { auth })
       commit('user', user)
       commit('environment', environment)
       commit('port', port)
       commit('database', database)
       commit('host', host)
+      commit('graphToLoad', graphToLoad)
     }
   },
   mutations: {
@@ -63,6 +68,9 @@ const store = new Vuex.Store({
     host (state, host) {
       state.host = host
     },
+    graphToLoad (state, graphToLoad) {
+      state.graphToLoad = graphToLoad;
+    },
     availableDatabases (state, dbs) {
       state.databases = dbs
     },
@@ -80,6 +88,9 @@ const store = new Vuex.Store({
     },
     graphDescription (state, description) {
       state.graphDescription = description
+    },
+    queryBuilderDB (state, db) {
+      state.queryBuilderDB = db
     },
     helpMode (state, mode) {
       state.helpMode = mode
@@ -109,7 +120,10 @@ const store = new Vuex.Store({
       state.models.splice(i, 1);
     },
     clearBlocks (state) { state.models = [] }
-  }
+  },
+  plugins: [
+    createPersistedState()
+  ]
 });
 
 

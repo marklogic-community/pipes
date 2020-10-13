@@ -17,6 +17,7 @@
   "context": {
     "collections": [
       "ingest-unit-test"
-    ]
+    ],
+    "permissions":[]
   }
 }

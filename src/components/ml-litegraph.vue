@@ -11,6 +11,7 @@
 
     <BlockPropertyEditDialog />
     <BlockMappingEditDialog />
+    <BlockQueryBuilderDialog />
     <GraphExecutePreview />
     <BlockDescription />
 
@@ -344,6 +345,7 @@ import EntityManager from '../components/entityManager.js';
 import LiteGraphHelper from '../components/liteGraphHelper.js';
 import BlockPropertyEditDialog from '../components/propertyEditDialog.vue';
 import BlockMappingEditDialog from '../components/mappingEditDialog.vue';
+import BlockQueryBuilderDialog from '../components/queryBuilderDialog.vue';
 import GraphExecutePreview from '../components/graphExecutePreview.vue';
 import BlockDescription from '../components/blockDescription.vue';
 import { LocalStorage } from 'quasar';
@@ -360,6 +362,7 @@ export default {
     CSVLoader,
     BlockPropertyEditDialog,
     BlockMappingEditDialog,
+    BlockQueryBuilderDialog,
     GraphExecutePreview,
     BlockDescription
   },
@@ -412,6 +415,9 @@ export default {
     },
     availableDB: function () {
       return this.$store.getters.availableDatabases
+    },
+    graphToLoad: function () {
+      return this.$store.getters.graphToLoad
     },
     graphTitle: {
       get: function () {
@@ -550,6 +556,7 @@ export default {
     getSavedGraph (uri, graphName) {
       //if(uri!=null)
       console.log("Reloading saved graph " + graphName)
+      console.log("saved graph uri:", uri)
       var self = this; // keep reference for notifications called from catch block
       this.$axios.get('/v1/resources/vppBackendServices?rs:action=GetSavedGraph&rs:uri=' + encodeURI(uri))
         .then((response) => {
@@ -565,7 +572,7 @@ export default {
           this.loadPopUpOpened = false
         })
         .catch((error) => {
-          self.notifyError("GetSavedGraph", error, self);
+          self.notifyError("GetSavedGraph", "Failed to load graph '" + graphName + "'", self);
         })
     },
     listSavedGraphs () {
@@ -770,14 +777,21 @@ export default {
           self.notifyError("SaveGraph", error, self);
         })
     },
-    resetDhfDefaultGraph () {
-      this.$axios.get('/statics/graph/dhfDefaultGraph.json')
-        .then((response) => {
-          this.clearGraphBlocks()
-          let defaultGraph = response.data
-          defaultGraph.models = this.blockModels
-          this.loadGraphFromJson(defaultGraph, false)
-        })
+
+    resetDhfDefaultGraph (overrideDefault) {
+      if (overrideDefault)
+        this.$axios.get('/statics/graph/' + overrideDefault)
+      else
+        this.$axios.get('/statics/graph/dhfDefaultGraph.json')
+
+          .then((response) => {
+            this.clearGraphBlocks()
+            let defaultGraph = response.data
+
+            defaultGraph.models = defaultGraph.models.concat(this.blockModels)
+
+            this.loadGraphFromJson(defaultGraph, false)
+          })
     },
     saveGraph (event) {
       this.savePopUpOpened = true;
@@ -852,7 +866,7 @@ export default {
         steps.sort(alphabeticalOrder);
 
         this.dhfSteps = steps.reduce(function (map, obj) {
-          map[obj.name] = { "database": obj.database, "collection": obj.collection };
+          map[obj.name] = { "database": obj.database, "collection": obj.collection, "query": obj.query };
           return map;
         }, {});
 
@@ -873,6 +887,14 @@ export default {
           this.$axios.get('/statics/library/core.json')
             .then((response) => {
               this.registerBlocksByConf(response.data, LiteGraph)
+
+              if (this.graphToLoad) {
+                this.getSavedGraph("/marklogic-pipes/savedGraph/" + this.graphToLoad + ".json", this.graphToLoad)
+              }
+              else {
+                this.resetDhfDefaultGraph()
+              }
+
             })
 
           this.$axios.get('/statics/library/custom/user.json')
@@ -890,16 +912,20 @@ export default {
     },
     // Double click on nodes
     nodeDoubleClick (block) {
+
       if (block.node_over && block.node_over.properties) {
 
         // Mapping edit (string/Mapvalues block)
         if (block.node_over.properties.mapping) {
-          this.$root.$emit("openMappingEdit", block.node_over.properties.mapping)
+          this.$root.$emit("openMappingEdit", block.node_over)
         } else if (block.node_over.properties.mappingRange) {
-          this.$root.$emit("openMappingEdit", block.node_over.properties.mappingRange, true)
+          this.$root.$emit("openMappingEdit", block.node_over, true)
 
         } else if (block.node_over.properties.mappingCase) {
           this.$root.$emit("openMappingEdit", block.node_over, false, true)
+
+        } else if (block.node_over.properties.queryBuilder) {
+          this.$root.$emit("openQueryBuilderEdit", block.node_over)
 
           // Property edit. selectCase, Lookup, EvalJavaScript, & generic edit window hook
         } else if (this.isNotEmpty(block.node_over.properties.pipesDblClickProp) && block.node_over.properties.editProp) {
@@ -986,10 +1012,6 @@ export default {
       var storedSettings = this.$q.localStorage.getItem(ADVANCED_SETTINGS_KEY)
       this.advancedSettings.confirmBrowserRefresh = storedSettings.confirmBrowserRefresh != null ? storedSettings.confirmBrowserRefresh : true
     }
-
-    //console.log("Registered blocks : " + JSON.stringify(LiteGraph.getRegisteredNodes()))
-
-    this.resetDhfDefaultGraph()
   },
   beforeMount () {
     window.addEventListener("beforeunload", this.browserRefreshConfirm)

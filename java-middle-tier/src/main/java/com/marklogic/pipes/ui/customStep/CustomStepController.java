@@ -4,6 +4,8 @@ Copyright ©2020 MarkLogic Corporation.
 
 package com.marklogic.pipes.ui.customStep;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.pipes.ui.auth.AbstractLoggingClass;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -32,8 +34,12 @@ public class CustomStepController extends AbstractLoggingClass {
    */
   @RequestMapping(value = "/customSteps", method = RequestMethod.GET)
   public String listOfCustomStepNames() throws IOException {
+    ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-    return customStepService.accessDhfRootAndGetCustomStepsJson();
+    String customStepResponseString=objectMapper.writeValueAsString(customStepService.accessDhfRootAndGetCustomStepsJson());
+    return customStepResponseString;
+
   }
 
   /**

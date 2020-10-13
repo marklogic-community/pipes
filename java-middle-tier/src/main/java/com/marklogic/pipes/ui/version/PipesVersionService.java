@@ -12,11 +12,17 @@ import java.io.InputStreamReader;
 public class PipesVersionService {
 
   final String VERSIONFILE="/version.txt";
-  public String get() throws IOException {
+  public String get() {
 
     final InputStream is = Application.class.getResourceAsStream(VERSIONFILE);
 
-    return InputStreamToString(is);
+    try {
+      return InputStreamToString(is);
+    } catch (Exception e) {
+      //assume file not existing, return a default value
+      return "Pipes version: NO-VERSION\n" +
+        "Build: NO-BUILD\n";
+    }
 
   }
 

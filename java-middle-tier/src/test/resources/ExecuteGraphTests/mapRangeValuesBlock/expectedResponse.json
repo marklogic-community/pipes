@@ -2,7 +2,9 @@
   {
     "value": {
       "envelope": {
-        "headers": {},
+        "headers": {
+          "value": "FIVE"
+        },
         "triples": [],
         "instance": {
           "value": "LOW"
@@ -14,7 +16,8 @@
     "context": {
       "collections": [
         "ingest-unit-test"
-      ]
+      ],
+      "permissions":[]
     }
   },
   {
@@ -32,7 +35,8 @@
     "context": {
       "collections": [
         "ingest-unit-test"
-      ]
+      ],
+      "permissions":[]
     }
   }
 ]

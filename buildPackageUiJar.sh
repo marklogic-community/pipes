@@ -4,11 +4,14 @@
 
 #!/bin/sh
 
+# fetch the git tags, they are used for versioning
+git fetch --all
+
 # build the front end SPA UI
 
 echo "Copying overrides..."
 cp node_modules_override/litegraph.js node_modules/litegraph.js/build/litegraph.js
-# quasar build
+# quasar build --modern
 
 # create static resource directory first
 echo "Moving the front-end package to SpringBoot static resources folder..."
@@ -22,7 +25,7 @@ echo "Moving the back-end modules to SpringBoot dhf resources folder..."
 mkdir -p java-middle-tier/src/main/resources/dhf/src
 
 # deploy backend modules to be picked up by jar builder
-#cp -r ml-backend/src/* java-middle-tier/src/main/resources/dhf/src/.
+cp -r ml-backend/src/* java-middle-tier/src/main/resources/dhf/src/.
 
 echo "Deleting existing builds in java-middle-tier/build/libs..."
 rm -f java-middle-tier/build/libs/*
@@ -30,9 +33,6 @@ rm -f java-middle-tier/build/libs/*
 echo "Adding version"
 version=$(git describe --tags)
 build=$(git rev-parse --verify --short HEAD)
-
-echo "Pipes version:" $version >java-middle-tier/src/main/resources/version.txt
-echo "Build:" $build >>java-middle-tier/src/main/resources/version.txt
 
 # Add build version to VPPBackendservices
 #VPPBACKEND=java-middle-tier/src/main/resources/dhf/src/main/ml-modules/services/vppBackendServices.sjs

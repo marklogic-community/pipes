@@ -78,7 +78,8 @@ export default {
           environment: response.data.environment,
           port: response.data.port,
           database: response.data.database,
-          host: response.data.host
+          host: response.data.host,
+          graphToLoad: response.data.loadGraph
         }).then(() => {
           this.$q.loading.hide()
           this.$router.push({ name: "home" })
@@ -86,7 +87,7 @@ export default {
       })
         .catch((error) => {
           this.$q.loading.hide()
-          this.$store.commit('authenticated', false)
+          this.$store.dispatch('authenticated', { auth: false })
           this.$q.notify({
             color: 'negative',
             position: 'center',
