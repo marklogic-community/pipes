@@ -1,3 +1,6 @@
+const DataHub = require("/data-hub/5/datahub.sjs");
+const datahub = new DataHub();
+
 module.exports = {
   executeStringJoin,
   executeStringJoinExecutorType,
@@ -16,6 +19,7 @@ module.exports = {
   executeMultiPurposeConstant,
   executeMultiPurposeConstantExecutorType,
   executeBlock,
+  executeEnvelope,
   flattenArray,
 
   // OLD
@@ -207,7 +211,7 @@ function executeStringJoinExecutorType() {
 
 function executeStringJoin(propertiesAndWidgets,inputs,outputs) {
   return [
-    "const " + outputs[0] + " = "+inputs[0]+" ? fn.stringJoin("+inputs[0]+",'"+propertiesAndWidgets.properties.seperator+"') : '';"
+    "const " + outputs[0] + " = "+inputs[0]+" ? fn.stringJoin("+inputs[0]+",'"+propertiesAndWidgets.properties.separator+"') : '';"
   ];
 }
 
@@ -231,14 +235,66 @@ function executeJoinArrayInputAsList() {
 
 function executeJoinArray(propertiesAndWidgets,inputs) {
   let result = []
-  xdmp.log("DATAJOS");
   xdmp.log(propertiesAndWidgets.widgets);
-  for (let i = 0; i < propertiesAndWidgets.widgets.w; i++) {
+  for (let i = 0; i < propertiesAndWidgets.widgets.nbInputs; i++) {
     let value = i < inputs.length ? inputs[i] : null
     if (value != null)
       result = result.concat(value)
   }
   return result;
+}
+
+function executeEnvelope(propertiesAndWidgets,iHeaders,iTriples,iInstance,iAttachments,iUri,iCollections,iPermissions) {
+
+  xdmp.log(propertiesAndWidgets);
+  xdmp.log(iHeaders);
+  xdmp.log(iTriples);
+  xdmp.log(iInstance);
+  xdmp.log(iAttachments);
+  xdmp.log(iUri);
+  xdmp.log(iCollections);
+  xdmp.log(iPermissions);
+  let headers = iHeaders ? iHeaders :  {};
+  let triples = iTriples ? iTriples : [];
+  let instance = iInstance ? iInstance : {};
+  let attachments = iAttachments ? iAttachments : {};
+  let hasAttachments = (attachments != null)
+
+  if (xdmp.type(headers) != "object") headers = { "value": headers }
+  if (xdmp.type(triples) != "array") triples = [triples]
+  if (xdmp.type(instance) != "object") instance = { "value": instance }
+  if (xdmp.type(attachments) != "object") attachments = { "value": attachments }
+
+  if (propertiesAndWidgets.widgets.format == "json" && hasAttachments) {
+    if (instance) {
+      if (instance.toObject) instance = instance.toObject()
+      instance["$attachments"] = attachments
+    } else {
+      instance = {}
+      instance["$attachments"] = attachments
+    }
+  }
+
+  let result = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, propertiesAndWidgets.widgets.format)
+
+  let defaultCollections =  undefined;
+  let defaultPermissions = undefined;
+  let defaultUri = sem.uuidString()
+  let defaultContext = {}
+
+  let uri = ( iUri != undefined) ? iUri : defaultUri;
+  let collections = iCollections ? iCollections : defaultCollections;
+  let permissions = iPermissions ? iPermissions  : defaultPermissions;
+  let context = defaultContext
+
+  let content = {}
+  content.value = result;
+  content.uri = uri
+
+  context.collections = collections
+  context.permissions = permissions
+  content.context = context;
+  return content;
 }
 
 function executeAddProperty(propertiesAndWidgets,doc,value) {
@@ -315,12 +371,16 @@ function executeBlock(block) {
   const doesFunctionExist =  typeExecutorFunction in lib && typeof lib[typeExecutorFunction] === "function";
   const executorType = doesFunctionExist ? lib[typeExecutorFunction]() : this.BLOCK_EXECUTOR_DELEGATOR;
   const doLog = xdmp.traceEnabled(TRACE_ID_PIPES_EXECUTION);
-  const inputAsListFunction = functionName + "nInputAsList"
+  const inputAsListFunction = functionName + "InputAsList"
+  xdmp.log("DEBUGGER");
+  xdmp.log(inputAsListFunction);
+  xdmp.log(lib);
   const inputAsList = inputAsListFunction in lib && typeof lib[inputAsListFunction] === "function" ? lib[inputAsListFunction]() : false;
   let startTime = 0;
   if ( doLog ) {
     let arr = [];
     arr.push("Start executing "+block.title);
+    arr.push("InputAsList="+inputAsList);
     arr.push("Properties:")
     arr.push(propertiesAndWidgets.properties);
     arr.push("Widgets:")
@@ -350,7 +410,7 @@ function executeBlock(block) {
   }
   let outputValues;
   if (  executorType === this.BLOCK_EXECUTOR_DELEGATOR ) {
-    if ( inputAsList ) {
+    if ( !inputAsList ) {
       outputValues = func(propertiesAndWidgets, ...inputs);
     } else {
       outputValues = func(propertiesAndWidgets, inputs);
@@ -436,9 +496,13 @@ function getPropertiesAndWidgets(block) {
     properties : block.properties,
     widgets : {}
   }
+  xdmp.log("DATA")
+  xdmp.log(block.widgets);
   for ( widget of block.widgets || [] ) {
     const name = widget.name;
-    const value = block[widget.name].value;
+    xdmp.log("NAME '"+name+"'")
+    xdmp.log(widget);
+    const value=widget.value;
     propertiesWidgets.widgets[name] = value;
   }
   return propertiesWidgets;

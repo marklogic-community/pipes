@@ -201,11 +201,11 @@ class GraphTest {
 
       // compare strings as JSON objects using Jackson ObjectMapper
       ObjectMapper mapper = new ObjectMapper();
-      /*System.err.println("EXPECTED ");
+      System.err.println("EXPECTED ");
       System.err.println(expectedResultJson.toString());
       System.err.println("GOT");
       System.err.println(actualResponseResultJson.toString());
-       */
+
       assertEquals("Response doesn't match expected",mapper.readTree(expectedResultJson.toString()), mapper.readTree(actualResponseResultJson.toString()));
     } finally {
      // removeCustomerSource();
@@ -216,7 +216,7 @@ class GraphTest {
     InputStreamHandle ism= getInputStreamHandle("ExecuteGraphTests");
     String dirs[]=ism.toString().split("\n");
     // limit the test set
-    // dirs=Arrays.stream(dirs).filter(x->x.equals("StringConstantTemplateCaseAddProperty")).toArray(String[]::new);
+    //dirs=Arrays.stream(dirs).filter(x->x.equals("Envelope")).toArray(String[]::new);
     return Arrays.stream(dirs);
   }
 

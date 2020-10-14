@@ -193,6 +193,17 @@ function getNode(nodes,nodeId) {
 
 
 function determineOutputVariables(graph,node) {
+  if ( node.type === "DHF/output") {
+    return [{name:"output",index:0}]
+  }
+  if ( node.type === "DHF/input") {
+    return [
+      { name:  createVariableName(node,0,{name:"input"}), index: 0},
+      { name: createVariableName(node,1,{name:"uri"}) , index: 1},
+      { name: createVariableName(node,2,{name:"collections"}),index: 2},
+      { name: createVariableName(node,3,{name:"permissions"}),index:3}
+    ];
+  }
   let arr = [];
   let i = 0;
   for ( const output of node.outputs || []) {
@@ -203,6 +214,14 @@ function determineOutputVariables(graph,node) {
   return arr
 }
 function determineInputVariables(graph,node) {
+  if ( node.type === "DHF/input") {
+    return [
+      { name: "input", index: 0},
+      { name: "uri" , index: 1},
+      { name: "collections",index: 2},
+      { name: "permissions",index:3}
+    ]
+  }
   let arr = [];
   let i = 0;
   for ( const input of node.inputs || []) {
@@ -224,14 +243,8 @@ function generateCode(options,jsonGraph,node,ins,outs,lib) {
   for ( const inp of ins ) {
     input["input"+inp.index] = inp.name;
   }
-  if ( node.type === "DHF/input") {
-    input = { input0 : "input" , input1 : "uri", input2: "collections", input3: "permissions" }
-  }
   for ( const outp of outs ) {
     output["output"+outp.index] = outp.name;
-  }
-  if ( node.type === "DHF/output") {
-    output["output0"] = "output";
   }
   let bc = new LiteGraph.registered_node_types[node.type]();
   let i = 0;
@@ -275,7 +288,11 @@ function generateCode(options,jsonGraph,node,ins,outs,lib) {
     code = [];
     let prefix = ""
     const library = "getRuntimeLibraryPath" in  bc ? bc.getRuntimeLibraryPath() : "coreFunctions.sjs"
-    if ( library == "coreFunctions.sjs" ) {
+    const req = require("/custom-modules/pipes/runtime/"+library);
+    const inputAsListFunction = bc.getRuntimeLibraryFunctionName() + "InputAsList"
+    const inputAsList = inputAsListFunction in req && typeof req[inputAsListFunction] === "function" ? req[inputAsListFunction]() : false;
+
+  if ( library == "coreFunctions.sjs" ) {
       lib.core = true;
       prefix = "r";
     } else if ( library == "user.sjs")  {
@@ -284,22 +301,25 @@ function generateCode(options,jsonGraph,node,ins,outs,lib) {
     }
     let inputString = "";
     if ( dataIn && dataIn.length > 0 ) {
-      inputString = "," + dataIn.join(",");
+      if ( inputAsList ) {
+        inputString = ",[" + dataIn.join(",") + "]";
+      } else {
+        inputString = "," + dataIn.join(",");
+      }
     }
     let out = "const ["+dataOut.join(",")+"]";
     if ( dataOut.length == 1) {
       out = "const "+dataOut[0];
     }
     const typeExecutorFunction =  bc.getRuntimeLibraryFunctionName() + "ExecutorType";
-    const req = require("/custom-modules/pipes/runtime/"+library);
     const doesFunctionExist =  typeExecutorFunction in req && typeof req[typeExecutorFunction] === "function";
     const executorType = doesFunctionExist ? req[typeExecutorFunction]() : cf.BLOCK_EXECUTOR_DELEGATOR;
     if ( executorType === cf.BLOCK_EXECUTOR_DELEGATOR ) {
-      code.push(out + " = " + prefix + "." + bc.getRuntimeLibraryFunctionName() + "(" + JSON.stringify(propertiesWidgets) + inputString + ");");
-    } else {
-      const genCode = req[bc.getRuntimeLibraryFunctionName()](propertiesWidgets,dataIn,dataOut);
-      code.push(...genCode);
-    }
+        code.push(out + " = " + prefix + "." + bc.getRuntimeLibraryFunctionName() + "(" + JSON.stringify(propertiesWidgets) + inputString + ");");
+      } else {
+        const genCode = req[bc.getRuntimeLibraryFunctionName()](propertiesWidgets,dataIn,dataOut);
+        code.push(...genCode);
+      }
     return code;
 }
 

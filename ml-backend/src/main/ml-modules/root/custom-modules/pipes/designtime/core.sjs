@@ -10,9 +10,6 @@ const BLOCK_RUNTIME_DEBUG_TRACE = "pipesBlockRuntimeDebug";
 
 const coreFunctions = require("/custom-modules/pipes/runtime/coreFunctions.sjs")
 
-const DataHub = require("/data-hub/5/datahub.sjs");
-const datahub = new DataHub();
-
 const TRACE_ID = "pipes-core";
 const TRACE_ID_DETAILS = "pipes-core-details";
 
@@ -103,53 +100,7 @@ function init (LiteGraph) {
 
 
   GraphOutputObjectDHF.prototype.onExecute = function () {
-
-    //let result = {'envelope' : {}} ;
-    // if(this.getInputData(0)==undefined) {
-    let headers = (this.getInputData(0)) ? this.getInputData(0) : {};
-    let triples = (this.getInputData(1)) ? this.getInputData(1) : [];
-    let instance = (this.getInputData(2)) ? this.getInputData(2) : {};
-    let attachments = (this.getInputData(3)) ? this.getInputData(3) : {};
-    let hasAttachments = (attachments != null)
-
-    if (xdmp.type(headers) != "object") headers = { "value": headers }
-    if (xdmp.type(triples) != "array") triples = [triples]
-    if (xdmp.type(instance) != "object") instance = { "value": instance }
-    if (xdmp.type(attachments) != "object") attachments = { "value": attachments }
-
-    xdmp.trace(TRACE_ID_DETAILS, triples);
-    if (this.format.value == "json" && hasAttachments) {
-      if (instance) {
-        if (instance.toObject) instance = instance.toObject()
-        instance["$attachments"] = attachments
-      } else {
-        instance = {}
-        instance["$attachments"] = attachments
-      }
-    }
-
-
-    let result = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, this.format.value)
-
-    let defaultCollections = (this.graph.inputs["collections"] != null) ? this.graph.inputs["collections"].value : null
-    let defaultPermissions = (this.graph.inputs["permissions"] != null) ? this.graph.inputs["permissions"].value : null
-    let defaultUri = (this.graph.inputs["uri"] != null) ? this.graph.inputs["uri"].value : sem.uuidString()
-    let defaultContext = (this.graph.inputs["context"] != null) ? JSON.parse(JSON.stringify(this.graph.inputs["context"].value)) : {}
-
-    let uri = (this.getInputData(4) != undefined) ? this.getInputData(4) : defaultUri;
-    let collections = (this.getInputData(5) != undefined) ? this.getInputData(5) : defaultCollections;
-    let permissions = (this.getInputData(6) != undefined) ? this.getInputData(6) : defaultPermissions;
-    let context = defaultContext
-
-    let content = {}
-    content.value = result;
-    content.uri = uri
-
-    context.collections = collections
-    context.permissions = permissions
-    content.context = context;
-
-    this.setOutputData(0, content)
+    coreFunctions.executeBlock(this);
   };
 
   GraphOutputObjectDHF.prototype.onAction = function (action, param) {
@@ -170,6 +121,10 @@ function init (LiteGraph) {
     }
     return this.title;
   };
+
+  GraphOutputObjectDHF.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeEnvelope";
+  }
 
   LiteGraph.registerNodeType("DHF/envelope", GraphOutputObjectDHF);
 
@@ -1182,7 +1137,7 @@ function init (LiteGraph) {
   Array.desc = "Array";
 
   Array.prototype.getRuntimeLibraryFunctionName = function() {
-    return "excuteJoinArray";
+    return "executeJoinArray";
   }
 
   Array.prototype.onExecute = function () {
