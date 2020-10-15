@@ -14,9 +14,5 @@
   },
   "uri": "/test/input.json",
   "context": {
-    "collections": [
-      "ingest-unit-test"
-    ],
-    "permissions":[]
   }
 }

@@ -1,0 +1,264 @@
+{
+  "pipesFileVersion": 2,
+  "models": [],
+  "executionGraph": {
+    "last_node_id": 6,
+    "last_link_id": 5,
+    "nodes": [
+      {
+        "id": 2,
+        "type": "DHF/output",
+        "pos": [
+          1308,
+          434
+        ],
+        "size": [
+          180,
+          60
+        ],
+        "flags": {},
+        "order": 5,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "output",
+            "type": 0,
+            "link": 5
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 1,
+        "type": "DHF/input",
+        "pos": [
+          248,
+          489
+        ],
+        "size": [
+          180,
+          100
+        ],
+        "flags": {},
+        "order": 0,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "input",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "uri",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "collections",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "permissions",
+            "type": "",
+            "links": null
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 4,
+        "type": "Generate/multiConstant",
+        "pos": [
+          559,
+          310
+        ],
+        "size": {
+          "0": 255,
+          "1": 82
+        },
+        "flags": {},
+        "order": 1,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "output",
+            "links": [
+              1
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "string",
+          "A"
+        ]
+      },
+      {
+        "id": 5,
+        "type": "Generate/multiConstant",
+        "pos": [
+          543,
+          439
+        ],
+        "size": {
+          "0": 255,
+          "1": 82
+        },
+        "flags": {},
+        "order": 2,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "output",
+            "links": [
+              2
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "string",
+          "B"
+        ]
+      },
+      {
+        "id": 3,
+        "type": "Advanced/EvalJavaScript",
+        "pos": [
+          846,
+          335
+        ],
+        "size": {
+          "0": 170,
+          "1": 106
+        },
+        "flags": {},
+        "order": 3,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "var1",
+            "type": 0,
+            "link": 1
+          },
+          {
+            "name": "var2",
+            "type": 0,
+            "link": 2
+          },
+          {
+            "name": "var3",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "var4",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "var5",
+            "type": 0,
+            "link": null
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output",
+            "links": [
+              4
+            ]
+          }
+        ],
+        "properties": {
+          "sjsCode": "var1+var2",
+          "editProp": "sjsCode",
+          "editWindowTitle": "Edit JavaScript"
+        }
+      },
+      {
+        "id": 6,
+        "type": "Enrich/AddProperty",
+        "pos": [
+          1005,
+          501
+        ],
+        "size": {
+          "0": 170,
+          "1": 46
+        },
+        "flags": {},
+        "order": 4,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "doc",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "value",
+            "type": 0,
+            "link": 4
+          }
+        ],
+        "outputs": [
+          {
+            "name": "doc",
+            "links": [
+              5
+            ]
+          }
+        ],
+        "properties": {
+          "propertyName": "output"
+        }
+      }
+    ],
+    "links": [
+      [
+        1,
+        4,
+        0,
+        3,
+        0,
+        0
+      ],
+      [
+        2,
+        5,
+        0,
+        3,
+        1,
+        0
+      ],
+      [
+        4,
+        3,
+        0,
+        6,
+        1,
+        0
+      ],
+      [
+        5,
+        6,
+        0,
+        2,
+        0,
+        0
+      ]
+    ],
+    "groups": [],
+    "config": {},
+    "version": 0.4
+  },
+  "name": "ExecuteJavascript",
+  "metadata": {
+    "version": "00.01",
+    "author": "",
+    "title": "ExecuteJavascript",
+    "dateExported": "15/10/2020, 12:06:42"
+  }
+}

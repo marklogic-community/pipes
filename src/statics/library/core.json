@@ -1510,12 +1510,6 @@
       }
     ],
     "widgets": [
-      {
-        "type": "text",
-        "name": "xpath",
-        "default": "//prop",
-        "values": []
-      }
     ],
     "properties": [],
     "outputs": [

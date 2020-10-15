@@ -62,6 +62,8 @@ public class BackendModulesManager {
   }
 
   public void checkModulesVersion(AuthService authService) {
+    boolean forceReload = System.getProperty("deployBackend") != null && System.getProperty("deployBackend").equals("true");
+    logger.info("Force reload modules="+forceReload);
     // since the user is not running with deployBackend=true,
     // let's check if the user has backend installed and
     // if the versions in front-end (java) and backe-end (MarkLogic) match
@@ -77,11 +79,12 @@ public class BackendModulesManager {
       output = pipesBackendService.get(params, new StringHandle().withFormat(Format.TEXT));
     }
     catch (FailedRequestException failedRequestException){
-      logger.info("Pipes REST extension not installed");
+        logger.error("Pipes REST extension not installed");
       }
     catch (Exception e) {
       logger.error("Unknown exception occurred");
       logger.error(e.toString());
+      forceReload = true;
     }
 
 
@@ -102,6 +105,7 @@ public class BackendModulesManager {
         outputJson = new JSONObject(output.toString());
       } catch (IOException e) {
         e.printStackTrace();
+        forceReload = true;
       }
       version= outputJson!=null ? outputJson.getString("Version") : "Error reading version";
       build=outputJson!=null ? outputJson.getString("Build") : "Error reading build";
@@ -109,6 +113,7 @@ public class BackendModulesManager {
     else {
       version="Not avaiable";
       build="Not avaiable";
+      forceReload = true;
     }
 
     // output version information
@@ -116,9 +121,9 @@ public class BackendModulesManager {
 
     // it will deploy modules if versions mismatch
     // and if using custom blocks
-    if (!javaVersionInfo.contains(version) || !javaVersionInfo.contains(build) || clientConfig.getCustomModulesRoot()!=null) {
+    if (forceReload || !javaVersionInfo.contains(version) || !javaVersionInfo.contains(build) || clientConfig.getCustomModulesRoot()!=null) {
 
-      logger.info("{} missmatch with Pipes backend modules, Version: {} | Build: {}",
+      logger.info("{} missmatch with Pipes backend modules or force reload, Version: {} | Build: {}",
         javaVersionInfo, version, build);
 
       try {

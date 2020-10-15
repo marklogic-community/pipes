@@ -1,12 +1,14 @@
 'use strict';
 
+const cf = require('/custom-modules/pipes/runtime/coreFunctions.sjs');
+
 function findStartNode(graph) {
-  let startNode = graph.executionGraph == null || graph.executionGraph.nodes == null ? null : graph.executionGraph.nodes.filter(x=>x.type==='dhf/input').map(x=>x.id);
+  let startNode = graph.executionGraph == null || graph.executionGraph.nodes == null ? null : graph.executionGraph.nodes.filter(x=>x.type==='DHF/input').map(x=>x.id);
   startNode = startNode == null || startNode.length === 0 ? null : startNode;
   return startNode;
 }
 function findFinalNode(graph) {
-  let startNode = graph.executionGraph == null || graph.executionGraph.nodes == null ? null : graph.executionGraph.nodes.filter(x=>x.type==='dhf/output').map(x=>x.id);
+  let startNode = graph.executionGraph == null || graph.executionGraph.nodes == null ? null : graph.executionGraph.nodes.filter(x=>x.type==='DHF/output').map(x=>x.id);
   startNode = startNode == null || startNode.length === 0 ? null : startNode;
   return startNode;
 }
@@ -39,7 +41,7 @@ function validateFinalNode(finalNodes,errors) {
 }
 function initLiteGraph(jsonGraph) {
   const userBlocks = require("/custom-modules/pipes/runtime/user.sjs");
-  const coreBlocks = require("/custom-modules/pipes/runtime/core.sjs");
+  const coreBlocks = require("/custom-modules/pipes/designtime/core.sjs");
   const gHelper  = require("/custom-modules/pipes/designtime/graphHelper.sjs");
   for (let model of jsonGraph.models || []) {
     LiteGraph.registerNodeType(model.source + "/" + model.collection, gHelper.createGraphNodeFromModel(model));
@@ -61,7 +63,7 @@ function allNodesSupportCodeGeneration(LiteGraph,jsonGraph,nodeGenerationOrder,e
       isError = true;
       continue;
     }
-    if (! ("onCodeGeneration" in bc)) {
+    if (! ("getRuntimeLibraryFunctionName" in bc)) {
       errors.push({ errorCode : "BLOCK_DOES_NOT_SUPPORT_CODE_GENERATION", errorDescription: "Block implementation "+type+" does not support code generation. Node-id="+node.id});
       isError = true;
     }
@@ -88,17 +90,19 @@ function compileGraphToJavaScriptWithOptions(jsonGraph,options) {
   if ( !validateFinalNode(finalNodes,errors) ) {
     return {
       sourceCode : null,
-      errrors
+      errors
     }
   }
   const finalNode = finalNodes[0];
   // STEP 3: Build the flow graph
   const PipesFlowControlGraph = require("/custom-modules/pipes/designtime/compilerFlowControlGraph.sjs")
   const flowGraph = new PipesFlowControlGraph();
-  flowGraph.initFromLiteGraph(LiteGraph,startNode,jsonGraph);
+  flowGraph.initFromLiteGraph(LiteGraph,startNode,finalNode,jsonGraph);
   // STEP 4: Check there is a path between start node and end node
   const paths = flowGraph.getAllPaths(startNode,finalNode);
-  if ( paths == null || paths.length == 0) {
+  xdmp.log("PATHS");
+  xdmp.log(paths);
+  if ( paths == null || paths.length == 0 ) {
     return {
       sourceCode : null,
       errors : [{ errorCode: "NO_PATH_FROM_DHF_INPUT_TO_OUTPUT",
@@ -106,9 +110,7 @@ function compileGraphToJavaScriptWithOptions(jsonGraph,options) {
       }],
     }
   }
-  // STEP 5: Remove dead nodes prior to the loop check
-  flowGraph.removeDeadNodes(startNode,finalNode);
-  // STEP 6: Check the remaining graph has no loop
+  // STEP 5: Check the remaining graph has no loop
   if ( flowGraph.isCyclic() ) {
     return {
       sourceCode : null,
@@ -126,32 +128,33 @@ function compileGraphToJavaScriptWithOptions(jsonGraph,options) {
     return { sourceCode: null, errors : errors};
   }
   let sourceCode = [];
-  let functions = ['function flattenArray(globalArray,value){',
-    ' for(let v of value)',
-    '  if(v.constructor === Array)',
-    '  flattenArray(globalArray,v)',
-    '  else',
-    '  globalArray.push(v)',
-    '}'];
+  let   lib = { user: false, core:false};
   for (const nodeId of nodeGenerationOrder ) {
     const node = getNode(jsonGraph.executionGraph.nodes,nodeId);
     const inputs = determineInputVariables(jsonGraph.executionGraph,node);
     const outputs = determineOutputVariables(jsonGraph.executionGraph,node);
-    sourceCode.push(...generateCode(options,jsonGraph,node,inputs,outputs,functions));
+    sourceCode.push(...generateCode(options,jsonGraph,node,inputs,outputs,lib));
   }
   let identSpace = options.identSpaceCount ? options.identSpaceCount : 1;
-  return { sourceCode : createSourceCodeOutput(options,sourceCode,identSpace,functions),
+  return { paths,sourceCode : createSourceCodeOutput(options,sourceCode,identSpace,lib),
     errors : null
   };
 }
 
-function createSourceCodeOutput(options,sourceCodeArray,identSpace,functions) {
+function createSourceCodeOutput(options,sourceCodeArray,identSpace,lib) {
+  let libs = []
+  if ( lib.core ) {
+    libs.push("const r = require('/custom-modules/pipes/runtime/coreFunctions.sjs');");
+  }
+  if ( lib.user ) {
+    libs.push("const u = require('/custom-modules/pipes/runtime/user.sjs');");
+  }
   return [
-    "function executeCustomStep(input,uri,collections,context) {",
+    "function executeCustomStep(input,uri,collections,context,permissions) {",
+    ...ident(libs,identSpace),
     ...ident(sourceCodeArray,identSpace),
-    ...ident(["return output"],identSpace),
-    "}",
-    ...ident(functions,identSpace)].join("\n");
+    ...ident(["return output;"],identSpace),
+    "}"]; // .join("\n");
 }
 
 function ident(sourceCodeArray,identSpace) {
@@ -192,6 +195,17 @@ function getNode(nodes,nodeId) {
 
 
 function determineOutputVariables(graph,node) {
+  if ( node.type === "DHF/output") {
+    return [{name:"output",index:0}]
+  }
+  if ( node.type === "DHF/input") {
+    return [
+      { name:  createVariableName(node,0,{name:"input"}), index: 0},
+      { name: createVariableName(node,1,{name:"uri"}) , index: 1},
+      { name: createVariableName(node,2,{name:"collections"}),index: 2},
+      { name: createVariableName(node,3,{name:"permissions"}),index:3}
+    ];
+  }
   let arr = [];
   let i = 0;
   for ( const output of node.outputs || []) {
@@ -202,38 +216,37 @@ function determineOutputVariables(graph,node) {
   return arr
 }
 function determineInputVariables(graph,node) {
+  if ( node.type === "DHF/input") {
+    return [
+      { name: "input", index: 0},
+      { name: "uri" , index: 1},
+      { name: "collections",index: 2},
+      { name: "permissions",index:3}
+    ]
+  }
   let arr = [];
   let i = 0;
   for ( const input of node.inputs || []) {
     const link = input.link;
     if ( link != null ) {
       arr.push({ name: getNodeWithOutputLink(graph,link).variableName, index: i});
+    } else {
+      arr.push({ name: "undefined", index: i});
     }
     i++;
   }
   return arr
 }
 
-function createFunctionName(node) {
-  let t = node.type.charAt(0).toUpperCase() + node.type.slice(1);
-  return "block"+t.match(/[0-9a-zA-Z_]+/g).join("")+node.id;
-}
-
-function generateCode(options,jsonGraph,node,ins,outs,functions) {
+function generateCode(options,jsonGraph,node,ins,outs,lib) {
   const addComments = options.addComments && options.addComments === true;
   let input = {};
   let output = {};
   for ( const inp of ins ) {
     input["input"+inp.index] = inp.name;
   }
-  if ( node.type === "dhf/input") {
-    input = { input0 : "input" , input1 : "uri", input2: "collections" }
-  }
   for ( const outp of outs ) {
     output["output"+outp.index] = outp.name;
-  }
-  if ( node.type === "dhf/output") {
-    output["output0"] = "output";
   }
   let bc = new LiteGraph.registered_node_types[node.type]();
   let i = 0;
@@ -242,57 +255,74 @@ function generateCode(options,jsonGraph,node,ins,outs,functions) {
     w[widget.name] = node.widgets_values[i];
     i++;
   }
+  let hasWidgets = i > 0;
   i = 0;
   let p = {};
   for ( const property of bc.properties_info || [] ) {
     p[property.name] = node.properties[property.name];
     i++;
   }
-  let propertiesWidgets = { properties : p,widgets : w};
-  if ("onCodeGeneration" in bc ) {
-    let code = bc.onCodeGeneration("temp_node_"+node.id+"_",input,output,propertiesWidgets);
-    if ( options.outputBlockAsFunction && options.outputBlockAsFunction === true ) {
-      let inputKeys = Object.keys(input);
-      let dataIn = [];
-      for ( const i of inputKeys ) {
-        dataIn.push(input[i])
-      }
-      if (node.type === "dhf/envelope") {
-        dataIn.push(...["collections","uri", "context"])
-      }
-      let outputKeys = Object.keys(output);
-      let dataOut = [];
-      for ( const i of outputKeys ) {
-        dataOut.push(output[i])
-      }
-      functions.push("\nfunction "+createFunctionName(node)+"("+dataIn.join(",")+") {");
-      if ( addComments ) {
-        if ( addComments ) {
-          functions.push("// Start code for "+node.type+" - nodeId = "+node.id);
-        }
-        functions.push("// Inputs: "+JSON.stringify(ins));
-        functions.push("// Outputs: "+JSON.stringify(outs));
-        functions.push("// Poperties/widgets: "+JSON.stringify(propertiesWidgets));
-      }
-      functions.push(...code);
-      functions.push("return {"+dataOut.join(",")+"};");
-      functions.push("}");
-      code = [];
-      code.push("const {"+dataOut.join(",")+"} = "+createFunctionName(node)+"("+dataIn.join(",")+");");
-      return code;
-    } else {
-      let comment = [];
-      if ( addComments ) {
-        if ( addComments ) {
-          comment.push("// Start code for "+node.type+" - nodeId = "+node.id);
-        }
-        comment.push("// Inputs: "+JSON.stringify(ins));
-        comment.push("// Outputs: "+JSON.stringify(outs));
-      }
-      return [...comment,...code];
+  let hasProperties = i > 0;
+  let propertiesWidgets = hasProperties || hasWidgets ? {} : null;
+  if ( propertiesWidgets ) {
+    if ( hasProperties ) {
+      propertiesWidgets.properties = p;
+    }
+    if ( hasWidgets ) {
+      propertiesWidgets.widgets = w;
     }
   }
-  return [];
+  let code = [bc.getRuntimeLibraryFunctionName()+"("+propertiesWidgets+","+input+","+ output+")"];
+    let inputKeys = Object.keys(input);
+    let dataIn = [];
+    for ( const i of inputKeys ) {
+      dataIn.push(input[i])
+    }
+    xdmp.log(Sequence.from(["TESTER",dataIn,ins]));
+    if (node.type === "dhf/envelope") {
+      dataIn.push(...["collections","uri", "context"])
+    }
+    let outputKeys = Object.keys(output);
+    let dataOut = [];
+    for ( const i of outputKeys ) {
+      dataOut.push(output[i])
+    }
+    code = [];
+    let prefix = ""
+    const library = "getRuntimeLibraryPath" in  bc ? bc.getRuntimeLibraryPath() : "coreFunctions.sjs"
+    const req = require("/custom-modules/pipes/runtime/"+library);
+    const inputAsListFunction = bc.getRuntimeLibraryFunctionName() + "InputAsList"
+    const inputAsList = inputAsListFunction in req && typeof req[inputAsListFunction] === "function" ? req[inputAsListFunction]() : false;
+
+  if ( library == "coreFunctions.sjs" ) {
+      lib.core = true;
+      prefix = "r";
+    } else if ( library == "user.sjs")  {
+      lib.user = true;
+      prefix = "u";
+    }
+    let inputString = "";
+    if ( dataIn && dataIn.length > 0 ) {
+      if ( inputAsList ) {
+        inputString = ",[" + dataIn.join(",") + "]";
+      } else {
+        inputString = "," + dataIn.join(",");
+      }
+    }
+    let out = "const ["+dataOut.join(",")+"]";
+    if ( dataOut.length == 1) {
+      out = "const "+dataOut[0];
+    }
+    const typeExecutorFunction =  bc.getRuntimeLibraryFunctionName() + "ExecutorType";
+    const doesFunctionExist =  typeExecutorFunction in req && typeof req[typeExecutorFunction] === "function";
+    const executorType = doesFunctionExist ? req[typeExecutorFunction]() : cf.BLOCK_EXECUTOR_DELEGATOR;
+    if ( executorType === cf.BLOCK_EXECUTOR_DELEGATOR ) {
+        code.push(out + " = " + prefix + "." + bc.getRuntimeLibraryFunctionName() + "(" + JSON.stringify(propertiesWidgets) + inputString + ");");
+      } else {
+        const genCode = req[bc.getRuntimeLibraryFunctionName()](propertiesWidgets,dataIn,dataOut);
+        code.push(...genCode);
+      }
+    return code;
 }
 
 function compileGraphToJavaScript(jsonGraph) {

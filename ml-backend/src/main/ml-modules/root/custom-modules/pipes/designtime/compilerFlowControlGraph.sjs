@@ -4,7 +4,17 @@ module.exports = class PipesFlowControlGraph {
     this.allPaths = []
   }
 
-  initFromLiteGraph(LiteGraph,startNode,litegraphJSON) {
+  // Check if a node has no inputs
+  isOrphanInput(node) {
+    for ( let inp of node.inputs || [] ) {
+      if ( inp.link != null ) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  initFromLiteGraph(LiteGraph,startNode,finalNode,litegraphJSON) {
     let arr = [];
     this.graph.clear();
     for ( const node of litegraphJSON.executionGraph.nodes || [] ){
@@ -16,10 +26,13 @@ module.exports = class PipesFlowControlGraph {
           this.addEdge(fromNode,toNode);
         }
       }
-      let bc = new LiteGraph.registered_node_types[node.type]();
-      if ( ( "onDeadNodeRemoval" in bc  && bc.onDeadNodeRemoval() === false ) ) {
-        // artificial add a depedency
-        this.addEdge(startNode,fromNode)
+      if ( this.isOrphanInput(node) ) {
+        if (node.id != startNode && node.id != finalNode ) {
+          // for nodes without inputs (such as constants) we add
+          // a link from the startnode to this node
+          // to get this picked up by the path analysis.
+          this.addEdge(startNode, fromNode)
+        }
       }
     }
     return arr;

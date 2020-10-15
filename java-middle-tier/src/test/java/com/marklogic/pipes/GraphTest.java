@@ -88,6 +88,10 @@ class GraphTest {
   @Autowired
   HubConfigImpl hubConfig;
 
+  static {
+    // force pipes to reload back end modules even if the version matches.
+    System.setProperty("deployBackend","true");
+  }
 
   void removeCustomerSource() throws Exception {
     DatabaseClient client = getDatabaseClient();
@@ -150,14 +154,26 @@ class GraphTest {
   }
 
 
-  @ParameterizedTest(name = "#{index} : {0}")
+  @ParameterizedTest(name = "Interpreter: #{index} : {0}")
   @MethodSource("getDirectoryNames")
-  void genericGraphTests(String argument) throws Exception {
-    try {
+  void genericGraphTestsInterpreter(String argument) throws Exception {
+    runGrahTests(argument,false);
+  }
 
-      addCustomerSourceDocument("ExecuteGraphTests/"+argument+"/input.json");
+  @ParameterizedTest(name = "Compiler: #{index} : {0}")
+  @MethodSource("getDirectoryNames")
+  void genericGraphTestsCompiler(String argument) throws Exception {
+    runGrahTests(argument,true);
+  }
+
+  private void runGrahTests(String argument,boolean compiler) throws Exception {
+    try {
+      String inputFile = "ExecuteGraphTests/"+argument+"/input.json";
+      assertNotNull("Input.json not found for "+argument,this.getInputStreamHandle(inputFile));
+      addCustomerSourceDocument(inputFile);
 
       InputStreamHandle graphHandle = getInputStreamHandle("ExecuteGraphTests/"+argument+"/graph.json");
+      assertNotNull("graph.json not found for "+argument,graphHandle);
       JSONObject graphJO = new JSONObject(graphHandle.toString()
       );
 
@@ -168,7 +184,7 @@ class GraphTest {
 
 
       InputStreamHandle expectedResponseHandle = getInputStreamHandle("ExecuteGraphTests/"+argument+"/expectedResponse.json");
-
+      assertNotNull("expectedResponse.json not found for "+argument,expectedResponseHandle);
       JSONObject expectedJO=new JSONObject();
       expectedJO.put("result", new JSONObject(expectedResponseHandle.toString()));
       expectedJO.put("uri",TEST_INPUT_JSON);
@@ -176,7 +192,7 @@ class GraphTest {
       //extract the value part only from the expected returned graph
       JsonNode expectedResultJson= expectedJO.getNode("result");
 
-      String request="/v1/resources/vppBackendServices?rs:action=ExecuteGraph&rs:database="+MLTESTDATABASE;
+      String request="/v1/resources/vppBackendServices?rs:action=ExecuteGraph&rs:compiler="+compiler+"&rs:database="+MLTESTDATABASE;
 
       MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(request).content(payloadJO.toString())
         .session(session);
@@ -191,11 +207,11 @@ class GraphTest {
 
       // compare strings as JSON objects using Jackson ObjectMapper
       ObjectMapper mapper = new ObjectMapper();
-      /*System.err.println("EXPECTED ");
+      System.err.println("EXPECTED ");
       System.err.println(expectedResultJson.toString());
       System.err.println("GOT");
       System.err.println(actualResponseResultJson.toString());
-       */
+
       assertEquals("Response doesn't match expected",mapper.readTree(expectedResultJson.toString()), mapper.readTree(actualResponseResultJson.toString()));
     } finally {
      // removeCustomerSource();
@@ -206,7 +222,7 @@ class GraphTest {
     InputStreamHandle ism= getInputStreamHandle("ExecuteGraphTests");
     String dirs[]=ism.toString().split("\n");
     // limit the test set
-    // dirs=Arrays.stream(dirs).filter(x->x.equals("MinimalGraph")).toArray(String[]::new);
+    //dirs=new String[]{"executeJavascript"};
     return Arrays.stream(dirs);
   }
 
