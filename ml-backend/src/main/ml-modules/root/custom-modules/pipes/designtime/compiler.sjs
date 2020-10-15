@@ -100,6 +100,8 @@ function compileGraphToJavaScriptWithOptions(jsonGraph,options) {
   flowGraph.initFromLiteGraph(LiteGraph,startNode,finalNode,jsonGraph);
   // STEP 4: Check there is a path between start node and end node
   const paths = flowGraph.getAllPaths(startNode,finalNode);
+  xdmp.log("PATHS");
+  xdmp.log(paths);
   if ( paths == null || paths.length == 0 ) {
     return {
       sourceCode : null,

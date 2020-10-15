@@ -310,7 +310,7 @@
           }
         ],
         "properties": {
-          "propertyName": "\"headSequence\""
+          "propertyName": "headSequence"
         }
       },
       {

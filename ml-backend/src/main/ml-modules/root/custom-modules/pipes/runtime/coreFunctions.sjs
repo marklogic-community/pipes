@@ -1,7 +1,22 @@
 const DataHub = require("/data-hub/5/datahub.sjs");
 const datahub = new DataHub();
 
+const BLOCK_RUNTIME_DEBUG_TRACE = "pipesBlockRuntimeDebug";
+
 module.exports = {
+  executeJavaScript,
+  executeMultiCastInputAsList,
+  executeMultiCast,
+  executeNormalizeSpace,
+  executeCount,
+  executeHead,
+  executeXpath,
+  executeHash,
+  executeDistinctValues,
+  executeFilterArray,
+  executeRegExReplace,
+  executeStringSplit,
+  executeStringPadding,
   executeStringJoin,
   executeStringJoinExecutorType,
   executeBaseUri,
@@ -27,7 +42,6 @@ module.exports = {
   LookupByValue,
   split,
   lookUp,
-  regExpReplace,
   computeQueryRecursively,
   BLOCK_EXECUTOR_DELEGATOR : 1,
   BLOCK_EXECUTOR_GENERATOR : 2
@@ -151,33 +165,6 @@ function LookupByValue (block, var1, nbOutputValues) {
   }
 }
 
-function regExpReplace (block, regEx, replace, global, caseInsensitive) {
-  let options = "";
-  if (global) {
-    options += "g"
-  }
-  if (caseInsensitive) {
-    options += "i"
-  }
-  replace = !replace ? "" : replace;
-  const regExObj = new RegExp(regEx, options);
-  const input = block.getInputData(0);
-  if (input) {
-    if (input instanceof Array) {
-      let arr = [];
-      for (const i of input) {
-        if (!i) {
-          continue;
-        }
-        arr.push(i.toString().replace(regExObj, replace))
-      }
-      block.setOutputData(0, arr);
-    } else {
-      block.setOutputData(0, input.toString().replace(regExObj, replace));
-    }
-  }
-}
-
 // NEW
 
 function executeGraphInputDHFExecutorType() {
@@ -203,6 +190,27 @@ function executeGraphOutputDHF(propertiesAndWidgets,output) {
     else {
       return output;
     }
+}
+
+function executeJavaScript(propertiesAndWidgets,var1,var2,var3,var4,var5) {
+  let code = propertiesAndWidgets.properties.sjsCode;
+  let template = "`" + code + "`";
+  let result = eval(template);
+  let output = eval(result);
+  return output;
+}
+
+function executeDistinctValues(propertiesAndWidgets,input) {
+  let seq = null;
+  if ( input instanceof Sequence ) {
+    seq = input;
+  } else if ( input.constructor.name === "Array" ) {
+    seq = Sequence.from(input);
+  } else {
+    seq = Sequence.from([input]);
+  }
+  const arr = fn.distinctValues(seq).toArray();
+  return arr;
 }
 
 function executeStringJoinExecutorType() {
@@ -234,8 +242,7 @@ function executeJoinArrayInputAsList() {
 }
 
 function executeJoinArray(propertiesAndWidgets,inputs) {
-  let result = []
-  xdmp.log(propertiesAndWidgets.widgets);
+  let result = [];
   for (let i = 0; i < propertiesAndWidgets.widgets.nbInputs; i++) {
     let value = i < inputs.length ? inputs[i] : null
     if (value != null)
@@ -244,16 +251,81 @@ function executeJoinArray(propertiesAndWidgets,inputs) {
   return result;
 }
 
+function executeXpath(propertiesAndWidgets,input) {
+  let ns = {};
+  const nstokens = propertiesAndWidgets.widgets.namespaces.trim().split(",");
+  if (nstokens.length % 2 === 0) {
+    for (let i = 0; i < nstokens.length; i += 2) {
+      ns[nstokens[i].trim()] = nstokens[i + 1].trim();
+    }
+  }
+  let output = null;
+  const xpathValue = propertiesAndWidgets.widgets.xpath;
+  xdmp.trace(BLOCK_RUNTIME_DEBUG_TRACE, Sequence.from(["Xpath: Input", input, "NS", ns]));
+  if (typeof(input) != "undefined" && input != null ) {
+    if ( input.constructor.name === "Array") {
+      output = [];
+      for ( const i of input) {
+        output.push(i.xpath(xpathValue, ns));
+      }
+    } else if ( input instanceof Sequence ) {
+      let arr = [];
+      for ( const i of input ) {
+        arr.push(i.xpath(xpathValue, ns));
+      }
+      output = Sequence.from(arr);
+    } else {
+      output=input.xpath(xpathValue,ns);
+    }
+    xdmp.trace(BLOCK_RUNTIME_DEBUG_TRACE, Sequence.from(["Xpath: Output", output]));
+  }
+  return output;
+}
+function executeHash(propertiesAndWidgets,input) {
+  switch (propertiesAndWidgets.widgets['hash function']) {
+    case "hash64":
+      return String(xdmp.hash64(xdmp.quote(input)));
+      break;
+    case "sha1":
+      return String(xdmp.sha1(xdmp.quote(input), "base64"))
+      break;
+    case "sha256":
+      return tring(xdmp.sha256(xdmp.quote(input), "base64"))
+      break;
+    case "sha512":
+      return String(xdmp.sha512(xdmp.quote(input), "base64"))
+      break;
+    default:
+      return "unknown";
+      break;
+  }
+}
+function executeFilterArray(propertiesAndWidgets,unfiltered,patterns) {
+  xdmp.trace(TRACE_ID, "++++++++++++++++++FilterArray++++++++++++++++++++++++++++++");
+  let include = propertiesAndWidgets.widgets.include;
+  let filtered = []
+  if ( !unfiltered.constructor.name === "Array") {
+    filtered = [unfiltered];
+  } else
+  {
+    let patternArray = patterns.constructor.name === "Array" ? patterns : [patterns]
+    filtered = unfiltered.filter(function (item) {
+      for (p of patternArray) {
+        if (item.includes(p)) {
+          return include;
+        }
+      }
+      return !include;
+    })
+    xdmp.trace(TRACE_ID, unfiltered);
+    xdmp.trace(TRACE_ID, patterns);
+    xdmp.trace(TRACE_ID, "include=" + include);
+    xdmp.trace(TRACE_ID, filtered);
+    xdmp.trace(TRACE_ID, "++++++++++++++++++FilterArray++++++++++++++++++++++++++++++");
+  }
+  return filtered;
+}
 function executeEnvelope(propertiesAndWidgets,iHeaders,iTriples,iInstance,iAttachments,iUri,iCollections,iPermissions) {
-
-  xdmp.log(propertiesAndWidgets);
-  xdmp.log(iHeaders);
-  xdmp.log(iTriples);
-  xdmp.log(iInstance);
-  xdmp.log(iAttachments);
-  xdmp.log(iUri);
-  xdmp.log(iCollections);
-  xdmp.log(iPermissions);
   let headers = iHeaders ? iHeaders :  {};
   let triples = iTriples ? iTriples : [];
   let instance = iInstance ? iInstance : {};
@@ -326,6 +398,58 @@ function executeStringCase(propertiesAndWidgets,inputs,outputs) {
       }
 }
 
+
+function executeMultiCastInputAsList() {
+  return true;
+}
+
+function executeMultiCast(propertiesAndWidgets,inputs) {
+  let arr = []
+  for (let i = 0; i < 4; i++) {
+    const inp = inputs[i]
+    if ( inp != undefined) {
+      if (!"type" + (i + 1) in propertiesAndWidgets.widgets) {
+        arr.push(inp);
+      } else {
+        switch (propertiesAndWidgets.widgets["type" + (i + 1)]) {
+          case "string":
+            arr.push(String(inp))
+            break;
+          case "int":
+            arr.push( parseInt(inp))
+            break;
+          case "float":
+            arr.push(parseFloat(inp))
+            break;
+          case "date":
+            arr.push(new date(inp))
+            break;
+          default:
+            arr.push(inp);
+        }
+      }
+    }
+  }
+  return arr;
+}
+function executeNormalizeSpace(propertiesAndWidgets,input) {
+  if (input) {
+    if (input.constructor.name === "Array") {
+      let arr = [];
+      for (const v of arr) {
+        if (v) {
+          arr.push(fn.normalizeSpace(String(v)))
+        }
+      }
+      return [arr]
+    } else {
+      return fn.normalizeSpace(String(input));
+    }
+  } else {
+    return "";
+  }
+}
+
 function executeTemplating(propertiesAndWidgets,v1,v2,v3) {
     let v4 = propertiesAndWidgets.widgets.v4;
     let v5 = propertiesAndWidgets.widgets.v5;
@@ -354,6 +478,99 @@ function executeMultiPurposeConstant(propertiesAndWidgets,inputs,outputs) {
   }
 }
 
+function executeCount(propertiesAndWidgets,input) {
+  let count = 0;
+  if ( input ) {
+    if (input.constructor.name === "Array") {
+      count = input.length;
+    } else if ( input instanceof Sequence ) {
+      count = fn.count(input)
+    }
+  }
+  return count;
+}
+
+function executeHead(propertiesAndWidgets,input) {
+  let output = null
+  if ( input.constructor.name === "Array") {
+    if (input.length > 0) {
+      output = input[0];
+    }
+  }
+  else if ( input instanceof Sequence) {
+    output = fn.head(input)
+  }
+  return output;
+}
+
+function executeStringPadding(propertiesAndWidgets,input) {
+  let totalWidth = propertiesAndWidgets.widgets.Size;
+  let paddingDirection = String(propertiesAndWidgets.widgets['Padding Direction']);
+  let paddingChar = String(propertiesAndWidgets.widgets['Padding Character']);
+  let inputString = String(input ? input : "");
+  let outputval = inputString;
+  switch (paddingDirection) {
+    case "left":
+      outputval = inputString.padStart(totalWidth, paddingChar);
+      break
+    case "right":
+      outputval = inputString.padEnd(totalWidth, paddingChar);
+      break
+    default:
+      break
+  }
+  return outputval;
+}
+
+function executeRegExReplace(propertiesAndWidgets,input) {
+    const global = propertiesAndWidgets.widgets.global;
+    const caseInsensitive = propertiesAndWidgets.widgets.caseInsensitive;
+    const regEx = propertiesAndWidgets.widgets.regex;
+    let replace = propertiesAndWidgets.widgets.replace;
+    let options = "";
+    if (global) {
+      options += "g"
+    }
+    if (caseInsensitive) {
+      options += "i"
+    }
+    replace = !replace ? "" : replace;
+    const regExObj = new RegExp(regEx, options);
+    let ret = null;
+    if (input) {
+      if (input.constructor.name === "Array") {
+        let arr = [];
+        for (const i of input) {
+          if (!i) {
+            continue;
+          }
+          arr.push(i.toString().replace(regExObj, replace))
+        }
+        ret = arr;
+      } else {
+        ret = input.toString().replace(regExObj, replace);
+      }
+    }
+    return ret;
+}
+
+function executeStringSplit(propertiesAndWidgets,input) {
+  if (!input) {
+    return []
+  }
+  let result = String(input).split(propertiesAndWidgets.widgets.splitChar);
+  let arr = [];
+  for (let i = 0; i < Math.min(result.length, 3); i++) {
+     arr.push(result[i]);
+   }
+  for ( let i = arr.length ; i < 3 ; i++ ) {
+    arr.push(undefined);
+  }
+  arr.push(result);
+  return arr;
+}
+// ========= RUNTIME
+
 function executeBlock(block) {
   if (! ("getRuntimeLibraryFunctionName" in block) ) {
     throw Error("Block does not implement getRuntimeLibraryFunctionName. Check blockType "+block.type)
@@ -372,9 +589,6 @@ function executeBlock(block) {
   const executorType = doesFunctionExist ? lib[typeExecutorFunction]() : this.BLOCK_EXECUTOR_DELEGATOR;
   const doLog = xdmp.traceEnabled(TRACE_ID_PIPES_EXECUTION);
   const inputAsListFunction = functionName + "InputAsList"
-  xdmp.log("DEBUGGER");
-  xdmp.log(inputAsListFunction);
-  xdmp.log(lib);
   const inputAsList = inputAsListFunction in lib && typeof lib[inputAsListFunction] === "function" ? lib[inputAsListFunction]() : false;
   let startTime = 0;
   if ( doLog ) {
@@ -496,12 +710,9 @@ function getPropertiesAndWidgets(block) {
     properties : block.properties,
     widgets : {}
   }
-  xdmp.log("DATA")
   xdmp.log(block.widgets);
   for ( widget of block.widgets || [] ) {
     const name = widget.name;
-    xdmp.log("NAME '"+name+"'")
-    xdmp.log(widget);
     const value=widget.value;
     propertiesWidgets.widgets[name] = value;
   }

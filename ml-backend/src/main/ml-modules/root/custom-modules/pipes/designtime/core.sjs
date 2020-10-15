@@ -326,21 +326,15 @@ function init (LiteGraph) {
     this.addOutput('nbItems', 'number');
     null
   };
+
+  fn_count.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeCount";
+  }
+
   fn_count.title = 'count';
 
   fn_count.prototype.onExecute = function() {
-    let input = this.getInputData(0);
-    let count = 0;
-    if ( input ) {
-      xdmp.log("FNCOUNT");
-      xdmp.log(input);
-      xdmp.log(input.constructor.name)
-      if (input.constructor.name === "Array") {
-        input = Sequence.from(input);
-      }
-      count = fn.count(input)
-    }
-    this.setOutputData(0, count);
+    coreFunctions.executeBlock(this);
   };
 
   LiteGraph.registerNodeType('Advanced/count', fn_count);
@@ -485,18 +479,12 @@ function init (LiteGraph) {
   //name to show
   fn_head.title = "head";
 
+  fn_head.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeHead";
+  }
+
   fn_head.prototype.onExecute = function () {
-    let input = this.getInputData(0)
-    let output = null
-    if ( input.constructor.name === "Array") {
-      if (input.length > 0) {
-        output = input[0];
-      }
-    }
-    else {
-      output = fn.head(input)
-    }
-    this.setOutputData(0, output)
+    coreFunctions.executeBlock(this);
   }
 
   LiteGraph.registerNodeType("Advanced/head", fn_head);
@@ -672,18 +660,12 @@ function init (LiteGraph) {
 
   EvalJavaScriptBlock.title = "EvalJavaScript";
 
+  EvalJavaScriptBlock.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeJavaScript";
+  }
+
   EvalJavaScriptBlock.prototype.onExecute = function () {
-    let var1 = this.getInputData(0);
-    let var2 = this.getInputData(1);
-    let var3 = this.getInputData(2);
-    let var4 = this.getInputData(3);
-    let var5 = this.getInputData(4);
-    let code = this.properties.sjsCode;
-    let template = "`" + code + "`";
-    let result = eval(template);
-    xdmp.trace(TRACE_ID_DETAILS, "EXECUTING " + result);
-    let output = eval(result);
-    this.setOutputData(0, output);
+    coreFunctions.executeBlock(this);
   }
 
   LiteGraph.registerNodeType("Advanced/EvalJavaScript", EvalJavaScriptBlock);
@@ -795,24 +777,11 @@ function init (LiteGraph) {
   hashNode.title = "Hash Node content";
 
   hashNode.prototype.onExecute = function () {
+    coreFunctions.executeBlock(this);
+  }
 
-    switch (this.hashAlgo.value) {
-      case "hash64":
-        this.setOutputData(0, String(xdmp.hash64(xdmp.quote(this.getInputData(0)))))
-        break;
-      case "sha1":
-        this.setOutputData(0, String(xdmp.sha1(xdmp.quote(this.getInputData(0)), "base64")))
-        break;
-      case "sha256":
-        this.setOutputData(0, String(xdmp.sha256(xdmp.quote(this.getInputData(0)), "base64")))
-        break;
-      case "sha512":
-        this.setOutputData(0, String(xdmp.sha512(xdmp.quote(this.getInputData(0)), "base64")))
-        break;
-      default:
-        this.setOutputData(0, "unknown")
-        break;
-    }
+  hashNode.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeHash";
   }
 
   LiteGraph.registerNodeType("Generate/hashNode", hashNode);
@@ -826,24 +795,13 @@ function init (LiteGraph) {
 
   normalizeSpaceBlock.title = "NormalizeSpace";
 
-  normalizeSpaceBlock.prototype.onExecute = function () {
 
-    let input = this.getInputData(0);
-    if (input) {
-      if (input.constructor.name === "Array") {
-        let arr = [];
-        for (const v of arr) {
-          if (v) {
-            arr.push(fn.normalizeSpace(String(v)))
-          }
-        }
-        this.setOutputData(0, arr);
-      } else {
-        this.setOutputData(0, fn.normalizeSpace(String(input)));
-      }
-    } else {
-      this.setOutputData(0, "")
-    }
+  normalizeSpaceBlock.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeNormalizeSpace";
+  }
+
+  normalizeSpaceBlock.prototype.onExecute = function () {
+    coreFunctions.executeBlock(this);
   }
 
   LiteGraph.registerNodeType("Clean/NormalizeSpace", normalizeSpaceBlock);
@@ -859,11 +817,11 @@ function init (LiteGraph) {
 
   RegExReplaceBlock.title = "RegExReplace";
   RegExReplaceBlock.prototype.onExecute = function () {
-    const global = this.global.value;
-    const caseInsensitive = this.caseInsensitive.value;
-    const regEx = this.regEx.value;
-    const replace = this.replace.value;
-    coreFunctions.regExpReplace(this, regEx, replace, global, caseInsensitive);
+    coreFunctions.executeBlock(this);
+  }
+
+  RegExReplaceBlock.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeRegExReplace";
   }
 
   LiteGraph.registerNodeType("Transform/RegExReplace", RegExReplaceBlock);
@@ -1037,35 +995,16 @@ function init (LiteGraph) {
     this.serialize_widgets = true;
   }
 
+
+  multicast.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeMultiCast";
+  }
+
   multicast.title = "Multicast";
   multicast.desc = "Cast input to type";
 
   multicast.prototype.onExecute = function () {
-
-    for (let i = 0; i < 4; i++) {
-      if (this.getInputData(i) != undefined) {
-        switch (this["type" + (i + 1)].value) {
-          case "string":
-            this.setOutputData(i, String(this.getInputData(i)))
-            break;
-          case "int":
-            this.setOutputData(i, parseInt(this.getInputData(i)))
-            break;
-          case "float":
-            this.setOutputData(i, parseFloat(this.getInputData(i)))
-            break;
-          case "date":
-            this.setOutputData(i, new date(this.getInputData(i)))
-            break;
-          default:
-            this.setOutputData(i, this.getInputData(i))
-        }
-
-      }
-
-
-    }
-
+      coreFunctions.executeBlock(this);
   }
   LiteGraph.registerNodeType("Transform/multicast", multicast);
 
@@ -1173,12 +1112,13 @@ function init (LiteGraph) {
   split.desc = "Split";
 
   split.prototype.onExecute = function () {
-    let str = this.getInputData(0)
-    let result = fn.tokenize(str, this.splitChar.value).toArray()
-    for (let i = 0; i < fn.max([result.length, 3]); i++)
-      this.setOutputData(i, result[i])
-    this.setOutputData(3, result)
+    coreFunctions.executeBlock(this);
   }
+
+  split.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeStringSplit";
+  }
+
 
   LiteGraph.registerNodeType("Split/Split", split);
 
@@ -1343,21 +1283,13 @@ function init (LiteGraph) {
   }
 
   DistinctValues.title = "DistinctValues";
+
+  DistinctValues.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeDistinctValues";
+  }
+
   DistinctValues.prototype.onExecute = function () {
-    const input = this.getInputData(0);
-    let seq = null;
-    if ( input instanceof Sequence ) {
-      xdmp.log("IN Input")
-      seq = input;
-    } else if ( input.constructor.name === "Array" ) {
-      xdmp.log("IN ARRAY")
-      seq = Sequence.from(input);
-    } else {
-      xdmp.log("OTHER "+input.constructor);
-      seq = Sequence.from([input]);
-    }
-    const arr = fn.distinctValues(seq).toArray();
-    this.setOutputData(0, arr);
+    coreFunctions.executeBlock(this);
   }
 
   LiteGraph.registerNodeType("Filter/DistinctValues", DistinctValues);
@@ -1371,32 +1303,12 @@ function init (LiteGraph) {
   FilterArray.title = "FilterArray";
   FilterArray.desc = "Returns the filtered Array based on the given pattern(can be an arrray), either inclusive or exclusive";
 
+  FilterArray.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeFilterArray";
+  }
+
   FilterArray.prototype.onExecute = function() {
-      xdmp.trace(TRACE_ID, "++++++++++++++++++FilterArray++++++++++++++++++++++++++++++");
-      let unfiltered = this.getInputData(0);
-      let patterns = this.getInputData(1);
-      let include = this.include.value;
-      let filtered = []
-      if ( !unfiltered.constructor.name === "Array") {
-        filtered = [unfiltered];
-      } else
-      {
-        let patternArray = patterns.constructor.name === "Array" ? patterns : [patterns]
-        filtered = unfiltered.filter(function (item) {
-        for (p of patternArray) {
-            if (item.includes(p)) {
-              return include;
-            }
-          }
-          return !include;
-        })
-        xdmp.trace(TRACE_ID, unfiltered);
-        xdmp.trace(TRACE_ID, patterns);
-        xdmp.trace(TRACE_ID, "include=" + include);
-        xdmp.trace(TRACE_ID, filtered);
-        xdmp.trace(TRACE_ID, "++++++++++++++++++FilterArray++++++++++++++++++++++++++++++");
-      }
-      this.setOutputData(0, filtered); //Set output(s) value(s)
+      coreFunctions.executeBlock(this);
   };
 
   LiteGraph.registerNodeType("Filter/FilterArray", FilterArray );
@@ -1579,44 +1491,12 @@ function init (LiteGraph) {
   xpathBlock.title = "xpath";
   xpathBlock.desc = "xpath";
 
+  xpathBlock.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeXpath";
+  }
+
   xpathBlock.prototype.onExecute = function () {
-    let input = this.getInputData(0);
-    let ns = {};
-    const nstokens = this.namespaces.value.trim().split(",");
-    if (nstokens.length % 2 === 0) {
-      for (let i = 0; i < nstokens.length; i += 2) {
-        ns[nstokens[i].trim()] = nstokens[i + 1].trim();
-      }
-    }
-    const xpathValue = this.xpath.value;
-    xdmp.trace(BLOCK_RUNTIME_DEBUG_TRACE, Sequence.from(["Xpath: Input", input, "NS", ns]));
-    if (typeof(input) != "undefined" && input != null ) {
-      let output = null;
-      if ( input.constructor.name === "Array") {
-        output = [];
-        for ( const i of input) {
-          output.push(i.xpath(xpathValue, ns));
-        }
-      } else if ( input instanceof Sequence ) {
-        let arr = [];
-        for ( const i of input ) {
-          arr.push(i.xpath(xpathValue, ns));
-        }
-        output = Sequence.from(arr);
-      } else {
-        xdmp.log("HERE");
-        xdmp.log(input);
-        xdmp.log(input.constructor);
-        xdmp.log("Xpath value");
-        xdmp.log(xpathValue);
-        xdmp.log("ns")
-        xdmp.log(ns);
-        xdmp.log(this.xpath);
-        output=input.xpath(xpathValue,ns);
-      }
-      xdmp.trace(BLOCK_RUNTIME_DEBUG_TRACE, Sequence.from(["Xpath: Output", output]));
-      this.setOutputData(0, output);
-    }
+    coreFunctions.executeBlock(this);
   }
 
   LiteGraph.registerNodeType("Transform/xpath", xpathBlock);
@@ -1650,24 +1530,12 @@ function init (LiteGraph) {
 
   StringPadding.title = "padding";
 
+  StringPadding.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeStringPadding";
+  }
+
   StringPadding.prototype.onExecute = function () {
-    let totalWidth = this.totalWidth.value
-    let paddingDirection = String(this.paddingDirection.value)
-    let paddingChar = String(this.paddingChar.value)
-    let inputString = String(this.getInputData(0) ? this.getInputData(0) : "")
-    let outputval = inputString
-    switch (paddingDirection) {
-      case "left":
-        outputval = inputString.padStart(totalWidth, paddingChar)
-        break
-      case "right":
-        outputval = inputString.padEnd(totalWidth, paddingChar)
-        break
-      default:
-        break
-    }
-    xdmp.log(Sequence.from(["inputString",inputString,"totalWidth",totalWidth,"Result","|"+outputval+"|"]));
-    this.setOutputData(0, outputval)
+    coreFunctions.executeBlock(this);
   }
   LiteGraph.registerNodeType("Format/stringPadding", StringPadding);
 }

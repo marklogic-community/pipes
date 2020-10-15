@@ -88,6 +88,10 @@ class GraphTest {
   @Autowired
   HubConfigImpl hubConfig;
 
+  static {
+    // force pipes to reload back end modules even if the version matches.
+    System.setProperty("deployBackend","true");
+  }
 
   void removeCustomerSource() throws Exception {
     DatabaseClient client = getDatabaseClient();
@@ -164,10 +168,12 @@ class GraphTest {
 
   private void runGrahTests(String argument,boolean compiler) throws Exception {
     try {
-
-      addCustomerSourceDocument("ExecuteGraphTests/"+argument+"/input.json");
+      String inputFile = "ExecuteGraphTests/"+argument+"/input.json";
+      assertNotNull("Input.json not found for "+argument,this.getInputStreamHandle(inputFile));
+      addCustomerSourceDocument(inputFile);
 
       InputStreamHandle graphHandle = getInputStreamHandle("ExecuteGraphTests/"+argument+"/graph.json");
+      assertNotNull("graph.json not found for "+argument,graphHandle);
       JSONObject graphJO = new JSONObject(graphHandle.toString()
       );
 
@@ -178,7 +184,7 @@ class GraphTest {
 
 
       InputStreamHandle expectedResponseHandle = getInputStreamHandle("ExecuteGraphTests/"+argument+"/expectedResponse.json");
-
+      assertNotNull("expectedResponse.json not found for "+argument,expectedResponseHandle);
       JSONObject expectedJO=new JSONObject();
       expectedJO.put("result", new JSONObject(expectedResponseHandle.toString()));
       expectedJO.put("uri",TEST_INPUT_JSON);
@@ -216,7 +222,7 @@ class GraphTest {
     InputStreamHandle ism= getInputStreamHandle("ExecuteGraphTests");
     String dirs[]=ism.toString().split("\n");
     // limit the test set
-    //dirs=Arrays.stream(dirs).filter(x->x.equals("Envelope")).toArray(String[]::new);
+    //dirs=new String[]{"executeJavascript"};
     return Arrays.stream(dirs);
   }
 

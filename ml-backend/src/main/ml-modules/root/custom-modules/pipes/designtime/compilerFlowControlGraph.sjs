@@ -4,6 +4,16 @@ module.exports = class PipesFlowControlGraph {
     this.allPaths = []
   }
 
+  // Check if a node has no inputs
+  isOrphanInput(node) {
+    for ( let inp of node.inputs || [] ) {
+      if ( inp.link != null ) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   initFromLiteGraph(LiteGraph,startNode,finalNode,litegraphJSON) {
     let arr = [];
     this.graph.clear();
@@ -16,7 +26,7 @@ module.exports = class PipesFlowControlGraph {
           this.addEdge(fromNode,toNode);
         }
       }
-      if ( !node.inputs || node.inputs.length === 0 ) {
+      if ( this.isOrphanInput(node) ) {
         if (node.id != startNode && node.id != finalNode ) {
           // for nodes without inputs (such as constants) we add
           // a link from the startnode to this node
