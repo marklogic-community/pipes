@@ -327,9 +327,22 @@ function init (LiteGraph) {
     null
   };
   fn_count.title = 'count';
+
   fn_count.prototype.onExecute = function() {
-    this.setOutputData(0, fn.count(this.getInputData(0)));
+    let input = this.getInputData(0);
+    let count = 0;
+    if ( input ) {
+      xdmp.log("FNCOUNT");
+      xdmp.log(input);
+      xdmp.log(input.constructor.name)
+      if (input.constructor.name === "Array") {
+        input = Sequence.from(input);
+      }
+      count = fn.count(input)
+    }
+    this.setOutputData(0, count);
   };
+
   LiteGraph.registerNodeType('Advanced/count', fn_count);
 
   function fn_stringJoin() {
@@ -475,12 +488,14 @@ function init (LiteGraph) {
   fn_head.prototype.onExecute = function () {
     let input = this.getInputData(0)
     let output = null
-    if (xdmp.type(input) == "array") {
-      if (input.length > 0)
-        output = input[0]
+    if ( input.constructor.name === "Array") {
+      if (input.length > 0) {
+        output = input[0];
+      }
     }
-    else
+    else {
       output = fn.head(input)
+    }
     this.setOutputData(0, output)
   }
 
@@ -815,16 +830,16 @@ function init (LiteGraph) {
 
     let input = this.getInputData(0);
     if (input) {
-      if (input instanceof Array) {
+      if (input.constructor.name === "Array") {
         let arr = [];
         for (const v of arr) {
           if (v) {
-            arr.push(fn.normalizeSpace(v.toString()))
+            arr.push(fn.normalizeSpace(String(v)))
           }
         }
         this.setOutputData(0, arr);
       } else {
-        this.setOutputData(0, fn.normalizeSpace(input));
+        this.setOutputData(0, fn.normalizeSpace(String(input)));
       }
     } else {
       this.setOutputData(0, "")
@@ -1323,22 +1338,28 @@ function init (LiteGraph) {
 
   function DistinctValues () {
     this.addInput("array", null);
-    this.xpath = this.addWidget("text", "xpath", "//prop", function (v) { });
-
     this.addOutput("distinctValues", null);
-
     this.serialize_widgets = true;
   }
 
   DistinctValues.title = "DistinctValues";
   DistinctValues.prototype.onExecute = function () {
-
-    const builder = new NodeBuilder();
-    let list = this.getInputData(0);
-    let xpath = this.getInputData(0);
-    let t = builder.addNode(list.toArray()).toNode()
-    this.setOutputData(0, fn.distinctValues(t.xpath(this.xpath.value)).toArray())
+    const input = this.getInputData(0);
+    let seq = null;
+    if ( input instanceof Sequence ) {
+      xdmp.log("IN Input")
+      seq = input;
+    } else if ( input.constructor.name === "Array" ) {
+      xdmp.log("IN ARRAY")
+      seq = Sequence.from(input);
+    } else {
+      xdmp.log("OTHER "+input.constructor);
+      seq = Sequence.from([input]);
+    }
+    const arr = fn.distinctValues(seq).toArray();
+    this.setOutputData(0, arr);
   }
+
   LiteGraph.registerNodeType("Filter/DistinctValues", DistinctValues);
 
   function FilterArray() {
@@ -1355,12 +1376,26 @@ function init (LiteGraph) {
       let unfiltered = this.getInputData(0);
       let patterns = this.getInputData(1);
       let include = this.include.value;
-      let filtered = include ? unfiltered.filter(function(item) { return patterns.includes(item); } ) : unfiltered.filter(function(item) { return !(patterns.includes(item)); } );
-      xdmp.trace(TRACE_ID, unfiltered);
-      xdmp.trace(TRACE_ID, patterns);
-      xdmp.trace(TRACE_ID, "include=" + include);
-      xdmp.trace(TRACE_ID, filtered);
-      xdmp.trace(TRACE_ID, "++++++++++++++++++FilterArray++++++++++++++++++++++++++++++");
+      let filtered = []
+      if ( !unfiltered.constructor.name === "Array") {
+        filtered = [unfiltered];
+      } else
+      {
+        let patternArray = patterns.constructor.name === "Array" ? patterns : [patterns]
+        filtered = unfiltered.filter(function (item) {
+        for (p of patternArray) {
+            if (item.includes(p)) {
+              return include;
+            }
+          }
+          return !include;
+        })
+        xdmp.trace(TRACE_ID, unfiltered);
+        xdmp.trace(TRACE_ID, patterns);
+        xdmp.trace(TRACE_ID, "include=" + include);
+        xdmp.trace(TRACE_ID, filtered);
+        xdmp.trace(TRACE_ID, "++++++++++++++++++FilterArray++++++++++++++++++++++++++++++");
+      }
       this.setOutputData(0, filtered); //Set output(s) value(s)
   };
 
@@ -1553,26 +1588,34 @@ function init (LiteGraph) {
         ns[nstokens[i].trim()] = nstokens[i + 1].trim();
       }
     }
-    const xpath = this.xpath.value;
+    const xpathValue = this.xpath.value;
     xdmp.trace(BLOCK_RUNTIME_DEBUG_TRACE, Sequence.from(["Xpath: Input", input, "NS", ns]));
     if (typeof(input) != "undefined" && input != null ) {
       let output = null;
-      if ( input instanceof Array) {
+      if ( input.constructor.name === "Array") {
         output = [];
         for ( const i of input) {
-          output.push(i.xpath(xpath, ns));
+          output.push(i.xpath(xpathValue, ns));
         }
       } else if ( input instanceof Sequence ) {
         let arr = [];
         for ( const i of input ) {
-          arr.push(i.xpath(xpath, ns));
+          arr.push(i.xpath(xpathValue, ns));
         }
         output = Sequence.from(arr);
       } else {
-        output = input.xpath(xpath,ns);
+        xdmp.log("HERE");
+        xdmp.log(input);
+        xdmp.log(input.constructor);
+        xdmp.log("Xpath value");
+        xdmp.log(xpathValue);
+        xdmp.log("ns")
+        xdmp.log(ns);
+        xdmp.log(this.xpath);
+        output=input.xpath(xpathValue,ns);
       }
       xdmp.trace(BLOCK_RUNTIME_DEBUG_TRACE, Sequence.from(["Xpath: Output", output]));
-      this.setOutputData(0, output)
+      this.setOutputData(0, output);
     }
   }
 
@@ -1623,6 +1666,7 @@ function init (LiteGraph) {
       default:
         break
     }
+    xdmp.log(Sequence.from(["inputString",inputString,"totalWidth",totalWidth,"Result","|"+outputval+"|"]));
     this.setOutputData(0, outputval)
   }
   LiteGraph.registerNodeType("Format/stringPadding", StringPadding);
