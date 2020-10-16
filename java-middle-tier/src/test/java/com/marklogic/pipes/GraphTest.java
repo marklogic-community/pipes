@@ -229,7 +229,7 @@ class GraphTest {
 
       assertEquals("Response doesn't match expected",mapper.readTree(expectedResultJson.toString()), mapper.readTree(actualResponseResultJson.toString()));
     } finally {
-     // removeCustomerSource();
+      removeCustomerSource();
     }
   }
 
@@ -237,7 +237,7 @@ class GraphTest {
     InputStreamHandle ism= getInputStreamHandle("ExecuteGraphTests");
     String dirs[]=ism.toString().split("\n");
     // limit the test set
-   // dirs=new String[]{"XMLValidation"}; // ,"","","","",""};
+    //dirs=new String[]{"Padding"};
     return Arrays.stream(dirs);
   }
 

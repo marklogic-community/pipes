@@ -1098,6 +1098,10 @@ function init (LiteGraph) {
 
   StringPadding.title = "padding";
 
+  StringPadding.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeStringPadding";
+  }
+
   StringPadding.prototype.onExecute = function () {
     return coreFunctions.executeBlock(this);
   }
