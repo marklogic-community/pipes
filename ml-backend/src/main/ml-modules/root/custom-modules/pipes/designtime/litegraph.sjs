@@ -201,44 +201,6 @@ const TRACE_ID = "pipes-litegraph";
     },
 
     /**
-     * Create a new nodetype by passing a function, it wraps it with a proper class and generates inputs according to the parameters of the function.
-     * Useful to wrap simple methods that do not require properties, and that only process some input to generate an output.
-     * @method wrapFunctionAsNode
-     * @param {String} name node name with namespace (p.e.: 'math/sum')
-     * @param {Function} func
-     * @param {Array} param_types [optional] an array containing the type of every parameter, otherwise parameters will accept any type
-     * @param {String} return_type [optional] string with the return type, otherwise it will be generic
-     * @param {Object} properties [optional] properties to be configurable
-     */
-    wrapFunctionAsNode: function(
-      name,
-      func,
-      param_types,
-      return_type,
-      properties
-    ) {
-      var params = Array(func.length);
-      var names = LiteGraph.getParameterNames(func);
-      let classobj = function() {};
-      classobj.title = name.split("/").pop();
-      classobj.desc = "Generated from " + func.name;
-      classobj.prototype.onExecute = function onExecute() {
-        for (var i = 0; i < params.length; ++i) {
-          params[i] = this.getInputData(i);
-        }
-        for (var i = 0; i < names.length; ++i) {
-          this.addInput(names[i], param_types && param_types[i] ? param_types[i] : 0);
-        }
-        this.addOutput('out', (return_type ? return_type : 0));
-        if (properties) {
-          this.properties = JSN.parse(JSON.stringify(properties));
-        }
-        this.setOutputData(0, r);
-      };
-      this.registerNodeType(name, classobj);
-    },
-
-    /**
      * Adds this method to all nodetypes, existing and to be created
      * (You can add it to LGraphNode.prototype but then existing node types wont have it)
      * @method addNodeMethod

@@ -321,44 +321,6 @@
     }
   },
   {
-    "functionName": "GeoReproject",
-    "blockName": "GeoReproject",
-    "library": "Transform",
-    "title": "Re-project geo coordinates",
-    "description": "Converts geo coordinates from one system to another",
-    "inputs": [
-      {
-        "name": "srcCoordinateSystem",
-        "type": "xs:string",
-        "mandatory": true,
-        "description": "Source coordinate system"
-      },
-      {
-        "name": "targetCoordinateSystem",
-        "type": "xs:string",
-        "mandatory": true,
-        "description": "Target coordinate system"
-      },
-      {
-        "name": "strWKT",
-        "type": "xs:string",
-        "mandatory": true,
-        "description": "Geo shape"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "strWKT",
-        "type": "node",
-        "description": "Converted geo shape"
-      }
-    ],
-    "function": {
-      "ref": "fn.doc",
-      "code": null
-    }
-  },
-  {
     "functionName": "fn_doc",
     "blockName": "doc",
     "title": "Document by URI",
@@ -474,7 +436,7 @@
       {
         "type": "text",
         "name": "format",
-        "default": "DD/MM/YYYY",
+        "default": "DD/MM/YYYY hh:mm:ss",
         "values": []
       }
     ],

@@ -44,8 +44,8 @@ public class BackendModulesAppRunner extends AbstractLoggingClass implements App
     File f = new File(clientConfig.getMlDhfRoot());
     if (!f.exists() || !f.isDirectory()) {
       logger
-          .error(String.format("You've specified the mlDhfRoot parameter but it looks like this folder doesn't exist: "
-              + clientConfig.getMlDhfRoot()));
+          .error(String.format("You've specified the mlDhfRoot parameter but it looks like this folder doesn't exist: ["
+              + clientConfig.getMlDhfRoot()+"]  current-directory=["+System.getProperty("user.dir")+"]"));
       logger.info(String.format("Pipes will not start, check the value of the mlDhfRoot parameter."));
       System.exit(1);
     }

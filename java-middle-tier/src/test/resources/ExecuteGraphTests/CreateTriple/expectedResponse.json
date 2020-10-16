@@ -1,0 +1,9 @@
+{
+"result": {
+"triple": {
+"subject": "SUBJECT",
+"predicate": "myPredicate",
+"object": "OBJECT"
+}
+}
+}

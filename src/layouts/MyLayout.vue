@@ -100,7 +100,7 @@
             @click.stop="executeGraph()"
           >
             <q-tooltip content-class="pipes-tooltip">
-              Preview Graph Execution
+              Preflight Graph
             </q-tooltip>
 
           </q-btn>

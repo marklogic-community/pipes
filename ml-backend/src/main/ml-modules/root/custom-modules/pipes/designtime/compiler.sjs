@@ -43,8 +43,12 @@ function initLiteGraph(jsonGraph) {
   const userBlocks = require("/custom-modules/pipes/runtime/user.sjs");
   const coreBlocks = require("/custom-modules/pipes/designtime/core.sjs");
   const gHelper  = require("/custom-modules/pipes/designtime/graphHelper.sjs");
+  xdmp.log("MODELS");
+  xdmp.log(jsonGraph.models);
   for (let model of jsonGraph.models || []) {
-    LiteGraph.registerNodeType(model.source + "/" + model.collection, gHelper.createGraphNodeFromModel(model));
+    xdmp.log("CREATE MODEL "+model.source + "/" + model.collection);
+    const block = gHelper.createGraphNodeFromModel(model)
+    LiteGraph.registerNodeType(model.source + "/" + model.collection, block);
   }
   coreBlocks.init(LiteGraph);
   userBlocks.init(LiteGraph);
@@ -252,7 +256,11 @@ function generateCode(options,jsonGraph,node,ins,outs,lib) {
   let i = 0;
   let w = {};
   for ( const widget of bc.widgets || [] ) {
-    w[widget.name] = node.widgets_values[i];
+    if ( !node.widgets_values || i >= node.widgets_values.length ) {
+      w[widget.name] = widget.value;
+    } else {
+      w[widget.name] = node.widgets_values[i];
+    }
     i++;
   }
   let hasWidgets = i > 0;
@@ -260,6 +268,12 @@ function generateCode(options,jsonGraph,node,ins,outs,lib) {
   let p = {};
   for ( const property of bc.properties_info || [] ) {
     p[property.name] = node.properties[property.name];
+    i++;
+  }
+  if ( "addBlockDataAsProperties" in bc ) {
+    const blockData = bc.addBlockDataAsProperties();
+    xdmp.log(blockData);
+    p.blockData = blockData;
     i++;
   }
   let hasProperties = i > 0;
@@ -293,7 +307,10 @@ function generateCode(options,jsonGraph,node,ins,outs,lib) {
     const req = require("/custom-modules/pipes/runtime/"+library);
     const inputAsListFunction = bc.getRuntimeLibraryFunctionName() + "InputAsList"
     const inputAsList = inputAsListFunction in req && typeof req[inputAsListFunction] === "function" ? req[inputAsListFunction]() : false;
-
+    const returnAlwaysAnArrayFunction = bc.getRuntimeLibraryFunctionName()  + "ReturnAlwaysAnArray"
+    const returnAlwaysAnArray = returnAlwaysAnArrayFunction in cf && typeof cf[returnAlwaysAnArrayFunction] === "function" ? cf[returnAlwaysAnArrayFunction]() : false;
+    xdmp.log("FUNCTION "+returnAlwaysAnArrayFunction);
+    xdmp.log(returnAlwaysAnArray);
   if ( library == "coreFunctions.sjs" ) {
       lib.core = true;
       prefix = "r";
@@ -310,9 +327,10 @@ function generateCode(options,jsonGraph,node,ins,outs,lib) {
       }
     }
     let out = "const ["+dataOut.join(",")+"]";
-    if ( dataOut.length == 1) {
+    if ( dataOut.length == 1 && !returnAlwaysAnArray) {
       out = "const "+dataOut[0];
     }
+     xdmp.log(out);
     const typeExecutorFunction =  bc.getRuntimeLibraryFunctionName() + "ExecutorType";
     const doesFunctionExist =  typeExecutorFunction in req && typeof req[typeExecutorFunction] === "function";
     const executorType = doesFunctionExist ? req[typeExecutorFunction]() : cf.BLOCK_EXECUTOR_DELEGATOR;

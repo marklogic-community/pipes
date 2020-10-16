@@ -1,0 +1,30 @@
+{
+"QueryOutput": {
+"one": {
+"a": 5,
+"b": 6
+},
+"two": 6,
+"three": {
+"a": 5,
+"b": 6
+},
+"four": {
+"andQuery": {
+"queries": [
+{
+"collectionQuery": {
+"uris": [
+"ingest-unit-test"
+]
+}
+}
+]
+}
+}
+},
+"info": {
+"title": "QueryOutput",
+"version": "0.0.1"
+}
+}
