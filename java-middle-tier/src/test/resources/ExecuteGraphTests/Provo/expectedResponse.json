@@ -1,0 +1,1 @@
+{"result":[{"triple":{"subject":"URI","predicate":"http://www.w3.org/ns/prov#DerivedFrom1","object":"PIPES"}},{"triple":{"subject":"URI","predicate":"http://www.w3.org/ns/prov#GeneratedBy","object":"JOS"}},{"triple":{"subject":"URI","predicate":"http://www.w3.org/ns/prov#createdOn","object":"CREATEDON"}}]}

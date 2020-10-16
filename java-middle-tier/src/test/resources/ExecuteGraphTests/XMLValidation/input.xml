@@ -1,0 +1,10 @@
+<t:thesaurus xmlns:t="http://marklogic.com/xdmp/thesaurus">
+<t:entry>
+<t:term>one</t:term>
+<t:notes>unexpected stuff</t:notes>
+<t:part-of-speech>expl</t:part-of-speech>
+<t:synonym>
+<t:term>unique</t:term>
+</t:synonym>
+</t:entry>
+</t:thesaurus>

@@ -1,0 +1,240 @@
+{
+  "pipesFileVersion": 2,
+  "models": [],
+  "executionGraph": {
+    "last_node_id": 7,
+    "last_link_id": 7,
+    "nodes": [
+      {
+        "id": 2,
+        "type": "DHF/output",
+        "pos": [
+          1308,
+          434
+        ],
+        "size": [
+          180,
+          60
+        ],
+        "flags": {},
+        "order": 5,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "output",
+            "type": 0,
+            "link": 3
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 1,
+        "type": "DHF/input",
+        "pos": [
+          248,
+          489
+        ],
+        "size": [
+          180,
+          100
+        ],
+        "flags": {},
+        "order": 0,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "input",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "uri",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "collections",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "permissions",
+            "type": "",
+            "links": null
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 5,
+        "type": "Generate/multiConstant",
+        "pos": [
+          460,
+          321
+        ],
+        "size": {
+          "0": 255,
+          "1": 82
+        },
+        "flags": {},
+        "order": 1,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "output",
+            "links": [
+              1
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "string",
+          "Unit test created by Jos"
+        ]
+      },
+      {
+        "id": 4,
+        "type": "Enrich/Highlight",
+        "pos": [
+          806,
+          340
+        ],
+        "size": {
+          "0": 262,
+          "1": 66
+        },
+        "flags": {},
+        "order": 4,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "string",
+            "type": 0,
+            "link": 1
+          },
+          {
+            "name": "query",
+            "type": 0,
+            "link": 6
+          },
+          {
+            "name": "highlightKeyword",
+            "type": 0,
+            "link": 7
+          }
+        ],
+        "outputs": [
+          {
+            "name": "enrichedString",
+            "links": [
+              3
+            ]
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 6,
+        "type": "Generate/multiConstant",
+        "pos": [
+          878,
+          606
+        ],
+        "size": {
+          "0": 255,
+          "1": 82
+        },
+        "flags": {},
+        "order": 2,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "output",
+            "links": [
+              6
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "string",
+          "Jos"
+        ]
+      },
+      {
+        "id": 7,
+        "type": "Generate/multiConstant",
+        "pos": [
+          463,
+          553
+        ],
+        "size": {
+          "0": 255,
+          "1": 82
+        },
+        "flags": {},
+        "order": 3,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "output",
+            "links": [
+              7
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "string",
+          "mark"
+        ]
+      }
+    ],
+    "links": [
+      [
+        1,
+        5,
+        0,
+        4,
+        0,
+        0
+      ],
+      [
+        3,
+        4,
+        0,
+        2,
+        0,
+        0
+      ],
+      [
+        6,
+        6,
+        0,
+        4,
+        1,
+        0
+      ],
+      [
+        7,
+        7,
+        0,
+        4,
+        2,
+        0
+      ]
+    ],
+    "groups": [],
+    "config": {},
+    "version": 0.4
+  },
+  "name": "Highlight",
+  "metadata": {
+    "version": "00.01",
+    "author": "",
+    "title": "Highlight",
+    "dateExported": "16/10/2020, 13:18:39"
+  }
+}
