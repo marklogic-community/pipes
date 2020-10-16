@@ -87,11 +87,9 @@ public class BackendModulesManager {
       forceReload = true;
     }
 
-
     // get the version info from front end
     String javaVersionInfo= null;
-      javaVersionInfo = versionService.get();
-
+    javaVersionInfo = versionService.get();
 
     // compare and stop the service if not working
 
@@ -121,8 +119,9 @@ public class BackendModulesManager {
 
     // it will deploy modules if versions mismatch
     // and if using custom blocks
-    if (forceReload || !javaVersionInfo.contains(version) || !javaVersionInfo.contains(build) || clientConfig.getCustomModulesRoot()!=null) {
 
+    // we always load moduels, this is because of user.sjs
+    if (true || forceReload || !javaVersionInfo.contains(version) || !javaVersionInfo.contains(build) || clientConfig.getCustomModulesRoot()!=null) {
       logger.info("{} missmatch with Pipes backend modules or force reload, Version: {} | Build: {}",
         javaVersionInfo, version, build);
 
@@ -135,7 +134,6 @@ public class BackendModulesManager {
       }
       deployModules(authService);
     }
-
   }
 
   private void copyModules() throws Exception {
@@ -208,9 +206,6 @@ public class BackendModulesManager {
 
       ));
 
-
-
-
     Boolean includeCustomUserModule=false;
     final String CUSTOMSJSNAME="user.sjs";
     final String CUSTOMSJSPATH=clientConfig.getCustomModulesRoot()+File.separator+CUSTOMSJSNAME;
@@ -220,6 +215,7 @@ public class BackendModulesManager {
       logger.info("getCustomModulesRoot is defined: " + clientConfig.getCustomModulesRoot());
 
       if( (new File(CUSTOMSJSPATH)).exists() ) {
+        logger.info("Custom user.sjs found. We will add this.");
         includeCustomUserModule = true;
       }
       else {
@@ -243,7 +239,7 @@ public class BackendModulesManager {
 
       try {
         if (operation== fileOperation.Copy) {
-          //FileUtils.copyFile(source,dest, false);
+          Files.createDirectories(Paths.get(clientConfig.getMlDhfRoot() + File.separator +".pipes"));
           Files.createDirectories(Paths.get(clientConfig.getMlDhfRoot() + File.separator +".pipes" + customModulesPipesRuntimePathPrefix));
           Files.copy(sjsSource.toPath(), sjsDest.toPath(),StandardCopyOption.REPLACE_EXISTING);
           logger.info("Copied "+sjsSource.getAbsolutePath()+" to "+sjsDest.getAbsolutePath());

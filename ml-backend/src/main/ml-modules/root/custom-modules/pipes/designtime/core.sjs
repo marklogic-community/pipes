@@ -132,7 +132,6 @@ function init (LiteGraph) {
     this.size = [180, 60];
   }
 
-  GraphOutputDHF.title = "Output";
   GraphOutputDHF.desc = "Output of the graph";
 
   GraphOutputDHF.prototype.getRuntimeLibraryFunctionName = function() {
@@ -184,8 +183,6 @@ function init (LiteGraph) {
     this.stringOperation = this.addWidget("combo", "stringOperation", "string", function (v) { }, { values: ["lowercase", "uppercase", "Capitalise"] });
   }
 
-  stringCaseBlock.title = "String Case";
-
   stringCaseBlock.prototype.getRuntimeLibraryFunctionName = function() {
     return "executeStringCase";
   }
@@ -202,7 +199,6 @@ function init (LiteGraph) {
     this.addOutput('doc', 'node');
     null
   };
-  fn_doc.title = 'doc';
 
   fn_doc.prototype.getRuntimeLibraryFunctionName = function() {
     return "executeQueryDoc";
@@ -219,7 +215,6 @@ function init (LiteGraph) {
     this.addOutput('uri', 'xs:string');
     null
   };
-  fn_baseUri.title = 'baseUri';
 
   fn_baseUri.prototype.getRuntimeLibraryFunctionName = function() {
     return "executeBaseUri";
@@ -242,8 +237,6 @@ function init (LiteGraph) {
     return "executeCount";
   }
 
-  fn_count.title = 'count';
-
   fn_count.prototype.onExecute = function() {
     coreFunctions.executeBlock(this);
   };
@@ -255,8 +248,6 @@ function init (LiteGraph) {
     this.addOutput('joinedString', 'xs:string');
     this.addProperty('separator', ',');
   };
-  fn_stringJoin.title = 'String join';
-
   fn_stringJoin.prototype.getRuntimeLibraryFunctionName = function() {
     return "executeStringJoin";
   }
@@ -271,7 +262,6 @@ function init (LiteGraph) {
     this.string = this.addWidget("text", "string", "Your string", function (v) { }, {});
   }
 
-  StringConstant.title = "Constant";
   StringConstant.desc = "Constant value";
 
   StringConstant.prototype.onDeadNodeRemoval = function () {
@@ -292,9 +282,6 @@ function init (LiteGraph) {
     this.addOutput("firstItem");
 
   }
-
-  //name to show
-  fn_head.title = "head";
 
   fn_head.prototype.getRuntimeLibraryFunctionName = function() {
     return "executeHead";
@@ -330,8 +317,6 @@ function init (LiteGraph) {
     coreFunctions.executeBlock(this);
   }
 
-  //name to show
-  featureLookupByValueBlock.title = "LookupByValue";
 
   featureLookupByValueBlock.prototype.getRuntimeLibraryFunctionName = function() {
     return "executeLookupByValue";
@@ -354,7 +339,6 @@ function init (LiteGraph) {
   featureQueryBuilderBlock.prototype.getRuntimeLibraryFunctionName = function() {
     return "executeExpertQueryBuilder";
   }
-  featureQueryBuilderBlock.title = "ExpertQueryBuilder";
 
   featureQueryBuilderBlock.prototype.onExecute = function () {
     coreFunctions.executeBlock(this);
@@ -369,7 +353,6 @@ function init (LiteGraph) {
     this.castOutput = this.addWidget("combo", "castOutput", "string", function (v) { }, { values: ["string", "bool", "date", "int", "float"] });
     this.wildcarded = this.addWidget("toggle", "wildcarded", false, function (v) { }, {});
   }
-  mapValueBlock.title = "mapValues";
 
   mapValueBlock.prototype.getRuntimeLibraryFunctionName = function() {
     return "executeMapValues";
@@ -388,7 +371,6 @@ function init (LiteGraph) {
     this.mappingRange = this.addProperty("mappingRange");
     this.castOutput = this.addWidget("combo", "castOutput", "string", function (v) { }, { values: ["string", "bool", "date", "int", "float"] });
   }
-  mapRangeValueBlock.title = "mapRangeValues";
 
   mapRangeValueBlock.prototype.getRuntimeLibraryFunctionName = function() {
     return "executeMapRangeValues";
@@ -410,8 +392,6 @@ function init (LiteGraph) {
     this.addProperty("sjsCode");
   }
 
-  EvalJavaScriptBlock.title = "EvalJavaScript";
-
   EvalJavaScriptBlock.prototype.getRuntimeLibraryFunctionName = function() {
     return "executeJavaScript";
   }
@@ -431,8 +411,6 @@ function init (LiteGraph) {
       this.database = this.addWidget("text", "database", "string", function (v) { }, {});
   }
 
-  AdvancedQueryBlock.title = "AdvancedQuery";
-
   AdvancedQueryBlock.prototype.getRuntimeLibraryFunctionName = function() {
     return "executeAdvancedQueryBlock";
   }
@@ -450,7 +428,6 @@ function init (LiteGraph) {
   }
 
   currentDate.values = ["currentDate", "currentDateNoTz", "currentDateTime", "currentTime"];
-  currentDate.title = "Current date(time)";
   currentDate.desc = "Outputs current date(time)";
   currentDate["currentDate"] = { type: "enum", title: "currentDate", values: currentDate.values };
 
@@ -467,7 +444,7 @@ function init (LiteGraph) {
   }
 
   currentDate.prototype.onExecute = function () {
-    coreFunctions.executeBlock();
+    coreFunctions.executeBlock(this);
   }
 
   currentDate.prototype.onDrawBackground = function (ctx) {
@@ -546,8 +523,6 @@ function init (LiteGraph) {
     this.serialize_widgets = true;
   }
 
-  hashNode.title = "Hash Node content";
-
   hashNode.prototype.onExecute = function () {
     coreFunctions.executeBlock(this);
   }
@@ -564,9 +539,6 @@ function init (LiteGraph) {
     this.addOutput("nsValue", "xs:string");
 
   }
-
-  normalizeSpaceBlock.title = "NormalizeSpace";
-
 
   normalizeSpaceBlock.prototype.getRuntimeLibraryFunctionName = function() {
     return "executeNormalizeSpace";
@@ -587,7 +559,6 @@ function init (LiteGraph) {
     this.caseInsensitive = this.addWidget("toggle", "caseInsensitive", true, function (v) { }, {});
   }
 
-  RegExReplaceBlock.title = "RegExReplace";
   RegExReplaceBlock.prototype.onExecute = function () {
     coreFunctions.executeBlock(this);
   }
@@ -612,7 +583,6 @@ function init (LiteGraph) {
 
   }
 
-  stringTemplate.title = "String Templating";
   stringTemplate.desc = "Apply string template on inputs";
 
   stringTemplate.prototype.getRuntimeLibraryFunctionName = function() {
@@ -637,7 +607,6 @@ function init (LiteGraph) {
     this.serialize_widgets = true;
 
   }
-  FormatDate.title = "Format date";
   FormatDate.desc = "Format date with explicit format";
 
   FormatDate.prototype.getRuntimeLibraryFunctionName = function() {
@@ -665,7 +634,6 @@ function init (LiteGraph) {
     return "executeFormatDateTime";
   }
 
-  FormatDateTime.title = "Format date";
   FormatDateTime.desc = "Format date with explicit format";
 
   FormatDateTime.prototype.onExecute = function () {
@@ -682,7 +650,6 @@ function init (LiteGraph) {
     this.addOutput('doc', 'node');
     this.addProperty('propertyName', 'Property name');
   };
-  addPropertyBlock.title = 'Add property';
 
   addPropertyBlock.prototype.getRuntimeLibraryFunctionName = function() {
     return "executeAddProperty";
@@ -705,7 +672,6 @@ function init (LiteGraph) {
     this.serialize_widgets = true;
   }
 
-  CreateTriple.title = "Create Triple";
   CreateTriple.desc = "Create Triple";
 
   CreateTriple.prototype.getRuntimeLibraryFunctionName = function() {
@@ -732,8 +698,6 @@ function init (LiteGraph) {
   uuidString.prototype.getRuntimeLibraryFunctionName = function() {
     return "executeUuidString";
   }
-
-  uuidString.title = "UUID";
   uuidString.desc = "Generate UUID with prefix";
 
   uuidString.prototype.onDeadNodeRemoval = function () {
@@ -772,7 +736,6 @@ function init (LiteGraph) {
     return "executeMultiCast";
   }
 
-  multicast.title = "Multicast";
   multicast.desc = "Cast input to type";
 
   multicast.prototype.onExecute = function () {
@@ -791,7 +754,6 @@ function init (LiteGraph) {
     this.addWidget("text", "nbInputs", 5, function (v) { }, { min: 0, max: 1000 });
   }
 
-  Array.title = "Array";
   Array.desc = "Array";
 
   Array.prototype.getRuntimeLibraryFunctionName = function() {
@@ -812,7 +774,6 @@ function init (LiteGraph) {
     this.splitChar = this.addWidget("string", "splitChar", "/", function (v) { });
   }
 
-  split.title = "Split";
   split.desc = "Split";
 
   split.prototype.onExecute = function () {
@@ -836,8 +797,6 @@ function init (LiteGraph) {
     this.serialize_widgets = true;
   }
 
-  selectCase.title = "selectCase";
-
   selectCase.prototype.getRuntimeLibraryFunctionName = function() {
     return "executeSelectCase";
   }
@@ -859,8 +818,6 @@ function init (LiteGraph) {
   xmlValidate.prototype.getRuntimeLibraryFunctionName = function() {
     return "executeXmlValidation";
   }
-
-  xmlValidate.title = "xmlValidate";
   xmlValidate.prototype.onExecute = function () {
     coreFunctions.executeBlock(this);
   }
@@ -878,8 +835,6 @@ function init (LiteGraph) {
   jsonValidate.prototype.getRuntimeLibraryFunctionName = function() {
     return "executeJsonValidation";
   }
-
-  jsonValidate.title = "jsonValidate";
   jsonValidate.prototype.onExecute = function () {
       coreFunctions.executeBlock(this);
   }
@@ -896,8 +851,6 @@ function init (LiteGraph) {
     this.addOutput("PROV-O", null);
     this.size = this.computeSize();
   }
-
-  provo.title = "PROV-O";
   provo.prototype.getRuntimeLibraryFunctionName = function() {
     return "executeProvo";
   }
@@ -918,8 +871,6 @@ function init (LiteGraph) {
     this.serialize_widgets = true;
   }
 
-  xslBlock.title = "XSL";
-
   xslBlock.prototype.getRuntimeLibraryFunctionName = function() {
     return "executeXsl";
   }
@@ -933,8 +884,6 @@ function init (LiteGraph) {
     this.addOutput("distinctValues", null);
     this.serialize_widgets = true;
   }
-
-  DistinctValues.title = "DistinctValues";
 
   DistinctValues.prototype.getRuntimeLibraryFunctionName = function() {
     return "executeDistinctValues";
@@ -952,7 +901,6 @@ function init (LiteGraph) {
       this.addOutput("filtered");//Add Outputs, same as the one in the json definition
       this.include = this.addWidget("toggle","include", true, function(v){} );
   }
-  FilterArray.title = "FilterArray";
   FilterArray.desc = "Returns the filtered Array based on the given pattern(can be an arrray), either inclusive or exclusive";
 
   FilterArray.prototype.getRuntimeLibraryFunctionName = function() {
@@ -974,8 +922,6 @@ function init (LiteGraph) {
     this.serialize_widgets = true;
   }
 
-  Highlight.title = "Highlight";
-
   Highlight.prototype.getRuntimeLibraryFunctionName = function() {
     return "executeHighlight";
   }
@@ -990,8 +936,6 @@ function init (LiteGraph) {
     this.addOutput("enrichedString", null);
     this.serialize_widgets = true;
   }
-
-  enrichEntity.title = "EntityEnrichment";
 
   enrichEntity.prototype.getRuntimeLibraryFunctionName = function() {
     return "executeEnrichEntity";
@@ -1012,7 +956,6 @@ function init (LiteGraph) {
     this.serialize_widgets = true;
   }
 
-  declarativeMapper.title = "declarativeMapper";
 
   declarativeMapper.prototype.getRuntimeLibraryFunctionName = function() {
     return "executeDeclarativeMapper";
@@ -1037,8 +980,6 @@ function init (LiteGraph) {
     this.serialize_widgets = true;
   }
 
-  checkPhoneNumber.title = "CheckPhoneNumber";
-
   checkPhoneNumber.prototype.getRuntimeLibraryFunctionName = function() {
     return "executeCheckPhoneNumber";
   }
@@ -1056,7 +997,6 @@ function init (LiteGraph) {
     this.namespaces = this.addWidget("text", "namespaces", "", function (v) { }, {});
   }
 
-  xpathBlock.title = "xpath";
   xpathBlock.desc = "xpath";
 
   xpathBlock.prototype.getRuntimeLibraryFunctionName = function() {
@@ -1076,7 +1016,6 @@ function init (LiteGraph) {
     this.constant = this.addWidget("text", "constant", "", function (v) { }, {});
   }
 
-  MultipurposeConstant.title = "multiconstant";
 
   MultipurposeConstant.prototype.getRuntimeLibraryFunctionName = function() {
     return "executeMultiPurposeConstant";
@@ -1095,8 +1034,6 @@ function init (LiteGraph) {
     this.paddingDirection = this.addWidget("combo", "Padding Direction", "left", function (v) { }, { values: ["left", "right"] });
     this.paddingChar = this.addWidget("text", "Padding Character", "", function (v) { }, {});
   }
-
-  StringPadding.title = "padding";
 
   StringPadding.prototype.getRuntimeLibraryFunctionName = function() {
     return "executeStringPadding";

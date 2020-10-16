@@ -137,7 +137,7 @@ function executeUuidStringExecutorType() {
 
 function executeUuidString(propertiesAndWidgets,inputs,outputs) {
   let prefix = propertiesAndWidgets.widgets.prefix;
-  let prefix = !prefix ? "" : prefix;
+  prefix = !prefix ? "" : prefix;
   return [
     "const " + outputs[0] + " = '"+prefix+"'+sem.uuidString();"
   ];
@@ -1062,6 +1062,10 @@ function executeBlock(block) {
   }
   const functionName = block.getRuntimeLibraryFunctionName();
   const library = "getRuntimeLibraryPath" in  block ? "/custom-modules/pipes/runtime/"+block.getRuntimeLibraryPath() : "/custom-modules/pipes/runtime/coreFunctions.sjs";
+  xdmp.log("LIBRARY");
+  xdmp.log(library)
+  xdmp.log("getRuntimeLibraryPath" in  block );
+  xdmp.log(Object.keys(block));
   const inputs = getInputs(block);
   let propertiesAndWidgets = getPropertiesAndWidgets(block);
   if ( functionName === "executeSourceBlock") {
