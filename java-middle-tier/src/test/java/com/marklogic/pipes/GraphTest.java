@@ -152,14 +152,11 @@ class GraphTest {
     session.setAttribute(SESSION_USERNAME_KEY, MLUSERNAME);
     session.setAttribute(SESSION_SERVICE, authService.getService());
   }
-
-
   @ParameterizedTest(name = "Interpreter: #{index} : {0}")
   @MethodSource("getDirectoryNames")
   void genericGraphTestsInterpreter(String argument) throws Exception {
     runGrahTests(argument,false);
   }
-
   @ParameterizedTest(name = "Compiler: #{index} : {0}")
   @MethodSource("getDirectoryNames")
   void genericGraphTestsCompiler(String argument) throws Exception {
@@ -222,7 +219,7 @@ class GraphTest {
     InputStreamHandle ism= getInputStreamHandle("ExecuteGraphTests");
     String dirs[]=ism.toString().split("\n");
     // limit the test set
-    dirs=new String[]{"FormatDate"};
+    //dirs=new String[]{"FilterArray"};
     return Arrays.stream(dirs);
   }
 

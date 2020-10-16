@@ -43,8 +43,12 @@ function initLiteGraph(jsonGraph) {
   const userBlocks = require("/custom-modules/pipes/runtime/user.sjs");
   const coreBlocks = require("/custom-modules/pipes/designtime/core.sjs");
   const gHelper  = require("/custom-modules/pipes/designtime/graphHelper.sjs");
+  xdmp.log("MODELS");
+  xdmp.log(jsonGraph.models);
   for (let model of jsonGraph.models || []) {
-    LiteGraph.registerNodeType(model.source + "/" + model.collection, gHelper.createGraphNodeFromModel(model));
+    xdmp.log("CREATE MODEL "+model.source + "/" + model.collection);
+    const block = gHelper.createGraphNodeFromModel(model)
+    LiteGraph.registerNodeType(model.source + "/" + model.collection, block);
   }
   coreBlocks.init(LiteGraph);
   userBlocks.init(LiteGraph);
@@ -252,7 +256,11 @@ function generateCode(options,jsonGraph,node,ins,outs,lib) {
   let i = 0;
   let w = {};
   for ( const widget of bc.widgets || [] ) {
-    w[widget.name] = node.widgets_values[i];
+    if ( !node.widgets_values || i >= node.widgets_values.length ) {
+      w[widget.name] = widget.value;
+    } else {
+      w[widget.name] = node.widgets_values[i];
+    }
     i++;
   }
   let hasWidgets = i > 0;
@@ -260,6 +268,12 @@ function generateCode(options,jsonGraph,node,ins,outs,lib) {
   let p = {};
   for ( const property of bc.properties_info || [] ) {
     p[property.name] = node.properties[property.name];
+    i++;
+  }
+  if ( "addBlockDataAsProperties" in bc ) {
+    const blockData = bc.addBlockDataAsProperties();
+    xdmp.log(blockData);
+    p.blockData = blockData;
     i++;
   }
   let hasProperties = i > 0;

@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = class PipesFlowControlGraph {
   constructor() {
     this.graph = new Map();

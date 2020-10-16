@@ -1,3 +1,4 @@
+'use strict'
 const moment = require("/custom-modules/pipes/runtime/moment-with-locales.min.sjs")
 const DataHub = require("/data-hub/5/datahub.sjs");
 const datahub = new DataHub();
@@ -5,6 +6,10 @@ const datahub = new DataHub();
 const BLOCK_RUNTIME_DEBUG_TRACE = "pipesBlockRuntimeDebug";
 
 module.exports = {
+  executeSourceBlockInputAsList,
+  executeSourceBlock,
+  executeMapRangeValues,
+  executeMapValues,
   executeFormatDate,
   executeFormatDateTime,
   executeFormatDateAuto,
@@ -14,6 +19,8 @@ module.exports = {
   executeJavaScript,
   executeMultiCastInputAsList,
   executeMultiCast,
+  executeSelectCase,
+  executeSelectCaseInputAsList,
   executeNormalizeSpace,
   executeCount,
   executeHead,
@@ -178,7 +185,6 @@ function executeGraphInputDHFExecutorType() {
   return this.BLOCK_EXECUTOR_GENERATOR;
 }
 
-
 function executeGraphInputDHF(propertiesAndWidgets,inputs,outputs) {
   return  [
     "const "+outputs[0]+" = "+inputs[0]+";",
@@ -197,6 +203,107 @@ function executeGraphOutputDHF(propertiesAndWidgets,output) {
     else {
       return output;
     }
+}
+
+function executeSourceBlockInputAsList() {
+  return true;
+}
+
+function executeSourceBlock(propertiesAndWidgets,inputs) {
+  xdmp.log("Enter executeSourceBlock");
+  xdmp.log(propertiesAndWidgets);
+  const blockData = propertiesAndWidgets.properties.blockData;
+  let outputMap = new Map()
+  let max = -1;
+  let index;
+  if (blockData.blockDef.options.indexOf("nodeInput")>-1) {
+    if(inputs[blockData.ioSetup.inputs["Node"]]!=null) {
+      let inputNode = inputs[blockData.ioSetup.inputs["Node"]];
+      blockData.doc.input = inputNode;
+      if(!blockData.doc.input.toObject) {
+        blockData.doc.input = fn.head(xdmp.unquote(JSON.stringify(blockData.doc.input)))
+      }
+    }
+  }
+  if (blockData.blockDef.options.indexOf("getByUri")>-1) {
+    if(inputs[blockData.ioSetup.inputs["Uri"]]!=null) {
+      blockData.doc.input = fn.head(fn.doc(inputs[blockData.ioSetup.inputs["Uri"]])).toObject();
+    }
+  }
+  let docNode = blockData.doc.input
+  for (let i = 0; i < blockData.blockDef.fields.length; i++) {
+    if (blockData.blockDef.options.indexOf("nodeInput") > -1) {
+      let path = "." + blockData.blockDef.fields[i].path
+      let v= docNode.xpath(path)
+      if(v==null || fn.count(v)==0) {
+
+        if(docNode && fn.exists(docNode.xpath("./.."))) {
+          let root = fn.head(docNode.xpath(".//name(.)"))
+          let rootPos = path.indexOf(root + "/")
+          if(rootPos >=0) {
+            path = "." + path.substring(rootPos + root.length)
+          }else {
+            rootPos = path.indexOf(root)
+            if(path.substring(rootPos).indexOf("/")<0)
+              path = path.substring(path.lastIndexOf("/"))
+          }
+        }
+      }
+      let children = docNode.xpath( path + "//*")
+      if(fn.count(children)>1)
+        v=docNode.xpath(path).toArray();
+      else
+        v=docNode.xpath( path + "/string()");
+      blockData.doc.output[blockData.blockDef.fields[i].field] =  v
+    }
+
+    if (blockData.blockDef.options.indexOf("fieldsInputs") > -1) {
+      let v = inputs[blockData.ioSetup.inputs[blockData.blockDef.fields[i].path]]
+      blockData.doc.output[blockData.blockDef.fields[i].field] = v ;
+      try {
+        let srcUri = fn.baseUri(v);
+        if(srcUri!=null) blockData.prov.add(String(srcUri))
+      }
+      catch(error) {
+      }
+    }
+    if (blockData.blockDef.options.indexOf("fieldsOutputs") > -1) {
+      index = blockData.ioSetup.outputs[blockData.blockDef.fields[i].path];
+      if ( index > max ) {
+        max = index;
+      }
+      outputMap.set(index, blockData.doc.output[blockData.blockDef.fields[i].field]);
+    }
+  }
+  if (blockData.blockDef.options.indexOf("nodeOutput") > -1) {
+    let out = {};
+    if(propertiesAndWidgets.widgets["WithInstanceRoot"] == true){
+      out[blockData.blockDef.collection] = blockData.doc.output;
+      out["info"] = {
+        "title" : blockData.blockDef.collection,
+        "version" : "0.0.1" //TODO make it dynamic
+      }
+    }
+    else{
+      out= blockData.doc.output;
+    }
+    index = blockData.ioSetup.outputs["Node"];
+    if ( index > max ) {
+      max = index;
+    }
+    outputMap.set(index, out);
+    index = blockData.ioSetup.outputs["Prov"];
+    if ( index > max ) {
+      max = index;
+    }
+    outputMap.set(index, Array.from(blockData.prov));
+  }
+  let output = [];
+  for ( let i = 0 ; i <= max ; i++ ) {
+    const value = outputMap.get(i);
+    output.push(value);
+  }
+  return output;
 }
 
 function executeJavaScript(propertiesAndWidgets,var1,var2,var3,var4,var5) {
@@ -288,6 +395,118 @@ function executeXpath(propertiesAndWidgets,input) {
   }
   return output;
 }
+
+function executeMapRangeValues(propertiesAndWidgets,input1,input2) {
+  let val = Number(input1);
+  let mappedValue = propertiesAndWidgets.properties['mappingRange'].filter(item => {
+    return val >= Number(item.from) && val <= Number(item.to)
+  });
+  let output = input2;
+  if (!output) {
+    output = 0;
+  }
+  if (mappedValue != null && mappedValue.length > 0) {
+    output = mappedValue[0].target;
+    if (output === "#INPUT#") {
+      output = val;
+    }
+  }
+  if (propertiesAndWidgets.widgets.castOutput === 'bool') {
+    if (output === "true") {
+      output = true;
+    } else if (output === "false") {
+      output = false;
+    }
+  } else if (propertiesAndWidgets.widgets.castOutput === 'string') {
+    output = output.toString();
+  } else if (propertiesAndWidgets.widgets.castOutput == 'number') {
+    output = Number(output.toString());
+  }
+  return output;
+}
+
+function executeMapValues(propertiesAndWidgets,input) {
+  let val = String(input);
+  if (val === undefined) {
+    val = "#NULL#";
+  }
+  if (val === null) {
+    val = "#NULL#";
+  }
+  if (val === "") {
+    val = "#EMPTY#";
+  }
+  let mappedValue = null;
+  if (propertiesAndWidgets.widgets.wildcarded) {
+    mappedValue = [];
+    for (const map of propertiesAndWidgets.properties['mapping']) {
+      const wildcard = map.source;
+      const re = new RegExp(`^${wildcard.replace(/\*/g, '.*').replace(/\?/g, '.')}$`, '');
+      if (re.test(val)) {
+        mappedValue.push(map);
+      }
+    }
+  } else {
+    mappedValue = propertiesAndWidgets.properties['mapping'].filter(item => {
+      return item.source === val;
+    });
+  }
+  let output = input;
+  if (mappedValue != null && mappedValue.length > 0) {
+    output = mappedValue[0].target;
+  }
+  if (propertiesAndWidgets.widgets.castOutput === 'bool') {
+    if (output === "true") {
+      output = true;
+    } else if (output === "false") {
+      output = false;
+    }
+  } else if (propertiesAndWidgets.widgets.castOutput === 'string') {
+    output = output.toString();
+  } else if (propertiesAndWidgets.widgets.castOutput == 'number') {
+    output = Number(output.toString());
+  }
+
+  if (output === "#NULL#") output = null;
+  if (output === "#EMPTY#") output = "";
+  return output;
+}
+function executeSelectCaseInputAsList() {
+  return true;
+}
+
+function executeSelectCase(propertiesAndWidgets,inputs) {
+  let value2test = inputs[0];
+  if (value2test === undefined) {
+    value2test = "#NULL#";
+  } else if (value2test === null) {
+    value2test = "#NULL#";
+  } else if (value2test === "") {
+    value2test = "#EMPTY#";
+  } else {
+    value2test = String(value2test);
+  }
+  let r = null;
+  let o = null;
+  for (let mapCase of propertiesAndWidgets.properties.mappingCase) {
+    if (mapCase.value == value2test) {
+      o = mapCase.input;
+    }
+  }
+  const index = parseInt(o) + 2;
+  if (o != null && index < inputs.length ) {
+    r = inputs[index];
+  } else {
+    const defaultValue = inputs[1];
+    if (defaultValue == null) {
+      r = value2test;
+    } else {
+      r = defaultValue;
+    }
+  }
+  return r;
+}
+
 function executeHash(propertiesAndWidgets,input) {
   switch (propertiesAndWidgets.widgets['hash function']) {
     case "hash64":
@@ -326,7 +545,7 @@ function executeFilterArray(propertiesAndWidgets,unfiltered,patterns) {
   {
     let patternArray = patterns.constructor.name === "Array" ? patterns : [patterns]
     filtered = unfiltered.filter(function (item) {
-      for (p of patternArray) {
+      for (let p of patternArray) {
         if (item.includes(p)) {
           return include;
         }
@@ -629,7 +848,10 @@ function executeBlock(block) {
   const functionName = block.getRuntimeLibraryFunctionName();
   const library = "getRuntimeLibraryPath" in  block ? "/custom-modules/pipes/runtime/"+block.getRuntimeLibraryPath() : "/custom-modules/pipes/runtime/coreFunctions.sjs";
   const inputs = getInputs(block);
-  const propertiesAndWidgets = getPropertiesAndWidgets(block);
+  let propertiesAndWidgets = getPropertiesAndWidgets(block);
+  if ( functionName === "executeSourceBlock") {
+    propertiesAndWidgets.properties.blockData = block.blockData;
+  }
   const lib = require(library)
   const func = lib[functionName];
   if ( typeof func !== "function") {
@@ -762,7 +984,7 @@ function getPropertiesAndWidgets(block) {
     widgets : {}
   }
   xdmp.log(block.widgets);
-  for ( widget of block.widgets || [] ) {
+  for ( let widget of block.widgets || [] ) {
     const name = widget.name;
     const value=widget.value;
     propertiesWidgets.widgets[name] = value;

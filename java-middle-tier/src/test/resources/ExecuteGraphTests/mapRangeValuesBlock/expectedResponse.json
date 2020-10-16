@@ -14,10 +14,6 @@
     },
     "uri": "/test/LOW.json",
     "context": {
-      "collections": [
-        "ingest-unit-test"
-      ],
-      "permissions":[]
     }
   },
   {
@@ -33,10 +29,6 @@
     },
     "uri": "/test/HIGH.json",
     "context": {
-      "collections": [
-        "ingest-unit-test"
-      ],
-      "permissions":[]
     }
   }
 ]

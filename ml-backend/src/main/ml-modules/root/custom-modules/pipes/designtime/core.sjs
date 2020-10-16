@@ -1,3 +1,4 @@
+'use strict';
 //Copyright ©2020 MarkLogic Corporation.
 const entity = require('/MarkLogic/entity');
 const lib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
@@ -562,49 +563,14 @@ function init (LiteGraph) {
   }
   mapValueBlock.title = "mapValues";
 
-  mapValueBlock.prototype.onExecute = function () {
-    let val = String(this.getInputData(0));
-    if (val === undefined) {
-      val = "#NULL#";
-    }
-    if (val === null) {
-      val = "#NULL#";
-    }
-    if (val === "") {
-      val = "#EMPTY#";
-    }
-    let mappedValue = null;
-    if (this.wildcarded.value) {
-      mappedValue = [];
-      for (const map of this.properties['mapping']) {
-        const wildcard = map.source;
-        const re = new RegExp(`^${wildcard.replace(/\*/g, '.*').replace(/\?/g, '.')}$`, '');
-        if (re.test(val)) {
-          mappedValue.push(map);
-        }
-      }
-    } else {
-      mappedValue = this.properties['mapping'].filter(item => {
-        return item.source === val;
-      });
-    }
-    let output = this.getInputData(1);
-    if (mappedValue != null && mappedValue.length > 0) {
-      output = mappedValue[0].target;
-    }
-    if (this.castOutput.value === 'bool') {
-      if (output === "true") {
-        output = true;
-      } else if (output === "false") {
-        output = false;
-      }
-    }
-
-    if (output == "#NULL#") output = null
-    if (output == "#EMPTY#") output = ""
-
-    this.setOutputData(0, output);
+  mapValueBlock.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeMapValues";
   }
+
+  mapValueBlock.prototype.onExecute = function () {
+    coreFunctions.executeBlock(this);
+  }
+
   LiteGraph.registerNodeType("Mapping/Map values", mapValueBlock);
 
   function mapRangeValueBlock () {
@@ -616,33 +582,12 @@ function init (LiteGraph) {
   }
   mapRangeValueBlock.title = "mapRangeValues";
 
+  mapRangeValueBlock.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeMapRangeValues";
+  }
+
   mapRangeValueBlock.prototype.onExecute = function () {
-    let val = Number(this.getInputData(0));
-    let mappedValue = this.properties['mappingRange'].filter(item => {
-      return val >= Number(item.from) && val <= Number(item.to)
-    });
-    let output = this.getInputData(1);
-    if (!output) {
-      output = 0;
-    }
-    if (mappedValue != null && mappedValue.length > 0) {
-      output = mappedValue[0].target;
-      if (output === "#INPUT#") {
-        output = val;
-      }
-    }
-    if (this.castOutput.value === 'bool') {
-      if (output === "true") {
-        output = true;
-      } else if (output === "false") {
-        output = false;
-      }
-    } else if (this.castOutput.value === 'string') {
-      output = output.toString()
-    } else if (this.castOutput.value === 'number') {
-      output = Number(output.toString())
-    }
-    this.setOutputData(0, output);
+    coreFunctions.executeBlock(this);
   }
 
   LiteGraph.registerNodeType("Mapping/mapRangeValues", mapRangeValueBlock);
@@ -1169,37 +1114,13 @@ function init (LiteGraph) {
   }
 
   selectCase.title = "selectCase";
+
+  selectCase.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeSelectCase";
+  }
+
   selectCase.prototype.onExecute = function () {
-    let value2test = this.getInputData(0);
-    if (value2test === undefined) {
-      value2test = "#NULL#";
-    } else if (value2test === null) {
-      value2test = "#NULL#";
-    } else if (value2test === "") {
-      value2test = "#EMPTY#";
-    } else {
-      value2test = String(value2test)
-    }
-
-    let r = null;
-    let o = null;
-    for (let mapCase of this.properties.mappingCase) {
-      if (mapCase.value == value2test) {
-        o = mapCase.input;
-      }
-    }
-
-    if (o != null) {
-      r = this.getInputData(parseInt(o) + 2);
-    } else {
-      const defaultValue = this.getInputData(1);
-      if (defaultValue == null) {
-        r = value2test;
-      } else {
-        r = defaultValue;
-      }
-    }
-    this.setOutputData(0, r);
+    coreFunctions.executeBlock(this);
   }
 
   LiteGraph.registerNodeType("Mapping/selectCase", selectCase);
