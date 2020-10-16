@@ -1,11 +1,6 @@
 'use strict';
 //Copyright ©2020 MarkLogic Corporation.
 const entity = require('/MarkLogic/entity');
-const lib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
-//const lib2 = require('/data-hub/5/builtins/steps/mapping/entity-services/lib.sjs')
-const lib2 = require("/custom-modules/pipes/runtime/entity-services-lib-vpp.sjs")
-const PNF = require('/custom-modules/pipes/runtime/google-libphonenumber.sjs').PhoneNumberFormat;
-const phoneUtil = require('/custom-modules/pipes/runtime/google-libphonenumber.sjs').PhoneNumberUtil.getInstance();
 const BLOCK_RUNTIME_DEBUG_TRACE = "pipesBlockRuntimeDebug";
 
 const coreFunctions = require("/custom-modules/pipes/runtime/coreFunctions.sjs")
@@ -201,87 +196,6 @@ function init (LiteGraph) {
 
   LiteGraph.registerNodeType("Transform/stringCase", stringCaseBlock);
 
-  //Show value inside the debug console
-  function Console () {
-    this.mode = LiteGraph.ON_EVENT;
-    this.size = [60, 20];
-    this.addProperty("msg", "");
-    this.addInput("log", LiteGraph.EVENT);
-    this.addInput("msg", 0);
-  }
-
-  Console.title = "Console";
-  Console.desc = "Show value inside the console";
-
-  Console.prototype.onAction = function (action, param) {
-    if (action == "log")
-      console.log(param);
-    else if (action == "warn")
-      console.warn(param);
-    else if (action == "error")
-      console.error(param);
-  }
-
-  Console.prototype.onExecute = function () {
-    var msg = this.getInputData(1);
-    if (msg !== null)
-      this.properties.msg = msg;
-    console.log(msg);
-  }
-
-  Console.prototype.onGetInputs = function () {
-    return [["log", LiteGraph.ACTION], ["warn", LiteGraph.ACTION], ["error", LiteGraph.ACTION]];
-  }
-
-  LiteGraph.registerNodeType("basic/console", Console);
-
-
-  //Show value inside the debug console
-  function NodeScript () {
-    this.size = [60, 20];
-    this.addProperty("onExecute", "");
-    this.addInput("in", "");
-    this.addInput("in2", "");
-    this.addOutput("out", "");
-    this.addOutput("out2", "");
-
-    this._func = null;
-  }
-
-  NodeScript.title = "Script";
-  NodeScript.desc = "executes a code";
-
-  NodeScript.widgets_info = {
-    "onExecute": { type: "code" }
-  };
-
-  NodeScript.prototype.onPropertyChanged = function (name, value) {
-    if (name == "onExecute" && LiteGraph.allow_scripts) {
-      this._func = null;
-      try {
-        this._func = new Function(value);
-      }
-      catch (err) {
-        console.error("Error parsing script");
-        console.error(err);
-      }
-    }
-  }
-
-  NodeScript.prototype.onExecute = function () {
-    if (!this._func)
-      return;
-
-    try {
-      this._func.call(this);
-    }
-    catch (err) {
-      console.error("Error in script");
-      console.error(err);
-    }
-  }
-
-  LiteGraph.registerNodeType("basic/script", NodeScript);
 
   function fn_doc() {
     this.addInput('uri', 'xs:string');
@@ -306,9 +220,6 @@ function init (LiteGraph) {
     null
   };
   fn_baseUri.title = 'baseUri';
-  fn_baseUri.prototype.onExecute = function() {
-    this.setOutputData(0, fn.baseUri(this.getInputData(0)));
-  };
 
   fn_baseUri.prototype.getRuntimeLibraryFunctionName = function() {
     return "executeBaseUri";
@@ -354,100 +265,6 @@ function init (LiteGraph) {
     coreFunctions.executeBlock(this);
   };
   LiteGraph.registerNodeType('Join/String join', fn_stringJoin);
-
-  //Output for a subgraph
-  function GlobalEnvelopeOutput () {
-    //random name to avoid problems with other outputs when added
-    var output_name = "output";
-    var output_uri = "uri";
-
-    this.addInput("output", null);
-    this.addInput("headers", null);
-    this.addInput("triples", null);
-    this.addInput("instance", null);
-    this.addInput("attachments", null);
-    this.addInput("uri", null);
-
-    this._value = null;
-
-    this.properties = { name: output_name, type: null, uri: output_uri };
-
-    var that = this;
-
-    Object.defineProperty(this.properties, "name", {
-      get: function () {
-        return output_name;
-      },
-      set: function (v) {
-        if (v == "")
-          return;
-
-        var info = that.getInputInfo(0);
-        if (info.name == v)
-          return;
-        info.name = v;
-        if (that.graph)
-          that.graph.renameGlobalOutput(output_name, v);
-        output_name = v;
-      },
-      enumerable: true
-    });
-
-    Object.defineProperty(this.properties, "uri", {
-      get: function () {
-        return output_uri;
-      },
-      set: function (v) {
-        if (v == "")
-          return;
-
-        var info = that.getInputInfo(5);
-        if (info.name == v)
-          return;
-        info.name = v;
-        if (that.graph)
-          that.graph.renameGlobalOutput(output_uri, v);
-        output_uri = v;
-      },
-      enumerable: true
-    });
-
-    Object.defineProperty(this.properties, "type", {
-      get: function () { return that.inputs[0].type; },
-      set: function (v) {
-        that.inputs[0].type = v;
-        if (that.graph)
-          that.graph.changeGlobalInputType(output_name, that.inputs[0].type);
-      },
-      enumerable: true
-    });
-  }
-
-  GlobalEnvelopeOutput.title = "Output with envelope";
-  GlobalEnvelopeOutput.desc = "Output of the graph";
-
-  GlobalEnvelopeOutput.prototype.onAdded = function () {
-    var name = this.graph.addGlobalOutput(this.properties.name, this.properties.type);
-    var uri = this.graph.addGlobalOutput(this.properties.uri, this.properties.type);
-  }
-
-  GlobalEnvelopeOutput.prototype.getValue = function () {
-    return this._value;
-  }
-
-  GlobalEnvelopeOutput.prototype.onExecute = function () {
-    let result = { 'envelope': {} };
-    result.envelope.headers = (this.getInputData(1) != undefined) ? this.getInputData(1) : {};
-    result.envelope.triples = (this.getInputData(2) != undefined) ? this.getInputData(2) : {};
-    result.envelope.instance = (this.getInputData(3) != undefined) ? this.getInputData(3) : {};
-    result.envelope.attachments = (this.getInputData(4) != undefined) ? this.getInputData(4) : {};
-    let uri = (this.getInputData(5) != undefined) ? this.getInputData(5) : null;
-
-    this.graph.setGlobalOutputData(this.properties.name, result);
-    this.graph.setGlobalOutputData(this.properties.uri, uri);
-  }
-
-  LiteGraph.registerNodeType("DHF/StepEnvelopeOutput", GlobalEnvelopeOutput);
 
   function StringConstant () {
     this.addOutput("value", "xs:string");
@@ -504,17 +321,24 @@ function init (LiteGraph) {
     const OUTPUTS = 20;
     for (var vp = 0; vp < OUTPUTS; vp++) {
       var varName = 'value' + vp + 'Path'
-      this[varName] = this.addWidget("text", "nbOutputValues", "", function (v) { }, {});
+      this[varName] = this.addWidget("text",varName, "", function (v) { }, {});
       this.addOutput("val" + vp);
     }
+  }
+
+  featureLookupByValueBlock.prototype.onExecute = function () {
+    coreFunctions.executeBlock(this);
   }
 
   //name to show
   featureLookupByValueBlock.title = "LookupByValue";
 
+  featureLookupByValueBlock.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeLookupByValue";
+  }
+
   featureLookupByValueBlock.prototype.onExecute = function () {
-    let var1 = this.getInputData(0);
-    coreFunctions.LookupByValue(this, var1, this.nbOutputValues.value);
+     coreFunctions.executeBlock(this);
   }
 
   LiteGraph.registerNodeType("Query/LookupByValue", featureLookupByValueBlock);
@@ -526,30 +350,14 @@ function init (LiteGraph) {
     this.addProperty("queryBuilder");
     this.database = this.addWidget("text", "database", "string", function (v) { }, {});
   }
+
+  featureQueryBuilderBlock.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeExpertQueryBuilder";
+  }
   featureQueryBuilderBlock.title = "ExpertQueryBuilder";
 
   featureQueryBuilderBlock.prototype.onExecute = function () {
-
-    let query = this.properties.queryBuilder
-
-    let computedQuery = null
-
-
-    // TODO : pass also the list of input in order to replace inside the query if needed
-    if (query.logicalOperator == "all") {
-      computedQuery = cts.andQuery(coreFunctions.computeQueryRecursively(query, this))
-    } else {
-      computedQuery = cts.orQuery(coreFunctions.computeQueryRecursively(query, this))
-    }
-
-    let result = xdmp.invokeFunction(() => {
-      return cts.search(computedQuery,["unfiltered","score-zero"],0);
-    }, { database: xdmp.database(query.selectedDB.label) });
-
-    if (result != null) {
-      this.setOutputData(0, result);
-    }
-    this.setOutputData(1, computedQuery);
+    coreFunctions.executeBlock(this);
   }
 
   LiteGraph.registerNodeType("Query/ExpertQueryBuilder", featureQueryBuilderBlock);
@@ -625,23 +433,12 @@ function init (LiteGraph) {
 
   AdvancedQueryBlock.title = "AdvancedQuery";
 
-  AdvancedQueryBlock.prototype.onExecute = function () {
-    let query = this.properties.query;
-    let code = "";
-    const nrOfInputs = parseInt(this.nbInputs.value);
-    for ( let i = 0 ; i < nrOfInputs ; i++ )  {
-      code += "const v" + i + " = this.getInputData(" + i + ");"
-    }
-    code += query;
-    let computedQuery = eval(code);
-    let result = xdmp.invokeFunction(() => {
-      return cts.search(computedQuery,["unfiltered","score-zero"],0);
-    }, { database: xdmp.database(this.database.value) });
+  AdvancedQueryBlock.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeAdvancedQueryBlock";
+  }
 
-    if (result != null) {
-      this.setOutputData(0, result);
-    }
-    this.setOutputData(1, computedQuery);
+  AdvancedQueryBlock.prototype.onExecute = function () {
+    coreFunctions.executeBlock(this);
   }
 
   LiteGraph.registerNodeType("Advanced/AdvancedQuery", AdvancedQueryBlock);
@@ -657,6 +454,10 @@ function init (LiteGraph) {
   currentDate.desc = "Outputs current date(time)";
   currentDate["currentDate"] = { type: "enum", title: "currentDate", values: currentDate.values };
 
+  currentDate.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeCurrentDate";
+  }
+
   currentDate.prototype.getTitle = function () {
     return this.properties.currentDate;
   }
@@ -666,12 +467,7 @@ function init (LiteGraph) {
   }
 
   currentDate.prototype.onExecute = function () {
-    switch (this.properties.currentDate) {
-      case "currentDate": this.setOutputData(0, fn.currentDate()); break;
-      case "currentDateNoTz": this.setOutputData(0, fn.adjustDateToTimezone(fn.currentDate(), null)); break;
-      case "currentDateTime": this.setOutputData(0, fn.currentDateTime()); break;
-      case "currentTime": this.setOutputData(0, fn.currentTime()); break;
-    }
+    coreFunctions.executeBlock();
   }
 
   currentDate.prototype.onDrawBackground = function (ctx) {
@@ -912,20 +708,12 @@ function init (LiteGraph) {
   CreateTriple.title = "Create Triple";
   CreateTriple.desc = "Create Triple";
 
+  CreateTriple.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeCreateTriple";
+  }
+
   CreateTriple.prototype.onExecute = function () {
-
-    let subject = this.getInputData(0)
-    let object = this.getInputData(1)
-    let predicate = this.predicate.value
-
-    let subjectIsIRI = this.subjectIsIRI.value
-    let objectIsIRI = this.objectIsIRI.value
-
-    if (subjectIsIRI) subject = sem.iri(String(subject))
-    if (objectIsIRI) object = sem.iri(String(object))
-    predicate = sem.iri(predicate)
-
-    this.setOutputData(0, sem.triple(subject, predicate, object));
+    coreFunctions.executeBlock(this);
   }
   LiteGraph.registerNodeType("Enrich/CreateTriple", CreateTriple);
 
@@ -941,6 +729,10 @@ function init (LiteGraph) {
 
   }
 
+  uuidString.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeUuidString";
+  }
+
   uuidString.title = "UUID";
   uuidString.desc = "Generate UUID with prefix";
 
@@ -950,8 +742,7 @@ function init (LiteGraph) {
   }
 
   uuidString.prototype.onExecute = function () {
-    let prefix = this.prefix.value
-    this.setOutputData(0, prefix + sem.uuidString());
+    coreFunctions.executeBlock(this);
   }
 
   LiteGraph.registerNodeType("Generate/uuid", uuidString);
@@ -988,74 +779,6 @@ function init (LiteGraph) {
       coreFunctions.executeBlock(this);
   }
   LiteGraph.registerNodeType("Transform/multicast", multicast);
-
-
-
-  function wktReproject (s_srs, t_srs, inWkt) {
-    // get coords from inWkt and send to Esri project service, alternative is to setup something with ogr2ogr as a service (RFE: ogr/gdal in MarkLogic)
-    // this reproject here is not the right place, no exception/error handling and won't work with higher data volumes I guess
-    let outWkt = esriResponseToWKT(wktToEsriRequest(s_srs, t_srs, inWkt));
-    //let outWkt = fn.concat(makeWkt("LINESTRING",5)); // create dummy wkt data
-    return outWkt;
-  }
-
-  function wktToEsriRequest (s_srs, t_srs, inWkt) {
-    let coords = fn.substringBefore(fn.substringAfter(inWkt, "LINESTRING ("), ")"); // TODO: improve to work for POINT and POLYGON WKT strings too
-    var i;
-    var pair;
-    var pairs = coords.split(",");
-    var esriPairs = '';
-    for (var i = 0; i < pairs.length; i++) {
-      pair = pairs[i].trim().split(" "); // TODO: now trims whitespaces from both ends of the string otherwise split on space fails, improve
-      esriPairs += fn.concat('{"x": ', pair[0], ', "y": ', pair[1], '},');
-    }
-    esriPairs = esriPairs.substr(0, esriPairs.length - 1); // cut of last trailing comma
-    let esriProjectService = "http://tasks.arcgisonline.com/arcgis/rest/services/Geometry/GeometryServer/project?";
-    let esriSR = fn.concat("inSR=+", s_srs, "&outSR=", t_srs, "&geometries=");
-    let esriGeometries = xdmp.urlEncode(fn.concat('{"geometryType":"esriGeometryPoint","geometries":[', esriPairs, ']}'), false);
-    let esriOptions = "&transformation=&transformForward=true&f=pjson";
-    let esriRequest = fn.concat(esriProjectService, esriSR, esriGeometries, esriOptions);
-    let esriResponse = fn.subsequence(xdmp.httpGet(esriRequest), 2, 1); // get second part of the response to only return body part, not headers
-    return esriResponse;
-  }
-
-  function esriResponseToWKT (esriResponse) {
-    // from Esri json response to LINESTRING format, can't get the code right in MarkLogic to do it the json/array way.
-    // should be able to just get x and y values from geometries object, this is so q&d now...
-    let coords = fn.substringBefore(fn.substringAfter(esriResponse, '"geometries": ['), ']');
-    coords = fn.replace(coords, "\\n", "");
-    coords = fn.replace(coords, "\\r", "");
-    coords = fn.replace(coords, "\\t", "");
-    coords = fn.replace(coords, "\\},", "xxx");
-    coords = fn.replace(coords, '\\{', '');
-    coords = fn.replace(coords, '"x": ', '');
-    coords = fn.replace(coords, '"y": ', '');
-    coords = fn.replace(coords, '\\}', '');
-    coords = fn.replace(coords, ',', ' ');
-    coords = fn.replace(coords, 'xxx', ',');
-    let reprojectedWkt = fn.concat("LINESTRING(", coords.trim(), ")");
-    return reprojectedWkt;
-  }
-
-  function GeoReproject () {
-    this.addInput("srcCoordinateSystem");
-    this.addInput("targetCoordinateSystem");
-    this.addInput("strWKT");
-    this.addOutput("strWKT");
-  }
-
-  GeoReproject.title = "GeoReproject";
-  GeoReproject.desc = "Geo Reproject";
-
-  GeoReproject.prototype.onExecute = function () {
-
-    let srcCS = parseInt(this.getInputData(0))
-    let tgtCS = parseInt(this.getInputData(1))
-    let strWKT = this.getInputData(2)
-    let result = wktReproject(srcCS, tgtCS, strWKT)
-    this.setOutputData(0, result)
-  }
-  LiteGraph.registerNodeType("Transform/GeoReproject", GeoReproject);
 
 
   function Array () {
@@ -1133,10 +856,13 @@ function init (LiteGraph) {
     this.serialize_widgets = true;
   }
 
+  xmlValidate.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeXmlValidation";
+  }
+
   xmlValidate.title = "xmlValidate";
   xmlValidate.prototype.onExecute = function () {
-    let inputNode = this.getInputData(0);
-    this.setOutputData(0, xdmp.validate(inputNode))
+    coreFunctions.executeBlock(this);
   }
   LiteGraph.registerNodeType("Validate/XMLValidate", xmlValidate);
 
@@ -1149,20 +875,13 @@ function init (LiteGraph) {
     this.serialize_widgets = true;
   }
 
+  jsonValidate.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeJsonValidation";
+  }
+
   jsonValidate.title = "jsonValidate";
   jsonValidate.prototype.onExecute = function () {
-
-    let inputNode = this.getInputData(0);
-    let schema = this.getInputData(1);
-
-    try {
-      let results = xdmp.jsonValidate(inputNode, schema)
-      this.setOutputData(0, results)
-    }
-    catch (error) {
-
-      this.setOutputData(0, error)
-    }
+      coreFunctions.executeBlock(this);
   }
 
   LiteGraph.registerNodeType("Validate/JsonValidate", jsonValidate);
@@ -1179,25 +898,12 @@ function init (LiteGraph) {
   }
 
   provo.title = "PROV-O";
+  provo.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeProvo";
+  }
+
   provo.prototype.onExecute = function () {
-    let uri = this.getInputData(0)
-    let triples = []
-    if (this.getInputData(1))
-      triples.push(sem.triple(sem.iri(uri), sem.iri("http://www.w3.org/ns/prov#DerivedFrom1"), sem.iri(this.getInputData(1))))
-
-    if (this.getInputData(2))
-      triples.push(sem.triple(sem.iri(uri), sem.iri("http://www.w3.org/ns/prov#DerivedFrom1"), sem.iri(this.getInputData(2))))
-
-    if (this.getInputData(3))
-      triples.push(sem.triple(sem.iri(uri), sem.iri("http://www.w3.org/ns/prov#DerivedFrom1"), sem.iri(this.getInputData(3))))
-
-    if (this.getInputData(4))
-      triples.push(sem.triple(sem.iri(uri), sem.iri("http://www.w3.org/ns/prov#GeneratedBy"), sem.iri(this.getInputData(4))))
-
-    if (this.getInputData(5))
-      triples.push(sem.triple(sem.iri(uri), sem.iri("http://www.w3.org/ns/prov#createdOn"), sem.iri(this.getInputData(5))))
-
-    this.setOutputData(0, triples)
+    coreFunctions.executeBlock(this);
   }
 
   LiteGraph.registerNodeType("Enrich/PROV-O structure", provo);
@@ -1213,23 +919,12 @@ function init (LiteGraph) {
   }
 
   xslBlock.title = "XSL";
+
+  xslBlock.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeXsl";
+  }
   xslBlock.prototype.onExecute = function () {
-
-    let inputNode = this.getInputData(0);
-    if (inputNode != null && inputNode != undefined) {
-      let xslStr = this.getInputData(1);
-      let xslPath = this.getInputData(2);
-      let result = null
-      if ((xslStr == undefined || xslStr == null) && (xslPath != null && xslPath != undefined))
-        result = xdmp.xsltInvoke(xslPath, inputNode)
-      else if (xslStr != null && xslStr != undefined) {
-        let xsl = xdmp.unquote(xslStr)
-        result = xdmp.xsltEval(xsl, inputNode)
-      }
-
-      this.setOutputData(0, result)
-    }
-
+      coreFunctions.executeBlock(this);
   }
   LiteGraph.registerNodeType("Transform/ApplyXSLT", xslBlock);
 
@@ -1280,51 +975,30 @@ function init (LiteGraph) {
   }
 
   Highlight.title = "Highlight";
+
+  Highlight.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeHighlight";
+  }
   Highlight.prototype.onExecute = function () {
-
-    let str = this.getInputData(0);
-    let query = this.getInputData(1);
-    let highlightKeyword = this.getInputData(2);
-
-    let x = { "str": str };
-    let result = new NodeBuilder();
-    cts.highlight(x, query,
-      function (builder, text, node, queries, start) {
-        let hl = {}
-        hl[highlightKeyword] = text
-        builder.addNode(hl);
-      }, result
-    );
-    this.setOutputData(0, result.toNode().str)
+      coreFunctions.executeBlock(this);
   }
   LiteGraph.registerNodeType("Enrich/Highlight", Highlight);
 
   function enrichEntity () {
     this.addInput("string", null);
     this.addInput("dictionary", null);
-
     this.addOutput("enrichedString", null);
-
     this.serialize_widgets = true;
   }
 
   enrichEntity.title = "EntityEnrichment";
+
+  enrichEntity.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeEnrichEntity";
+  }
+
   enrichEntity.prototype.onExecute = function () {
-
-    let str = this.getInputData(0);
-    let dict = this.getInputData(1);
-
-    function asNode (text) {
-      return new NodeBuilder()
-        .addElement('node', text)
-        .toNode();
-    }
-
-    let result = entity.enrich(asNode(str),
-      [cts.entityDictionaryGet(dict)],
-      "full")
-
-    this.setOutputData(0, result)
+    coreFunctions.executeBlock(this);
   }
   LiteGraph.registerNodeType("Enrich/EntityEnrichment", enrichEntity);
 
@@ -1339,38 +1013,12 @@ function init (LiteGraph) {
   }
 
   declarativeMapper.title = "declarativeMapper";
+
+  declarativeMapper.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeDeclarativeMapper";
+  }
   declarativeMapper.prototype.onExecute = function () {
-
-    let node = this.getInputData(0);
-
-    if (!node.xpath) node = fn.head(xdmp.unquote(xdmp.quote(node)))
-
-    let result = ""
-    let prov = {}
-
-    let mapping = lib.getMappingWithVersion(this.mappingName.value, parseInt(this.mappingVersion.value)).toObject()
-
-    result = lib2.validateAndRunMappingByDoc(mapping, node)
-
-    let entityType = result.targetEntityType
-    entityType = entityType.substring(0, entityType.lastIndexOf("/"))
-    entityType = entityType.substring(entityType.lastIndexOf("/") + 1).split("-")
-
-    let oOutput = {}
-    Object.keys(result.properties).map(item => { oOutput[item] = result.properties[item].output })
-    let out = {};
-    if (this["WithInstanceRoot"].value == true) {
-      out[entityType[0]] = oOutput
-      out["info"] = {
-        "title": entityType[0],
-        "version": entityType[1]
-      }
-    }
-    else {
-      out = oOutput
-    }
-
-    this.setOutputData(0, out)
+    coreFunctions.executeDeclarativeMapper();
   }
   LiteGraph.registerNodeType("DHF/declarativeMapper", declarativeMapper);
 
@@ -1390,50 +1038,13 @@ function init (LiteGraph) {
   }
 
   checkPhoneNumber.title = "CheckPhoneNumber";
+
+  checkPhoneNumber.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeCheckPhoneNumber";
+  }
+
   checkPhoneNumber.prototype.onExecute = function () {
-    this.setOutputData(0, "test")
-    const NumberType = [
-      "FIXED_LINE",
-      "MOBILE",
-      "FIXED_LINE_OR_MOBILE",
-      "TOLL_FREE",
-      "PREMIUM_RATE",
-      "SHARED_COST",
-      "VOIP",
-      "PERSONAL_NUMBER",
-      "PAGER",
-      "UAN",
-      "VOICEMAIL",
-      "UNKNOWN"
-    ]
-
-    let pn = this.getInputData(0)
-    let cc = this.getInputData(1)
-    if (cc == null || cc == undefined) cc = this.defaultCountry.value
-
-    const number = phoneUtil.parseAndKeepRawInput(pn, cc);
-    if (phoneUtil.isValidNumber(number)) {
-      let output = phoneUtil.format(number, PNF[this.outputFormat.value])
-      this.setOutputData(0, output)
-      this.setOutputData(1, number.getCountryCode())
-      this.setOutputData(2, NumberType[phoneUtil.getNumberType(number)])
-    }
-    else {
-
-      if (this.ifInvalid)
-        this.setOutputData(0, pn)
-      let qualityStatus = {
-        "field": "Phone Number",
-        "isValid": phoneUtil.isValidNumber(number),
-        "isPossible": phoneUtil.isPossibleNumber(number),
-        "Uri": this.getInputData(2),
-        "message": "The phone number is invalid"
-
-      }
-      this.setOutputData(3, qualityStatus)
-
-    }
-
+    coreFunctions.executeBlock(this);
   }
 
   LiteGraph.registerNodeType("Validate/CheckPhoneNumber", checkPhoneNumber);
@@ -1487,16 +1098,14 @@ function init (LiteGraph) {
 
   StringPadding.title = "padding";
 
-  StringPadding.prototype.getRuntimeLibraryFunctionName = function() {
-    return "executeStringPadding";
+  StringPadding.prototype.onExecute = function () {
+    return coreFunctions.executeBlock(this);
   }
 
-  StringPadding.prototype.onExecute = function () {
-    coreFunctions.executeBlock(this);
-  }
-  LiteGraph.registerNodeType("Format/stringPadding", StringPadding);
+LiteGraph.registerNodeType("Format/stringPadding", StringPadding);
 }
 
 module.exports = {
   init: init
 };
+

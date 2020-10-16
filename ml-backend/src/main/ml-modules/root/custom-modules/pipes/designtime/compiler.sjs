@@ -307,7 +307,10 @@ function generateCode(options,jsonGraph,node,ins,outs,lib) {
     const req = require("/custom-modules/pipes/runtime/"+library);
     const inputAsListFunction = bc.getRuntimeLibraryFunctionName() + "InputAsList"
     const inputAsList = inputAsListFunction in req && typeof req[inputAsListFunction] === "function" ? req[inputAsListFunction]() : false;
-
+    const returnAlwaysAnArrayFunction = bc.getRuntimeLibraryFunctionName()  + "ReturnAlwaysAnArray"
+    const returnAlwaysAnArray = returnAlwaysAnArrayFunction in cf && typeof cf[returnAlwaysAnArrayFunction] === "function" ? cf[returnAlwaysAnArrayFunction]() : false;
+    xdmp.log("FUNCTION "+returnAlwaysAnArrayFunction);
+    xdmp.log(returnAlwaysAnArray);
   if ( library == "coreFunctions.sjs" ) {
       lib.core = true;
       prefix = "r";
@@ -324,9 +327,10 @@ function generateCode(options,jsonGraph,node,ins,outs,lib) {
       }
     }
     let out = "const ["+dataOut.join(",")+"]";
-    if ( dataOut.length == 1) {
+    if ( dataOut.length == 1 && !returnAlwaysAnArray) {
       out = "const "+dataOut[0];
     }
+     xdmp.log(out);
     const typeExecutorFunction =  bc.getRuntimeLibraryFunctionName() + "ExecutorType";
     const doesFunctionExist =  typeExecutorFunction in req && typeof req[typeExecutorFunction] === "function";
     const executorType = doesFunctionExist ? req[typeExecutorFunction]() : cf.BLOCK_EXECUTOR_DELEGATOR;

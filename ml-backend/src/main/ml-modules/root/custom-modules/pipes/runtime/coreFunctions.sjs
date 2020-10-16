@@ -6,6 +6,22 @@ const datahub = new DataHub();
 const BLOCK_RUNTIME_DEBUG_TRACE = "pipesBlockRuntimeDebug";
 
 module.exports = {
+  executeCheckPhoneNumber,
+  executeDeclarativeMapper,
+  executeXsl,
+  executeUuidStringExecutorType,
+  executeUuidString,
+  executeAdvancedQueryBlockInputAsList,
+  executeAdvancedQueryBlock,
+  executeLookupByValueReturnAlwaysAnArray,
+  executeLookupByValue,
+  executeExpertQueryBuilderInputAsList,
+  executeExpertQueryBuilder,
+  executeProvo,
+  executeHighlight,
+  executeXmlValidation,
+  executeJsonValidation,
+  executeCreateTriple,
   executeSourceBlockInputAsList,
   executeSourceBlock,
   executeMapRangeValues,
@@ -16,6 +32,7 @@ module.exports = {
   executeFormatDateTimeAuto,
   executeEpochToDateTimeExecutorType,
   executeEpochToDateTime,
+  executeEntityEnrich,
   executeJavaScript,
   executeMultiCastInputAsList,
   executeMultiCast,
@@ -50,13 +67,7 @@ module.exports = {
   executeBlock,
   executeEnvelope,
   flattenArray,
-
-  // OLD
-  getCurrentDate,
-  LookupByValue,
-  split,
-  lookUp,
-  computeQueryRecursively,
+  executeCurrentDate,
   BLOCK_EXECUTOR_DELEGATOR : 1,
   BLOCK_EXECUTOR_GENERATOR : 2
 };
@@ -65,121 +76,7 @@ const TRACE_ID = "pipes-coreFunctions";
 const TRACE_ID_PIPES_EXECUTION = "pipes-execution";
 const TRACE_ID_PIPES_EXECUTION_DETAILS = "pipes-execution-detasils";
 
-function replaceInputValueQuery (value, block) {
-  for (var i = 0; i < block.inputs.length; i++) {
-    if (value.includes("${v" + i + "}")) {
-      return value.replace("${v" + i + "}", block.getInputData(i))
-    }
-  }
-  return value
-}
 
-function computeQueryRecursively (queryString, block) {
-  let qArray = []
-
-  for (let child of queryString.children) {
-    if (child.type == "query-builder-rule") {
-      if (child.query.rule == "cts.collectionQuery") {
-        qArray.push(cts.collectionQuery(replaceInputValueQuery(child.query.value.value, block)))
-      } else if (child.query.rule == "jsonPropertyValueQuery") {
-
-        let value = child.query.value.selectedType == "string" ? fn.string(replaceInputValueQuery(child.query.value.selectedValue.name ? child.query.value.selectedValue.name : child.query.value.selectedValue, block)) : child.query.value.selectedType == "number" ? fn.number(replaceInputValueQuery(child.query.value.selectedValue.name ? child.query.value.selectedValue.name : child.query.value.selectedValue, block)) : replaceInputValueQuery(child.query.value.selectedValue.name ? child.query.value.selectedValue.name : child.query.value.selectedValue, block)
-
-        qArray.push(cts.jsonPropertyValueQuery(child.query.value.selectedAttribute, value))
-      } else if (child.query.rule == "wordQuery") {
-        qArray.push(cts.wordQuery(replaceInputValueQuery(child.query.value, block)))
-      }
-    } else if (child.type == "query-builder-group") {
-      if (child.query.logicalOperator == "all") {
-        qArray.push(cts.andQuery(computeQueryRecursively(child.query, block)))
-        xdmp.trace(TRACE_ID, qArray)
-      } else {
-        qArray.push(cts.orQuery(computeQueryRecursively(child.query, block)))
-      }
-    }
-  }
-  return qArray
-}
-
-function getCurrentDate (dateOption) {
-  switch (dateOption) {
-    case "currentDate":
-      return fn.currentDate();
-      break;
-    case "currentDateTime":
-      return fn.currentDateTime();
-      break;
-    case "currentTime":
-      return fn.currentTime();
-      break;
-  }
-}
-
-function upperCase (v) {
-  return String(v).toUpperCase()
-}
-
-function split (v, splitChar) {
-  return String(v).split(splitChar)
-}
-
-function lookUp (block, var1, var2, nbOutputValues, ctsQuery) {
-  let template = "`" + ctsQuery + "`";
-  let result = eval(template);
-  let query = eval(result);
-  let foundDoc = fn.head(xdmp.invokeFunction(() => {
-    return cts.search(query, ["unfiltered", "score-zero"], 0);
-  }, { database: xdmp.database(block.database.value) }));
-  if (foundDoc != null) {
-    for (let i = 0; i < parseInt(nbOutputValues); i++) {
-      if (block["value" + i + "Path"] != null && block["value" + i + "Path"].value != "") {
-        const r = foundDoc.xpath(block["value" + i + "Path"].value)
-        block.setOutputData(i, r)
-      }
-    }
-  }
-}
-
-function LookupByValue (block, var1, nbOutputValues) {
-  let collection = block.collection.value;
-  collection = !collection ? "" : collection;
-  let dataType = block.dataType.value;
-  let property = block.property.value;
-  dataType = !dataType || (dataType !== 'bool' && dataType !== 'string' && dataType !== 'number') ? "string" : dataType;
-  let foundDoc = fn.head(xdmp.invokeFunction(() => {
-    let arr = [];
-    if (!(var1 instanceof Array)) {
-      var1 = [var1]
-    }
-    for (const v of var1) {
-      if (!v) {
-        continue;
-      }
-      if (dataType === 'bool') {
-        arr.push(v.toString() === 'true');
-      }
-      if (dataType === 'string') {
-        arr.push(v.toString());
-      }
-      if (dataType === 'number') {
-        arr.push(Number(v.toString()));
-      }
-    }
-    const query = cts.andQuery([cts.collectionQuery(collection), cts.jsonPropertyValueQuery(property, arr)]);
-    return cts.search(query, ["unfiltered", "score-zero"], 0);
-  }, { database: xdmp.database(block.database.value) }));
-
-  if (foundDoc != null) {
-    for (let i = 0; i < parseInt(nbOutputValues); i++) {
-      if (block["value" + i + "Path"] != null && block["value" + i + "Path"].value != "") {
-        const r = foundDoc.xpath(block["value" + i + "Path"].value);
-        block.setOutputData(i, r)
-      }
-    }
-  }
-}
-
-// NEW
 
 function executeGraphInputDHFExecutorType() {
   return this.BLOCK_EXECUTOR_GENERATOR;
@@ -198,11 +95,283 @@ function executeGraphOutputDHF(propertiesAndWidgets,output) {
     if (output && output.constructor === Array) {
       let globalArray = [];
       flattenArray(globalArray, output);
-      return globalArray;
+      return globalArray;``
     }
     else {
       return output;
     }
+}
+
+function executeAdvancedQueryBlockInputAsList() {
+  return true;
+}
+
+function executeAdvancedQueryBlock(propertiesAndWidgets,inputs) {
+  let query = propertiesAndWidgets.properties.query;
+  let code = "";
+  const nrOfInputs = parseInt(propertiesAndWidgets.widgets.nbInputs);
+  for ( let i = 0 ; i < nrOfInputs ; i++ )  {
+    code += "const v" + i + " = " + JSON.stringify(inputs[i])+ ";"
+  }
+  code += query;
+  let computedQuery = eval(code);
+  let result = xdmp.invokeFunction(() => {
+    return cts.search(computedQuery,["unfiltered","score-zero"],0);
+  }, { database: xdmp.database(propertiesAndWidgets.widgets.database) });
+  return [result,computedQuery];
+}
+
+function executeCurrentDate(propertiesAndWidgets) {
+  switch (propertiesAndWidgets.properties.currentDate) {
+    case "currentDate": return fn.currentDate();
+    case "currentDateNoTz":  return fn.adjustDateToTimezone(fn.currentDate(), null);
+    case "currentDateTime":return fn.currentDateTime();
+    case "currentTime": return fn.currentTime();
+  }
+  return []
+}
+
+function executeUuidStringExecutorType() {
+  return this.BLOCK_EXECUTOR_GENERATOR;
+}
+
+function executeUuidString(propertiesAndWidgets,inputs,outputs) {
+  let prefix = propertiesAndWidgets.widgets.prefix;
+  let prefix = !prefix ? "" : prefix;
+  return [
+    "const " + outputs[0] + " = '"+prefix+"'+sem.uuidString();"
+  ];
+}
+
+function executeEntityEnrich(propertiesAndWidgets,input,dictionary) {
+  let str = String(input);
+  function asNode (text) {
+    return new NodeBuilder()
+      .addElement('node', text)
+      .toNode();
+  }
+  let result = entity.enrich(asNode(str),
+    [cts.entityDictionaryGet(dictionary)],
+    "full")
+  return result;
+}
+
+function executeCheckPhoneNumber(propertiesAndWidgets,pn,cc,uri) {
+  const PNF = require('/custom-modules/pipes/runtime/google-libphonenumber.sjs').PhoneNumberFormat;
+  const phoneUtil = require('/custom-modules/pipes/runtime/google-libphonenumber.sjs').PhoneNumberUtil.getInstance();
+  const NumberType = [
+    "FIXED_LINE",
+    "MOBILE",
+    "FIXED_LINE_OR_MOBILE",
+    "TOLL_FREE",
+    "PREMIUM_RATE",
+    "SHARED_COST",
+    "VOIP",
+    "PERSONAL_NUMBER",
+    "PAGER",
+    "UAN",
+    "VOICEMAIL",
+    "UNKNOWN"
+  ];
+
+  if (cc == null || cc == undefined) {
+    cc = propertiesAndWidgets.widgets.defaultCountry;
+  }
+  const number = phoneUtil.parseAndKeepRawInput(pn, cc);
+  if (phoneUtil.isValidNumber(number)) {
+    let output = phoneUtil.format(number, PNF[propertiesAndWidgets.widgets.outputFormat]);
+    return [output,number.getCountryCode(),NumberType[phoneUtil.getNumberType(number)]];
+  }
+  else {
+    let ret = []
+    if (this.ifInvalid) {
+      ret.push(pn);
+    } else {
+      ret.push(undefined);
+    }
+    let qualityStatus = {
+      "field": "Phone Number",
+      "isValid": phoneUtil.isValidNumber(number),
+      "isPossible": phoneUtil.isPossibleNumber(number),
+      "Uri": uri,
+      "message": "The phone number is invalid"
+
+    }
+    ret.push(undefined);
+    ret.push(qualityStatus);
+    return ret;
+  }
+}
+
+function executeDeclarativeMapper(propertiesAndWidgets,node) {
+  const lib2 = require("/custom-modules/pipes/runtime/entity-services-lib-vpp.sjs")
+  const lib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
+
+  if (!node.xpath) node = fn.head(xdmp.unquote(xdmp.quote(node)))
+
+  let result = ""
+  let prov = {}
+
+  let mapping = lib.getMappingWithVersion(propertiesAndWidgets.widgets.mappingName, parseInt(propertiesAndWidgets.widgets.mappingVersion)).toObject()
+
+  result = lib2.validateAndRunMappingByDoc(mapping, node)
+
+  let entityType = result.targetEntityType
+  entityType = entityType.substring(0, entityType.lastIndexOf("/"))
+  entityType = entityType.substring(entityType.lastIndexOf("/") + 1).split("-")
+
+  let oOutput = {}
+  Object.keys(result.properties).map(item => { oOutput[item] = result.properties[item].output })
+  let out = {};
+  if (propertiesAndWidgets.widgets["WithInstanceRoot"]  === true) {
+    out[entityType[0]] = oOutput
+    out["info"] = {
+      "title": entityType[0],
+      "version": entityType[1]
+    }
+  }
+  else {
+    out = oOutput
+  }
+  return out;
+}
+
+function executeXsl(propertiesAndWidgets,inputNode,xslStr,xslPath) {
+  let result = null;
+  if (inputNode != null && inputNode != undefined) {
+    if ((xslStr == undefined || xslStr == null) && (xslPath != null && xslPath != undefined)) {
+      result = xdmp.xsltInvoke(xslPath, inputNode);
+   }  else if (xslStr != null && xslStr != undefined) {
+      let xsl = xdmp.unquote(xslStr);
+      result = xdmp.xsltEval(xsl, inputNode);
+    }
+  }
+  return result;
+}
+
+function executeLookupByValueReturnAlwaysAnArray() {
+  return true;
+}
+
+function executeLookupByValue(propertiesAndWidgets,var1) {
+  let retArray = [];
+  let collection = propertiesAndWidgets.widgets.collection;
+  collection = !collection ? "" : collection;
+  let dataType = propertiesAndWidgets.widgets.dataType;
+  let property = propertiesAndWidgets.widgets.property;
+  dataType = !dataType || (dataType !== 'bool' && dataType !== 'string' && dataType !== 'number') ? "string" : dataType;
+  let foundDoc = fn.head(xdmp.invokeFunction(() => {
+    let arr = [];
+    if (!(var1.constructor.name === 'Array')) {
+      var1 = [var1]
+    }
+    for (const v of var1) {
+      if (!v) {
+        continue;
+      }
+      if (dataType === 'bool') {
+        arr.push(v.toString() === 'true');
+      }
+      if (dataType === 'string') {
+        arr.push(v.toString());
+      }
+      if (dataType === 'number') {
+        arr.push(Number(v.toString()));
+      }
+    }
+    const query = cts.andQuery([cts.collectionQuery(collection), cts.jsonPropertyValueQuery(property, arr)]);
+    xdmp.log("QUERY");
+    xdmp.log(query);
+    return cts.search(query, ["unfiltered", "score-zero"], 0);
+  }, { database: xdmp.database(propertiesAndWidgets.widgets.database) }));
+  xdmp.log("FOUND");
+  if (!fn.empty(foundDoc)) {
+    xdmp.log(propertiesAndWidgets.widgets);
+    xdmp.log(propertiesAndWidgets.widgets.nbOutputValues);
+    xdmp.log(parseInt(propertiesAndWidgets.widgets.nbOutputValues));
+    for (let i = 0; i < parseInt(propertiesAndWidgets.widgets.nbOutputValues); i++) {
+      let path = propertiesAndWidgets.widgets["value" + i + "Path"];
+      xdmp.log("PATRH")
+      xdmp.log(path);
+      if ( path != null && path  != "") {
+        const r = foundDoc.xpath(path);
+        xdmp.log("R ")
+        xdmp.log(r);
+        retArray.push(r);
+      } else {
+        retArray.push(undefined);
+      }
+    }
+    return retArray;
+  }
+  return undefined;
+}
+
+function executeExpertQueryBuilderInputAsList() {
+  return true;
+}
+function executeExpertQueryBuilder(propertiesAndWidgets,inputs) {
+  let query = propertiesAndWidgets.properties.queryBuilder
+  let computedQuery = null
+  // TODO : pass also the list of input in order to replace inside the query if needed
+  if (query.logicalOperator == "all") {
+    computedQuery = cts.andQuery( computeQueryRecursively(query, propertiesAndWidgets,inputs))
+  } else {
+    computedQuery = cts.orQuery(computeQueryRecursively(query, propertiesAndWidgets,inputs))
+  }
+  let result = xdmp.invokeFunction(() => {
+    return cts.search(computedQuery,["unfiltered","score-zero"],0);
+  }, { database: xdmp.database(query.selectedDB.label) });
+  return [result,computedQuery];
+}
+
+function computeQueryRecursively (queryString, propertiesAndWidgets,inputs) {
+  let qArray = []
+
+  for (let child of queryString.children) {
+    if (child.type == "query-builder-rule") {
+      if (child.query.rule == "cts.collectionQuery") {
+        qArray.push(cts.collectionQuery(replaceInputValueQuery(child.query.value.value, inputs)))
+      } else if (child.query.rule == "jsonPropertyValueQuery") {
+
+        let value = child.query.value.selectedType == "string" ? fn.string(replaceInputValueQuery(child.query.value.selectedValue.name ? child.query.value.selectedValue.name : child.query.value.selectedValue, inputs)) : child.query.value.selectedType == "number" ? fn.number(replaceInputValueQuery(child.query.value.selectedValue.name ? child.query.value.selectedValue.name : child.query.value.selectedValue, inputs)) : replaceInputValueQuery(child.query.value.selectedValue.name ? child.query.value.selectedValue.name : child.query.value.selectedValue, inputs)
+
+        qArray.push(cts.jsonPropertyValueQuery(child.query.value.selectedAttribute, value))
+      } else if (child.query.rule == "wordQuery") {
+        qArray.push(cts.wordQuery(replaceInputValueQuery(child.query.value, inputs)))
+      }
+    } else if (child.type == "query-builder-group") {
+      if (child.query.logicalOperator == "all") {
+        qArray.push(cts.andQuery(computeQueryRecursively(child.query, inputs)))
+        xdmp.trace(TRACE_ID, qArray)
+      } else {
+        qArray.push(cts.orQuery(computeQueryRecursively(child.query, inputs)))
+      }
+    }
+  }
+  return qArray
+}
+
+function replaceInputValueQuery (value, inputs) {
+  for (var i = 0; i < inputs.length ; i++) {
+    if (value.includes("${v" + i + "}")) {
+      return value.replace("${v" + i + "}", inputs[i])
+    }
+  }
+  return value
+}
+
+
+function executeJsonValidation(propertiesAndWidgets,inputNode,schema){
+  try {
+    return xdmp.jsonValidate(inputNode, schema);
+  }
+  catch (error) {
+    return error.message;
+  }
+}
+function executeXmlValidation(propertiesAndWidgets,inputNode) {
+  return xdmp.toJSON(xdmp.validate(inputNode));
 }
 
 function executeSourceBlockInputAsList() {
@@ -363,6 +532,19 @@ function executeJoinArray(propertiesAndWidgets,inputs) {
       result = result.concat(value)
   }
   return result;
+}
+
+function executeHighlight(propertiesAndWidgets,str,query,highlightKeyword) {
+  let x = { "str": str };
+  let result = new NodeBuilder();
+  cts.highlight(x, query,
+    function (builder, text, node, queries, start) {
+      let hl = {}
+      hl[highlightKeyword] = text
+      builder.addNode(hl);
+    }, result
+  );
+  return result.toNode().str
 }
 
 function executeXpath(propertiesAndWidgets,input) {
@@ -713,6 +895,39 @@ function executeMultiPurposeConstant(propertiesAndWidgets,inputs,outputs) {
   }
 }
 
+function executeCreateTriple(propertiesAndWidgets,subject,object) {
+  let predicate = propertiesAndWidgets.widgets.predicate;
+
+  let subjectIsIRI = propertiesAndWidgets.widgets.subjectIsIRI;
+  let objectIsIRI = propertiesAndWidgets.widgets.objectIsIRI;
+
+  if (subjectIsIRI) subject = sem.iri(String(subject))
+  if (objectIsIRI) object = sem.iri(String(object))
+  predicate = sem.iri(predicate)
+
+ return sem.triple(subject, predicate, object);
+}
+
+function executeProvo(propertiesdAndWidgets,uri,t1,t2,t3,t4,t5){
+  let triples = []
+  if (t1) {
+    triples.push(sem.triple(sem.iri(uri), sem.iri("http://www.w3.org/ns/prov#DerivedFrom1"), sem.iri(t1)))
+  }
+  if (t2) {
+    triples.push(sem.triple(sem.iri(uri), sem.iri("http://www.w3.org/ns/prov#DerivedFrom1"), sem.iri(t2)))
+  }
+  if (t3) {
+    triples.push(sem.triple(sem.iri(uri), sem.iri("http://www.w3.org/ns/prov#DerivedFrom1"), sem.iri(t3)))
+  }
+  if (t4) {
+    triples.push(sem.triple(sem.iri(uri), sem.iri("http://www.w3.org/ns/prov#GeneratedBy"), sem.iri(t4)))
+  }
+  if (t5) {
+    triples.push(sem.triple(sem.iri(uri), sem.iri("http://www.w3.org/ns/prov#createdOn"), sem.iri(t5)))
+  }
+
+  return triples;
+}
 function executeCount(propertiesAndWidgets,input) {
   let count = 0;
   if ( input ) {
@@ -863,6 +1078,8 @@ function executeBlock(block) {
   const doLog = xdmp.traceEnabled(TRACE_ID_PIPES_EXECUTION);
   const inputAsListFunction = functionName + "InputAsList"
   const inputAsList = inputAsListFunction in lib && typeof lib[inputAsListFunction] === "function" ? lib[inputAsListFunction]() : false;
+  const returnAlwaysAnArrayFunction = functionName + "ReturnAlwaysAnArray"
+  const returnAlwaysAnArray = returnAlwaysAnArrayFunction in lib && typeof lib[returnAlwaysAnArrayFunction] === "function" ? lib[returnAlwaysAnArrayFunction]() : false;
   let startTime = 0;
   if ( doLog ) {
     let arr = [];
@@ -916,7 +1133,8 @@ function executeBlock(block) {
       }
       xdmp.trace(TRACE_ID_PIPES_EXECUTION, Sequence.from(arr));
     }
-    if (block.outputs.length > 1) {
+    // TODO should make this dynamical
+    if (block.outputs.length > 1 || returnAlwaysAnArray ) {
       outputValues.map((v, index) => {
         if (typeof v !== "undefined") {
           block.setOutputData(index, v)
@@ -983,6 +1201,7 @@ function getPropertiesAndWidgets(block) {
     properties : block.properties,
     widgets : {}
   }
+  xdmp.log("BLOCK WIDGETS");
   xdmp.log(block.widgets);
   for ( let widget of block.widgets || [] ) {
     const name = widget.name;

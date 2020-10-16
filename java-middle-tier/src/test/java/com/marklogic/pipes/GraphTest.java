@@ -9,6 +9,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.JSONDocumentManager;
+import com.marklogic.client.document.DocumentManager;
+import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.InputStreamHandle;
@@ -57,6 +59,7 @@ import org.springframework.context.annotation.PropertySource;
 @TestPropertySource({"/test.properties", "file:${user.dir}/test-dhf-project/gradle.properties" })
 class GraphTest {
   public static final String TEST_INPUT_JSON = "/test/input.json";
+  public static final String TEST_INPUT_XML = "/test/input.xml";
   public static final String TEST_SOURCE_COLLECTION = "ingest-unit-test";
 
   public static final String TEST_SAVE_GRAPH_JSON = "/marklogic-pipes/savedGraph/test-save-graph.json";
@@ -96,14 +99,20 @@ class GraphTest {
   void removeCustomerSource() throws Exception {
     DatabaseClient client = getDatabaseClient();
     JSONDocumentManager jsonDocumentManager = client.newJSONDocumentManager();
-
     jsonDocumentManager.delete(TEST_INPUT_JSON);
+    XMLDocumentManager xmlDocumentManager = client.newXMLDocumentManager();
+    xmlDocumentManager.delete(TEST_INPUT_XML);
   }
 
   void addCustomerSourceDocument(String s) throws Exception {
     DatabaseClient client = getDatabaseClient();
     try {
-      JSONDocumentManager jsonDocumentManager = client.newJSONDocumentManager();
+      String file = TEST_INPUT_JSON;
+      DocumentManager dm = client.newJSONDocumentManager();
+      if ( s.endsWith(".xml")) {
+        dm = client.newXMLDocumentManager();
+        file = TEST_INPUT_XML;
+      }
 
       // will create a customer document
 
@@ -117,10 +126,14 @@ class GraphTest {
       collections.add(TEST_SOURCE_COLLECTION);
 
       // write
-      jsonDocumentManager.write(TEST_INPUT_JSON, metadataHandle, handle);
+      dm.write(file, metadataHandle, handle);
 
       // release client
-    } finally {
+    } catch (Exception e ) {
+        e.printStackTrace();
+        throw e;
+    }
+      finally {
       client.release();
     }
   }
@@ -162,10 +175,15 @@ class GraphTest {
   void genericGraphTestsCompiler(String argument) throws Exception {
     runGrahTests(argument,true);
   }
-
   private void runGrahTests(String argument,boolean compiler) throws Exception {
     try {
-      String inputFile = "ExecuteGraphTests/"+argument+"/input.json";
+      String ext = "json";
+      String preview = TEST_INPUT_JSON;
+      if ( argument.equals("XMLValidation")) {
+        ext = "xml";
+        preview = TEST_INPUT_XML;
+      }
+      String inputFile = "ExecuteGraphTests/"+argument+"/input."+ext;
       assertNotNull("Input.json not found for "+argument,this.getInputStreamHandle(inputFile));
       addCustomerSourceDocument(inputFile);
 
@@ -177,14 +195,14 @@ class GraphTest {
       JSONObject payloadJO= new JSONObject();
       payloadJO.put("jsonGraph", graphJO);
       payloadJO.put("collectionRandom", false);
-      payloadJO.put("previewUri",TEST_INPUT_JSON);
+      payloadJO.put("previewUri",preview);
 
 
       InputStreamHandle expectedResponseHandle = getInputStreamHandle("ExecuteGraphTests/"+argument+"/expectedResponse.json");
       assertNotNull("expectedResponse.json not found for "+argument,expectedResponseHandle);
       JSONObject expectedJO=new JSONObject();
       expectedJO.put("result", new JSONObject(expectedResponseHandle.toString()));
-      expectedJO.put("uri",TEST_INPUT_JSON);
+      expectedJO.put("uri",preview);
 
       //extract the value part only from the expected returned graph
       JsonNode expectedResultJson= expectedJO.getNode("result");
@@ -219,7 +237,7 @@ class GraphTest {
     InputStreamHandle ism= getInputStreamHandle("ExecuteGraphTests");
     String dirs[]=ism.toString().split("\n");
     // limit the test set
-    //dirs=new String[]{"FilterArray"};
+   // dirs=new String[]{"XMLValidation"}; // ,"","","","",""};
     return Arrays.stream(dirs);
   }
 
