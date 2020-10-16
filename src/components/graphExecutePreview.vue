@@ -14,7 +14,7 @@
         <div
           class="col-11 text-h6"
           align="left"
-        >Preview Graph Execution</div>
+        >Preflight Graph</div>
         <div
           class="col-1"
           align="right"
@@ -41,7 +41,7 @@
           >
             <q-step
               :name="1"
-              title="Select the source of the document for preview"
+              title="Select the source of the document for preflight."
               icon="settings"
               :done="previewWizardStep > 1"
             >

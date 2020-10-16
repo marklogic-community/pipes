@@ -1,9 +1,16 @@
+const moment = require("/custom-modules/pipes/runtime/moment-with-locales.min.sjs")
 const DataHub = require("/data-hub/5/datahub.sjs");
 const datahub = new DataHub();
 
 const BLOCK_RUNTIME_DEBUG_TRACE = "pipesBlockRuntimeDebug";
 
 module.exports = {
+  executeFormatDate,
+  executeFormatDateTime,
+  executeFormatDateAuto,
+  executeFormatDateTimeAuto,
+  executeEpochToDateTimeExecutorType,
+  executeEpochToDateTime,
   executeJavaScript,
   executeMultiCastInputAsList,
   executeMultiCast,
@@ -300,6 +307,15 @@ function executeHash(propertiesAndWidgets,input) {
       break;
   }
 }
+
+function executeEpochToDateTimeExecutorType() {
+  return this.BLOCK_EXECUTOR_GENERATOR;
+}
+
+function executeEpochToDateTime(propertiesAndWidgets,inputs,outputs) {
+      return ["const "+outputs[0]+" = (new Date(Number("+inputs[0]+"))).toISOString();"];
+};
+
 function executeFilterArray(propertiesAndWidgets,unfiltered,patterns) {
   xdmp.trace(TRACE_ID, "++++++++++++++++++FilterArray++++++++++++++++++++++++++++++");
   let include = propertiesAndWidgets.widgets.include;
@@ -569,6 +585,41 @@ function executeStringSplit(propertiesAndWidgets,input) {
   arr.push(result);
   return arr;
 }
+
+function executeFormatDate(propertiesAndWidgets,inputDate) {
+  let format = propertiesAndWidgets.widgets.format;
+  let result = fn.string(moment(inputDate, [format]).format('YYYY-MM-DD'));
+  if (result == "Invalid date") {
+    result = null;
+  }
+  return result;
+}
+
+function executeFormatDateTime(propertiesAndWidgets,inputDateTime) {
+  let format = propertiesAndWidgets.widgets.format;
+  let result = fn.string(moment(inputDateTime, [format]).format());
+  if (result == "Invalid date") {
+    result = null;
+  }
+  return result;
+}
+
+function executeFormatDateAuto(propertiesAndWidgets,srcDate) {
+    let result = moment(srcDate, ["MM-DD-YYYY", "YYYY-MM-DD", "DD/MM/YYYY"]).format("YYYY-MM-DD")
+    if (result == "Invalid date")
+      return null;
+    else
+      return result
+}
+
+function executeFormatDateTimeAuto(propertiesAndWidgets,srcDate) {
+  let result = moment(srcDate).format();
+  if (result == "Invalid date")
+    return null;
+  else
+    return result
+}
+
 // ========= RUNTIME
 
 function executeBlock(block) {

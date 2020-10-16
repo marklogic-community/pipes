@@ -1,0 +1,640 @@
+{
+  "pipesFileVersion": 2,
+  "models": [],
+  "executionGraph": {
+    "last_node_id": 18,
+    "last_link_id": 22,
+    "nodes": [
+      {
+        "id": 1,
+        "type": "DHF/input",
+        "pos": [
+          248,
+          489
+        ],
+        "size": [
+          180,
+          100
+        ],
+        "flags": {},
+        "order": 0,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "input",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "uri",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "collections",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "permissions",
+            "type": "",
+            "links": null
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 2,
+        "type": "DHF/output",
+        "pos": [
+          1242,
+          421
+        ],
+        "size": [
+          180,
+          60
+        ],
+        "flags": {},
+        "order": 14,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "output",
+            "type": 0,
+            "link": 22
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 3,
+        "type": "Format/FormatDate",
+        "pos": [
+          722,
+          327
+        ],
+        "size": {
+          "0": 255,
+          "1": 58
+        },
+        "flags": {},
+        "order": 5,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "inputDate",
+            "type": 0,
+            "link": 1
+          }
+        ],
+        "outputs": [
+          {
+            "name": "IsoDate",
+            "links": [
+              5
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "DD-MM-YYYY"
+        ]
+      },
+      {
+        "id": 8,
+        "type": "Enrich/AddProperty",
+        "pos": [
+          1007,
+          444
+        ],
+        "size": {
+          "0": 170,
+          "1": 46
+        },
+        "flags": {},
+        "order": 9,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "doc",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "value",
+            "type": 0,
+            "link": 5
+          }
+        ],
+        "outputs": [
+          {
+            "name": "doc",
+            "links": [
+              8
+            ]
+          }
+        ],
+        "properties": {
+          "propertyName": "date1"
+        }
+      },
+      {
+        "id": 9,
+        "type": "Format/FormatDateTime",
+        "pos": [
+          714,
+          490
+        ],
+        "size": {
+          "0": 255,
+          "1": 58
+        },
+        "flags": {},
+        "order": 7,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "inputDateTime",
+            "type": 0,
+            "link": 7
+          }
+        ],
+        "outputs": [
+          {
+            "name": "IsoDateTime",
+            "links": [
+              9
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "DD-MM-YYYY hh:mm:ss"
+        ]
+      },
+      {
+        "id": 11,
+        "type": "Enrich/AddProperty",
+        "pos": [
+          1018,
+          545
+        ],
+        "size": {
+          "0": 170,
+          "1": 46
+        },
+        "flags": {},
+        "order": 10,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "doc",
+            "type": 0,
+            "link": 8
+          },
+          {
+            "name": "value",
+            "type": 0,
+            "link": 9
+          }
+        ],
+        "outputs": [
+          {
+            "name": "doc",
+            "links": [
+              12
+            ]
+          }
+        ],
+        "properties": {
+          "propertyName": "date2"
+        }
+      },
+      {
+        "id": 12,
+        "type": "Format/EpochToDateTime",
+        "pos": [
+          770,
+          634
+        ],
+        "size": {
+          "0": 170,
+          "1": 26
+        },
+        "flags": {},
+        "order": 4,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "epoch",
+            "type": 0,
+            "link": 11
+          }
+        ],
+        "outputs": [
+          {
+            "name": "IsoDateTime",
+            "links": [
+              13
+            ]
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 13,
+        "type": "Generate/multiConstant",
+        "pos": [
+          382,
+          628
+        ],
+        "size": {
+          "0": 255,
+          "1": 82
+        },
+        "flags": {},
+        "order": 1,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "output",
+            "links": [
+              11
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "string",
+          "1602831554023"
+        ]
+      },
+      {
+        "id": 7,
+        "type": "Generate/multiConstant",
+        "pos": [
+          447,
+          339
+        ],
+        "size": {
+          "0": 255,
+          "1": 82
+        },
+        "flags": {},
+        "order": 2,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "output",
+            "links": [
+              1,
+              15
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "string",
+          "01-10-2010"
+        ]
+      },
+      {
+        "id": 15,
+        "type": "Format/FormatDateAuto",
+        "pos": [
+          784,
+          736
+        ],
+        "size": {
+          "0": 170,
+          "1": 26
+        },
+        "flags": {},
+        "order": 6,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "inputDate",
+            "type": 0,
+            "link": 15
+          }
+        ],
+        "outputs": [
+          {
+            "name": "IsoDate",
+            "links": [
+              16
+            ]
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 14,
+        "type": "Enrich/AddProperty",
+        "pos": [
+          1098,
+          645.5
+        ],
+        "size": {
+          "0": 170,
+          "1": 46
+        },
+        "flags": {},
+        "order": 11,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "doc",
+            "type": 0,
+            "link": 12
+          },
+          {
+            "name": "value",
+            "type": 0,
+            "link": 13
+          }
+        ],
+        "outputs": [
+          {
+            "name": "doc",
+            "links": [
+              17
+            ]
+          }
+        ],
+        "properties": {
+          "propertyName": "date3"
+        }
+      },
+      {
+        "id": 10,
+        "type": "Generate/multiConstant",
+        "pos": [
+          436,
+          491
+        ],
+        "size": {
+          "0": 255,
+          "1": 82
+        },
+        "flags": {},
+        "order": 3,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "output",
+            "links": [
+              7,
+              19
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "string",
+          "01-10-2010 13:12:40"
+        ]
+      },
+      {
+        "id": 17,
+        "type": "Format/FormatDateTimeAuto",
+        "pos": [
+          748,
+          859
+        ],
+        "size": {
+          "0": 211.60000610351562,
+          "1": 26
+        },
+        "flags": {},
+        "order": 8,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "inputDateTime",
+            "type": 0,
+            "link": 19
+          }
+        ],
+        "outputs": [
+          {
+            "name": "IsoDateTime",
+            "links": [
+              20
+            ]
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 16,
+        "type": "Enrich/AddProperty",
+        "pos": [
+          1108,
+          738.5
+        ],
+        "size": {
+          "0": 170,
+          "1": 46
+        },
+        "flags": {},
+        "order": 12,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "doc",
+            "type": 0,
+            "link": 17
+          },
+          {
+            "name": "value",
+            "type": 0,
+            "link": 16
+          }
+        ],
+        "outputs": [
+          {
+            "name": "doc",
+            "links": [
+              21
+            ]
+          }
+        ],
+        "properties": {
+          "propertyName": "date4"
+        }
+      },
+      {
+        "id": 18,
+        "type": "Enrich/AddProperty",
+        "pos": [
+          1093,
+          841
+        ],
+        "size": {
+          "0": 170,
+          "1": 46
+        },
+        "flags": {},
+        "order": 13,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "doc",
+            "type": 0,
+            "link": 21
+          },
+          {
+            "name": "value",
+            "type": 0,
+            "link": 20
+          }
+        ],
+        "outputs": [
+          {
+            "name": "doc",
+            "links": [
+              22
+            ]
+          }
+        ],
+        "properties": {
+          "propertyName": "date5"
+        }
+      }
+    ],
+    "links": [
+      [
+        1,
+        7,
+        0,
+        3,
+        0,
+        0
+      ],
+      [
+        5,
+        3,
+        0,
+        8,
+        1,
+        0
+      ],
+      [
+        7,
+        10,
+        0,
+        9,
+        0,
+        0
+      ],
+      [
+        8,
+        8,
+        0,
+        11,
+        0,
+        0
+      ],
+      [
+        9,
+        9,
+        0,
+        11,
+        1,
+        0
+      ],
+      [
+        11,
+        13,
+        0,
+        12,
+        0,
+        0
+      ],
+      [
+        12,
+        11,
+        0,
+        14,
+        0,
+        0
+      ],
+      [
+        13,
+        12,
+        0,
+        14,
+        1,
+        0
+      ],
+      [
+        15,
+        7,
+        0,
+        15,
+        0,
+        0
+      ],
+      [
+        16,
+        15,
+        0,
+        16,
+        1,
+        0
+      ],
+      [
+        17,
+        14,
+        0,
+        16,
+        0,
+        0
+      ],
+      [
+        19,
+        10,
+        0,
+        17,
+        0,
+        0
+      ],
+      [
+        20,
+        17,
+        0,
+        18,
+        1,
+        0
+      ],
+      [
+        21,
+        16,
+        0,
+        18,
+        0,
+        0
+      ],
+      [
+        22,
+        18,
+        0,
+        2,
+        0,
+        0
+      ]
+    ],
+    "groups": [],
+    "config": {},
+    "version": 0.4
+  },
+  "name": "FormatDate",
+  "metadata": {
+    "version": "00.01",
+    "author": "",
+    "title": "FormatDate",
+    "dateExported": "16/10/2020, 09:07:46"
+  }
+}

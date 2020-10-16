@@ -474,7 +474,7 @@
       {
         "type": "text",
         "name": "format",
-        "default": "DD/MM/YYYY",
+        "default": "DD/MM/YYYY hh:mm:ss",
         "values": []
       }
     ],

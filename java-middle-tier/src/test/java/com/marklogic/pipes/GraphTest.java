@@ -222,7 +222,7 @@ class GraphTest {
     InputStreamHandle ism= getInputStreamHandle("ExecuteGraphTests");
     String dirs[]=ism.toString().split("\n");
     // limit the test set
-    //dirs=new String[]{"executeJavascript"};
+    dirs=new String[]{"FormatDate"};
     return Arrays.stream(dirs);
   }
 

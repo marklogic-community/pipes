@@ -1,5 +1,4 @@
 //Copyright ©2020 MarkLogic Corporation.
-const moment = require("/custom-modules/pipes/runtime/moment-with-locales.min.sjs")
 const entity = require('/MarkLogic/entity');
 const lib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
 //const lib2 = require('/data-hub/5/builtins/steps/mapping/entity-services/lib.sjs')
@@ -737,32 +736,64 @@ function init (LiteGraph) {
 
   LiteGraph.registerNodeType("Generate/Current Date", currentDate);
 
-  function EpochToDateTime (epoch) {
-    return (new Date(Number(epoch))).toISOString()
-  }
-  LiteGraph.wrapFunctionAsNode('Format/EpochToDateTime', EpochToDateTime,
-    ['xs:string'], 'xs:string');
+  // -----
 
-  function formatDateTimeAuto (srcDate) {
-    let result = moment(srcDate).format();
-    if (result == "Invalid date")
-      return null;
-    else
-      return result
+  function EpochToDateTime () {
+    this.addInput("epoch", null);
+    this.addOutput("IsoDateTime", null);
+    this.serialize_widgets = true;
   }
-  LiteGraph.wrapFunctionAsNode('Format/FormatDateTimeAuto', formatDateTimeAuto,
-    ['xs:string'], 'xs:string')
 
-  function formatDateAuto (srcDate) {
-    let result = moment(srcDate, ["MM-DD-YYYY", "YYYY-MM-DD", "DD/MM/YYYY"]).format("YYYY-MM-DD")
-    if (result == "Invalid date")
-      return null;
-    else
-      return result
 
+  EpochToDateTime.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeEpochToDateTime";
   }
-  LiteGraph.wrapFunctionAsNode('Format/FormatDateAuto', formatDateAuto,
-    ['xs:string'], 'xs:string')
+
+  EpochToDateTime.prototype.onExecute = function () {
+    coreFunctions.executeBlock(this);
+  }
+
+  LiteGraph.registerNodeType('Format/EpochToDateTime', EpochToDateTime);
+
+  // ----
+
+  function formatDateTimeAuto () {
+    this.addInput("inputDateTime", null);
+    this.addOutput("IsoDateTime", null);
+    this.serialize_widgets = true;
+  }
+
+
+  formatDateTimeAuto.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeFormatDateTimeAuto";
+  }
+
+  formatDateTimeAuto.prototype.onExecute = function () {
+    coreFunctions.executeBlock(this);
+  }
+
+  LiteGraph.registerNodeType('Format/FormatDateTimeAuto', formatDateTimeAuto);
+
+  // ----
+
+  function formatDateAuto () {
+    this.addInput("inputDate", null);
+    this.addOutput("IsoDate", null);
+    this.serialize_widgets = true;
+  }
+
+
+  formatDateAuto.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeFormatDateAuto";
+  }
+
+  formatDateAuto.prototype.onExecute = function () {
+    coreFunctions.executeBlock(this);
+  }
+
+  LiteGraph.registerNodeType('Format/FormatDateAuto', formatDateAuto);
+
+  // -----
 
   function hashNode () {
     this.addInput("Node", null);
@@ -853,6 +884,8 @@ function init (LiteGraph) {
 
   LiteGraph.registerNodeType("Generate/Templating", stringTemplate);
 
+  // ---
+
   function FormatDate () {
     this.addInput("inputDate");
 
@@ -865,15 +898,17 @@ function init (LiteGraph) {
   }
   FormatDate.title = "Format date";
   FormatDate.desc = "Format date with explicit format";
+
+  FormatDate.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeFormatDate";
+  }
+
   FormatDate.prototype.onExecute = function () {
-    let inputDate = this.getInputData(0)
-    let format = this.format.value
-    let result = fn.string(moment(inputDate, [format]).format('YYYY-MM-DD'))
-    if (result == "Invalid date") result = null;
-    this.setOutputData(0, result);
+    coreFunctions.executeBlock(this);
   }
 
   LiteGraph.registerNodeType("Format/FormatDate", FormatDate);
+  // ---
 
   function FormatDateTime () {
     this.addInput("inputDateTime");
@@ -885,19 +920,20 @@ function init (LiteGraph) {
     this.serialize_widgets = true;
   }
 
+  FormatDateTime.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeFormatDateTime";
+  }
+
   FormatDateTime.title = "Format date";
   FormatDateTime.desc = "Format date with explicit format";
 
   FormatDateTime.prototype.onExecute = function () {
-    let inputDateTime = this.getInputData(0)
-    let format = this.format.value
-    let result = fn.string(moment(inputDateTime, [format]).format())
-    if (result == "Invalid date") result = null;
-    this.setOutputData(0, result);
+    coreFunctions.executeBlock(this);
   }
 
   LiteGraph.registerNodeType("Format/FormatDateTime", FormatDateTime);
 
+   // ---
 
   function addPropertyBlock() {
     this.addInput('doc', 'node');
