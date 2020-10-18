@@ -63,6 +63,10 @@ public class BackendModulesManager {
 
   public void checkModulesVersion(AuthService authService) {
     boolean forceReload = System.getProperty("deployBackend") != null && System.getProperty("deployBackend").equals("true");
+
+    // for now forceReload = true hardcoded because we need to ensure we load user.sjs
+    forceReload = true;
+
     logger.info("Force reload modules="+forceReload);
     // since the user is not running with deployBackend=true,
     // let's check if the user has backend installed and
@@ -120,8 +124,7 @@ public class BackendModulesManager {
     // it will deploy modules if versions mismatch
     // and if using custom blocks
 
-    // we always load moduels, this is because of user.sjs
-    if (true || forceReload || !javaVersionInfo.contains(version) || !javaVersionInfo.contains(build) || clientConfig.getCustomModulesRoot()!=null) {
+    if (forceReload || !javaVersionInfo.contains(version) || !javaVersionInfo.contains(build) || clientConfig.getCustomModulesRoot()!=null) {
       logger.info("{} missmatch with Pipes backend modules or force reload, Version: {} | Build: {}",
         javaVersionInfo, version, build);
 
@@ -191,6 +194,7 @@ public class BackendModulesManager {
 
     ArrayList<String> filePaths = new ArrayList<String>(
       Arrays.asList(
+        customModulesPipesDesigntimePathPrefix+"/CustomStepMainTemplate.sjs",
         customModulesPipesDesigntimePathPrefix+"/compiler.sjs",
         customModulesPipesDesigntimePathPrefix+"/compilerFlowControlGraph.sjs",
         customModulesPipesDesigntimePathPrefix+"/graphHelper.sjs",

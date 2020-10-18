@@ -4,6 +4,14 @@ Copyright ©2020 MarkLogic Corporation.
 
 package com.marklogic.pipes.ui;
 
+import com.marklogic.hub.DatabaseKind;
+import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.hub.flow.FlowInputs;
+import com.marklogic.hub.flow.FlowRunner;
+import com.marklogic.hub.flow.RunFlowResponse;
+import com.marklogic.hub.flow.impl.FlowRunnerImpl;
+
+import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -19,6 +27,8 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.client.query.DeleteQueryDefinition;
+import com.marklogic.client.query.QueryManager;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.pipes.ui.auth.AuthService;
@@ -42,6 +52,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.stream.Stream;
@@ -76,6 +87,8 @@ class GraphTest {
   private  String MLPASSWORD;
   @Value("${mlStagingAppserverName}")
   private  String MLTESTDATABASE;
+  @Value("${mlStagingPort}")
+  private int STAGING_PORT;
 
   static MockHttpSession session;
 
@@ -96,28 +109,32 @@ class GraphTest {
     System.setProperty("deployBackend","true");
   }
 
-  void removeCustomerSource() throws Exception {
-    DatabaseClient client = getDatabaseClient();
-    JSONDocumentManager jsonDocumentManager = client.newJSONDocumentManager();
-    jsonDocumentManager.delete(TEST_INPUT_JSON);
-    XMLDocumentManager xmlDocumentManager = client.newXMLDocumentManager();
-    xmlDocumentManager.delete(TEST_INPUT_XML);
-  }
-
-  void addCustomerSourceDocument(String s) throws Exception {
+  void removeTestDocuments() throws Exception {
     DatabaseClient client = getDatabaseClient();
     try {
-      String file = TEST_INPUT_JSON;
+      QueryManager qm = client.newQueryManager();
+      DeleteQueryDefinition col = qm.newDeleteDefinition();
+      col.setCollections(TEST_SOURCE_COLLECTION);
+      qm.delete(col);
+    } finally {
+      client.release();
+    }
+  }
+
+  void ingestTestFile(String pathOfFile) throws Exception {
+    DatabaseClient client = getDatabaseClient();
+    String fileName = new File(pathOfFile).getName();
+    try {
+      String uri = "/test/"+fileName;
       DocumentManager dm = client.newJSONDocumentManager();
-      if ( s.endsWith(".xml")) {
+      if ( pathOfFile.endsWith(".xml")) {
         dm = client.newXMLDocumentManager();
-        file = TEST_INPUT_XML;
       }
 
       // will create a customer document
 
       // get the doc from resources
-      InputStreamHandle handle = getInputStreamHandle(s);
+      InputStreamHandle handle = getInputStreamHandle(pathOfFile);
 
       //Get the set of collections the document belongs to and put in array.
       DocumentMetadataHandle metadataHandle = new DocumentMetadataHandle();
@@ -126,7 +143,7 @@ class GraphTest {
       collections.add(TEST_SOURCE_COLLECTION);
 
       // write
-      dm.write(file, metadataHandle, handle);
+      dm.write(uri, metadataHandle, handle);
 
       // release client
     } catch (Exception e ) {
@@ -165,6 +182,72 @@ class GraphTest {
     session.setAttribute(SESSION_USERNAME_KEY, MLUSERNAME);
     session.setAttribute(SESSION_SERVICE, authService.getService());
   }
+
+  @Test
+  void testCustomStep() throws Exception {
+    try {
+      String inputFile = "FullTest/input1.json";
+      assertNotNull("Input1.json not found", this.getInputStreamHandle(inputFile));
+      ingestTestFile(inputFile);
+      inputFile = "FullTest/input2.json";
+      assertNotNull("Input2.json not found", this.getInputStreamHandle(inputFile));
+      ingestTestFile(inputFile);
+      String sourceCode = compile("FullTest/graph.json");
+      publishCustomStepSourceCode("TestStep",sourceCode);
+      runFlow("TestFlow");
+    } finally {
+      //removeTestDocuments();
+    }
+  }
+
+  private void runFlow(String flowName) throws Exception {
+    try {
+      HubConfigImpl hc = new HubConfigImpl("localhost", MLUSERNAME, MLPASSWORD);
+      hc.setPort(DatabaseKind.STAGING,STAGING_PORT);
+      hc.setDbName(DatabaseKind.STAGING,MLTESTDATABASE);
+      FlowRunner flowRunner = new FlowRunnerImpl(hc);
+      FlowInputs inputs = new FlowInputs(flowName);
+      RunFlowResponse response = flowRunner.runFlow(inputs);
+     // flowRunner.awaitCompletion();
+      //System.out.println("Response: " + response);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  private void publishCustomStepSourceCode(String customStepName,String sourceCode) throws Exception {
+    String request = "/customSteps?name=" + customStepName + "&deploy=true";
+    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(request).content(sourceCode)
+      .session(session);
+    ResultActions resultActions = this.mockMvc.perform(builder)
+      .andExpect(status().isOk());
+    MvcResult result = resultActions.andReturn();
+    assertEquals("Did not return OK",result.getResponse().getStatus(),200);
+  }
+
+  private String compile(String grahPath) throws Exception {
+    InputStreamHandle graphHandle = getInputStreamHandle(grahPath);
+    assertNotNull("graph.json not found for "+grahPath,graphHandle);
+
+    String request="/v1/resources/vppBackendServices?rs:action=compile";
+
+    MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(request).content(graphHandle.toString())
+      .session(session);
+
+    ResultActions resultActions = this.mockMvc.perform(builder)
+      .andExpect(status().isOk());
+
+    MvcResult result = resultActions.andReturn();
+
+    JSONObject responseJson=new JSONObject(result.getResponse().getContentAsString());
+    JsonNode errorsNode = responseJson.getNode("errors");
+    assertTrue("Compilation errors",errorsNode.isNull());
+    JsonNode sourceCodeNode = responseJson.getNode("sourceCode");
+    assertNotNull("sourceCode not available",sourceCodeNode);
+    assertTrue("Sourcecode should be a string",sourceCodeNode.getNodeType() == JsonNodeType.STRING);
+    return sourceCodeNode.textValue();
+  }
+  /*
   @ParameterizedTest(name = "Interpreter: #{index} : {0}")
   @MethodSource("getDirectoryNames")
   void genericGraphTestsInterpreter(String argument) throws Exception {
@@ -175,6 +258,7 @@ class GraphTest {
   void genericGraphTestsCompiler(String argument) throws Exception {
     runGrahTests(argument,true);
   }
+*/
   private void runGrahTests(String argument,boolean compiler) throws Exception {
     try {
       String ext = "json";
@@ -185,7 +269,7 @@ class GraphTest {
       }
       String inputFile = "ExecuteGraphTests/"+argument+"/input."+ext;
       assertNotNull("Input.json not found for "+argument,this.getInputStreamHandle(inputFile));
-      addCustomerSourceDocument(inputFile);
+      ingestTestFile(inputFile);
 
       InputStreamHandle graphHandle = getInputStreamHandle("ExecuteGraphTests/"+argument+"/graph.json");
       assertNotNull("graph.json not found for "+argument,graphHandle);
@@ -229,7 +313,7 @@ class GraphTest {
 
       assertEquals("Response doesn't match expected",mapper.readTree(expectedResultJson.toString()), mapper.readTree(actualResponseResultJson.toString()));
     } finally {
-      removeCustomerSource();
+      removeTestDocuments();
     }
   }
 
