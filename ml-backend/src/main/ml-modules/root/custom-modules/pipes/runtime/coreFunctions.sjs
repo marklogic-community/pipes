@@ -68,6 +68,10 @@ module.exports = {
   executeEnvelope,
   flattenArray,
   executeCurrentDate,
+  executeLogInputAsList,
+  executeLog,
+  executeTraceInputAsList,
+  executeTrace,
   BLOCK_EXECUTOR_DELEGATOR : 1,
   BLOCK_EXECUTOR_GENERATOR : 2
 };
@@ -1052,6 +1056,66 @@ function executeFormatDateTimeAuto(propertiesAndWidgets,srcDate) {
     return null;
   else
     return result
+}
+
+function executeLogInputAsList() {
+  return true;
+}
+
+function executeLog(propertiesAndWidgets,inputs) {
+  let level =propertiesAndWidgets.widgets.Level;
+  let message =propertiesAndWidgets.widgets.Message;
+  let logRequestId = propertiesAndWidgets.widgets.LogRequestId;
+  let arr = []
+  if ( logRequestId === true ) {
+    arr.push("RequestId:");
+    arr.push(xdmp.request());
+  }
+  if ( message && message.toString().length > 0 ) {
+    arr.push("Message:");
+    arr.push(message);
+  }
+  const total = (inputs || []).length;
+  for ( let i = 0 ; i < total ; i++ ){
+    if ( inputs[i] ) {
+      arr.push("Input" + i + ":");
+      arr.push(inputs[i]);
+    }
+  }
+  let d = Sequence.from(arr);
+  xdmp.log(d,level);
+  return inputs;
+}
+
+function executeTraceInputAsList() {
+  return true;
+}
+
+function executeTrace(propertiesAndWidgets,inputs) {
+  let trace =propertiesAndWidgets.widgets.Trace.toString();
+  if ( trace && xdmp.traceEnabled(trace)) {
+    let message = propertiesAndWidgets.widgets.Message;
+    let logRequestId = propertiesAndWidgets.widgets.LogRequestId;
+    let arr = []
+    if (logRequestId === true) {
+      arr.push("RequestId:");
+      arr.push(xdmp.request());
+    }
+    if (message && message.toString().length > 0) {
+      arr.push("Message:");
+      arr.push(message);
+    }
+    const total = (inputs || []).length;
+    for (let i = 0; i < total; i++) {
+      if (inputs[i]) {
+        arr.push("Input" + i + ":");
+        arr.push(inputs[i]);
+      }
+    }
+    let d = Sequence.from(arr);
+    xdmp.trace(trace,d);
+  }
+  return inputs;
 }
 
 // ========= RUNTIME

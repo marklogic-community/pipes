@@ -257,24 +257,58 @@ function init (LiteGraph) {
   };
   LiteGraph.registerNodeType('Join/String join', fn_stringJoin);
 
-  function StringConstant () {
-    this.addOutput("value", "xs:string");
-    this.string = this.addWidget("text", "string", "Your string", function (v) { }, {});
+  function Log () {
+    this.addOutput("input0");
+    this.addOutput("input1");
+    this.addOutput("input2");
+    this.addOutput("input3");
+    this.addOutput("output0");
+    this.addOutput("output1");
+    this.addOutput("output2");
+    this.addOutput("output3");
+    this.Level = this.addWidget("combo", "Level", "info", function (v) { }, { values: ["info","emergency", "alert", "critical", "error", "warning", "notice","config", "debug", "fine", "finer", "finest"] });
+    this.message = this.addWidget("text", "Message", "", function (v) { }, {});
+    this.LogRequestId = this.addWidget("toggle", "LogRequestId", true, function (v) { }, {});
   }
 
-  StringConstant.desc = "Constant value";
+  Log.desc = "Debug log";
 
-  StringConstant.prototype.onDeadNodeRemoval = function () {
-    // this node is not dead.
-    return false;
+  Log.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeLog";
   }
 
-  StringConstant.prototype.onExecute = function () {
-    this.setOutputData(0, this.string.value);
+  Log.prototype.onExecute = function () {
+    coreFunctions.executeBlock(this);
   }
 
-  LiteGraph.registerNodeType("Generate/constant", StringConstant);
+  LiteGraph.registerNodeType("Debug/Log", Log);
 
+
+  function Trace () {
+    this.addOutput("input0");
+    this.addOutput("input1");
+    this.addOutput("input2");
+    this.addOutput("input3");
+    this.addOutput("output0");
+    this.addOutput("output1");
+    this.addOutput("output2");
+    this.addOutput("output3");
+    this.trace = this.addWidget("text", "Trace", "", function (v) { }, {});
+      this.message = this.addWidget("text", "Message", "", function (v) { }, {});
+    this.LogRequestId = this.addWidget("toggle", "LogRequestId", true, function (v) { }, {});
+  }
+
+  Trace.desc = "Debug trace";
+
+  Trace.prototype.getRuntimeLibraryFunctionName = function() {
+    return "executeTrace";
+  }
+
+  Trace.prototype.onExecute = function () {
+    coreFunctions.executeBlock(this);
+  }
+
+  LiteGraph.registerNodeType("Debug/Trace", Trace);
 
 
   function fn_head () {

@@ -1,0 +1,200 @@
+{
+  "pipesFileVersion": 2,
+  "models": [],
+  "executionGraph": {
+    "last_node_id": 5,
+    "last_link_id": 7,
+    "nodes": [
+      {
+        "id": 2,
+        "type": "DHF/output",
+        "pos": [
+          1308,
+          434
+        ],
+        "size": [
+          180,
+          60
+        ],
+        "flags": {},
+        "order": 3,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "output",
+            "type": 0,
+            "link": 7
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 4,
+        "type": "Generate/multiConstant",
+        "pos": [
+          344,
+          333
+        ],
+        "size": {
+          "0": 255,
+          "1": 82
+        },
+        "flags": {},
+        "order": 0,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "output",
+            "links": [
+              5
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "string",
+          "asd"
+        ]
+      },
+      {
+        "id": 1,
+        "type": "DHF/input",
+        "pos": [
+          248,
+          489
+        ],
+        "size": [
+          180,
+          100
+        ],
+        "flags": {},
+        "order": 1,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "input",
+            "type": "",
+            "links": [
+              6
+            ]
+          },
+          {
+            "name": "uri",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "collections",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "permissions",
+            "type": "",
+            "links": null
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 5,
+        "type": "Debug/Trace",
+        "pos": [
+          733,
+          423
+        ],
+        "size": {
+          "0": 255,
+          "1": 166
+        },
+        "flags": {},
+        "order": 2,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "input0",
+            "type": 0,
+            "link": 5
+          },
+          {
+            "name": "input1",
+            "type": 0,
+            "link": 6
+          },
+          {
+            "name": "input2",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "input3",
+            "type": 0,
+            "link": null
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output0",
+            "links": null
+          },
+          {
+            "name": "output1",
+            "links": [
+              7
+            ]
+          },
+          {
+            "name": "output2",
+            "links": null
+          },
+          {
+            "name": "output3",
+            "links": null
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "test",
+          "MSG",
+          true
+        ]
+      }
+    ],
+    "links": [
+      [
+        5,
+        4,
+        0,
+        5,
+        0,
+        0
+      ],
+      [
+        6,
+        1,
+        0,
+        5,
+        1,
+        0
+      ],
+      [
+        7,
+        5,
+        1,
+        2,
+        0,
+        0
+      ]
+    ],
+    "groups": [],
+    "config": {},
+    "version": 0.4
+  },
+  "name": "trace",
+  "metadata": {
+    "version": "00.01",
+    "author": "",
+    "title": "trace",
+    "dateExported": "19/10/2020, 12:35:07"
+  }
+}

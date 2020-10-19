@@ -962,8 +962,11 @@ export default {
       for (let config of configs) {
 
         // Generate LiteGraph node from config
-        var blockCode = this.createGraphNodeFromConfig(config, availableDatabases)
-        try { eval(blockCode) } catch (e) {
+        try {
+            var blockCode = this.createGraphNodeFromConfig(config, availableDatabases)
+            eval(blockCode)
+            console.log("Succesful registered block "+config.blockName);
+         } catch (e) {
           console.log("Error occured registering block " + config.blockName + ": " + e)
         }
       }
