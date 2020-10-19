@@ -1,0 +1,36 @@
+{
+  "name" : "TestFlow",
+  "description" : "",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stopOnError" : false,
+  "options" : { },
+  "version" : 0,
+  "steps" : {
+    "1" : {
+      "name" : "TestStep",
+      "description" : "",
+      "options" : {
+        "additionalCollections" : [ ],
+        "sourceQuery" : "cts.collectionQuery([\"ingest-unit-test\"])",
+        "collections" : [ "TestStep" ],
+        "sourceDatabase" : "test-data-hub-STAGING",
+        "permissions" : "data-hub-operator,read,data-hub-operator,update",
+        "sourceCollection" : "ingest-unit-test",
+        "outputFormat" : "json",
+        "targetDatabase" : "test-data-hub-FINAL"
+      },
+      "customHook" : {
+        "module" : "",
+        "parameters" : { },
+        "user" : "",
+        "runBefore" : false
+      },
+      "retryLimit" : null,
+      "batchSize" : 100,
+      "threadCount" : 4,
+      "stepDefinitionName" : "TestStep",
+      "stepDefinitionType" : "CUSTOM"
+    }
+  }
+}

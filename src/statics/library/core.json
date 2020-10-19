@@ -1699,5 +1699,120 @@
       "ref": null,
       "code": null
     }
+  },
+  {
+    "functionName": "Log",
+    "blockName": "Log",
+    "title": "Log",
+    "description": "Log",
+    "library": "Debug",
+    "widgets": [
+      {
+        "type": "combo",
+        "name": "Level",
+        "default": "info",
+        "values": ["info","emergency", "alert", "critical", "error", "warning", "notice","config", "debug", "fine", "finer", "finest"]
+      },
+      {
+        "type": "text",
+        "name": "Message",
+        "default": ""
+      },
+      {
+        "type": "toggle",
+        "name": "LogRequestId",
+        "default": true,
+        "values": []
+      }
+    ],
+    "inputs": [
+      {
+        "name": "input0"
+      },
+      {
+        "name": "input1"
+      },
+      {
+        "name": "input2"
+      },
+      {
+        "name": "input3"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "output0"
+      },
+      {
+        "name": "output1"
+      },
+      {
+        "name": "output2"
+      },
+      {
+        "name": "output3"
+      }
+    ],
+    "function": {
+      "ref": null,
+      "code": null
+    }
+  },
+  {
+    "functionName": "Trace",
+    "blockName": "Trace",
+    "title": "Trace",
+    "description": "Trace",
+    "library": "Debug",
+    "widgets": [
+      {
+        "type": "text",
+        "name": "Trace",
+        "default": ""
+      },
+      {
+        "type": "text",
+        "name": "Message",
+        "default": ""
+      },
+      {
+        "type": "toggle",
+        "name": "LogRequestId",
+        "default": true,
+        "values": []
+      }
+    ],
+    "inputs": [
+      {
+        "name": "input0"
+      },
+      {
+        "name": "input1"
+      },
+      {
+        "name": "input2"
+      },
+      {
+        "name": "input3"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "output0"
+      },
+      {
+        "name": "output1"
+      },
+      {
+        "name": "output2"
+      },
+      {
+        "name": "output3"
+      }
+    ],
+    "function": {
+      "ref": null,
+      "code": null
+    }
   }
 ]

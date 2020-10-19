@@ -104,8 +104,6 @@ function compileGraphToJavaScriptWithOptions(jsonGraph,options) {
   flowGraph.initFromLiteGraph(LiteGraph,startNode,finalNode,jsonGraph);
   // STEP 4: Check there is a path between start node and end node
   const paths = flowGraph.getAllPaths(startNode,finalNode);
-  xdmp.log("PATHS");
-  xdmp.log(paths);
   if ( paths == null || paths.length == 0 ) {
     return {
       sourceCode : null,
@@ -140,7 +138,7 @@ function compileGraphToJavaScriptWithOptions(jsonGraph,options) {
     sourceCode.push(...generateCode(options,jsonGraph,node,inputs,outputs,lib));
   }
   let identSpace = options.identSpaceCount ? options.identSpaceCount : 1;
-  return { paths,sourceCode : createSourceCodeOutput(options,sourceCode,identSpace,lib),
+  return { sourceCode : createSourceCodeOutput(options,sourceCode,identSpace,lib),
     errors : null
   };
 }
@@ -158,7 +156,7 @@ function createSourceCodeOutput(options,sourceCodeArray,identSpace,lib) {
     ...ident(libs,identSpace),
     ...ident(sourceCodeArray,identSpace),
     ...ident(["return output;"],identSpace),
-    "}"]; // .join("\n");
+    "}"].join("\n");
 }
 
 function ident(sourceCodeArray,identSpace) {

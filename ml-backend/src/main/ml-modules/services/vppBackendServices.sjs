@@ -9,6 +9,8 @@ const PIPESBUILD = "@PIPESBUILDTOKEN@";
 const TRACE_ID = "pipes-vpp";
 const TRACE_ID_DETAILS = "pipes-vpp-details";
 
+const DHF_CUSTOM_STEP_TEMPLATE = "/custom-modules/pipes/designtime/CustomStepMainTemplate.sjs"
+
 function mapper (item, cfg) {
 
   if (cfg.entities != null) {
@@ -391,7 +393,7 @@ function InvokeExecuteGraph (input,compiler) {
             code += "const collections = "+JSON.stringify(collections)+";\n";
             code += "const permissions = "+JSON.stringify(permissions)+";\n";
             code += "const context = "+JSON.stringify(context)+";\n";
-            code += compiled.sourceCode.join("\n");
+            code += compiled.sourceCode;
             code += "executeCustomStep(input,uri,collections,context,permissions);"
             xdmp.log("EXECUTE CODE");
             xdmp.log(code)
@@ -765,7 +767,14 @@ function post (context, params, input) {
     case "compile":
       let compiler = require("/custom-modules/pipes/designtime/compiler.sjs");
       let output = compiler.compileGraphToJavaScript(ctx);
-      //xdmp.log(Sequence.from(["COMPILER OUTPUT", output]));
+      if ( output.errors == null || output.errors.length > 0 ) {
+        const template = xdmp.invokeFunction(x=>cts.doc(DHF_CUSTOM_STEP_TEMPLATE),{database:xdmp.modulesDatabase()}).toString();
+        output.sourceCode = template+output.sourceCode;
+      } else {
+        output.sourceCode = null;
+      }
+      xdmp.log("COMPILE OUTPUT");
+      xdmp.log(output);
       return output;
     case "config":
       config.databases = getDatabases();
