@@ -4,8 +4,7 @@ Copyright ©2020 MarkLogic Corporation.
 
 package com.marklogic.pipes.ui;
 
-import com.marklogic.hub.DatabaseKind;
-import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.hub.flow.FlowInputs;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.RunFlowResponse;
@@ -24,9 +23,12 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
+import com.marklogic.client.io.SearchHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.client.query.StructuredQueryDefinition;
+import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.DeleteQueryDefinition;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.hub.impl.HubConfigImpl;
@@ -52,9 +54,11 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.Map;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.io.FileInputStream;
 import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.equalToCompressingWhiteSpace;
@@ -85,10 +89,8 @@ class GraphTest {
   private  String MLUSERNAME;
   @Value("${mlPassword}")
   private  String MLPASSWORD;
-  @Value("${mlStagingAppserverName}")
+  @Value("${mlStagingDbName}")
   private  String MLTESTDATABASE;
-  @Value("${mlStagingPort}")
-  private int STAGING_PORT;
 
   static MockHttpSession session;
 
@@ -110,7 +112,11 @@ class GraphTest {
   }
 
   void removeTestDocuments() throws Exception {
-    DatabaseClient client = getDatabaseClient();
+    removeTestDocuments(hubConfig.newStagingClient());
+    removeTestDocuments(hubConfig.newFinalClient());
+  }
+
+  void removeTestDocuments(DatabaseClient client) throws Exception {
     try {
       QueryManager qm = client.newQueryManager();
       DeleteQueryDefinition col = qm.newDeleteDefinition();
@@ -121,7 +127,7 @@ class GraphTest {
     }
   }
 
-  void ingestTestFile(String pathOfFile) throws Exception {
+  void ingestTestFile(InputStreamHandle handle,String pathOfFile) throws Exception {
     DatabaseClient client = getDatabaseClient();
     String fileName = new File(pathOfFile).getName();
     try {
@@ -130,12 +136,6 @@ class GraphTest {
       if ( pathOfFile.endsWith(".xml")) {
         dm = client.newXMLDocumentManager();
       }
-
-      // will create a customer document
-
-      // get the doc from resources
-      InputStreamHandle handle = getInputStreamHandle(pathOfFile);
-
       //Get the set of collections the document belongs to and put in array.
       DocumentMetadataHandle metadataHandle = new DocumentMetadataHandle();
       DocumentMetadataHandle.DocumentCollections collections = metadataHandle.getCollections();
@@ -155,8 +155,13 @@ class GraphTest {
     }
   }
 
-  private static InputStreamHandle getInputStreamHandle(String path) {
+  private static InputStreamHandle getClasspathInputStreamHandle(String path) {
     final InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
+    return new InputStreamHandle(is);
+  }
+
+  private static InputStreamHandle getFileInputStreamHandle(File path) throws Exception {
+    final InputStream is = new FileInputStream(path);
     return new InputStreamHandle(is);
   }
 
@@ -185,31 +190,83 @@ class GraphTest {
 
   @Test
   void testCustomStep() throws Exception {
+    // this is an end to end test.
+    // ingest some sample json
+    // compile a graph
+    // deploy the compiled code as step
+    // run the flow step
+    // compare the result with the expected results
     try {
-      String inputFile = "FullTest/input1.json";
-      assertNotNull("Input1.json not found", this.getInputStreamHandle(inputFile));
-      ingestTestFile(inputFile);
-      inputFile = "FullTest/input2.json";
-      assertNotNull("Input2.json not found", this.getInputStreamHandle(inputFile));
-      ingestTestFile(inputFile);
+      File[] inputFiles = new File("src/test/resources/FullTest/input").listFiles();
+      assertNotNull("FullTest/input directory does not exist",inputFiles);
+      assertNotEquals("Input files not present.",inputFiles.length,0);
+      for ( File inputFile : inputFiles ) {
+        InputStreamHandle in = this.getFileInputStreamHandle(inputFile);
+        assertNotNull("file not found.", in);
+        ingestTestFile(in,inputFile.getAbsolutePath());
+      }
       String sourceCode = compile("FullTest/graph.json");
       publishCustomStepSourceCode("TestStep",sourceCode);
-      runFlow("TestFlow");
+      runDHFFlow("TestFlow");
+      File[] expectedOutcomeFiles = new File("src/test/resources/FullTest/expectedResponse").listFiles();
+      assertNotNull("FullTest/expectedResponse directory does not exist",expectedOutcomeFiles);
+      assertEquals("Input files not present.",inputFiles.length,expectedOutcomeFiles.length);
+      long filesInCollection = getDocumentCountInFinalInCollection(TEST_SOURCE_COLLECTION);
+      assertEquals("Number of files in colection do not match.",filesInCollection,(long) expectedOutcomeFiles.length);
+      ObjectMapper mapper = new ObjectMapper();
+      for ( File exepectedOutcomeFile : expectedOutcomeFiles ) {
+        String expectedResultJson = getFileInputStreamHandle(exepectedOutcomeFile).toString();
+        String uri = "/final/test/"+exepectedOutcomeFile.getName();
+        JacksonHandle actualResponseResultJson = getFinalDocByURI(uri);
+        System.err.println("EXPECTED ");
+        System.err.println(expectedResultJson);
+        System.err.println("GOT");
+        System.err.println(actualResponseResultJson);
+        assertEquals("Response doesn't match expected",mapper.readTree(expectedResultJson.toString()), mapper.readTree(actualResponseResultJson.toString()));
+      }
     } finally {
-      //removeTestDocuments();
+      removeTestDocuments();
     }
   }
 
-  private void runFlow(String flowName) throws Exception {
+  private JacksonHandle getFinalDocByURI(String uri) {
+    DatabaseClient client = hubConfig.newFinalClient();
     try {
-      HubConfigImpl hc = new HubConfigImpl("localhost", MLUSERNAME, MLPASSWORD);
-      hc.setPort(DatabaseKind.STAGING,STAGING_PORT);
-      hc.setDbName(DatabaseKind.STAGING,MLTESTDATABASE);
-      FlowRunner flowRunner = new FlowRunnerImpl(hc);
+      JSONDocumentManager JSONDocMgr = client.newJSONDocumentManager();
+      JacksonHandle handleJSON = new JacksonHandle();
+      JSONDocMgr.read(uri, handleJSON);
+      return handleJSON;
+    } finally {
+      client.release();
+    }
+  }
+
+  private long getDocumentCountInFinalInCollection(String collection) {
+    long found = 0;
+    DatabaseClient client = hubConfig.newFinalClient();
+    try {
+      QueryManager qm = client.newQueryManager();
+      StructuredQueryBuilder sb = qm.newStructuredQueryBuilder();
+      StructuredQueryDefinition criteria = sb.collection(collection);
+      found = qm.search( criteria, new SearchHandle()).getTotalResults();
+    } finally {
+      client.release();
+    }
+    return found;
+  }
+
+  private void runDHFFlow(String flowName) throws Exception {
+    try {
+      FlowRunner flowRunner = new FlowRunnerImpl(hubConfig);
       FlowInputs inputs = new FlowInputs(flowName);
       RunFlowResponse response = flowRunner.runFlow(inputs);
-     // flowRunner.awaitCompletion();
-      //System.out.println("Response: " + response);
+      flowRunner.awaitCompletion();
+      Map<String,RunStepResponse> m  = response.getStepResponses();
+      assertNotNull("Response null",m);
+      RunStepResponse rs = m.get("1");
+      assertNotNull("Step 1 not found",rs);
+      assertEquals("Failures not 0",rs.getFailedEvents(),0L );
+      assertEquals("Successful should be 2",rs.	getSuccessfulEvents(),2L );
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -226,7 +283,7 @@ class GraphTest {
   }
 
   private String compile(String grahPath) throws Exception {
-    InputStreamHandle graphHandle = getInputStreamHandle(grahPath);
+    InputStreamHandle graphHandle = getClasspathInputStreamHandle(grahPath);
     assertNotNull("graph.json not found for "+grahPath,graphHandle);
 
     String request="/v1/resources/vppBackendServices?rs:action=compile";
@@ -247,7 +304,7 @@ class GraphTest {
     assertTrue("Sourcecode should be a string",sourceCodeNode.getNodeType() == JsonNodeType.STRING);
     return sourceCodeNode.textValue();
   }
-  /*
+
   @ParameterizedTest(name = "Interpreter: #{index} : {0}")
   @MethodSource("getDirectoryNames")
   void genericGraphTestsInterpreter(String argument) throws Exception {
@@ -258,7 +315,7 @@ class GraphTest {
   void genericGraphTestsCompiler(String argument) throws Exception {
     runGrahTests(argument,true);
   }
-*/
+
   private void runGrahTests(String argument,boolean compiler) throws Exception {
     try {
       String ext = "json";
@@ -268,10 +325,11 @@ class GraphTest {
         preview = TEST_INPUT_XML;
       }
       String inputFile = "ExecuteGraphTests/"+argument+"/input."+ext;
-      assertNotNull("Input.json not found for "+argument,this.getInputStreamHandle(inputFile));
-      ingestTestFile(inputFile);
+      InputStreamHandle in = this.getClasspathInputStreamHandle(inputFile);
+      assertNotNull("Input.json not found for "+argument,in);
+      ingestTestFile(in,inputFile);
 
-      InputStreamHandle graphHandle = getInputStreamHandle("ExecuteGraphTests/"+argument+"/graph.json");
+      InputStreamHandle graphHandle = getClasspathInputStreamHandle("ExecuteGraphTests/"+argument+"/graph.json");
       assertNotNull("graph.json not found for "+argument,graphHandle);
       JSONObject graphJO = new JSONObject(graphHandle.toString()
       );
@@ -282,7 +340,7 @@ class GraphTest {
       payloadJO.put("previewUri",preview);
 
 
-      InputStreamHandle expectedResponseHandle = getInputStreamHandle("ExecuteGraphTests/"+argument+"/expectedResponse.json");
+      InputStreamHandle expectedResponseHandle = getClasspathInputStreamHandle("ExecuteGraphTests/"+argument+"/expectedResponse.json");
       assertNotNull("expectedResponse.json not found for "+argument,expectedResponseHandle);
       JSONObject expectedJO=new JSONObject();
       expectedJO.put("result", new JSONObject(expectedResponseHandle.toString()));
@@ -318,7 +376,7 @@ class GraphTest {
   }
 
   private static Stream<String> getDirectoryNames() {
-    InputStreamHandle ism= getInputStreamHandle("ExecuteGraphTests");
+    InputStreamHandle ism= getClasspathInputStreamHandle("ExecuteGraphTests");
     String dirs[]=ism.toString().split("\n");
     // limit the test set
     //dirs=new String[]{"Padding"};

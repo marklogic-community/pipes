@@ -358,7 +358,7 @@
         "widgets_values": [
           "",
           "",
-          "/final/${v1}"
+          "/final${v1}"
         ]
       },
       {

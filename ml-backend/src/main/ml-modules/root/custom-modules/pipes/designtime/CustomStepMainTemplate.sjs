@@ -1,6 +1,10 @@
 const DataHub = require("/data-hub/5/datahub.sjs");
 const datahub = new DataHub();
 
+module.exports = {
+  main: main
+};
+
 function main(content, options) {
   let id = content.uri;
   let context = content.context; 

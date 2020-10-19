@@ -393,7 +393,7 @@ function InvokeExecuteGraph (input,compiler) {
             code += "const collections = "+JSON.stringify(collections)+";\n";
             code += "const permissions = "+JSON.stringify(permissions)+";\n";
             code += "const context = "+JSON.stringify(context)+";\n";
-            code += compiled.sourceCode.join("\n");
+            code += compiled.sourceCode;
             code += "executeCustomStep(input,uri,collections,context,permissions);"
             xdmp.log("EXECUTE CODE");
             xdmp.log(code)
