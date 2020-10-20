@@ -63,10 +63,6 @@ function init (LiteGraph) {
     }
   };
 
-  GraphInputDHF.prototype.getRuntimeLibraryFunctionName = function() {
-    return "executeGraphInputDHF";
-  }
-
   LiteGraph.GraphInput = GraphInputDHF;
   LiteGraph.registerNodeType("DHF/input", GraphInputDHF);
 

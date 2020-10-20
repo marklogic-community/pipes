@@ -59,8 +59,6 @@ module.exports = {
   executeJoinArray,
   executeQueryDocExecutorType,
   executeQueryDoc,
-  executeGraphInputDHFExecutorType,
-  executeGraphInputDHF,
   executeGraphOutputDHF,
   executeAddProperty,
   executeStringCaseExecutorType,
@@ -79,19 +77,6 @@ module.exports = {
   BLOCK_EXECUTOR_DELEGATOR : 1,
   BLOCK_EXECUTOR_GENERATOR : 2
 };
-
-function executeGraphInputDHFExecutorType() {
-  return this.BLOCK_EXECUTOR_GENERATOR;
-}
-
-function executeGraphInputDHF(propertiesAndWidgets,inputs,outputs) {
-  return  [
-    "const "+outputs[0]+" = "+inputs[0]+";",
-    "const "+outputs[1]+" = "+inputs[1]+";",
-    "const "+outputs[2]+" = "+inputs[2]+";",
-    "const "+outputs[3]+" = "+inputs[3]+";"
-  ]
-}
 
 function executeGraphOutputDHF(propertiesAndWidgets,output) {
     if (output && output.constructor === Array) {

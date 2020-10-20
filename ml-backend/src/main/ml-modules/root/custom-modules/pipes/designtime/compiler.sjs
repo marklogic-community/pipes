@@ -68,7 +68,7 @@ function allNodesSupportCodeGeneration(LiteGraph,graph,nodeGenerationOrder,error
   for ( const nodeId of nodeGenerationOrder ) {
     let node = getNode(graph.nodes,nodeId);
     let type = node.type;
-    if ( type === SUBGRAPH_TYPE || type === "Graph/input" || type === "Graph/output") {
+    if ( type === SUBGRAPH_TYPE || type === "Graph/input" || type === "Graph/output" || type === "DHF/input") {
       continue;
     }
     let bc = null;
@@ -176,28 +176,15 @@ function compileGraphToJavaScriptWithOptions(jsonGraph,options) {
   let outputFunctions = []
   generateFunctionForGraph(options,jsonGraph.executionGraph,outputFunctions,null);
   return outputFunctions;
-  /*
-  let sourceCode = [];
-  let   lib = { user: false, core:false};
-  for (const nodeId of nodeGenerationOrder ) {
-    const node = getNode(jsonGraph.executionGraph.nodes,nodeId);
-    const inputs = determineInputVariables(jsonGraph.executionGraph,node);
-    const outputs = determineOutputVariables(jsonGraph.executionGraph,node);
-    sourceCode.push(...generateCode(options,jsonGraph,node,inputs,outputs,lib));
-  }
-  let identSpace = options.identSpaceCount ? options.identSpaceCount : 1;
-  return { sourceCode : createSourceCodeOutput(options,sourceCode,identSpace,lib),
-    errors : null
-  };
-  */
 }
 
 function generateFunctionForGraph(options,graph,outputFunctions,title) {
+  let variablePool = [];
   const functionName = generateFunctionName(graph,title);
-  const argList = generateFunctionArguments(graph);
+  const argList = generateFunctionArguments(graph,variablePool);
   let func = { functionName,argList,body:[],returnVar : []}
   let lib = {user: false, core:false};
-
+  const inSubgraph = addSubgraphLoopIfNeeded(graph,func,variablePool);
   for (const nodeId of graph.nodeGenerationOrder ) {
     const node = getNode(graph.nodes,nodeId);
     xdmp.log("TYPE "+node.type);
@@ -207,18 +194,42 @@ function generateFunctionForGraph(options,graph,outputFunctions,title) {
       generateFunctionForGraph(options,node.subgraph,outputFunctions,node.title);
     } else if ( node.type === "Graph/input" || node.type === "Graph/output") {
       // nothing to emit
-    } else {
-      xdmp.log("ENTER");
-      xdmp.log(node);
-      const inputs = determineInputVariables(graph,node);
-      const outputs = determineOutputVariables(graph,node);
-      func.body.push(...generateCode(options,graph,node,inputs,outputs,lib));
+      continue;
     }
+    const inputs = determineInputVariables(graph,node,variablePool);
+    const outputs = determineOutputVariables(graph,node,variablePool);
+    let code = generateCode(options,graph,node,inputs,outputs,lib);
+    if ( inSubgraph ) {
+      let identSpace = options.identSpaceCount ? options.identSpaceCount : 1;
+      code = ident(code,identSpace);
+    }
+    func.body.push(...code);
   }
   func.returnVar = generateReturnVar(graph);
   outputFunctions.push(generateEntireFunction(options,lib,func));
   outputFunctions.reverse();
 }
+
+function addSubgraphLoopIfNeeded(graph,func,variablePool) {
+  if ( graph.subgraphPath ) {
+    const firstSubgraphInput = graph.nodes.filter(x=>x.type==="Graph/input")[0];
+    // reserve result
+    addToVariablePool(variablePool,"result","result",-1);
+    xdmp.log("FIRST");
+    xdmp.log(firstSubgraphInput);
+    xdmp.log("DUMP");
+    dumpVariablePool(variablePool);
+    const variableName =  getVariableNameForSubgraphInput(graph,firstSubgraphInput,variablePool)
+    const inputName = "list_"+variableName
+    let snippet = `${inputName} = !(${inputName}.toArray || Array.isArray(${inputName})) ? [${inputName}] : ${inputName};
+let result = []
+for ( const ${variableName} of ${inputName} ) {`
+    func.body.push(...snippet.split('\n'))
+    return true;
+  }
+  return false;
+}
+
 
 function generateEntireFunction(options,lib,func) {
   let identSpace = options.identSpaceCount ? options.identSpaceCount : 1;
@@ -232,7 +243,9 @@ function generateEntireFunction(options,lib,func) {
     ret.push(ident(["const u = require('/custom-modules/pipes/runtime/user.sjs');"],identSpace));
   }
   ret.push(...ident(func.body,identSpace));
-  ret.push(ident(["return "+func.returnVar+";"],identSpace));
+  if ( func.returnVar ) {
+    ret.push(ident(["return "+func.returnVar+";"],identSpace));
+  }
   ret.push("}");
   return ret.join(newLine);
 }
@@ -240,7 +253,7 @@ function generateReturnVar(graph) {
   if ( graph.subgraphPath ) {
     return "[TODO]";
   } else {
-    return "output";
+    return null;
   }
 }
 
@@ -249,28 +262,59 @@ function generateFunctionName(graph,title) {
   return graph.subgraphPath ? "executeSubgraph"+graph.subgraphPath + titleString : "executeCustomStep";
 }
 
-function generateFunctionArguments(graph) {
+function generateFunctionArguments(graph,variablePool) {
   if ( graph.subgraphPath ) {
-    let args = []
+    let args = [];
+    let counter = 0;
     for ( const node of graph.nodes.filter(x=>x.type==="Graph/input") ) {
-      args.push(createVariableNameForSubgraphInput(graph,node));
+      const prefix = counter == 0 ? "list_" : "";
+      args.push(prefix+createVariableNameForSubgraphInput(graph,node,variablePool));
+      counter++;
     }
     return args;
   } else {
-    return [
+    let inputNode = graph.nodes.filter(x=>x.type==='DHF/input')[0]
+    const params = [
       "input",
       "uri",
       "collections",
       "context",
       "permissions"
-    ]
+    ];
+    for ( const p of params ) {
+      addToVariablePool(variablePool,p,p,inputNode);
+    }
+    return params;
   }
 }
 
-function createVariableNameForSubgraphInput(graph,subgraphInputNode) {
-  const name = subgraphInputNode.properties.name.match(/[0-9a-zA-Z_]+/g)+"_"+graph.subgraphPath;
+function getVariableNameForSubgraphInput(graph,subgraphInputNode,variablePool) {
+  const nodeId = subgraphInputNode.id;
+  const lookupName = subgraphInputNode.properties.name;
+  xdmp.log("NodeID="+nodeId+" lookup="+lookupName);
+  const found =  variablePool.find(x=>x.lookup === lookupName  && x.nodeId === nodeId );
+  if ( found ) {
+    return found.varName;
+  }
+  return null;
+}
+
+function createVariableNameForSubgraphInput(graph,subgraphInputNode,variablePool) {
+  let name = subgraphInputNode.properties.name.match(/[0-9a-zA-Z_]+/g).join("");
+  if ( variablePoolHasVariable(variablePool,name)) {
+    name = name + "_"+graph.subgraphPath;
+  }
+  addToVariablePool(variablePool,name,subgraphInputNode.properties.name,subgraphInputNode);
   return name;
 }
+
+function variablePoolHasVariable(variablePool,varName) {
+  return variablePool.some( x => x.varName === varName )
+}
+function addToVariablePool(variablePool,varName,lookup,node) {
+  variablePool.push({ varName, lookup, nodeId : node.id })
+};
+
 
 function ident(sourceCodeArray,identSpace) {
   if (identSpace === 0 || identSpace < 0 ) {
@@ -284,21 +328,38 @@ function ident(sourceCodeArray,identSpace) {
   }
   return arr;
 }
-function createVariableName(node,index,inputOutput) {
-  return "var_"+node.id+"_"+index+"_"+inputOutput.name.match(/[0-9a-zA-Z_]+/g).join("");
+function createVariableName(node,index,inputOutput,variablePool) {
+  let lookup = inputOutput.name.match(/[0-9a-zA-Z_]+/g).join("");
+  let found = variablePool.find(x=>x.lookup === lookup && x.nodeId === node.id );
+  if ( found ) {
+    return found.varName;
+  }
+  let name = lookup;
+  if ( variablePoolHasVariable(variablePool,"var_"+name)) {
+    name = "var_"+node.id+"_"+index+"_"+name;
+  } else {
+    name = "var_"+name;
+  }
+  addToVariablePool(variablePool,name,lookup,node);
+  return  name;
 }
 
-
-function getNodeWithOutputLink(graph,link) {
+function dumpVariablePool(variablePool) {
+  xdmp.log(Sequence.from(["start variable pool dump",...variablePool,"end variable pool"]));
+}
+function getNodeWithOutputLink(graph,link,variablePool) {
+  xdmp.log("getNodeWithOutputLink")
   for ( const node of graph.nodes || [] ) {
     let i = 0;
     for (const output of node.outputs || [] ) {
       for ( const outputLink of output.links || [] ) {
         if ( outputLink === link ) {
           if ( node.type === "Graph/input") {
-            return {nodeId : node.id,variableName : createVariableNameForSubgraphInput(graph,node)};
+            return {nodeId : node.id,variableName : getVariableNameForSubgraphInput(graph,node,variablePool)};
           } else {
-            return {nodeId : node.id,variableName : createVariableName(node,i,output) }
+            dumpVariablePool(variablePool);
+            xdmp.log("getNodeWithOutputLink for NodeId="+node.id+" node type="+node.type);
+            return {nodeId : node.id,variableName : createVariableName(node,i,output,variablePool) }
           }
         }
       }
@@ -313,42 +374,37 @@ function getNode(nodes,nodeId) {
 }
 
 
-function determineOutputVariables(graph,node) {
+function determineOutputVariables(graph,node,variablePool) {
   if ( node.type === "DHF/output") {
-    return [{name:"output",index:0}]
+    return [];
   }
   if ( node.type === "DHF/input") {
     return [
-      { name:  createVariableName(node,0,{name:"input"}), index: 0},
-      { name: createVariableName(node,1,{name:"uri"}) , index: 1},
-      { name: createVariableName(node,2,{name:"collections"}),index: 2},
-      { name: createVariableName(node,3,{name:"permissions"}),index:3}
+      { name:  createVariableName(node,0,{name:"input"},variablePool), index: 0},
+      { name: createVariableName(node,1,{name:"uri"},variablePool) , index: 1},
+      { name: createVariableName(node,2,{name:"collections"},variablePool),index: 2},
+      { name: createVariableName(node,3,{name:"permissions"},variablePool),index:3}
     ];
   }
   let arr = [];
   let i = 0;
   for ( const output of node.outputs || []) {
-    let variableName = createVariableName(node,i,output);
+    let variableName = createVariableName(node,i,output,variablePool);
     arr.push({ name: variableName, index : i } );
     i++;
   }
   return arr
 }
-function determineInputVariables(graph,node) {
+function determineInputVariables(graph,node,variablePool) {
   if ( node.type === "DHF/input") {
-    return [
-      { name: "input", index: 0},
-      { name: "uri" , index: 1},
-      { name: "collections",index: 2},
-      { name: "permissions",index:3}
-    ]
+    return [];
   }
   let arr = [];
   let i = 0;
   for ( const input of node.inputs || []) {
     const link = input.link;
     if ( link != null ) {
-      arr.push({ name: getNodeWithOutputLink(graph,link).variableName, index: i});
+      arr.push({ name: getNodeWithOutputLink(graph,link,variablePool).variableName, index: i});
     } else {
       arr.push({ name: "undefined", index: i});
     }
@@ -357,7 +413,10 @@ function determineInputVariables(graph,node) {
   return arr
 }
 
-function generateCode(options,jsonGraph,node,ins,outs,lib) {
+function generateCode(options,graph,node,ins,outs,lib) {
+  if ( node.type === "DHF/input") {
+    return [];
+  }
   const addComments = options.addComments && options.addComments === true;
   let input = {};
   let output = {};
@@ -401,13 +460,11 @@ function generateCode(options,jsonGraph,node,ins,outs,lib) {
       propertiesWidgets.widgets = w;
     }
   }
-  let code = [bc.getRuntimeLibraryFunctionName()+"("+propertiesWidgets+","+input+","+ output+")"];
   let inputKeys = Object.keys(input);
   let dataIn = [];
   for ( const i of inputKeys ) {
     dataIn.push(input[i])
   }
-  xdmp.log(Sequence.from(["TESTER",dataIn,ins]));
   if (node.type === "dhf/envelope") {
     dataIn.push(...["collections","uri", "context"])
   }
@@ -416,44 +473,54 @@ function generateCode(options,jsonGraph,node,ins,outs,lib) {
   for ( const i of outputKeys ) {
     dataOut.push(output[i])
   }
-  code = [];
-  let prefix = ""
-  const library = "getRuntimeLibraryPath" in  bc ? bc.getRuntimeLibraryPath() : "coreFunctions.sjs"
-  const req = require("/custom-modules/pipes/runtime/"+library);
-  const inputAsListFunction = bc.getRuntimeLibraryFunctionName() + "InputAsList"
-  const inputAsList = inputAsListFunction in req && typeof req[inputAsListFunction] === "function" ? req[inputAsListFunction]() : false;
-  const returnAlwaysAnArrayFunction = bc.getRuntimeLibraryFunctionName()  + "ReturnAlwaysAnArray"
-  const returnAlwaysAnArray = returnAlwaysAnArrayFunction in cf && typeof cf[returnAlwaysAnArrayFunction] === "function" ? cf[returnAlwaysAnArrayFunction]() : false;
-  xdmp.log("FUNCTION "+returnAlwaysAnArrayFunction);
-  xdmp.log(returnAlwaysAnArray);
-  if ( library == "coreFunctions.sjs" ) {
-    lib.core = true;
-    prefix = "r";
-  } else if ( library == "user.sjs")  {
-    lib.user = true;
-    prefix = "u";
-  }
-  let inputString = "";
-  if ( dataIn && dataIn.length > 0 ) {
-    if ( inputAsList ) {
-      inputString = ",[" + dataIn.join(",") + "]";
-    } else {
-      inputString = "," + dataIn.join(",");
-    }
-  }
-  let out = "const ["+dataOut.join(",")+"]";
-  if ( dataOut.length == 1 && !returnAlwaysAnArray) {
-    out = "const "+dataOut[0];
-  }
-  xdmp.log(out);
-  const typeExecutorFunction =  bc.getRuntimeLibraryFunctionName() + "ExecutorType";
-  const doesFunctionExist =  typeExecutorFunction in req && typeof req[typeExecutorFunction] === "function";
-  const executorType = doesFunctionExist ? req[typeExecutorFunction]() : cf.BLOCK_EXECUTOR_DELEGATOR;
-  if ( executorType === cf.BLOCK_EXECUTOR_DELEGATOR ) {
-    code.push(out + " = " + prefix + "." + bc.getRuntimeLibraryFunctionName() + "(" + JSON.stringify(propertiesWidgets) + inputString + ");");
+  let inputString;
+  let out;
+  let code = [];
+  if ( node.type === SUBGRAPH_TYPE ) {
+    inputString =  dataIn.join(",");
+    out = "const ["+dataOut.join(",")+"] = ";
+    code.push(out + generateFunctionName(node.subgraph,node.title)+"(" + inputString +");");
   } else {
-    const genCode = req[bc.getRuntimeLibraryFunctionName()](propertiesWidgets,dataIn,dataOut);
-    code.push(...genCode);
+    let prefix = ""
+    const library = "getRuntimeLibraryPath" in  bc ? bc.getRuntimeLibraryPath() : "coreFunctions.sjs"
+    const req = require("/custom-modules/pipes/runtime/"+library);
+    const inputAsListFunction = bc.getRuntimeLibraryFunctionName() + "InputAsList"
+    const inputAsList = inputAsListFunction in req && typeof req[inputAsListFunction] === "function" ? req[inputAsListFunction]() : false;
+    const returnAlwaysAnArrayFunction = bc.getRuntimeLibraryFunctionName()  + "ReturnAlwaysAnArray"
+    const returnAlwaysAnArray = returnAlwaysAnArrayFunction in cf && typeof cf[returnAlwaysAnArrayFunction] === "function" ? cf[returnAlwaysAnArrayFunction]() : false;
+    xdmp.log("FUNCTION "+returnAlwaysAnArrayFunction);
+    xdmp.log(returnAlwaysAnArray);
+    if ( library == "coreFunctions.sjs" ) {
+      lib.core = true;
+      prefix = "r";
+    } else if ( library == "user.sjs")  {
+      lib.user = true;
+      prefix = "u";
+    }
+    if ( dataIn && dataIn.length > 0 ) {
+      if ( inputAsList ) {
+        inputString = ",[" + dataIn.join(",") + "]";
+      } else {
+        inputString = "," + dataIn.join(",");
+      }
+    } else {
+      inputString = ",[" + dataIn.join(",") + "]";
+    }
+    if ( dataOut.length == 1 && !returnAlwaysAnArray) {
+      out = "const "+dataOut[0]+" = ";
+    }
+    if ( node.type === "DHF/output") {
+      out = "return ";
+    }
+    const typeExecutorFunction =  bc.getRuntimeLibraryFunctionName() + "ExecutorType";
+    const doesFunctionExist =  typeExecutorFunction in req && typeof req[typeExecutorFunction] === "function";
+    const executorType = doesFunctionExist ? req[typeExecutorFunction]() : cf.BLOCK_EXECUTOR_DELEGATOR;
+    if ( executorType === cf.BLOCK_EXECUTOR_DELEGATOR ) {
+      code.push(out + prefix + "." + bc.getRuntimeLibraryFunctionName() + "(" + JSON.stringify(propertiesWidgets) + inputString + ");");
+    } else {
+      const genCode = req[bc.getRuntimeLibraryFunctionName()](propertiesWidgets,dataIn,dataOut);
+      code.push(...genCode);
+    }
   }
   return code;
 }
@@ -464,7 +531,3 @@ function compileGraphToJavaScript(jsonGraph) {
 
 let jsonGraph = cts.doc("/graph.json").toObject();
 compileGraphToJavaScript(jsonGraph).join("\n");
-
-module.exports = {
-  compileGraphToJavaScript
-};
