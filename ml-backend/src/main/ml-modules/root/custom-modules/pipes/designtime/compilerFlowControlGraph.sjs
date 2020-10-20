@@ -8,28 +8,28 @@ module.exports = class PipesFlowControlGraph {
 
   // Check if a node has no inputs
   isOrphanInput(node) {
-    for ( let inp of node.inputs || [] ) {
-      if ( inp.link != null ) {
+    for (let inp of node.inputs || []) {
+      if (inp.link != null) {
         return false;
       }
     }
     return true;
   }
 
-  initFromLiteGraph(LiteGraph,startNode,finalNode,graph) {
+  initFromLiteGraph(LiteGraph, startNode, finalNode, graph) {
     let arr = [];
     this.graph.clear();
-    for ( const node of graph.nodes || [] ){
+    for (const node of graph.nodes || []) {
       let fromNode = node.id;
-      for ( const output of node.outputs || [] ) {
-        for ( const link of output.links || [] ) {
-          const outputData = getNodeWithInputLink(graph,link);
+      for (const output of node.outputs || []) {
+        for (const link of output.links || []) {
+          const outputData = getNodeWithInputLink(graph, link);
           const toNode = outputData.nodeId;
-          this.addEdge(fromNode,toNode);
+          this.addEdge(fromNode, toNode);
         }
       }
-      if ( this.isOrphanInput(node) ) {
-        if (node.id != startNode && node.id != finalNode ) {
+      if (this.isOrphanInput(node)) {
+        if (node.id != startNode && node.id != finalNode) {
           // for nodes without inputs (such as constants) we add
           // a link from the startnode to this node
           // to get this picked up by the path analysis.
@@ -40,66 +40,75 @@ module.exports = class PipesFlowControlGraph {
     return arr;
   }
 
-  addEdge(start,end) {
+  addEdge(start, end) {
     if (!this.graph.has(start)) {
-      this.graph.set(start,[end])
-    }
-    else {
+      this.graph.set(start, [end])
+    } else {
       this.graph.get(start).push(end)
     }
   }
 
   removeNode(node) {
     this.graph.delete(node);
-    this.graph.forEach((v,k) => { const index = v.indexOf(node); if ( index > -1 ) { v.splice(index,1)}});
+    this.graph.forEach((v, k) => {
+      const index = v.indexOf(node);
+      if (index > -1) {
+        v.splice(index, 1)
+      }
+    });
   }
-  getAllPathsUtil( u, d, isVisited, localPathList, allPaths) {
-    isVisited.set(u,true);
-    if ( u == d )  {
+
+  getAllPathsUtil(u, d, isVisited, localPathList, allPaths) {
+    isVisited.set(u, true);
+    if (u == d) {
       allPaths.push(localPathList);
-      isVisited.set(u,false);
+      isVisited.set(u, false);
       return localPathList;
     }
     const list = this.graph.get(u)
-    for (let i of list || [] ) {
-      if ( !isVisited.has(i) || isVisited.get(i) == false )  {
+    for (let i of list || []) {
+      if (!isVisited.has(i) || isVisited.get(i) == false) {
         localPathList.push(i);
-        localPathList = this.getAllPathsUtil(Number(i), d, isVisited, localPathList,allPaths);
+        localPathList = this.getAllPathsUtil(Number(i), d, isVisited, localPathList, allPaths);
         localPathList = localPathList.filter(x => x !== i)
       }
     }
-    isVisited.set(u,false);
+    isVisited.set(u, false);
     return localPathList
   }
+
   getAllPaths(s, d) {
     let allPaths = [];
     let isVisited = new Map();
     let pathList = [];
     pathList.push(s);
-    this.getAllPathsUtil(s, d, isVisited, pathList,allPaths);
+    this.getAllPathsUtil(s, d, isVisited, pathList, allPaths);
     return allPaths
   }
 
-  removeDeadNodes(startNode,endNode) {
+  removeDeadNodes(startNode, endNode) {
     let liveNodes = new Set();
-    let allPaths = this.getAllPaths(startNode,endNode);
-    allPaths.forEach(x=>x.forEach(liveNodes.add,liveNodes));
+    let allPaths = this.getAllPaths(startNode, endNode);
+    allPaths.forEach(x => x.forEach(liveNodes.add, liveNodes));
     let allNodes = new Set();
-    this.graph.forEach(function(value, key, map) { allNodes.add(key); value.forEach(allNodes.add,allNodes)});
+    this.graph.forEach(function (value, key, map) {
+      allNodes.add(key);
+      value.forEach(allNodes.add, allNodes)
+    });
     let dead = new Set([...allNodes].filter(x => !liveNodes.has(x)));
-    dead.forEach(x=>{
-          this.removeNode(x)
+    dead.forEach(x => {
+      this.removeNode(x)
     });
   }
 
-  isCyclicUtil(i, visited,  recStack)  {
-    if (recStack.get(i) === true ) {
+  isCyclicUtil(i, visited, recStack) {
+    if (recStack.get(i) === true) {
       return true;
     }
-    if (visited.get(i) === true ) {
+    if (visited.get(i) === true) {
       return false;
     }
-    visited.set(i,true);
+    visited.set(i, true);
     recStack.set(i, true);
     let children = this.graph.get(i);
     for (const c of children || []) {
@@ -107,18 +116,18 @@ module.exports = class PipesFlowControlGraph {
         return true;
       }
     }
-    recStack.set(i,false);
+    recStack.set(i, false);
     return false;
   }
 
   isCyclic() {
     let visited = new Map();
     let recStack = new Map();
-    for ( const x of this.graph.keys() ){
-      visited.set(x,false);
-      recStack.set(x,false);
+    for (const x of this.graph.keys()) {
+      visited.set(x, false);
+      recStack.set(x, false);
     }
-    for ( const i of this.graph.keys() ){
+    for (const i of this.graph.keys()) {
       if (this.isCyclicUtil(Number(i), visited, recStack))
         return true;
     }
@@ -135,30 +144,38 @@ module.exports = class PipesFlowControlGraph {
     */
     let outputOrderReverse = [];
     let deepCopyPaths = [];
-    allPaths.forEach(x=>{ let arr = []; x.forEach(y=>arr.push(y)); deepCopyPaths.push(arr) })
-    const finalState = deepCopyPaths[0].slice(-1)[0];
-    for ( const path of deepCopyPaths) {
+    allPaths.forEach(x => {
+      let arr = [];
+      x.forEach(y => arr.push(y));
+      deepCopyPaths.push(arr)
+    })
+    let finalState = [];
+    for (const path of deepCopyPaths) {
       const finalStateThisPath = path.slice(-1)[0];
-      if ( finalStateThisPath !== finalState ) {
-        // TODO Error
-      }
+      finalState.push(finalStateThisPath);
       path.pop()
     }
-    let currentStates = [finalState];
+    finalState = [...new Set(finalState)];
+    let currentStates = finalState;
     let arr = []
-    while ( currentStates.length > 0) {
+    while (currentStates.length > 0) {
       let dependsOn = new Set();
       arr.push(currentStates);
-      currentStates.forEach(x=>outputOrderReverse.push(x));
-      deepCopyPaths.forEach(x=>{let y = x.pop(); if ( y != null) { dependsOn.add(y) } });
-      dependsOn.forEach(x=>deepCopyPaths.forEach(y=>y.indexOf(x) > -1 ? dependsOn.delete(x) : true ));
+      currentStates.forEach(x => outputOrderReverse.push(x));
+      deepCopyPaths.forEach(x => {
+        let y = x.pop();
+        if (y != null) {
+          dependsOn.add(y)
+        }
+      });
+      dependsOn.forEach(x => deepCopyPaths.forEach(y => y.indexOf(x) > -1 ? dependsOn.delete(x) : true));
       currentStates = [...dependsOn]
     }
     return outputOrderReverse.reverse()
   }
 };
 
-function getNodeWithInputLink(graph,link) {
+  function getNodeWithInputLink(graph,link) {
   for ( const node of graph.nodes || [] ) {
     for (const input of node.inputs || [] ) {
       if ( input.link == link ) {

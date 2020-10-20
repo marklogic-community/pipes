@@ -151,7 +151,7 @@ function checkAndDecorateExecutionOrder(graph,subgraphPath,graphTitle) {
   const subgraphNodes = graph.nodes.filter( x=>x.type===SUBGRAPH_TYPE )
   for ( const subgraph of subgraphNodes ) {
     const path = subgraphPath === null ? String(subgraph.id) : subgraphPath+"_"+subgraph.id;
-    subgraph.subgraphPath = path;
+    subgraph.subgraph.subgraphPath = path;
     const subgraphTitle = "subgraph "+subgraph.title;
     const errorResponse = checkAndDecorateExecutionOrder(subgraph.subgraph,path,subgraphTitle);
     if ( errorResponse != null ) {
@@ -167,13 +167,15 @@ function compileGraphToJavaScriptWithOptions(jsonGraph,options) {
   const LiteGraph = require("/custom-modules/pipes/designtime/litegraph").LiteGraph;
   initLiteGraph(jsonGraph);
 
-  const errorResponse = checkAndDecorateExecutionOrder(jsonGraph.executionGraph,null,"main graph");
+  let errorResponse = checkAndDecorateExecutionOrder(jsonGraph.executionGraph,null,"main graph");
 
   if ( errorResponse !== null ) {
     return errorResponse;
   }
 
-  return jsonGraph;
+  let outputFunctions = []
+  generateFunctionForGraph(options,jsonGraph.executionGraph,outputFunctions,null);
+  return outputFunctions;
   /*
   let sourceCode = [];
   let   lib = { user: false, core:false};
@@ -190,20 +192,84 @@ function compileGraphToJavaScriptWithOptions(jsonGraph,options) {
   */
 }
 
-function createSourceCodeOutput(options,sourceCodeArray,identSpace,lib) {
-  let libs = []
+function generateFunctionForGraph(options,graph,outputFunctions,title) {
+  const functionName = generateFunctionName(graph,title);
+  const argList = generateFunctionArguments(graph);
+  let func = { functionName,argList,body:[],returnVar : []}
+  let lib = {user: false, core:false};
+
+  for (const nodeId of graph.nodeGenerationOrder ) {
+    const node = getNode(graph.nodes,nodeId);
+    xdmp.log("TYPE "+node.type);
+    if ( node.type === SUBGRAPH_TYPE ) {
+      xdmp.log("LOOP");
+      xdmp.log(node.subgraph);
+      generateFunctionForGraph(options,node.subgraph,outputFunctions,node.title);
+    } else if ( node.type === "Graph/input" || node.type === "Graph/output") {
+      // nothing to emit
+    } else {
+      xdmp.log("ENTER");
+      xdmp.log(node);
+      const inputs = determineInputVariables(graph,node);
+      const outputs = determineOutputVariables(graph,node);
+      func.body.push(...generateCode(options,graph,node,inputs,outputs,lib));
+    }
+  }
+  func.returnVar = generateReturnVar(graph);
+  outputFunctions.push(generateEntireFunction(options,lib,func));
+  outputFunctions.reverse();
+}
+
+function generateEntireFunction(options,lib,func) {
+  let identSpace = options.identSpaceCount ? options.identSpaceCount : 1;
+  let newLine = options.newLine ? options.newLine : "\\n";
+  let ret = [];
+  ret.push("function "+func.functionName+"("+func.argList.join(",")+") {");
   if ( lib.core ) {
-    libs.push("const r = require('/custom-modules/pipes/runtime/coreFunctions.sjs');");
+    ret.push(ident(["const r = require('/custom-modules/pipes/runtime/coreFunctions.sjs');"],identSpace));
   }
   if ( lib.user ) {
-    libs.push("const u = require('/custom-modules/pipes/runtime/user.sjs');");
+    ret.push(ident(["const u = require('/custom-modules/pipes/runtime/user.sjs');"],identSpace));
   }
-  return [
-    "function executeCustomStep(input,uri,collections,context,permissions) {",
-    ...ident(libs,identSpace),
-    ...ident(sourceCodeArray,identSpace),
-    ...ident(["return output;"],identSpace),
-    "}"].join("\n");
+  ret.push(...ident(func.body,identSpace));
+  ret.push(ident(["return "+func.returnVar+";"],identSpace));
+  ret.push("}");
+  return ret.join(newLine);
+}
+function generateReturnVar(graph) {
+  if ( graph.subgraphPath ) {
+    return "[TODO]";
+  } else {
+    return "output";
+  }
+}
+
+function generateFunctionName(graph,title) {
+  let titleString = title ? "_"+title : "";
+  return graph.subgraphPath ? "executeSubgraph"+graph.subgraphPath + titleString : "executeCustomStep";
+}
+
+function generateFunctionArguments(graph) {
+  if ( graph.subgraphPath ) {
+    let args = []
+    for ( const node of graph.nodes.filter(x=>x.type==="Graph/input") ) {
+      args.push(createVariableNameForSubgraphInput(graph,node));
+    }
+    return args;
+  } else {
+    return [
+      "input",
+      "uri",
+      "collections",
+      "context",
+      "permissions"
+    ]
+  }
+}
+
+function createVariableNameForSubgraphInput(graph,subgraphInputNode) {
+  const name = subgraphInputNode.properties.name.match(/[0-9a-zA-Z_]+/g)+"_"+graph.subgraphPath;
+  return name;
 }
 
 function ident(sourceCodeArray,identSpace) {
@@ -229,7 +295,11 @@ function getNodeWithOutputLink(graph,link) {
     for (const output of node.outputs || [] ) {
       for ( const outputLink of output.links || [] ) {
         if ( outputLink === link ) {
-          return {nodeId : node.id,variableName : createVariableName(node,i,output) }
+          if ( node.type === "Graph/input") {
+            return {nodeId : node.id,variableName : createVariableNameForSubgraphInput(graph,node)};
+          } else {
+            return {nodeId : node.id,variableName : createVariableName(node,i,output) }
+          }
         }
       }
       i++;
@@ -389,8 +459,11 @@ function generateCode(options,jsonGraph,node,ins,outs,lib) {
 }
 
 function compileGraphToJavaScript(jsonGraph) {
-  return compileGraphToJavaScriptWithOptions(jsonGraph,{addComments:true, identSpaceCount : 1,outputBlockAsFunction : true });
+  return compileGraphToJavaScriptWithOptions(jsonGraph,{addComments:true, identSpaceCount : 1,newLine : "\n"});
 }
+
+let jsonGraph = cts.doc("/graph.json").toObject();
+compileGraphToJavaScript(jsonGraph).join("\n");
 
 module.exports = {
   compileGraphToJavaScript
