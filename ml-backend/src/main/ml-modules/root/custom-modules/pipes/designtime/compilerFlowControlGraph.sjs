@@ -16,14 +16,14 @@ module.exports = class PipesFlowControlGraph {
     return true;
   }
 
-  initFromLiteGraph(LiteGraph,startNode,finalNode,litegraphJSON) {
+  initFromLiteGraph(LiteGraph,startNode,finalNode,graph) {
     let arr = [];
     this.graph.clear();
-    for ( const node of litegraphJSON.executionGraph.nodes || [] ){
+    for ( const node of graph.nodes || [] ){
       let fromNode = node.id;
       for ( const output of node.outputs || [] ) {
         for ( const link of output.links || [] ) {
-          const outputData = getNodeWithInputLink(litegraphJSON.executionGraph,link);
+          const outputData = getNodeWithInputLink(graph,link);
           const toNode = outputData.nodeId;
           this.addEdge(fromNode,toNode);
         }

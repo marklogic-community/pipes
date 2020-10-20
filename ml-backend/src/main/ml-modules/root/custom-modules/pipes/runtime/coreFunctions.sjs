@@ -5,6 +5,10 @@ const datahub = new DataHub();
 
 const BLOCK_RUNTIME_DEBUG_TRACE = "pipesBlockRuntimeDebug";
 
+const TRACE_ID = "pipes-coreFunctions";
+const TRACE_ID_PIPES_EXECUTION = "pipes-execution";
+const TRACE_ID_PIPES_EXECUTION_DETAILS = "pipes-execution-detasils";
+
 module.exports = {
   executeCheckPhoneNumber,
   executeDeclarativeMapper,
@@ -75,12 +79,6 @@ module.exports = {
   BLOCK_EXECUTOR_DELEGATOR : 1,
   BLOCK_EXECUTOR_GENERATOR : 2
 };
-
-const TRACE_ID = "pipes-coreFunctions";
-const TRACE_ID_PIPES_EXECUTION = "pipes-execution";
-const TRACE_ID_PIPES_EXECUTION_DETAILS = "pipes-execution-detasils";
-
-
 
 function executeGraphInputDHFExecutorType() {
   return this.BLOCK_EXECUTOR_GENERATOR;
@@ -505,8 +503,19 @@ function executeStringJoinExecutorType() {
 }
 
 function executeStringJoin(propertiesAndWidgets,inputs,outputs) {
+  const output0 = outputs[0];
+  const input0 = inputs[0];
+  const separator = propertiesAndWidgets.properties.separator;
   return [
-    "const " + outputs[0] + " = "+inputs[0]+" ? fn.stringJoin("+inputs[0]+",'"+propertiesAndWidgets.properties.separator+"') : '';"
+    `const ${output0}=(()=>{`,
+    `            if ( !input0 )  {`,
+    `              return '';`,
+    `            } else if ( ${input0} instanceof Sequence) {`,
+    `              return fn.stringJoin(${input0},'${separator}')`,
+    `            } else if ( ${input0}.constructor.name === 'Array') {`,
+    `              return ${input0}.join('${separator}')`,
+    `            }`,
+    `          })()`
   ];
 }
 
@@ -1174,7 +1183,8 @@ function executeBlock(block) {
     }
     else {
       for (let i = 0; i < inputs.length; i++) {
-        arr.push("input" + i + "=" + JSON.stringify(inputs[i]))
+        const type = inputs[i] ? inputs[i].constructor.name : "undefined";
+        arr.push("input" + i + "=" + JSON.stringify(inputs[i])+" type="+type+"")
       }
     }
     xdmp.trace(TRACE_ID_PIPES_EXECUTION,Sequence.from(arr));
@@ -1224,7 +1234,7 @@ function executeBlock(block) {
     for ( let i = 0 ; i < ( block.outputs || []).length; i++ ) {
       generatorOutputs.push("output"+i);
     }
-    const returnCode = "\n[" + generatorOutputs.join(",") + "];"
+    const returnCode = "\nconst r=[" + generatorOutputs.join(",") + "];\nr;"
     const genCode = inputCode + func(propertiesAndWidgets,generatorInputs,generatorOutputs).join("\n") + returnCode;
     let outputValues = null;
     xdmp.trace(TRACE_ID_PIPES_EXECUTION_DETAILS,Sequence.from(["-- Start code --",genCode,"-- End code ---"]));

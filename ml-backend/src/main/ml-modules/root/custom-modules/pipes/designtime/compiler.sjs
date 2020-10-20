@@ -1,40 +1,49 @@
 'use strict';
 
+const SUBGRAPH_TYPE = "Graph/subgraph";
+
 const cf = require('/custom-modules/pipes/runtime/coreFunctions.sjs');
 
-function findStartNode(graph) {
-  let startNode = graph.executionGraph == null || graph.executionGraph.nodes == null ? null : graph.executionGraph.nodes.filter(x=>x.type==='DHF/input').map(x=>x.id);
-  startNode = startNode == null || startNode.length === 0 ? null : startNode;
-  return startNode;
+function findStartNodes(graph,subgraphPath) {
+  let type = subgraphPath === null ? 'DHF/input' : 'Graph/input';
+  let startNodes = graph == null || graph.nodes == null ? null : graph.nodes.filter(x=>x.type===type).map(x=>x.id);
+  startNodes = startNodes == null || startNodes.length === 0 ? null : startNodes;
+  return startNodes;
 }
-function findFinalNode(graph) {
-  let startNode = graph.executionGraph == null || graph.executionGraph.nodes == null ? null : graph.executionGraph.nodes.filter(x=>x.type==='DHF/output').map(x=>x.id);
-  startNode = startNode == null || startNode.length === 0 ? null : startNode;
-  return startNode;
+function findFinalNodes(graph,subgraphPath) {
+  let type = subgraphPath === null ? 'DHF/output' : 'Graph/output';
+  let finalNodes = graph == null || graph.nodes == null ? null : graph.nodes.filter(x=>x.type===type).map(x=>x.id);
+  finalNodes = finalNodes == null || finalNodes.length === 0 ? null : finalNodes;
+  return finalNodes;
 }
 
-function validateStartNode(startNodes,errors) {
-  if ( startNodes == null ) {
+function validateStartNode(graph,startNodes,errors,subgraphPath,graphTitle) {
+  if ( startNodes === null && subgraphPath === null ) {
     errors.push({ errorCode: "DHF_INPUT_NODE_NOT_FOUND",
-      errorDescription:"DHF Input Node not found"});
+      errorDescription:"DHF Input Node not found in "+graphTitle,graph});
     return false;
   }
-  if ( startNodes.length > 1 ) {
+  if ( startNodes === null && subgraphPath !== null ) {
+    errors.push({ errorCode: "GRAPH_INPUT_NODE_NOT_FOUND",
+      errorDescription:"Graph Input Node not found in "+graphTitle,graph});
+    return false;
+  }
+  if ( graph === null && startNodes.length > 1 ) {
     errors.push({ errorCode: "DHF_INPUT_MULTIPLE_NODES_FOUND",
-      errorDescription:"Multiple DHF Input Nodes found."});
+      errorDescription:"Multiple DHF Input Nodes found in "+graphTitle,graph});
     return false;
   }
   return true;
 }
-function validateFinalNode(finalNodes,errors) {
+function validateFinalNode(graph,finalNodes,errors,subgraphPath,graphTitle) {
   if ( finalNodes == null ) {
     errors.push({ errorCode: "DHF_OUTPUT_NODE_NOT_FOUND",
-      errorDescription:"DHF Output Node not found"});
+      errorDescription:"DHF Output Node not found in "+graphTitle,graph});
     return false;
   }
-  if ( finalNodes.length > 1 ) {
+  if ( graph === null && finalNodes.length > 1 ) {
     errors.push({ errorCode: "DHF_OUTPUT_MULTIPLE_NODES_FOUND",
-      errorDescription:"Multiple DHF Output Nodes found."});
+      errorDescription:"Multiple DHF Output Nodes found in "+graphTitle,graph});
     return false;
   }
   return true;
@@ -54,61 +63,67 @@ function initLiteGraph(jsonGraph) {
   userBlocks.init(LiteGraph);
 }
 
-function allNodesSupportCodeGeneration(LiteGraph,jsonGraph,nodeGenerationOrder,errors) {
+function allNodesSupportCodeGeneration(LiteGraph,graph,nodeGenerationOrder,errors,graphTitle) {
   let isError = false;
   for ( const nodeId of nodeGenerationOrder ) {
-    let node = getNode(jsonGraph.executionGraph.nodes,nodeId);
+    let node = getNode(graph.nodes,nodeId);
     let type = node.type;
+    if ( type === SUBGRAPH_TYPE || type === "Graph/input" || type === "Graph/output") {
+      continue;
+    }
     let bc = null;
     try {
       bc = new LiteGraph.registered_node_types[node.type]()
     } catch (e) {
-      errors.push({ errorCode : "BLOCK_IMPL_NOT_FOUND", errorDescription: "Block implementation not found of "+type+" for node-id="+node.id});
+      errors.push({ errorCode : "BLOCK_IMPL_NOT_FOUND", errorDescription: "Block implementation not found of "+type+" in "+graphTitle});
       isError = true;
       continue;
     }
     if (! ("getRuntimeLibraryFunctionName" in bc)) {
-      errors.push({ errorCode : "BLOCK_DOES_NOT_SUPPORT_CODE_GENERATION", errorDescription: "Block implementation "+type+" does not support code generation. Node-id="+node.id});
+      errors.push({ errorCode : "BLOCK_DOES_NOT_SUPPORT_CODE_GENERATION", errorDescription: "Block implementation "+type+" does not support code generation in "+graphTitle});
       isError = true;
     }
   }
   return !isError;
 }
 
-function compileGraphToJavaScriptWithOptions(jsonGraph,options) {
-  let errors = []
-  // STEP 0: Init litegraph
-  const LiteGraph = require("/custom-modules/pipes/designtime/litegraph").LiteGraph;
-  initLiteGraph(jsonGraph);
+function checkAndDecorateExecutionOrder(graph,subgraphPath,graphTitle) {
+  let errors = [];
   // STEP 1: Check the start node
-  const startNodes = findStartNode(jsonGraph);
-  if ( !validateStartNode(startNodes,errors) ) {
+  const startNodes = findStartNodes(graph,subgraphPath);
+  if ( !validateStartNode(graph,startNodes,errors,subgraphPath,graphTitle) ) {
     return {
       sourceCode : null,
-      errors
+      errors,
+      graphTitle
     }
   }
-  const startNode = startNodes[0];
   // STEP 2: Check the final node
-  const finalNodes = findFinalNode(jsonGraph);
-  if ( !validateFinalNode(finalNodes,errors) ) {
+  const finalNodes = findFinalNodes(graph,subgraphPath);
+  if ( !validateFinalNode(graph,finalNodes,errors,subgraphPath,graphTitle) ) {
     return {
       sourceCode : null,
-      errors
+      errors,
+      graphTitle
     }
   }
-  const finalNode = finalNodes[0];
   // STEP 3: Build the flow graph
   const PipesFlowControlGraph = require("/custom-modules/pipes/designtime/compilerFlowControlGraph.sjs")
   const flowGraph = new PipesFlowControlGraph();
-  flowGraph.initFromLiteGraph(LiteGraph,startNode,finalNode,jsonGraph);
+  flowGraph.initFromLiteGraph(LiteGraph,startNodes[0],finalNodes[0],graph);
   // STEP 4: Check there is a path between start node and end node
-  const paths = flowGraph.getAllPaths(startNode,finalNode);
+  let paths = []
+  for ( const startNode of startNodes ) {
+    for ( const finalNode of finalNodes ) {
+      paths = paths.concat(flowGraph.getAllPaths(startNode,finalNode));
+    }
+  }
   if ( paths == null || paths.length == 0 ) {
     return {
       sourceCode : null,
+      graphTitle,
       errors : [{ errorCode: "NO_PATH_FROM_DHF_INPUT_TO_OUTPUT",
-        errorDescription:"There is no path between DHF Input to Output"
+        errorDescription:"There is no path between Input to Output in "+graphTitle
       }],
     }
   }
@@ -116,8 +131,9 @@ function compileGraphToJavaScriptWithOptions(jsonGraph,options) {
   if ( flowGraph.isCyclic() ) {
     return {
       sourceCode : null,
+      graphTitle,
       errors : [{ errorCode: "GRAPH_CONTAINS_LOOPS",
-        errorDescription:"The graph contains loops. This is unsupported."
+        errorDescription:"The graph contains loops in "+graphTitle
       }],
     };
   }
@@ -126,9 +142,39 @@ function compileGraphToJavaScriptWithOptions(jsonGraph,options) {
   const nodeGenerationOrder = flowGraph.determineNodeCodeGenerationOrder(paths);
 
   // STEP 6: Check all nodes in the paths support code generation
-  if ( !allNodesSupportCodeGeneration(LiteGraph,jsonGraph,nodeGenerationOrder,errors)) {
+  if ( !allNodesSupportCodeGeneration(LiteGraph,graph,nodeGenerationOrder,errors,graphTitle)) {
     return { sourceCode: null, errors : errors};
   }
+  graph.nodeGenerationOrder = nodeGenerationOrder;
+
+  // STEP 7: Check all subgraphs in this graph
+  const subgraphNodes = graph.nodes.filter( x=>x.type===SUBGRAPH_TYPE )
+  for ( const subgraph of subgraphNodes ) {
+    const path = subgraphPath === null ? String(subgraph.id) : subgraphPath+"_"+subgraph.id;
+    subgraph.subgraphPath = path;
+    const subgraphTitle = "subgraph "+subgraph.title;
+    const errorResponse = checkAndDecorateExecutionOrder(subgraph.subgraph,path,subgraphTitle);
+    if ( errorResponse != null ) {
+      return errorResponse;
+    }
+  }
+  return null;
+}
+
+function compileGraphToJavaScriptWithOptions(jsonGraph,options) {
+
+  // STEP 0: Init litegraph
+  const LiteGraph = require("/custom-modules/pipes/designtime/litegraph").LiteGraph;
+  initLiteGraph(jsonGraph);
+
+  const errorResponse = checkAndDecorateExecutionOrder(jsonGraph.executionGraph,null,"main graph");
+
+  if ( errorResponse !== null ) {
+    return errorResponse;
+  }
+
+  return jsonGraph;
+  /*
   let sourceCode = [];
   let   lib = { user: false, core:false};
   for (const nodeId of nodeGenerationOrder ) {
@@ -141,6 +187,7 @@ function compileGraphToJavaScriptWithOptions(jsonGraph,options) {
   return { sourceCode : createSourceCodeOutput(options,sourceCode,identSpace,lib),
     errors : null
   };
+  */
 }
 
 function createSourceCodeOutput(options,sourceCodeArray,identSpace,lib) {
@@ -285,60 +332,60 @@ function generateCode(options,jsonGraph,node,ins,outs,lib) {
     }
   }
   let code = [bc.getRuntimeLibraryFunctionName()+"("+propertiesWidgets+","+input+","+ output+")"];
-    let inputKeys = Object.keys(input);
-    let dataIn = [];
-    for ( const i of inputKeys ) {
-      dataIn.push(input[i])
-    }
-    xdmp.log(Sequence.from(["TESTER",dataIn,ins]));
-    if (node.type === "dhf/envelope") {
-      dataIn.push(...["collections","uri", "context"])
-    }
-    let outputKeys = Object.keys(output);
-    let dataOut = [];
-    for ( const i of outputKeys ) {
-      dataOut.push(output[i])
-    }
-    code = [];
-    let prefix = ""
-    const library = "getRuntimeLibraryPath" in  bc ? bc.getRuntimeLibraryPath() : "coreFunctions.sjs"
-    const req = require("/custom-modules/pipes/runtime/"+library);
-    const inputAsListFunction = bc.getRuntimeLibraryFunctionName() + "InputAsList"
-    const inputAsList = inputAsListFunction in req && typeof req[inputAsListFunction] === "function" ? req[inputAsListFunction]() : false;
-    const returnAlwaysAnArrayFunction = bc.getRuntimeLibraryFunctionName()  + "ReturnAlwaysAnArray"
-    const returnAlwaysAnArray = returnAlwaysAnArrayFunction in cf && typeof cf[returnAlwaysAnArrayFunction] === "function" ? cf[returnAlwaysAnArrayFunction]() : false;
-    xdmp.log("FUNCTION "+returnAlwaysAnArrayFunction);
-    xdmp.log(returnAlwaysAnArray);
+  let inputKeys = Object.keys(input);
+  let dataIn = [];
+  for ( const i of inputKeys ) {
+    dataIn.push(input[i])
+  }
+  xdmp.log(Sequence.from(["TESTER",dataIn,ins]));
+  if (node.type === "dhf/envelope") {
+    dataIn.push(...["collections","uri", "context"])
+  }
+  let outputKeys = Object.keys(output);
+  let dataOut = [];
+  for ( const i of outputKeys ) {
+    dataOut.push(output[i])
+  }
+  code = [];
+  let prefix = ""
+  const library = "getRuntimeLibraryPath" in  bc ? bc.getRuntimeLibraryPath() : "coreFunctions.sjs"
+  const req = require("/custom-modules/pipes/runtime/"+library);
+  const inputAsListFunction = bc.getRuntimeLibraryFunctionName() + "InputAsList"
+  const inputAsList = inputAsListFunction in req && typeof req[inputAsListFunction] === "function" ? req[inputAsListFunction]() : false;
+  const returnAlwaysAnArrayFunction = bc.getRuntimeLibraryFunctionName()  + "ReturnAlwaysAnArray"
+  const returnAlwaysAnArray = returnAlwaysAnArrayFunction in cf && typeof cf[returnAlwaysAnArrayFunction] === "function" ? cf[returnAlwaysAnArrayFunction]() : false;
+  xdmp.log("FUNCTION "+returnAlwaysAnArrayFunction);
+  xdmp.log(returnAlwaysAnArray);
   if ( library == "coreFunctions.sjs" ) {
-      lib.core = true;
-      prefix = "r";
-    } else if ( library == "user.sjs")  {
-      lib.user = true;
-      prefix = "u";
+    lib.core = true;
+    prefix = "r";
+  } else if ( library == "user.sjs")  {
+    lib.user = true;
+    prefix = "u";
+  }
+  let inputString = "";
+  if ( dataIn && dataIn.length > 0 ) {
+    if ( inputAsList ) {
+      inputString = ",[" + dataIn.join(",") + "]";
+    } else {
+      inputString = "," + dataIn.join(",");
     }
-    let inputString = "";
-    if ( dataIn && dataIn.length > 0 ) {
-      if ( inputAsList ) {
-        inputString = ",[" + dataIn.join(",") + "]";
-      } else {
-        inputString = "," + dataIn.join(",");
-      }
-    }
-    let out = "const ["+dataOut.join(",")+"]";
-    if ( dataOut.length == 1 && !returnAlwaysAnArray) {
-      out = "const "+dataOut[0];
-    }
-     xdmp.log(out);
-    const typeExecutorFunction =  bc.getRuntimeLibraryFunctionName() + "ExecutorType";
-    const doesFunctionExist =  typeExecutorFunction in req && typeof req[typeExecutorFunction] === "function";
-    const executorType = doesFunctionExist ? req[typeExecutorFunction]() : cf.BLOCK_EXECUTOR_DELEGATOR;
-    if ( executorType === cf.BLOCK_EXECUTOR_DELEGATOR ) {
-        code.push(out + " = " + prefix + "." + bc.getRuntimeLibraryFunctionName() + "(" + JSON.stringify(propertiesWidgets) + inputString + ");");
-      } else {
-        const genCode = req[bc.getRuntimeLibraryFunctionName()](propertiesWidgets,dataIn,dataOut);
-        code.push(...genCode);
-      }
-    return code;
+  }
+  let out = "const ["+dataOut.join(",")+"]";
+  if ( dataOut.length == 1 && !returnAlwaysAnArray) {
+    out = "const "+dataOut[0];
+  }
+  xdmp.log(out);
+  const typeExecutorFunction =  bc.getRuntimeLibraryFunctionName() + "ExecutorType";
+  const doesFunctionExist =  typeExecutorFunction in req && typeof req[typeExecutorFunction] === "function";
+  const executorType = doesFunctionExist ? req[typeExecutorFunction]() : cf.BLOCK_EXECUTOR_DELEGATOR;
+  if ( executorType === cf.BLOCK_EXECUTOR_DELEGATOR ) {
+    code.push(out + " = " + prefix + "." + bc.getRuntimeLibraryFunctionName() + "(" + JSON.stringify(propertiesWidgets) + inputString + ");");
+  } else {
+    const genCode = req[bc.getRuntimeLibraryFunctionName()](propertiesWidgets,dataIn,dataOut);
+    code.push(...genCode);
+  }
+  return code;
 }
 
 function compileGraphToJavaScript(jsonGraph) {
