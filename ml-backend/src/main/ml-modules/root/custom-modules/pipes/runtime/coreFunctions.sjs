@@ -493,12 +493,14 @@ function executeStringJoin(propertiesAndWidgets,inputs,outputs) {
   const separator = propertiesAndWidgets.properties.separator;
   return [
     `const ${output0}=(()=>{`,
-    `            if ( !input0 )  {`,
+    `            if ( !${input0} )  {`,
     `              return '';`,
     `            } else if ( ${input0} instanceof Sequence) {`,
     `              return fn.stringJoin(${input0},'${separator}')`,
     `            } else if ( ${input0}.constructor.name === 'Array') {`,
     `              return ${input0}.join('${separator}')`,
+    `            } else {`,
+    `              return ${input0}`,
     `            }`,
     `          })()`
   ];

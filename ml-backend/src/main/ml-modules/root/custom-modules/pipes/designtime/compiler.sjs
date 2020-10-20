@@ -182,9 +182,10 @@ function generateFunctionForGraph(options,graph,outputFunctions,title) {
   let variablePool = [];
   const functionName = generateFunctionName(graph,title);
   const argList = generateFunctionArguments(graph,variablePool);
-  let func = { functionName,argList,body:[],returnVar : []}
+  let func = { functionName,argList,body:[],returnVar : null};
   let lib = {user: false, core:false};
-  const inSubgraph = addSubgraphLoopIfNeeded(graph,func,variablePool);
+  createReturnVariable(graph,variablePool,func);
+  const inSubgraph = addSubgraphLoop(graph,func,variablePool);
   for (const nodeId of graph.nodeGenerationOrder ) {
     const node = getNode(graph.nodes,nodeId);
     xdmp.log("TYPE "+node.type);
@@ -198,6 +199,10 @@ function generateFunctionForGraph(options,graph,outputFunctions,title) {
     }
     const inputs = determineInputVariables(graph,node,variablePool);
     const outputs = determineOutputVariables(graph,node,variablePool);
+    xdmp.log("HERE44");
+    xdmp.log(node.type);
+    xdmp.log(outputs);
+    xdmp.log("CLEAR");
     let code = generateCode(options,graph,node,inputs,outputs,lib);
     if ( inSubgraph ) {
       let identSpace = options.identSpaceCount ? options.identSpaceCount : 1;
@@ -205,24 +210,58 @@ function generateFunctionForGraph(options,graph,outputFunctions,title) {
     }
     func.body.push(...code);
   }
-  func.returnVar = generateReturnVar(graph);
+  addSubgraphEndLoop(graph,func,variablePool,options);
   outputFunctions.push(generateEntireFunction(options,lib,func));
   outputFunctions.reverse();
 }
 
-function addSubgraphLoopIfNeeded(graph,func,variablePool) {
+function createReturnVariable(graph,variablePool,func) {
   if ( graph.subgraphPath ) {
-    const firstSubgraphInput = graph.nodes.filter(x=>x.type==="Graph/input")[0];
-    // reserve result
-    addToVariablePool(variablePool,"result","result",-1);
-    xdmp.log("FIRST");
-    xdmp.log(firstSubgraphInput);
-    xdmp.log("DUMP");
-    dumpVariablePool(variablePool);
+    func.returnVar = [];
+    let outputNodes = graph.nodes.filter(x=>x.type==="Graph/output") ;
+    outputNodes.sort((a, b) => a.id - b.id);
+    for ( const node of outputNodes ) {
+      const name = node.properties.name;
+      let returnName = "result_"+name;
+      if (variablePoolHasVariable(variablePool,returnName) ) {
+        returnName = "result_"+name+"_"+graph.subgraphPath;
+      }
+      addToVariablePool(variablePool,returnName,returnName,-1);
+      func.returnVar.push(returnName);
+    }
+  }
+}
+
+function addSubgraphEndLoop(graph,func,variablePool,options) {
+  if ( graph.subgraphPath ) {
+    let identSpace = options.identSpaceCount ? options.identSpaceCount : 1;
+    let outputNodes = graph.nodes.filter(x=>x.type==="Graph/output") ;
+    outputNodes.sort((a, b) => a.id - b.id);
+    let counter = 0;
+    for ( const v of func.returnVar) {
+      xdmp.log("OUTPUTNODE");
+      xdmp.log(outputNodes[counter]);
+      const link = outputNodes[counter].inputs[0].link;
+      const variableName = getNodeWithOutputLink(graph,link,variablePool).variableName
+      const line = ""+v+".push("+variableName+");";
+      func.body.push(...ident([line],identSpace));
+      counter++;
+    }
+    func.body.push("}");
+  }
+}
+
+function addSubgraphLoop(graph,func,variablePool) {
+  if ( graph.subgraphPath ) {
+    let inputNodes = graph.nodes.filter(x=>x.type==="Graph/input") ;
+    inputNodes.sort((a, b) => a.id - b.id);
+    const firstSubgraphInput = inputNodes[0];
+    for ( const retVar of func.returnVar ) {
+      func.body.push("let "+retVar+" = [];");
+    }
     const variableName =  getVariableNameForSubgraphInput(graph,firstSubgraphInput,variablePool)
     const inputName = "list_"+variableName
     let snippet = `${inputName} = !(${inputName}.toArray || Array.isArray(${inputName})) ? [${inputName}] : ${inputName};
-let result = []
 for ( const ${variableName} of ${inputName} ) {`
     func.body.push(...snippet.split('\n'))
     return true;
@@ -244,7 +283,7 @@ function generateEntireFunction(options,lib,func) {
   }
   ret.push(...ident(func.body,identSpace));
   if ( func.returnVar ) {
-    ret.push(ident(["return "+func.returnVar+";"],identSpace));
+    ret.push(ident(["return ["+func.returnVar+"];"],identSpace));
   }
   ret.push("}");
   return ret.join(newLine);
@@ -266,7 +305,9 @@ function generateFunctionArguments(graph,variablePool) {
   if ( graph.subgraphPath ) {
     let args = [];
     let counter = 0;
-    for ( const node of graph.nodes.filter(x=>x.type==="Graph/input") ) {
+    let inputs = graph.nodes.filter(x=>x.type==="Graph/input") ;
+    inputs.sort((a, b) => a.id - b.id);
+    for ( const node of inputs) {
       const prefix = counter == 0 ? "list_" : "";
       args.push(prefix+createVariableNameForSubgraphInput(graph,node,variablePool));
       counter++;
@@ -323,6 +364,8 @@ function ident(sourceCodeArray,identSpace) {
   let ident = " ".repeat(identSpace);
   let arr=[];
   for ( const line of sourceCodeArray ) {
+    xdmp.log("LINE2");
+    xdmp.log(line);
     const identiation = ident.repeat(line.search(/\S|$/) + 1);
     arr.push(identiation+line);
   }
@@ -474,11 +517,10 @@ function generateCode(options,graph,node,ins,outs,lib) {
     dataOut.push(output[i])
   }
   let inputString;
-  let out;
+  let out = "const ["+dataOut.join(",")+"] = ";
   let code = [];
   if ( node.type === SUBGRAPH_TYPE ) {
     inputString =  dataIn.join(",");
-    out = "const ["+dataOut.join(",")+"] = ";
     code.push(out + generateFunctionName(node.subgraph,node.title)+"(" + inputString +");");
   } else {
     let prefix = ""
