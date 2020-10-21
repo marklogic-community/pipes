@@ -1,0 +1,1098 @@
+{
+  "pipesFileVersion": 2,
+  "models": [
+    {
+      "label": "ResultOut",
+      "collection": "ResultOut",
+      "source": "Sources",
+      "fields": [
+        {
+          "label": "result",
+          "children": [],
+          "field": "result",
+          "path": "//result",
+          "type": "custom"
+        },
+        {
+          "label": "output",
+          "children": [],
+          "field": "output",
+          "path": "//output",
+          "type": "custom"
+        }
+      ],
+      "options": [
+        "fieldsInputs",
+        "nodeOutput"
+      ],
+      "metadata": {
+        "description": "",
+        "dateCreated": "2020-10-19T18:35:12.698Z",
+        "blockCreatedFrom": "none",
+        "sourceDHFStep": null,
+        "sourceDatabase": "",
+        "sourceCollection": "",
+        "customURIs": ""
+      }
+    }
+  ],
+  "executionGraph": {
+    "last_node_id": 13,
+    "last_link_id": 19,
+    "nodes": [
+      {
+        "id": 1,
+        "type": "DHF/input",
+        "pos": [
+          248,
+          489
+        ],
+        "size": [
+          180,
+          100
+        ],
+        "flags": {},
+        "order": 0,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "input",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "uri",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "collections",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "permissions",
+            "type": "",
+            "links": null
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 4,
+        "type": "Generate/multiConstant",
+        "pos": [
+          307,
+          340
+        ],
+        "size": {
+          "0": 255,
+          "1": 82
+        },
+        "flags": {},
+        "order": 1,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "output",
+            "links": [
+              1
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "string",
+          "FIRST"
+        ]
+      },
+      {
+        "id": 5,
+        "type": "Generate/multiConstant",
+        "pos": [
+          282,
+          465
+        ],
+        "size": {
+          "0": 255,
+          "1": 82
+        },
+        "flags": {},
+        "order": 2,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "output",
+            "links": [
+              2
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "string",
+          "SECOND"
+        ]
+      },
+      {
+        "id": 3,
+        "type": "Join/Array",
+        "pos": [
+          636,
+          360
+        ],
+        "size": {
+          "0": 255,
+          "1": 138
+        },
+        "flags": {},
+        "order": 6,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "item1",
+            "type": 0,
+            "link": 1
+          },
+          {
+            "name": "item2",
+            "type": 0,
+            "link": 2
+          },
+          {
+            "name": "item3",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "item4",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "item5",
+            "type": 0,
+            "link": null
+          }
+        ],
+        "outputs": [
+          {
+            "name": "array",
+            "links": [
+              3
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "5"
+        ]
+      },
+      {
+        "id": 2,
+        "type": "DHF/output",
+        "pos": [
+          1541,
+          320
+        ],
+        "size": [
+          180,
+          60
+        ],
+        "flags": {},
+        "order": 10,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "output",
+            "type": 0,
+            "link": 19
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 9,
+        "type": "Generate/multiConstant",
+        "pos": [
+          410,
+          577
+        ],
+        "size": {
+          "0": 255,
+          "1": 82
+        },
+        "flags": {},
+        "order": 3,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "output",
+            "links": [
+              13
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "string",
+          "A"
+        ]
+      },
+      {
+        "id": 10,
+        "type": "Generate/multiConstant",
+        "pos": [
+          402,
+          650
+        ],
+        "size": {
+          "0": 255,
+          "1": 82
+        },
+        "flags": {},
+        "order": 4,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "output",
+            "links": [
+              14
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "string",
+          "B"
+        ]
+      },
+      {
+        "id": 11,
+        "type": "Generate/multiConstant",
+        "pos": [
+          411,
+          711
+        ],
+        "size": {
+          "0": 255,
+          "1": 82
+        },
+        "flags": {},
+        "order": 5,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "output",
+            "links": [
+              15
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "number",
+          0
+        ]
+      },
+      {
+        "id": 12,
+        "type": "Join/Array",
+        "pos": [
+          740.0370081787111,
+          618.8170249023439
+        ],
+        "size": {
+          "0": 255,
+          "1": 138
+        },
+        "flags": {},
+        "order": 7,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "item1",
+            "type": 0,
+            "link": 13
+          },
+          {
+            "name": "item2",
+            "type": 0,
+            "link": 14
+          },
+          {
+            "name": "item3",
+            "type": 0,
+            "link": 15
+          },
+          {
+            "name": "item4",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "item5",
+            "type": 0,
+            "link": null
+          }
+        ],
+        "outputs": [
+          {
+            "name": "array",
+            "links": [
+              16
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "5"
+        ]
+      },
+      {
+        "id": 13,
+        "type": "Sources/ResultOut",
+        "pos": [
+          1233,
+          90
+        ],
+        "size": [
+          305,
+          108
+        ],
+        "flags": {},
+        "order": 9,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "result",
+            "type": 0,
+            "link": 17
+          },
+          {
+            "name": "output",
+            "type": 0,
+            "link": 18
+          }
+        ],
+        "outputs": [
+          {
+            "name": "Node",
+            "type": "Node",
+            "links": [
+              19
+            ]
+          },
+          {
+            "name": "Prov",
+            "type": null,
+            "links": null
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          true
+        ]
+      },
+      {
+        "id": 6,
+        "type": "Graph/subgraph",
+        "pos": [
+          933,
+          245
+        ],
+        "size": [
+          211.60000610351562,
+          66
+        ],
+        "flags": {},
+        "order": 8,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "Item",
+            "type": 0,
+            "link": 3,
+            "label": "Item [List]"
+          },
+          {
+            "name": "input",
+            "type": 0,
+            "link": 16
+          }
+        ],
+        "outputs": [
+          {
+            "name": "Result",
+            "type": "",
+            "links": [
+              17
+            ],
+            "label": "Result [List]"
+          },
+          {
+            "name": "output",
+            "type": "",
+            "links": [
+              18
+            ]
+          }
+        ],
+        "title": "BLA1",
+        "properties": {
+          "enabled": true
+        },
+        "subgraph": {
+          "last_node_id": 11,
+          "last_link_id": 15,
+          "nodes": [
+            {
+              "id": 5,
+              "type": "Graph/output",
+              "pos": [
+                1255,
+                555
+              ],
+              "size": [
+                180,
+                90
+              ],
+              "flags": {},
+              "order": 8,
+              "mode": 0,
+              "inputs": [
+                {
+                  "name": "",
+                  "type": 0,
+                  "link": 4
+                }
+              ],
+              "properties": {
+                "name": "output",
+                "type": "",
+                "value": "",
+                "isMain": false
+              }
+            },
+            {
+              "id": 2,
+              "type": "Graph/output",
+              "pos": [
+                1206,
+                247
+              ],
+              "size": [
+                180,
+                90
+              ],
+              "flags": {},
+              "order": 7,
+              "mode": 0,
+              "inputs": [
+                {
+                  "name": "",
+                  "type": 0,
+                  "link": 2
+                }
+              ],
+              "properties": {
+                "name": "Result",
+                "type": "",
+                "value": "",
+                "isMain": true
+              }
+            },
+            {
+              "id": 9,
+              "type": "Join/String join",
+              "pos": [
+                580,
+                705
+              ],
+              "size": {
+                "0": 169.35400390625,
+                "1": 24
+              },
+              "flags": {},
+              "order": 2,
+              "mode": 0,
+              "inputs": [
+                {
+                  "name": "string*",
+                  "type": 0,
+                  "link": 7
+                }
+              ],
+              "outputs": [
+                {
+                  "name": "joinedString",
+                  "links": [
+                    8
+                  ]
+                }
+              ],
+              "properties": {
+                "separator": ","
+              }
+            },
+            {
+              "id": 4,
+              "type": "Graph/input",
+              "pos": [
+                335,
+                633
+              ],
+              "size": [
+                180,
+                90
+              ],
+              "flags": {},
+              "order": 0,
+              "mode": 0,
+              "outputs": [
+                {
+                  "name": "",
+                  "type": "",
+                  "links": [
+                    7
+                  ]
+                }
+              ],
+              "properties": {
+                "name": "input",
+                "type": "",
+                "value": "",
+                "isMain": ""
+              }
+            },
+            {
+              "id": 3,
+              "type": "Debug/Log",
+              "pos": [
+                932,
+                353
+              ],
+              "size": {
+                "0": 255,
+                "1": 166
+              },
+              "flags": {},
+              "order": 6,
+              "mode": 0,
+              "inputs": [
+                {
+                  "name": "input0",
+                  "type": 0,
+                  "link": 15
+                },
+                {
+                  "name": "input1",
+                  "type": 0,
+                  "link": 13
+                },
+                {
+                  "name": "input2",
+                  "type": 0,
+                  "link": null
+                },
+                {
+                  "name": "input3",
+                  "type": 0,
+                  "link": null
+                }
+              ],
+              "outputs": [
+                {
+                  "name": "output0",
+                  "links": [
+                    2
+                  ]
+                },
+                {
+                  "name": "output1",
+                  "links": [
+                    4
+                  ]
+                },
+                {
+                  "name": "output2",
+                  "links": null
+                },
+                {
+                  "name": "output3",
+                  "links": null
+                }
+              ],
+              "properties": {},
+              "widgets_values": [
+                "info",
+                "",
+                true
+              ]
+            },
+            {
+              "id": 1,
+              "type": "Graph/input",
+              "pos": [
+                400,
+                400
+              ],
+              "size": [
+                180,
+                90
+              ],
+              "flags": {},
+              "order": 1,
+              "mode": 0,
+              "outputs": [
+                {
+                  "name": "",
+                  "type": "",
+                  "links": [
+                    5,
+                    11
+                  ]
+                }
+              ],
+              "properties": {
+                "name": "Item",
+                "type": "",
+                "value": "",
+                "isMain": true
+              }
+            },
+            {
+              "id": 6,
+              "type": "Generate/Templating",
+              "pos": [
+                919,
+                627
+              ],
+              "size": {
+                "0": 255,
+                "1": 146
+              },
+              "flags": {},
+              "order": 4,
+              "mode": 0,
+              "inputs": [
+                {
+                  "name": "v1",
+                  "type": 0,
+                  "link": 5
+                },
+                {
+                  "name": "v2",
+                  "type": 0,
+                  "link": 8
+                },
+                {
+                  "name": "v3",
+                  "type": 0,
+                  "link": null
+                }
+              ],
+              "outputs": [
+                {
+                  "name": "newString",
+                  "links": [
+                    13
+                  ]
+                }
+              ],
+              "properties": {},
+              "widgets_values": [
+                "",
+                "",
+                "${v1}${v2}GRAPH"
+              ]
+            },
+            {
+              "id": 11,
+              "type": "Generate/Templating",
+              "pos": [
+                881.742002685547,
+                134.9174577636719
+              ],
+              "size": {
+                "0": 255,
+                "1": 146
+              },
+              "flags": {},
+              "order": 5,
+              "mode": 0,
+              "inputs": [
+                {
+                  "name": "v1",
+                  "type": 0,
+                  "link": 14
+                },
+                {
+                  "name": "v2",
+                  "type": 0,
+                  "link": null
+                },
+                {
+                  "name": "v3",
+                  "type": 0,
+                  "link": null
+                }
+              ],
+              "outputs": [
+                {
+                  "name": "newString",
+                  "links": [
+                    15
+                  ]
+                }
+              ],
+              "properties": {},
+              "widgets_values": [
+                "",
+                "",
+                "${v1}APPEND"
+              ]
+            },
+            {
+              "id": 10,
+              "type": "Graph/subgraph",
+              "pos": [
+                658,
+                190
+              ],
+              "size": [
+                170,
+                46
+              ],
+              "flags": {},
+              "order": 3,
+              "mode": 0,
+              "inputs": [
+                {
+                  "name": "Item",
+                  "type": 0,
+                  "link": 11,
+                  "label": "Item [List]"
+                }
+              ],
+              "outputs": [
+                {
+                  "name": "Result",
+                  "type": "",
+                  "links": [
+                    14
+                  ],
+                  "label": "Result [List]"
+                }
+              ],
+              "title": "BLA2",
+              "properties": {
+                "enabled": true
+              },
+              "subgraph": {
+                "last_node_id": 4,
+                "last_link_id": 2,
+                "nodes": [
+                  {
+                    "id": 2,
+                    "type": "Graph/output",
+                    "pos": [
+                      1100,
+                      400
+                    ],
+                    "size": [
+                      180,
+                      90
+                    ],
+                    "flags": {},
+                    "order": 2,
+                    "mode": 0,
+                    "inputs": [
+                      {
+                        "name": "",
+                        "type": 0,
+                        "link": 2
+                      }
+                    ],
+                    "properties": {
+                      "name": "Result",
+                      "type": "",
+                      "value": "",
+                      "isMain": true
+                    }
+                  },
+                  {
+                    "id": 1,
+                    "type": "Graph/input",
+                    "pos": [
+                      400,
+                      400
+                    ],
+                    "size": [
+                      180,
+                      90
+                    ],
+                    "flags": {},
+                    "order": 0,
+                    "mode": 0,
+                    "outputs": [
+                      {
+                        "name": "",
+                        "type": "",
+                        "links": [
+                          1
+                        ]
+                      }
+                    ],
+                    "properties": {
+                      "name": "Item",
+                      "type": "",
+                      "value": "",
+                      "isMain": true
+                    }
+                  },
+                  {
+                    "id": 4,
+                    "type": "Generate/Templating",
+                    "pos": [
+                      785.9251928064355,
+                      399.3492631919394
+                    ],
+                    "size": {
+                      "0": 255,
+                      "1": 146
+                    },
+                    "flags": {},
+                    "order": 1,
+                    "mode": 0,
+                    "inputs": [
+                      {
+                        "name": "v1",
+                        "type": 0,
+                        "link": 1
+                      },
+                      {
+                        "name": "v2",
+                        "type": 0,
+                        "link": null
+                      },
+                      {
+                        "name": "v3",
+                        "type": 0,
+                        "link": null
+                      }
+                    ],
+                    "outputs": [
+                      {
+                        "name": "newString",
+                        "links": [
+                          2
+                        ]
+                      }
+                    ],
+                    "properties": {},
+                    "widgets_values": [
+                      "",
+                      "",
+                      "${v1}LEVEL2"
+                    ]
+                  }
+                ],
+                "links": [
+                  [
+                    1,
+                    1,
+                    0,
+                    4,
+                    0,
+                    0
+                  ],
+                  [
+                    2,
+                    4,
+                    0,
+                    2,
+                    0,
+                    0
+                  ]
+                ],
+                "groups": [],
+                "config": {},
+                "version": 0.4
+              }
+            }
+          ],
+          "links": [
+            [
+              2,
+              3,
+              0,
+              2,
+              0,
+              0
+            ],
+            [
+              4,
+              3,
+              1,
+              5,
+              0,
+              0
+            ],
+            [
+              5,
+              1,
+              0,
+              6,
+              0,
+              0
+            ],
+            [
+              7,
+              4,
+              0,
+              9,
+              0,
+              0
+            ],
+            [
+              8,
+              9,
+              0,
+              6,
+              1,
+              0
+            ],
+            [
+              11,
+              1,
+              0,
+              10,
+              0,
+              0
+            ],
+            [
+              13,
+              6,
+              0,
+              3,
+              1,
+              0
+            ],
+            [
+              14,
+              10,
+              0,
+              11,
+              0,
+              0
+            ],
+            [
+              15,
+              11,
+              0,
+              3,
+              0,
+              0
+            ]
+          ],
+          "groups": [],
+          "config": {},
+          "version": 0.4
+        }
+      }
+    ],
+    "links": [
+      [
+        1,
+        4,
+        0,
+        3,
+        0,
+        0
+      ],
+      [
+        2,
+        5,
+        0,
+        3,
+        1,
+        0
+      ],
+      [
+        3,
+        3,
+        0,
+        6,
+        0,
+        0
+      ],
+      [
+        13,
+        9,
+        0,
+        12,
+        0,
+        0
+      ],
+      [
+        14,
+        10,
+        0,
+        12,
+        1,
+        0
+      ],
+      [
+        15,
+        11,
+        0,
+        12,
+        2,
+        0
+      ],
+      [
+        16,
+        12,
+        0,
+        6,
+        1,
+        0
+      ],
+      [
+        17,
+        6,
+        0,
+        13,
+        0,
+        0
+      ],
+      [
+        18,
+        6,
+        1,
+        13,
+        1,
+        0
+      ],
+      [
+        19,
+        13,
+        0,
+        2,
+        0,
+        0
+      ]
+    ],
+    "groups": [],
+    "config": {},
+    "version": 0.4
+  },
+  "name": "subgraph",
+  "metadata": {
+    "version": "00.01",
+    "author": "",
+    "title": "subgraph",
+    "dateExported": "20/10/2020, 09:27:57"
+  }
+}

@@ -102,7 +102,7 @@ export default {
       dhfSteps: [],
       compilerErrors: [],
       showDialog: false,
-      sourceCode: null,
+      compilerOutput: null,
       isCompilerError: false,
       selectedOptions: ["download"],
       generationOptions: [
@@ -132,7 +132,7 @@ export default {
         })
 
       if (this.selectedOptions.indexOf("download") >= 0) {
-        var blob = new Blob([this.sourceCode], {
+        var blob = new Blob([this.compilerOutput.sourceCode], {
           type: "text/plain;charset=utf-8",
           endings: "transparent"
         });
@@ -156,7 +156,7 @@ export default {
             responseType: 'text'
           };
 
-          this.$axios.post('/customSteps?name=' + this.selectedStep.value + '&deploy=' + this.deployOption, this.sourceCode, config).then(
+          this.$axios.post('/customSteps?name=' + this.selectedStep.value + '&deploy=' + this.deployOption + "&dependencies="+encodeURIComponent(this.compilerOutput.dependencies.join(",")), this.compilerOutput.sourceCode, config).then(
             (response) => {
               let msgAdd = (this.deployOption) ? " and deployed to MarkLogic." : "."
               this.$q.notify({
@@ -198,7 +198,7 @@ export default {
     this.$axios.post('/v1/resources/vppBackendServices?rs:action=compile', jsonGraph).then((response) => {
       console.log(response);
       this.isCompilerError = response.data.errors != null && response.data.errors.length > 0;
-      this.sourceCode = response.data.sourceCode;
+      this.compilerOutput = response.data;
       if (this.isCompilerError) {
         this.compilerErrors = response.data.errors.map(x => x.errorDescription)
       } else {

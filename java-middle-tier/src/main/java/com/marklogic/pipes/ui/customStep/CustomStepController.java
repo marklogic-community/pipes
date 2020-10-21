@@ -17,18 +17,22 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.net.URLDecoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 public class CustomStepController extends AbstractLoggingClass {
 
+  private static final Logger logger = LoggerFactory.getLogger(CustomStepController.class);
+
   private final CustomStepService customStepService;
 
-  public CustomStepController(CustomStepService service){
-    this.customStepService=service;
+  public CustomStepController(CustomStepService service) {
+    this.customStepService = service;
   }
 
   /**
-   *
    * @return a String representing a json containing an array with all custom steps found in the DHF project
    * @throws IOException gets thrown if the path is not correct (check mlDhfRoot in application.properties)
    */
@@ -37,7 +41,7 @@ public class CustomStepController extends AbstractLoggingClass {
     ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-    String customStepResponseString=objectMapper.writeValueAsString(customStepService.accessDhfRootAndGetCustomStepsJson());
+    String customStepResponseString = objectMapper.writeValueAsString(customStepService.accessDhfRootAndGetCustomStepsJson());
     return customStepResponseString;
 
   }
@@ -45,27 +49,38 @@ public class CustomStepController extends AbstractLoggingClass {
   /**
    * Will copy incoming body (hopefully a Pipes-generated main.sjs for the custom step) to the proper location specified by the "name" parameter
    * Additionally, it will deploy the main.sjs, if requested by using param deploy=true in the request
-   * @param body content of main.sjs
-   * @param method not used
+   *
+   * @param body    content of main.sjs
+   * @param method  not used
    * @param request name: name of the custom step; deploy=true will also push the code to ML
    * @throws IOException
    */
   @RequestMapping(value = "/customSteps", method = RequestMethod.POST)
   public ResponseEntity<Object> deployCustomStep(@RequestBody String body, HttpMethod method, HttpServletRequest request) throws IOException {
-    if(request.getParameter("name") != null) {
-      String customStepName=request.getParameter("name");
-      customStepService.copyCustomStepToDhf(body, customStepName);
+    try {
+      if (request.getParameter("name") != null) {
+        String customStepName = request.getParameter("name");
+        customStepService.copyCustomStepToDhf(body, customStepName);
+        String[] dependencies = null;
+        String dependenciesString = request.getParameter("dependencies");
+        if (dependenciesString != null) {
+          dependenciesString = URLDecoder.decode(dependenciesString);
+          dependencies = dependenciesString.split(",");
+        }
+        if (dependencies != null) {
+          customStepService.copyDepdenciesToDHfSource(dependencies);
+        }
+        if (request.getParameter("deploy") != null && request.getParameter("deploy").equals("true")) {
+          customStepService.loadCustomStepToMl(body, customStepName);
+        }
 
-      if (request.getParameter("deploy")!=null && request.getParameter("deploy").equals("true")) {
-        customStepService.loadCustomStepToMl(body, customStepName);
+        return new ResponseEntity<>(null, HttpStatus.OK);
+      } else {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Parameter 'name' is mandatory.");
       }
-
-      return new ResponseEntity<>(null,HttpStatus.OK);
+    } catch (IOException e) {
+      logger.error("Error occured during deployCustomStep", e);
+      throw e;
     }
-    else {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Parameter 'name' is mandatory.");
-    }
-
-
   }
 }

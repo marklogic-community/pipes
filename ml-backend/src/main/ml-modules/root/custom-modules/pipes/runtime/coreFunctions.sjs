@@ -1,5 +1,4 @@
 'use strict'
-const moment = require("/custom-modules/pipes/runtime/moment-with-locales.min.sjs")
 const DataHub = require("/data-hub/5/datahub.sjs");
 const datahub = new DataHub();
 
@@ -74,6 +73,12 @@ module.exports = {
   executeLog,
   executeTraceInputAsList,
   executeTrace,
+  executeCheckPhoneNumberDependencies,
+  executeDeclarativeMapperDependencies,
+  executeFormatDateDependencies,
+  executeFormatDateTimeDependencies,
+  executeFormatDateAutoDependencies,
+  executeFormatDateTimeAutoDependencies,
   BLOCK_EXECUTOR_DELEGATOR : 1,
   BLOCK_EXECUTOR_GENERATOR : 2
 };
@@ -143,6 +148,12 @@ function executeEntityEnrich(propertiesAndWidgets,input,dictionary) {
   return result;
 }
 
+function executeCheckPhoneNumberDependencies() {
+  return [
+    '/custom-modules/pipes/runtime/google-libphonenumber.sjs',
+    '/custom-modules/pipes/runtime/google-libphonenumber.sjs'
+  ]
+}
 function executeCheckPhoneNumber(propertiesAndWidgets,pn,cc,uri) {
   const PNF = require('/custom-modules/pipes/runtime/google-libphonenumber.sjs').PhoneNumberFormat;
   const phoneUtil = require('/custom-modules/pipes/runtime/google-libphonenumber.sjs').PhoneNumberUtil.getInstance();
@@ -190,6 +201,11 @@ function executeCheckPhoneNumber(propertiesAndWidgets,pn,cc,uri) {
   }
 }
 
+function executeDeclarativeMapperDependencies() {
+  return [
+    "/custom-modules/pipes/runtime/entity-services-lib-vpp.sjs"
+  ]
+}
 function executeDeclarativeMapper(propertiesAndWidgets,node) {
   const lib2 = require("/custom-modules/pipes/runtime/entity-services-lib-vpp.sjs")
   const lib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
@@ -521,15 +537,16 @@ function executeQueryDoc(propertiesAndWidgets,inputs,outputs) {
 }
 
 function executeJoinArrayInputAsList() {
-    return true;
+    return false;
 }
 
-function executeJoinArray(propertiesAndWidgets,inputs) {
+function executeJoinArray(propertiesAndWidgets) {
   let result = [];
   for (let i = 0; i < propertiesAndWidgets.widgets.nbInputs; i++) {
-    let value = i < inputs.length ? inputs[i] : null
-    if (value != null)
-      result = result.concat(value)
+    let value = i < arguments.length + 1 ? arguments[i+1] : null
+    if (value != null) {
+      result.push(value)
+    }
   }
   return result;
 }
@@ -1020,7 +1037,12 @@ function executeStringSplit(propertiesAndWidgets,input) {
   return arr;
 }
 
+function executeFormatDateDependencies() {
+  return ["/custom-modules/pipes/runtime/moment-with-locales.min.sjs"];
+}
+
 function executeFormatDate(propertiesAndWidgets,inputDate) {
+  const moment = require("/custom-modules/pipes/runtime/moment-with-locales.min.sjs");
   let format = propertiesAndWidgets.widgets.format;
   let result = fn.string(moment(inputDate, [format]).format('YYYY-MM-DD'));
   if (result == "Invalid date") {
@@ -1029,7 +1051,11 @@ function executeFormatDate(propertiesAndWidgets,inputDate) {
   return result;
 }
 
+function executeFormatDateTimeDependencies() {
+  return ["/custom-modules/pipes/runtime/moment-with-locales.min.sjs"];
+}
 function executeFormatDateTime(propertiesAndWidgets,inputDateTime) {
+  const moment = require("/custom-modules/pipes/runtime/moment-with-locales.min.sjs");
   let format = propertiesAndWidgets.widgets.format;
   let result = fn.string(moment(inputDateTime, [format]).format());
   if (result == "Invalid date") {
@@ -1038,7 +1064,11 @@ function executeFormatDateTime(propertiesAndWidgets,inputDateTime) {
   return result;
 }
 
+function executeFormatDateAutoDependencies() {
+  return ["/custom-modules/pipes/runtime/moment-with-locales.min.sjs"];
+}
 function executeFormatDateAuto(propertiesAndWidgets,srcDate) {
+  const moment = require("/custom-modules/pipes/runtime/moment-with-locales.min.sjs");
     let result = moment(srcDate, ["MM-DD-YYYY", "YYYY-MM-DD", "DD/MM/YYYY"]).format("YYYY-MM-DD")
     if (result == "Invalid date")
       return null;
@@ -1046,7 +1076,12 @@ function executeFormatDateAuto(propertiesAndWidgets,srcDate) {
       return result
 }
 
+function executeFormatDateTimeAutoDependencies() {
+  return ["/custom-modules/pipes/runtime/moment-with-locales.min.sjs"];
+}
+
 function executeFormatDateTimeAuto(propertiesAndWidgets,srcDate) {
+  const moment = require("/custom-modules/pipes/runtime/moment-with-locales.min.sjs");
   let result = moment(srcDate).format();
   if (result == "Invalid date")
     return null;

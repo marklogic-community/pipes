@@ -161,8 +161,9 @@ function checkAndDecorateExecutionOrder(graph,subgraphPath,graphTitle) {
   return null;
 }
 
-function compileGraphToJavaScriptWithOptions(jsonGraph,options) {
-
+function compileGraphToJavaScript(jsonGraph,options) {
+  let dependencies = new Set();
+  let functionPool = [];
   // STEP 0: Init litegraph
   const LiteGraph = require("/custom-modules/pipes/designtime/litegraph").LiteGraph;
   initLiteGraph(jsonGraph);
@@ -173,14 +174,20 @@ function compileGraphToJavaScriptWithOptions(jsonGraph,options) {
     return errorResponse;
   }
 
-  let outputFunctions = []
-  generateFunctionForGraph(options,jsonGraph.executionGraph,outputFunctions,null);
-  return outputFunctions;
+  let outputFunctions = [];
+  generateFunctionForGraph(options,jsonGraph.executionGraph,outputFunctions,null,functionPool,dependencies);
+  let newLine = options && options.newLine ? options.newLine : "\n";
+  let sourceCode = outputFunctions.join(newLine);
+  return {
+    sourceCode : sourceCode,
+    errors : null,
+    dependencies: Array. from(dependencies)
+  }
 }
 
-function generateFunctionForGraph(options,graph,outputFunctions,title) {
+function generateFunctionForGraph(options,graph,outputFunctions,title,functionPool,dependencies) {
   let variablePool = [];
-  const functionName = generateFunctionName(graph,title);
+  const functionName = generateFunctionName(graph,title,functionPool);
   const argList = generateFunctionArguments(graph,variablePool);
   let func = { functionName,argList,body:[],returnVar : null};
   let lib = {user: false, core:false};
@@ -192,18 +199,17 @@ function generateFunctionForGraph(options,graph,outputFunctions,title) {
     if ( node.type === SUBGRAPH_TYPE ) {
       xdmp.log("LOOP");
       xdmp.log(node.subgraph);
-      generateFunctionForGraph(options,node.subgraph,outputFunctions,node.title);
+      generateFunctionForGraph(options,node.subgraph,outputFunctions,node.title,functionPool,dependencies);
     } else if ( node.type === "Graph/input" || node.type === "Graph/output") {
       // nothing to emit
       continue;
     }
     const inputs = determineInputVariables(graph,node,variablePool);
     const outputs = determineOutputVariables(graph,node,variablePool);
-    xdmp.log("HERE44");
-    xdmp.log(node.type);
-    xdmp.log(outputs);
+    xdmp.log("HERE44 POOL");
+    xdmp.log(functionPool);
     xdmp.log("CLEAR");
-    let code = generateCode(options,graph,node,inputs,outputs,lib);
+    let code = generateCode(options,graph,node,inputs,outputs,lib,functionPool,dependencies);
     if ( inSubgraph ) {
       let identSpace = options.identSpaceCount ? options.identSpaceCount : 1;
       code = ident(code,identSpace);
@@ -211,7 +217,7 @@ function generateFunctionForGraph(options,graph,outputFunctions,title) {
     func.body.push(...code);
   }
   addSubgraphEndLoop(graph,func,variablePool,options);
-  outputFunctions.push(generateEntireFunction(options,lib,func));
+  outputFunctions.push(generateEntireFunction(options,lib,func,dependencies));
   outputFunctions.reverse();
 }
 
@@ -221,7 +227,8 @@ function createReturnVariable(graph,variablePool,func) {
     let outputNodes = graph.nodes.filter(x=>x.type==="Graph/output") ;
     outputNodes.sort((a, b) => a.id - b.id);
     for ( const node of outputNodes ) {
-      const name = node.properties.name;
+      let name = node.properties.name;
+      name = name.match(/[0-9a-zA-Z_]+/g).join("");
       let returnName = "result_"+name;
       if (variablePoolHasVariable(variablePool,returnName) ) {
         returnName = "result_"+name+"_"+graph.subgraphPath;
@@ -234,7 +241,7 @@ function createReturnVariable(graph,variablePool,func) {
 
 function addSubgraphEndLoop(graph,func,variablePool,options) {
   if ( graph.subgraphPath ) {
-    let identSpace = options.identSpaceCount ? options.identSpaceCount : 1;
+    let identSpace = options && options.identSpaceCount ? options.identSpaceCount : 1;
     let outputNodes = graph.nodes.filter(x=>x.type==="Graph/output") ;
     outputNodes.sort((a, b) => a.id - b.id);
     let counter = 0;
@@ -270,16 +277,20 @@ for ( const ${variableName} of ${inputName} ) {`
 }
 
 
-function generateEntireFunction(options,lib,func) {
-  let identSpace = options.identSpaceCount ? options.identSpaceCount : 1;
-  let newLine = options.newLine ? options.newLine : "\\n";
-  let ret = [];
+function generateEntireFunction(options,lib,func,dependencies) {
+  let identSpace = options && options.identSpaceCount ? options.identSpaceCount : 1;
+  let newLine = options && options.newLine ? options.newLine : "\n";
+  let ret = [];1
   ret.push("function "+func.functionName+"("+func.argList.join(",")+") {");
   if ( lib.core ) {
-    ret.push(ident(["const r = require('/custom-modules/pipes/runtime/coreFunctions.sjs');"],identSpace));
+    const dependency = "/custom-modules/pipes/runtime/coreFunctions.sjs";
+    dependencies.add(dependency);
+    ret.push(ident([`const r = require('${dependency}');`],identSpace));
   }
   if ( lib.user ) {
-    ret.push(ident(["const u = require('/custom-modules/pipes/runtime/user.sjs');"],identSpace));
+    const dependency = "/custom-modules/pipes/runtime/user.sjs";
+    dependencies.add(dependency);
+    ret.push(ident([`const u = require('${dependency}');`],identSpace));
   }
   ret.push(...ident(func.body,identSpace));
   if ( func.returnVar ) {
@@ -288,17 +299,30 @@ function generateEntireFunction(options,lib,func) {
   ret.push("}");
   return ret.join(newLine);
 }
-function generateReturnVar(graph) {
-  if ( graph.subgraphPath ) {
-    return "[TODO]";
-  } else {
-    return null;
+
+function getFunctionName(graph,functionPool) {
+  let f = functionPool.find(x=>x.subgraphPath === graph.subgraphPath );;
+  if ( f ) {
+    return f.name;
   }
+  throw new Error("Not found for graph = "+ graph.subgraphPath );
 }
 
-function generateFunctionName(graph,title) {
-  let titleString = title ? "_"+title : "";
-  return graph.subgraphPath ? "executeSubgraph"+graph.subgraphPath + titleString : "executeCustomStep";
+function generateFunctionName(graph,title,functionPool) {
+  let functionName;
+  if ( !graph.subgraphPath ) {
+    functionName = "executeCustomStep";
+    functionPool.push({ subgraphPath: null , name: functionName } );
+  } else {
+    let addTitle = title ? title : "";
+    addTitle=addTitle.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, function(match, chr) { return chr.toUpperCase();});
+    functionName = "executeSubgraph"+addTitle;
+    if ( functionPool.some( x => x.name === functionName ) ) {
+      functionName = functionName + graph.subgraphPath;
+    }
+    functionPool.push({ subgraphPath: graph.subgraphPath , name: functionName } );
+  }
+  return functionName;
 }
 
 function generateFunctionArguments(graph,variablePool) {
@@ -456,11 +480,10 @@ function determineInputVariables(graph,node,variablePool) {
   return arr
 }
 
-function generateCode(options,graph,node,ins,outs,lib) {
+function generateCode(options,graph,node,ins,outs,lib,functionPool,dependencies) {
   if ( node.type === "DHF/input") {
     return [];
   }
-  const addComments = options.addComments && options.addComments === true;
   let input = {};
   let output = {};
   for ( const inp of ins ) {
@@ -521,11 +544,14 @@ function generateCode(options,graph,node,ins,outs,lib) {
   let code = [];
   if ( node.type === SUBGRAPH_TYPE ) {
     inputString =  dataIn.join(",");
-    code.push(out + generateFunctionName(node.subgraph,node.title)+"(" + inputString +");");
+    code.push(out + getFunctionName(node.subgraph,functionPool)+"(" + inputString +");");
   } else {
     let prefix = ""
     const library = "getRuntimeLibraryPath" in  bc ? bc.getRuntimeLibraryPath() : "coreFunctions.sjs"
     const req = require("/custom-modules/pipes/runtime/"+library);
+    const denependeciesFunction = bc.getRuntimeLibraryFunctionName() + "Dependencies"
+    const functionDependencies = denependeciesFunction in req && typeof req[denependeciesFunction] === "function" ? req[denependeciesFunction]() : [];
+    functionDependencies.forEach(item => dependencies.add(item))
     const inputAsListFunction = bc.getRuntimeLibraryFunctionName() + "InputAsList"
     const inputAsList = inputAsListFunction in req && typeof req[inputAsListFunction] === "function" ? req[inputAsListFunction]() : false;
     const returnAlwaysAnArrayFunction = bc.getRuntimeLibraryFunctionName()  + "ReturnAlwaysAnArray"
@@ -567,9 +593,12 @@ function generateCode(options,graph,node,ins,outs,lib) {
   return code;
 }
 
-function compileGraphToJavaScript(jsonGraph) {
-  return compileGraphToJavaScriptWithOptions(jsonGraph,{addComments:true, identSpaceCount : 1,newLine : "\n"});
-}
-
+module.exports = {
+  compileGraphToJavaScript
+};
+/*
 let jsonGraph = cts.doc("/graph.json").toObject();
 compileGraphToJavaScript(jsonGraph).join("\n");
+*/
+
+

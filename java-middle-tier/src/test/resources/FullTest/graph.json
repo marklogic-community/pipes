@@ -67,15 +67,22 @@
           "field": "third",
           "path": "//third",
           "type": "custom"
+        },
+        {
+          "label": "fourth",
+          "children": [],
+          "field": "fourth",
+          "path": "//fourth",
+          "type": "custom"
         }
       ],
       "options": [
-        "nodeOutput",
-        "fieldsInputs"
+        "fieldsInputs",
+        "nodeOutput"
       ],
       "metadata": {
         "description": "",
-        "dateCreated": "2020-10-16T08:39:12.573Z",
+        "dateCreated": "2020-10-21T12:22:29.609Z",
         "blockCreatedFrom": "none",
         "sourceDHFStep": null,
         "sourceDatabase": "",
@@ -85,8 +92,8 @@
     }
   ],
   "executionGraph": {
-    "last_node_id": 7,
-    "last_link_id": 11,
+    "last_node_id": 11,
+    "last_link_id": 17,
     "nodes": [
       {
         "id": 2,
@@ -100,7 +107,7 @@
           60
         ],
         "flags": {},
-        "order": 6,
+        "order": 8,
         "mode": 0,
         "inputs": [
           {
@@ -110,52 +117,6 @@
           }
         ],
         "properties": {}
-      },
-      {
-        "id": 3,
-        "type": "Sources/InputSource",
-        "pos": [
-          491,
-          361
-        ],
-        "size": [
-          305,
-          128
-        ],
-        "flags": {},
-        "order": 2,
-        "mode": 0,
-        "inputs": [
-          {
-            "name": "Node",
-            "type": 0,
-            "link": 1
-          }
-        ],
-        "outputs": [
-          {
-            "name": "a",
-            "links": [
-              2
-            ]
-          },
-          {
-            "name": "b",
-            "links": [
-              3
-            ]
-          },
-          {
-            "name": "c",
-            "links": [
-              4
-            ]
-          }
-        ],
-        "properties": {},
-        "widgets_values": [
-          true
-        ]
       },
       {
         "id": 1,
@@ -201,121 +162,6 @@
         "properties": {}
       },
       {
-        "id": 5,
-        "type": "DHF/envelope",
-        "pos": [
-          1080,
-          542
-        ],
-        "size": [
-          180,
-          180
-        ],
-        "flags": {},
-        "order": 5,
-        "mode": 0,
-        "inputs": [
-          {
-            "name": "headers",
-            "type": 0,
-            "link": null
-          },
-          {
-            "name": "triples",
-            "type": 0,
-            "link": null
-          },
-          {
-            "name": "instance",
-            "type": 0,
-            "link": 6
-          },
-          {
-            "name": "attachments",
-            "type": 0,
-            "link": 7
-          },
-          {
-            "name": "uri",
-            "type": 0,
-            "link": 9
-          },
-          {
-            "name": "collections",
-            "type": 0,
-            "link": 11
-          },
-          {
-            "name": "permissions",
-            "type": 0,
-            "link": null
-          }
-        ],
-        "outputs": [
-          {
-            "name": "output",
-            "type": null,
-            "links": [
-              10
-            ]
-          }
-        ],
-        "properties": {},
-        "widgets_values": [
-          "json"
-        ]
-      },
-      {
-        "id": 4,
-        "type": "Sources/OutputBlock",
-        "pos": [
-          884,
-          284
-        ],
-        "size": [
-          305,
-          128
-        ],
-        "flags": {},
-        "order": 4,
-        "mode": 0,
-        "inputs": [
-          {
-            "name": "first",
-            "type": 0,
-            "link": 2
-          },
-          {
-            "name": "second",
-            "type": 0,
-            "link": 3
-          },
-          {
-            "name": "third",
-            "type": 0,
-            "link": 4
-          }
-        ],
-        "outputs": [
-          {
-            "name": "Node",
-            "type": "Node",
-            "links": [
-              6
-            ]
-          },
-          {
-            "name": "Prov",
-            "type": null,
-            "links": null
-          }
-        ],
-        "properties": {},
-        "widgets_values": [
-          true
-        ]
-      },
-      {
         "id": 6,
         "type": "Generate/Templating",
         "pos": [
@@ -327,7 +173,7 @@
           "1": 146
         },
         "flags": {},
-        "order": 3,
+        "order": 4,
         "mode": 0,
         "inputs": [
           {
@@ -388,6 +234,234 @@
           "string",
           "ingest-unit-test"
         ]
+      },
+      {
+        "id": 3,
+        "type": "Sources/InputSource",
+        "pos": [
+          491,
+          361
+        ],
+        "size": [
+          305,
+          128
+        ],
+        "flags": {},
+        "order": 3,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "Node",
+            "type": 0,
+            "link": 1
+          }
+        ],
+        "outputs": [
+          {
+            "name": "a",
+            "links": [
+              12
+            ]
+          },
+          {
+            "name": "b",
+            "links": [
+              14
+            ]
+          },
+          {
+            "name": "c",
+            "links": [
+              13
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          true
+        ]
+      },
+      {
+        "id": 10,
+        "type": "Generate/multiConstant",
+        "pos": [
+          450,
+          917
+        ],
+        "size": {
+          "0": 255,
+          "1": 82
+        },
+        "flags": {},
+        "order": 2,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "output",
+            "links": [
+              15
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "string",
+          "30-12-2012"
+        ]
+      },
+      {
+        "id": 11,
+        "type": "Format/FormatDate",
+        "pos": [
+          861.9994894409177,
+          911.3003173828123
+        ],
+        "size": {
+          "0": 255,
+          "1": 58
+        },
+        "flags": {},
+        "order": 5,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "inputDate",
+            "type": 0,
+            "link": 15
+          }
+        ],
+        "outputs": [
+          {
+            "name": "IsoDate",
+            "links": [
+              16
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "DD-MM-YYYY"
+        ]
+      },
+      {
+        "id": 5,
+        "type": "DHF/envelope",
+        "pos": [
+          1222,
+          571
+        ],
+        "size": [
+          180,
+          180
+        ],
+        "flags": {},
+        "order": 7,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "headers",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "triples",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "instance",
+            "type": 0,
+            "link": 17
+          },
+          {
+            "name": "attachments",
+            "type": 0,
+            "link": 7
+          },
+          {
+            "name": "uri",
+            "type": 0,
+            "link": 9
+          },
+          {
+            "name": "collections",
+            "type": 0,
+            "link": 11
+          },
+          {
+            "name": "permissions",
+            "type": 0,
+            "link": null
+          }
+        ],
+        "outputs": [
+          {
+            "name": "output",
+            "type": null,
+            "links": [
+              10
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "json"
+        ]
+      },
+      {
+        "id": 8,
+        "type": "Sources/OutputBlock",
+        "pos": [
+          957,
+          336.5
+        ],
+        "size": [
+          305,
+          148
+        ],
+        "flags": {},
+        "order": 6,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "first",
+            "type": 0,
+            "link": 12
+          },
+          {
+            "name": "second",
+            "type": 0,
+            "link": 14
+          },
+          {
+            "name": "third",
+            "type": 0,
+            "link": 13
+          },
+          {
+            "name": "fourth",
+            "type": 0,
+            "link": 16
+          }
+        ],
+        "outputs": [
+          {
+            "name": "Node",
+            "type": "Node",
+            "links": [
+              17
+            ]
+          },
+          {
+            "name": "Prov",
+            "type": null,
+            "links": null
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          true
+        ]
       }
     ],
     "links": [
@@ -397,38 +471,6 @@
         0,
         3,
         0,
-        0
-      ],
-      [
-        2,
-        3,
-        0,
-        4,
-        0,
-        0
-      ],
-      [
-        3,
-        3,
-        1,
-        4,
-        1,
-        0
-      ],
-      [
-        4,
-        3,
-        2,
-        4,
-        2,
-        0
-      ],
-      [
-        6,
-        4,
-        0,
-        5,
-        2,
         0
       ],
       [
@@ -470,6 +512,54 @@
         5,
         5,
         0
+      ],
+      [
+        12,
+        3,
+        0,
+        8,
+        0,
+        0
+      ],
+      [
+        13,
+        3,
+        2,
+        8,
+        2,
+        0
+      ],
+      [
+        14,
+        3,
+        1,
+        8,
+        1,
+        0
+      ],
+      [
+        15,
+        10,
+        0,
+        11,
+        0,
+        0
+      ],
+      [
+        16,
+        11,
+        0,
+        8,
+        3,
+        0
+      ],
+      [
+        17,
+        8,
+        0,
+        5,
+        2,
+        0
       ]
     ],
     "groups": [],
@@ -481,6 +571,6 @@
     "version": "00.01",
     "author": "",
     "title": "fulltest",
-    "dateExported": "18/10/2020, 21:01:14"
+    "dateExported": "21/10/2020, 14:26:24"
   }
 }
