@@ -12,9 +12,6 @@
     },
     "uri": "5",
     "context": {
-      "collections": null,
-
-    "permissions":null
     }
   },
   {
@@ -29,10 +26,7 @@
       }
     },
     "uri": "6",
-    "context": {
-      "collections": null
-    ,
-    "permissions":null
+    "context": { 
     }
   }
 ]

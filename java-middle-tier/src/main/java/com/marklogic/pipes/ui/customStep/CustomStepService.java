@@ -23,6 +23,8 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class CustomStepService {
@@ -49,13 +51,8 @@ public class CustomStepService {
 
 
   public CustomStepResponse accessDhfRootAndGetCustomStepsJson() throws IOException {
-
     File[] directories = new File(clientConfig.getMlDhfRoot()+ customStepsRelativePath).listFiles(File::isDirectory);
-
     CustomStepResponse customStepResponse = new CustomStepResponse();
-
-
-
     if (directories!=null) {
       for (File dir:directories) {
 
@@ -103,8 +100,10 @@ public class CustomStepService {
       String.format("Now copying custom step "+ customStepName +" to your DHF project...")
     );
     String customStepsAbsolutePath = clientConfig.getMlDhfRoot()+ "/src/main/ml-modules/root/custom-modules/custom/";
-
-    BufferedWriter writer = new BufferedWriter(new FileWriter(customStepsAbsolutePath+customStepName+"/main.sjs"));
+    String targetFile = customStepsAbsolutePath+customStepName+"/main.sjs";
+    String targetDirectory = new File(targetFile).getParent();
+    Files.createDirectories(Paths.get(targetDirectory));
+    BufferedWriter writer = new BufferedWriter(new FileWriter(targetFile));
     writer.write(customStepDocument);
     writer.close();
 
@@ -162,6 +161,10 @@ public class CustomStepService {
 
   private Path resolvePath(Path path, String more) {
     return path.resolve(more);
+  }
+
+  public void  copyDepdenciesToDHfSource(String[] dependencies)  throws IOException {
+    backendModulesManager.copyDepdenciesToDHfSource(dependencies);
   }
 
   public void loadCustomStepToMl(String body, String customStepName) throws IOException {

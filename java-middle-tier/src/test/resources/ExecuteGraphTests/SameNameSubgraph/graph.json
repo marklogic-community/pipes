@@ -1,0 +1,740 @@
+{
+  "pipesFileVersion": 2,
+  "models": [
+    {
+      "label": "OutputBlock",
+      "collection": "OutputBlock",
+      "source": "Sources",
+      "fields": [
+        {
+          "label": "output",
+          "children": [],
+          "field": "output",
+          "path": "//output",
+          "type": "custom"
+        },
+        {
+          "label": "original",
+          "children": [],
+          "field": "original",
+          "path": "//original",
+          "type": "custom"
+        }
+      ],
+      "options": [
+        "fieldsInputs",
+        "nodeOutput"
+      ],
+      "metadata": {
+        "description": "",
+        "dateCreated": "2020-10-21T04:57:43.108Z",
+        "blockCreatedFrom": "none",
+        "sourceDHFStep": null,
+        "sourceDatabase": "",
+        "sourceCollection": "",
+        "customURIs": ""
+      }
+    }
+  ],
+  "executionGraph": {
+    "last_node_id": 8,
+    "last_link_id": 7,
+    "nodes": [
+      {
+        "id": 2,
+        "type": "DHF/output",
+        "pos": [
+          1308,
+          434
+        ],
+        "size": [
+          180,
+          60
+        ],
+        "flags": {},
+        "order": 7,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "output",
+            "type": 0,
+            "link": 7
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 1,
+        "type": "DHF/input",
+        "pos": [
+          248,
+          489
+        ],
+        "size": [
+          180,
+          100
+        ],
+        "flags": {},
+        "order": 0,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "input",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "uri",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "collections",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "permissions",
+            "type": "",
+            "links": null
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 3,
+        "type": "Generate/multiConstant",
+        "pos": [
+          457,
+          258
+        ],
+        "size": {
+          "0": 255,
+          "1": 82
+        },
+        "flags": {},
+        "order": 1,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "output",
+            "links": [
+              1
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "string",
+          "A"
+        ]
+      },
+      {
+        "id": 4,
+        "type": "Generate/multiConstant",
+        "pos": [
+          461,
+          387
+        ],
+        "size": {
+          "0": 255,
+          "1": 82
+        },
+        "flags": {},
+        "order": 2,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "output",
+            "links": [
+              2
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "string",
+          "B"
+        ]
+      },
+      {
+        "id": 5,
+        "type": "Join/Array",
+        "pos": [
+          772,
+          308
+        ],
+        "size": {
+          "0": 255,
+          "1": 138
+        },
+        "flags": {},
+        "order": 3,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "item1",
+            "type": 0,
+            "link": 1
+          },
+          {
+            "name": "item2",
+            "type": 0,
+            "link": 2
+          },
+          {
+            "name": "item3",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "item4",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "item5",
+            "type": 0,
+            "link": null
+          }
+        ],
+        "outputs": [
+          {
+            "name": "array",
+            "links": [
+              3
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "5"
+        ]
+      },
+      {
+        "id": 7,
+        "type": "Graph/subgraph",
+        "pos": [
+          1114,
+          292
+        ],
+        "size": {
+          "0": 211.60000610351562,
+          "1": 46
+        },
+        "flags": {},
+        "order": 5,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "Item",
+            "type": 0,
+            "link": 4,
+            "label": "Item [List]"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "Result",
+            "type": "",
+            "links": [
+              5
+            ],
+            "label": "Result [List]"
+          }
+        ],
+        "title": "SUBGRAPHTITLE",
+        "properties": {
+          "enabled": true
+        },
+        "subgraph": {
+          "last_node_id": 6,
+          "last_link_id": 3,
+          "nodes": [
+            {
+              "id": 2,
+              "type": "Graph/output",
+              "pos": [
+                1100,
+                400
+              ],
+              "size": [
+                180,
+                90
+              ],
+              "flags": {},
+              "order": 4,
+              "mode": 0,
+              "inputs": [
+                {
+                  "name": "",
+                  "type": 0,
+                  "link": 3
+                }
+              ],
+              "properties": {
+                "name": "Result",
+                "type": "",
+                "value": "",
+                "isMain": true
+              }
+            },
+            {
+              "id": 5,
+              "type": "Graph/output",
+              "pos": [
+                1116.3193593749997,
+                579.4800952148437
+              ],
+              "size": [
+                180,
+                90
+              ],
+              "flags": {},
+              "order": 2,
+              "mode": 0,
+              "inputs": [
+                {
+                  "name": "",
+                  "type": 0,
+                  "link": 1
+                }
+              ],
+              "properties": {
+                "name": "Result",
+                "type": "",
+                "value": "",
+                "isMain": false
+              }
+            },
+            {
+              "id": 3,
+              "type": "Graph/input",
+              "pos": [
+                409,
+                564
+              ],
+              "size": [
+                180,
+                90
+              ],
+              "flags": {},
+              "order": 0,
+              "mode": 0,
+              "outputs": [
+                {
+                  "name": "",
+                  "type": "",
+                  "links": [
+                    1
+                  ]
+                }
+              ],
+              "properties": {
+                "name": "Item",
+                "type": "",
+                "value": "",
+                "isMain": ""
+              }
+            },
+            {
+              "id": 1,
+              "type": "Graph/input",
+              "pos": [
+                400,
+                400
+              ],
+              "size": [
+                180,
+                90
+              ],
+              "flags": {},
+              "order": 1,
+              "mode": 0,
+              "outputs": [
+                {
+                  "name": "",
+                  "type": "",
+                  "links": [
+                    2
+                  ]
+                }
+              ],
+              "properties": {
+                "name": "Item",
+                "type": "",
+                "value": "",
+                "isMain": true
+              }
+            },
+            {
+              "id": 6,
+              "type": "Graph/subgraph",
+              "pos": [
+                798,
+                347
+              ],
+              "size": {
+                "0": 170,
+                "1": 46
+              },
+              "flags": {},
+              "order": 3,
+              "mode": 0,
+              "inputs": [
+                {
+                  "name": "Item",
+                  "type": 0,
+                  "link": 2,
+                  "label": "Item [List]"
+                }
+              ],
+              "outputs": [
+                {
+                  "name": "Result",
+                  "type": "",
+                  "links": [
+                    3
+                  ],
+                  "label": "Result [List]"
+                }
+              ],
+              "title": "SUBGRAPHTITLE",
+              "properties": {
+                "enabled": true
+              },
+              "subgraph": {
+                "last_node_id": 3,
+                "last_link_id": 2,
+                "nodes": [
+                  {
+                    "id": 2,
+                    "type": "Graph/output",
+                    "pos": [
+                      1100,
+                      400
+                    ],
+                    "size": [
+                      180,
+                      90
+                    ],
+                    "flags": {},
+                    "order": 2,
+                    "mode": 0,
+                    "inputs": [
+                      {
+                        "name": "",
+                        "type": 0,
+                        "link": 2
+                      }
+                    ],
+                    "properties": {
+                      "name": "Result",
+                      "type": "",
+                      "value": "",
+                      "isMain": true
+                    }
+                  },
+                  {
+                    "id": 1,
+                    "type": "Graph/input",
+                    "pos": [
+                      400,
+                      400
+                    ],
+                    "size": [
+                      180,
+                      90
+                    ],
+                    "flags": {},
+                    "order": 0,
+                    "mode": 0,
+                    "outputs": [
+                      {
+                        "name": "",
+                        "type": "",
+                        "links": [
+                          1
+                        ]
+                      }
+                    ],
+                    "properties": {
+                      "name": "Item",
+                      "type": "",
+                      "value": "",
+                      "isMain": true
+                    }
+                  },
+                  {
+                    "id": 3,
+                    "type": "Generate/Templating",
+                    "pos": [
+                      705.7139249687502,
+                      347.8768175097657
+                    ],
+                    "size": {
+                      "0": 255,
+                      "1": 146
+                    },
+                    "flags": {},
+                    "order": 1,
+                    "mode": 0,
+                    "inputs": [
+                      {
+                        "name": "v1",
+                        "type": 0,
+                        "link": 1
+                      },
+                      {
+                        "name": "v2",
+                        "type": 0,
+                        "link": null
+                      },
+                      {
+                        "name": "v3",
+                        "type": 0,
+                        "link": null
+                      }
+                    ],
+                    "outputs": [
+                      {
+                        "name": "newString",
+                        "links": [
+                          2
+                        ]
+                      }
+                    ],
+                    "properties": {},
+                    "widgets_values": [
+                      "",
+                      "",
+                      "${v1}POSTFIX"
+                    ]
+                  }
+                ],
+                "links": [
+                  [
+                    1,
+                    1,
+                    0,
+                    3,
+                    0,
+                    0
+                  ],
+                  [
+                    2,
+                    3,
+                    0,
+                    2,
+                    0,
+                    0
+                  ]
+                ],
+                "groups": [],
+                "config": {},
+                "version": 0.4
+              }
+            }
+          ],
+          "links": [
+            [
+              1,
+              3,
+              0,
+              5,
+              0,
+              0
+            ],
+            [
+              2,
+              1,
+              0,
+              6,
+              0,
+              0
+            ],
+            [
+              3,
+              6,
+              0,
+              2,
+              0,
+              0
+            ]
+          ],
+          "groups": [],
+          "config": {},
+          "version": 0.4
+        }
+      },
+      {
+        "id": 6,
+        "type": "Join/Array",
+        "pos": [
+          813,
+          540
+        ],
+        "size": {
+          "0": 255,
+          "1": 138
+        },
+        "flags": {},
+        "order": 4,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "item1",
+            "type": 0,
+            "link": 3
+          },
+          {
+            "name": "item2",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "item3",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "item4",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "item5",
+            "type": 0,
+            "link": null
+          }
+        ],
+        "outputs": [
+          {
+            "name": "array",
+            "links": [
+              4,
+              6
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "5"
+        ]
+      },
+      {
+        "id": 8,
+        "type": "Sources/OutputBlock",
+        "pos": [
+          1456.5449734179685,
+          162.00154511718745
+        ],
+        "size": [
+          305,
+          108
+        ],
+        "flags": {},
+        "order": 6,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "output",
+            "type": 0,
+            "link": 5
+          },
+          {
+            "name": "original",
+            "type": 0,
+            "link": 6
+          }
+        ],
+        "outputs": [
+          {
+            "name": "Node",
+            "type": "Node",
+            "links": [
+              7
+            ]
+          },
+          {
+            "name": "Prov",
+            "type": null,
+            "links": null
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          true
+        ]
+      }
+    ],
+    "links": [
+      [
+        1,
+        3,
+        0,
+        5,
+        0,
+        0
+      ],
+      [
+        2,
+        4,
+        0,
+        5,
+        1,
+        0
+      ],
+      [
+        3,
+        5,
+        0,
+        6,
+        0,
+        0
+      ],
+      [
+        4,
+        6,
+        0,
+        7,
+        0,
+        0
+      ],
+      [
+        5,
+        7,
+        0,
+        8,
+        0,
+        0
+      ],
+      [
+        6,
+        6,
+        0,
+        8,
+        1,
+        0
+      ],
+      [
+        7,
+        8,
+        0,
+        2,
+        0,
+        0
+      ]
+    ],
+    "groups": [],
+    "config": {},
+    "version": 0.4
+  },
+  "name": "SameNameSubgraph",
+  "metadata": {
+    "version": "00.01",
+    "author": "",
+    "title": "SameNameSubgraph",
+    "dateExported": "21/10/2020, 06:58:53"
+  }
+}

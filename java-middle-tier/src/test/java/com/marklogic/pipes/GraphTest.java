@@ -54,12 +54,16 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.io.FileInputStream;
 import java.util.stream.Stream;
+import java.net.URLEncoder;
 
 import static org.hamcrest.Matchers.equalToCompressingWhiteSpace;
 import static org.springframework.test.util.AssertionErrors.*;
@@ -205,8 +209,13 @@ class GraphTest {
         assertNotNull("file not found.", in);
         ingestTestFile(in,inputFile.getAbsolutePath());
       }
-      String sourceCode = compile("FullTest/graph.json");
-      publishCustomStepSourceCode("TestStep",sourceCode);
+      String[] data = compile("FullTest/graph.json");
+      String sourceCode = data[0];
+      String dependencies = data[1];
+      System.out.println("SOURCECODE");
+      System.out.println(sourceCode);
+      System.out.println("DEPENDENCIES "+dependencies);
+      publishCustomStepSourceCode("TestStep",sourceCode,dependencies);
       runDHFFlow("TestFlow");
       File[] expectedOutcomeFiles = new File("src/test/resources/FullTest/expectedResponse").listFiles();
       assertNotNull("FullTest/expectedResponse directory does not exist",expectedOutcomeFiles);
@@ -228,7 +237,6 @@ class GraphTest {
       removeTestDocuments();
     }
   }
-
   private JacksonHandle getFinalDocByURI(String uri) {
     DatabaseClient client = hubConfig.newFinalClient();
     try {
@@ -265,6 +273,7 @@ class GraphTest {
       assertNotNull("Response null",m);
       RunStepResponse rs = m.get("1");
       assertNotNull("Step 1 not found",rs);
+      System.out.println(rs);
       assertEquals("Failures not 0",rs.getFailedEvents(),0L );
       assertEquals("Successful should be 2",rs.	getSuccessfulEvents(),2L );
     } catch (Exception e) {
@@ -272,8 +281,9 @@ class GraphTest {
     }
   }
 
-  private void publishCustomStepSourceCode(String customStepName,String sourceCode) throws Exception {
-    String request = "/customSteps?name=" + customStepName + "&deploy=true";
+  private void publishCustomStepSourceCode(String customStepName,String sourceCode,String dependencies) throws Exception {
+    dependencies =  URLEncoder.encode(dependencies, StandardCharsets.UTF_8.toString());
+    String request = "/customSteps?name=" + customStepName + "&deploy=true&dependencies="+dependencies;
     MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(request).content(sourceCode)
       .session(session);
     ResultActions resultActions = this.mockMvc.perform(builder)
@@ -282,7 +292,7 @@ class GraphTest {
     assertEquals("Did not return OK",result.getResponse().getStatus(),200);
   }
 
-  private String compile(String grahPath) throws Exception {
+  private String[] compile(String grahPath) throws Exception {
     InputStreamHandle graphHandle = getClasspathInputStreamHandle(grahPath);
     assertNotNull("graph.json not found for "+grahPath,graphHandle);
 
@@ -302,9 +312,19 @@ class GraphTest {
     JsonNode sourceCodeNode = responseJson.getNode("sourceCode");
     assertNotNull("sourceCode not available",sourceCodeNode);
     assertTrue("Sourcecode should be a string",sourceCodeNode.getNodeType() == JsonNodeType.STRING);
-    return sourceCodeNode.textValue();
+    String code = sourceCodeNode.textValue();
+    JsonNode dependenciesNode = responseJson.getNode("dependencies");
+    assertNotNull("dependencies not available",dependenciesNode);
+    assertTrue("Dependencies should be a array",dependenciesNode.getNodeType() == JsonNodeType.ARRAY);
+    ArrayList<String> list = new ArrayList<String>();
+    for ( JsonNode node : dependenciesNode ) {
+      String s = node.textValue();
+      list.add(s);
+    }
+    String[] ret = { code, String.join(",",list)};
+    return ret;
   }
-
+  /*
   @ParameterizedTest(name = "Interpreter: #{index} : {0}")
   @MethodSource("getDirectoryNames")
   void genericGraphTestsInterpreter(String argument) throws Exception {
@@ -315,7 +335,7 @@ class GraphTest {
   void genericGraphTestsCompiler(String argument) throws Exception {
     runGrahTests(argument,true);
   }
-
+*/
   private void runGrahTests(String argument,boolean compiler) throws Exception {
     try {
       String ext = "json";
@@ -379,7 +399,7 @@ class GraphTest {
     InputStreamHandle ism= getClasspathInputStreamHandle("ExecuteGraphTests");
     String dirs[]=ism.toString().split("\n");
     // limit the test set
-    //dirs=new String[]{"Padding"};
+   //   dirs=new String[]{"Subgraph"};
     return Arrays.stream(dirs);
   }
 

@@ -1,0 +1,474 @@
+{
+  "pipesFileVersion": 2,
+  "models": [],
+  "executionGraph": {
+    "last_node_id": 7,
+    "last_link_id": 7,
+    "nodes": [
+      {
+        "id": 1,
+        "type": "DHF/input",
+        "pos": [
+          248,
+          489
+        ],
+        "size": [
+          180,
+          100
+        ],
+        "flags": {},
+        "order": 0,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "input",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "uri",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "collections",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "permissions",
+            "type": "",
+            "links": null
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 3,
+        "type": "Generate/multiConstant",
+        "pos": [
+          572,
+          322
+        ],
+        "size": {
+          "0": 255,
+          "1": 82
+        },
+        "flags": {},
+        "order": 1,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "output",
+            "links": [
+              1
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "string",
+          "T"
+        ]
+      },
+      {
+        "id": 4,
+        "type": "Generate/multiConstant",
+        "pos": [
+          566,
+          452
+        ],
+        "size": {
+          "0": 255,
+          "1": 82
+        },
+        "flags": {},
+        "order": 2,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "output",
+            "links": [
+              2
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "string",
+          "U"
+        ]
+      },
+      {
+        "id": 5,
+        "type": "Join/Array",
+        "pos": [
+          842,
+          234
+        ],
+        "size": {
+          "0": 255,
+          "1": 138
+        },
+        "flags": {},
+        "order": 3,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "item1",
+            "type": 0,
+            "link": 1
+          },
+          {
+            "name": "item2",
+            "type": 0,
+            "link": 2
+          },
+          {
+            "name": "item3",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "item4",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "item5",
+            "type": 0,
+            "link": null
+          }
+        ],
+        "outputs": [
+          {
+            "name": "array",
+            "links": [
+              4
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "5"
+        ]
+      },
+      {
+        "id": 2,
+        "type": "DHF/output",
+        "pos": [
+          1406,
+          405
+        ],
+        "size": [
+          180,
+          60
+        ],
+        "flags": {},
+        "order": 6,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "output",
+            "type": 0,
+            "link": 6
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 6,
+        "type": "Graph/subgraph",
+        "pos": [
+          1092,
+          286
+        ],
+        "size": [
+          170,
+          46
+        ],
+        "flags": {},
+        "order": 4,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "Item",
+            "type": 0,
+            "link": 4,
+            "label": "Item [List]"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "Result",
+            "type": "",
+            "links": [
+              7
+            ],
+            "label": "Result [List]"
+          }
+        ],
+        "properties": {
+          "enabled": true
+        },
+        "subgraph": {
+          "last_node_id": 4,
+          "last_link_id": 3,
+          "nodes": [
+            {
+              "id": 2,
+              "type": "Graph/output",
+              "pos": [
+                1100,
+                400
+              ],
+              "size": [
+                180,
+                90
+              ],
+              "flags": {},
+              "order": 3,
+              "mode": 0,
+              "inputs": [
+                {
+                  "name": "",
+                  "type": 0,
+                  "link": 3
+                }
+              ],
+              "properties": {
+                "name": "Result",
+                "type": "",
+                "value": "",
+                "isMain": true
+              }
+            },
+            {
+              "id": 4,
+              "type": "Generate/multiConstant",
+              "pos": [
+                599.4214821807609,
+                564.0743802283421
+              ],
+              "size": {
+                "0": 255,
+                "1": 82
+              },
+              "flags": {},
+              "order": 0,
+              "mode": 0,
+              "outputs": [
+                {
+                  "name": "output",
+                  "links": [
+                    1
+                  ]
+                }
+              ],
+              "properties": {},
+              "widgets_values": [
+                "string",
+                "Z"
+              ]
+            },
+            {
+              "id": 1,
+              "type": "Graph/input",
+              "pos": [
+                400,
+                400
+              ],
+              "size": [
+                180,
+                90
+              ],
+              "flags": {},
+              "order": 1,
+              "mode": 0,
+              "outputs": [
+                {
+                  "name": "",
+                  "type": "",
+                  "links": [
+                    2
+                  ]
+                }
+              ],
+              "properties": {
+                "name": "Item",
+                "type": "",
+                "value": "",
+                "isMain": true
+              }
+            },
+            {
+              "id": 3,
+              "type": "Generate/Templating",
+              "pos": [
+                744.0495813543146,
+                367.380165352309
+              ],
+              "size": {
+                "0": 255,
+                "1": 146
+              },
+              "flags": {},
+              "order": 2,
+              "mode": 0,
+              "inputs": [
+                {
+                  "name": "v1",
+                  "type": 0,
+                  "link": 2
+                },
+                {
+                  "name": "v2",
+                  "type": 0,
+                  "link": 1
+                },
+                {
+                  "name": "v3",
+                  "type": 0,
+                  "link": null
+                }
+              ],
+              "outputs": [
+                {
+                  "name": "newString",
+                  "links": [
+                    3
+                  ]
+                }
+              ],
+              "properties": {},
+              "widgets_values": [
+                "",
+                "",
+                "${v1}${v2}"
+              ]
+            }
+          ],
+          "links": [
+            [
+              1,
+              4,
+              0,
+              3,
+              1,
+              0
+            ],
+            [
+              2,
+              1,
+              0,
+              3,
+              0,
+              0
+            ],
+            [
+              3,
+              3,
+              0,
+              2,
+              0,
+              0
+            ]
+          ],
+          "groups": [],
+          "config": {},
+          "version": 0.4
+        }
+      },
+      {
+        "id": 7,
+        "type": "Enrich/AddProperty",
+        "pos": [
+          1243,
+          538
+        ],
+        "size": {
+          "0": 170,
+          "1": 46
+        },
+        "flags": {},
+        "order": 5,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "doc",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "value",
+            "type": 0,
+            "link": 7
+          }
+        ],
+        "outputs": [
+          {
+            "name": "doc",
+            "links": [
+              6
+            ]
+          }
+        ],
+        "properties": {
+          "propertyName": "result"
+        }
+      }
+    ],
+    "links": [
+      [
+        1,
+        3,
+        0,
+        5,
+        0,
+        0
+      ],
+      [
+        2,
+        4,
+        0,
+        5,
+        1,
+        0
+      ],
+      [
+        4,
+        5,
+        0,
+        6,
+        0,
+        0
+      ],
+      [
+        6,
+        7,
+        0,
+        2,
+        0,
+        0
+      ],
+      [
+        7,
+        6,
+        0,
+        7,
+        1,
+        0
+      ]
+    ],
+    "groups": [],
+    "config": {},
+    "version": 0.4
+  },
+  "name": "MinimalSubgraph",
+  "metadata": {
+    "version": "00.01",
+    "author": "",
+    "title": "MinimalSubgraph",
+    "dateExported": "21/10/2020, 09:05:52"
+  }
+}

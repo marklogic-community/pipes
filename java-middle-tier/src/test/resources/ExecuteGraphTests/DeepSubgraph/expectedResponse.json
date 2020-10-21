@@ -1,0 +1,16 @@
+{
+"ResultOut": {
+"result": [
+"FIRSTLEVEL2APPEND",
+"SECONDLEVEL2APPEND"
+],
+"output": [
+"FIRSTA,B,0GRAPH",
+"SECONDA,B,0GRAPH"
+]
+},
+"info": {
+"title": "ResultOut",
+"version": "0.0.1"
+}
+}

@@ -1,0 +1,20 @@
+{
+"OutputBlock": {
+"output": [
+[
+"APOSTFIX",
+"BPOSTFIX"
+]
+],
+"original": [
+[
+"A",
+"B"
+]
+]
+},
+"info": {
+"title": "OutputBlock",
+"version": "0.0.1"
+}
+}

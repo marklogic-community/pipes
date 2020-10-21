@@ -306,7 +306,23 @@ public class BackendModulesManager {
     else if (operation== fileOperation.Copy) {
       logger.info(String.format("MarkLogic backend modules copied to your DHF project."));
     }
+  }
 
+  /**
+   * Copy a list of (runtime) dependencies to the Project folder
+   *
+   * @param dependencies
+   * @throws IOException
+   */
+  public void copyDepdenciesToDHfSource(String[] dependencies) throws IOException {
+    for (String dependency : dependencies ){
+      dependency = "/root"+dependency;
+      String target = clientConfig.getMlDhfRoot() + destinationDhfRoot + dependency;
+      final InputStream is = Application.class.getResourceAsStream(resourcesDhfRoot + dependency);
+      String targetDirectory = new File(target).getParent();
+      Files.createDirectories(Paths.get(targetDirectory));
+      FileUtils.copyInputStreamToFile(is, new File(target));
+    }
   }
 
   public void deployMlBackendModulesToModulesDatabase(String patternString, AuthService authService) {

@@ -1,9 +1,12 @@
 'use strict'
-const moment = require("/custom-modules/pipes/runtime/moment-with-locales.min.sjs")
 const DataHub = require("/data-hub/5/datahub.sjs");
 const datahub = new DataHub();
 
 const BLOCK_RUNTIME_DEBUG_TRACE = "pipesBlockRuntimeDebug";
+
+const TRACE_ID = "pipes-coreFunctions";
+const TRACE_ID_PIPES_EXECUTION = "pipes-execution";
+const TRACE_ID_PIPES_EXECUTION_DETAILS = "pipes-execution-detasils";
 
 module.exports = {
   executeCheckPhoneNumber,
@@ -55,8 +58,6 @@ module.exports = {
   executeJoinArray,
   executeQueryDocExecutorType,
   executeQueryDoc,
-  executeGraphInputDHFExecutorType,
-  executeGraphInputDHF,
   executeGraphOutputDHF,
   executeAddProperty,
   executeStringCaseExecutorType,
@@ -72,28 +73,15 @@ module.exports = {
   executeLog,
   executeTraceInputAsList,
   executeTrace,
+  executeCheckPhoneNumberDependencies,
+  executeDeclarativeMapperDependencies,
+  executeFormatDateDependencies,
+  executeFormatDateTimeDependencies,
+  executeFormatDateAutoDependencies,
+  executeFormatDateTimeAutoDependencies,
   BLOCK_EXECUTOR_DELEGATOR : 1,
   BLOCK_EXECUTOR_GENERATOR : 2
 };
-
-const TRACE_ID = "pipes-coreFunctions";
-const TRACE_ID_PIPES_EXECUTION = "pipes-execution";
-const TRACE_ID_PIPES_EXECUTION_DETAILS = "pipes-execution-detasils";
-
-
-
-function executeGraphInputDHFExecutorType() {
-  return this.BLOCK_EXECUTOR_GENERATOR;
-}
-
-function executeGraphInputDHF(propertiesAndWidgets,inputs,outputs) {
-  return  [
-    "const "+outputs[0]+" = "+inputs[0]+";",
-    "const "+outputs[1]+" = "+inputs[1]+";",
-    "const "+outputs[2]+" = "+inputs[2]+";",
-    "const "+outputs[3]+" = "+inputs[3]+";"
-  ]
-}
 
 function executeGraphOutputDHF(propertiesAndWidgets,output) {
     if (output && output.constructor === Array) {
@@ -160,6 +148,12 @@ function executeEntityEnrich(propertiesAndWidgets,input,dictionary) {
   return result;
 }
 
+function executeCheckPhoneNumberDependencies() {
+  return [
+    '/custom-modules/pipes/runtime/google-libphonenumber.sjs',
+    '/custom-modules/pipes/runtime/google-libphonenumber.sjs'
+  ]
+}
 function executeCheckPhoneNumber(propertiesAndWidgets,pn,cc,uri) {
   const PNF = require('/custom-modules/pipes/runtime/google-libphonenumber.sjs').PhoneNumberFormat;
   const phoneUtil = require('/custom-modules/pipes/runtime/google-libphonenumber.sjs').PhoneNumberUtil.getInstance();
@@ -207,6 +201,11 @@ function executeCheckPhoneNumber(propertiesAndWidgets,pn,cc,uri) {
   }
 }
 
+function executeDeclarativeMapperDependencies() {
+  return [
+    "/custom-modules/pipes/runtime/entity-services-lib-vpp.sjs"
+  ]
+}
 function executeDeclarativeMapper(propertiesAndWidgets,node) {
   const lib2 = require("/custom-modules/pipes/runtime/entity-services-lib-vpp.sjs")
   const lib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
@@ -505,8 +504,21 @@ function executeStringJoinExecutorType() {
 }
 
 function executeStringJoin(propertiesAndWidgets,inputs,outputs) {
+  const output0 = outputs[0];
+  const input0 = inputs[0];
+  const separator = propertiesAndWidgets.properties.separator;
   return [
-    "const " + outputs[0] + " = "+inputs[0]+" ? fn.stringJoin("+inputs[0]+",'"+propertiesAndWidgets.properties.separator+"') : '';"
+    `const ${output0}=(()=>{`,
+    `            if ( !${input0} )  {`,
+    `              return '';`,
+    `            } else if ( ${input0} instanceof Sequence) {`,
+    `              return fn.stringJoin(${input0},'${separator}')`,
+    `            } else if ( ${input0}.constructor.name === 'Array') {`,
+    `              return ${input0}.join('${separator}')`,
+    `            } else {`,
+    `              return ${input0}`,
+    `            }`,
+    `          })()`
   ];
 }
 
@@ -525,15 +537,16 @@ function executeQueryDoc(propertiesAndWidgets,inputs,outputs) {
 }
 
 function executeJoinArrayInputAsList() {
-    return true;
+    return false;
 }
 
-function executeJoinArray(propertiesAndWidgets,inputs) {
+function executeJoinArray(propertiesAndWidgets) {
   let result = [];
   for (let i = 0; i < propertiesAndWidgets.widgets.nbInputs; i++) {
-    let value = i < inputs.length ? inputs[i] : null
-    if (value != null)
-      result = result.concat(value)
+    let value = i < arguments.length + 1 ? arguments[i+1] : null
+    if (value != null) {
+      result.push(value)
+    }
   }
   return result;
 }
@@ -1024,7 +1037,12 @@ function executeStringSplit(propertiesAndWidgets,input) {
   return arr;
 }
 
+function executeFormatDateDependencies() {
+  return ["/custom-modules/pipes/runtime/moment-with-locales.min.sjs"];
+}
+
 function executeFormatDate(propertiesAndWidgets,inputDate) {
+  const moment = require("/custom-modules/pipes/runtime/moment-with-locales.min.sjs");
   let format = propertiesAndWidgets.widgets.format;
   let result = fn.string(moment(inputDate, [format]).format('YYYY-MM-DD'));
   if (result == "Invalid date") {
@@ -1033,7 +1051,11 @@ function executeFormatDate(propertiesAndWidgets,inputDate) {
   return result;
 }
 
+function executeFormatDateTimeDependencies() {
+  return ["/custom-modules/pipes/runtime/moment-with-locales.min.sjs"];
+}
 function executeFormatDateTime(propertiesAndWidgets,inputDateTime) {
+  const moment = require("/custom-modules/pipes/runtime/moment-with-locales.min.sjs");
   let format = propertiesAndWidgets.widgets.format;
   let result = fn.string(moment(inputDateTime, [format]).format());
   if (result == "Invalid date") {
@@ -1042,7 +1064,11 @@ function executeFormatDateTime(propertiesAndWidgets,inputDateTime) {
   return result;
 }
 
+function executeFormatDateAutoDependencies() {
+  return ["/custom-modules/pipes/runtime/moment-with-locales.min.sjs"];
+}
 function executeFormatDateAuto(propertiesAndWidgets,srcDate) {
+  const moment = require("/custom-modules/pipes/runtime/moment-with-locales.min.sjs");
     let result = moment(srcDate, ["MM-DD-YYYY", "YYYY-MM-DD", "DD/MM/YYYY"]).format("YYYY-MM-DD")
     if (result == "Invalid date")
       return null;
@@ -1050,7 +1076,12 @@ function executeFormatDateAuto(propertiesAndWidgets,srcDate) {
       return result
 }
 
+function executeFormatDateTimeAutoDependencies() {
+  return ["/custom-modules/pipes/runtime/moment-with-locales.min.sjs"];
+}
+
 function executeFormatDateTimeAuto(propertiesAndWidgets,srcDate) {
+  const moment = require("/custom-modules/pipes/runtime/moment-with-locales.min.sjs");
   let result = moment(srcDate).format();
   if (result == "Invalid date")
     return null;
@@ -1174,7 +1205,8 @@ function executeBlock(block) {
     }
     else {
       for (let i = 0; i < inputs.length; i++) {
-        arr.push("input" + i + "=" + JSON.stringify(inputs[i]))
+        const type = inputs[i] ? inputs[i].constructor.name : "undefined";
+        arr.push("input" + i + "=" + JSON.stringify(inputs[i])+" type="+type+"")
       }
     }
     xdmp.trace(TRACE_ID_PIPES_EXECUTION,Sequence.from(arr));
@@ -1224,7 +1256,7 @@ function executeBlock(block) {
     for ( let i = 0 ; i < ( block.outputs || []).length; i++ ) {
       generatorOutputs.push("output"+i);
     }
-    const returnCode = "\n[" + generatorOutputs.join(",") + "];"
+    const returnCode = "\nconst r=[" + generatorOutputs.join(",") + "];\nr;"
     const genCode = inputCode + func(propertiesAndWidgets,generatorInputs,generatorOutputs).join("\n") + returnCode;
     let outputValues = null;
     xdmp.trace(TRACE_ID_PIPES_EXECUTION_DETAILS,Sequence.from(["-- Start code --",genCode,"-- End code ---"]));

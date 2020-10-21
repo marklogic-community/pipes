@@ -383,7 +383,18 @@ function InvokeExecuteGraph (input,compiler) {
           }
           if ( compiler ) {
             const compiler =require("/custom-modules/pipes/designtime/compiler.sjs")
-            const compiled = compiler.compileGraphToJavaScript(execContext.jsonGraph,{identSpaceCount : 1 })
+            const options = {identSpaceCount : 1 };
+            const graph = execContext.jsonGraph;
+            xdmp.trace("pipes-compiler","Invoking compiler:");
+            xdmp.trace("pipes-compiler","Graph:");
+            xdmp.trace("pipes-compiler",graph);
+            xdmp.trace("pipes-compiler","Options:");
+            xdmp.trace("pipes-compiler",options);
+            xdmp.trace("pipes-compiler","End Invoking compiler dump");
+            const compiled = compiler.compileGraphToJavaScript(graph,options)
+            xdmp.trace("pipes-compiler","Start Compiler output:");
+            xdmp.trace("pipes-compier",compiled);
+            xdmp.trace("pipes-compiler","End Compiler output:");
             if ( compiled.errors && compiled.errors.length > 0 ) {
               xdmp.log(Sequence.from(["Error while compiling",compiled.errors]),"error");
               throw new Error("Compiler error: "+JSON.stringify(compiled.errors));
@@ -396,7 +407,7 @@ function InvokeExecuteGraph (input,compiler) {
             code += compiled.sourceCode;
             code += "executeCustomStep(input,uri,collections,context,permissions);"
             xdmp.log("EXECUTE CODE");
-            xdmp.log(code)
+            xdmp.log(code);
             graphResult = eval(code);
           } else {
             graphResult = gHelper.executeGraphFromJson(
