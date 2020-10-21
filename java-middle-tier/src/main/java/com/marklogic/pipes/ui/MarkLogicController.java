@@ -56,7 +56,7 @@ public class MarkLogicController extends AbstractLoggingClass
       } catch ( RuntimeException e) {
           logger.error("Error during /v1/** get",e);
         throw e;
-      } 
+      }
     }
 
 

@@ -767,7 +767,7 @@ function executeEnvelope(propertiesAndWidgets,iHeaders,iTriples,iInstance,iAttac
   let hasAttachments = (attachments != null)
 
   if (xdmp.type(headers) != "object") headers = { "value": headers }
-  if (xdmp.type(triples) != "array") triples = [triples]
+  if (xdmp.type(triples) != "array") triples = [triples];
   if (xdmp.type(instance) != "object") instance = { "value": instance }
   if (xdmp.type(attachments) != "object") attachments = { "value": attachments }
 
