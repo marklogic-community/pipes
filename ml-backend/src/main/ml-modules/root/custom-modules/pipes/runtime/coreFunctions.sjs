@@ -764,16 +764,16 @@ function executeFilterArray(propertiesAndWidgets,unfiltered,patterns) {
   return filtered;
 }
 function executeEnvelope(propertiesAndWidgets,iHeaders,iTriples,iInstance,iAttachments,iUri,iCollections,iPermissions) {
+  iHeaders = iHeaders && iHeaders instanceof Sequence ? iHeaders.toArray() : iHeaders;
+  iTriples = iTriples && iTriples instanceof Sequence ? iTriples.toArray() : iTriples;
+  iInstance = iInstance && iInstance instanceof Sequence ? iInstance.toArray() : iInstance;
+  iAttachments = iAttachments && iAttachments instanceof Sequence ? iAttachments.toArray() : iAttachments;
+
   let headers = iHeaders ? iHeaders :  {};
   let triples = iTriples ? iTriples : [];
   let instance = iInstance ? iInstance : {};
+  let hasAttachments = (iAttachments != null)
   let attachments = iAttachments ? iAttachments : {};
-  let hasAttachments = (attachments != null)
-
-  if (xdmp.type(headers) != "object") headers = { "value": headers }
-  if (xdmp.type(triples) != "array") triples = [triples];
-  if (xdmp.type(instance) != "object") instance = { "value": instance }
-  if (xdmp.type(attachments) != "object") attachments = { "value": attachments }
 
   if (propertiesAndWidgets.widgets.format == "json" && hasAttachments) {
     if (instance) {
