@@ -265,10 +265,10 @@ function executeLookupByValue(propertiesAndWidgets,var1) {
   dataType = !dataType || (dataType !== 'bool' && dataType !== 'string' && dataType !== 'number') ? "string" : dataType;
   let foundDoc = fn.head(xdmp.invokeFunction(() => {
     let arr = [];
-    if (!(var1.constructor.name === 'Array')) {
-      var1 = [var1]
+    if (var1 && !(var1.constructor.name === 'Array')) {
+      var1 = [var1];
     }
-    for (const v of var1) {
+    for (const v of var1 || []) {
       if (!v) {
         continue;
       }
@@ -282,7 +282,11 @@ function executeLookupByValue(propertiesAndWidgets,var1) {
         arr.push(Number(v.toString()));
       }
     }
-    const query = cts.andQuery([cts.collectionQuery(collection), cts.jsonPropertyValueQuery(property, arr)]);
+    let collectionQuery = cts.trueQuery();
+    if ( collection && collection.length > 0 ) {
+      collectionQuery = cts.collectionQuery(collection)
+    }
+    const query = cts.andQuery([collectionQuery, cts.jsonPropertyValueQuery(property, arr)]);
     xdmp.log("QUERY");
     xdmp.log(query);
     return cts.search(query, ["unfiltered", "score-zero"], 0);
@@ -767,7 +771,7 @@ function executeEnvelope(propertiesAndWidgets,iHeaders,iTriples,iInstance,iAttac
   let hasAttachments = (attachments != null)
 
   if (xdmp.type(headers) != "object") headers = { "value": headers }
-  if (xdmp.type(triples) != "array") triples = [triples]
+  if (xdmp.type(triples) != "array") triples = [triples];
   if (xdmp.type(instance) != "object") instance = { "value": instance }
   if (xdmp.type(attachments) != "object") attachments = { "value": attachments }
 
@@ -1234,7 +1238,7 @@ function executeBlock(block) {
       xdmp.trace(TRACE_ID_PIPES_EXECUTION, Sequence.from(arr));
     }
     // TODO should make this dynamical
-    if (block.outputs.length > 1 || returnAlwaysAnArray ) {
+    if (outputValues && (block.outputs.length > 1 || returnAlwaysAnArray )) {
       outputValues.map((v, index) => {
         if (typeof v !== "undefined") {
           block.setOutputData(index, v)
