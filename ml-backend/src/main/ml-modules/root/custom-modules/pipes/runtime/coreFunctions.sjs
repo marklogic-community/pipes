@@ -764,17 +764,52 @@ function executeFilterArray(propertiesAndWidgets,unfiltered,patterns) {
   return filtered;
 }
 function executeEnvelope(propertiesAndWidgets,iHeaders,iTriples,iInstance,iAttachments,iUri,iCollections,iPermissions) {
-  iHeaders = iHeaders && iHeaders instanceof Sequence ? iHeaders.toArray() : iHeaders;
+  if ( iHeaders && iHeaders instanceof Sequence ) {
+    iHeaders = iHeaders.toArray();
+    if (iHeaders && iHeaders.length == 1) {
+      iHeaders = iHeaders[0];
+    }
+  }
+  xdmp.log(iInstance instanceof Sequence);
   iTriples = iTriples && iTriples instanceof Sequence ? iTriples.toArray() : iTriples;
-  iInstance = iInstance && iInstance instanceof Sequence ? iInstance.toArray() : iInstance;
-  iAttachments = iAttachments && iAttachments instanceof Sequence ? iAttachments.toArray() : iAttachments;
+  if ( iInstance && iInstance instanceof Sequence ) {
+    iInstance = iInstance.toArray();
+    xdmp.log("HERE2");
+    xdmp.log(iInstance.length);
+    if (iInstance && iInstance.length === 1) {
+      iInstance = iInstance[0];
+    }
+  }
+
+  if ( iAttachments && iAttachments instanceof Sequence ) {
+    iAttachments = iAttachments.toArray();
+    if (iAttachments && iAttachments.length === 1) {
+      iAttachments = iAttachments[0];
+    }
+    if (iAttachments && iAttachments.length === 0) {
+      iAttachments = null;
+    }
+  }
 
   let headers = iHeaders ? iHeaders :  {};
   let triples = iTriples ? iTriples : [];
   let instance = iInstance ? iInstance : {};
-  let hasAttachments = (iAttachments != null)
-  let attachments = iAttachments ? iAttachments : {};
 
+  xdmp.log("INSTANCEHERE");
+  xdmp.log(instance);
+  xdmp.log(instance.constructor.name );
+  headers = headers.toObject ? headers.toObject() : headers;
+  instance = instance.toObject ? instance.toObject() : instance;
+  triples = triples.toObject ?  triples.toObject() : triples;
+
+  headers = headers.constructor.name == "Object" ? headers : {value: headers};
+  instance = instance.constructor.name == "Object" ? instance : {value: instance};
+  triples = triples.constructor.name == "Array" ?  triples : [triples];
+
+  let hasAttachments = typeof iAttachments !== 'undefined' && iAttachments !== null;
+  let attachments = iAttachments ? iAttachments : {};
+xdmp.log("hasAttachments");
+xdmp.log(hasAttachments);
   if (propertiesAndWidgets.widgets.format == "json" && hasAttachments) {
     if (instance) {
       if (instance.toObject) instance = instance.toObject()

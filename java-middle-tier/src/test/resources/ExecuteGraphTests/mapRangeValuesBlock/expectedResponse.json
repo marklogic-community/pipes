@@ -9,7 +9,7 @@
         "instance": {
           "value": "LOW"
         },
-        "attachments": {}
+        "attachments": null
       }
     },
     "uri": "/test/LOW.json",
@@ -24,7 +24,7 @@
         "instance": {
           "value": "HIGH"
         },
-        "attachments": {}
+        "attachments": null
       }
     },
     "uri": "/test/HIGH.json",

@@ -64,6 +64,9 @@ import java.util.Arrays;
 import java.io.FileInputStream;
 import java.util.stream.Stream;
 import java.net.URLEncoder;
+import java.time.LocalDate;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import static org.hamcrest.Matchers.equalToCompressingWhiteSpace;
 import static org.springframework.test.util.AssertionErrors.*;
@@ -192,7 +195,7 @@ class GraphTest {
     session.setAttribute(SESSION_SERVICE, authService.getService());
   }
 
-  @Test
+ @Test
   void testCustomStep() throws Exception {
     // this is an end to end test.
     // ingest some sample json
@@ -212,9 +215,6 @@ class GraphTest {
       String[] data = compile("FullTest/graph.json");
       String sourceCode = data[0];
       String dependencies = data[1];
-      System.out.println("SOURCECODE");
-      System.out.println(sourceCode);
-      System.out.println("DEPENDENCIES "+dependencies);
       publishCustomStepSourceCode("TestStep",sourceCode,dependencies);
       runDHFFlow("TestFlow");
       File[] expectedOutcomeFiles = new File("src/test/resources/FullTest/expectedResponse").listFiles();
@@ -273,7 +273,6 @@ class GraphTest {
       assertNotNull("Response null",m);
       RunStepResponse rs = m.get("1");
       assertNotNull("Step 1 not found",rs);
-      System.out.println(rs);
       assertEquals("Failures not 0",rs.getFailedEvents(),0L );
       assertEquals("Successful should be 2",rs.	getSuccessfulEvents(),2L );
     } catch (Exception e) {
@@ -324,18 +323,70 @@ class GraphTest {
     String[] ret = { code, String.join(",",list)};
     return ret;
   }
-  /*
+
+  @Test
+  public void currentDateCompilerTest() throws Exception {
+    currentDateTest(true);
+  }
+
+  @Test
+  public void currentDateInterpreterTest() throws Exception {
+    currentDateTest(false);
+  }
+
+  private void currentDateTest(boolean compiler) throws Exception {
+    try {
+      String preview = TEST_INPUT_JSON;
+      String inputFile = "currentDate/input.json";
+      InputStreamHandle in = this.getClasspathInputStreamHandle(inputFile);
+      assertNotNull("Input.json not found", in);
+      ingestTestFile(in, inputFile);
+      InputStreamHandle graphHandle = getClasspathInputStreamHandle("currentDate/graph.json");
+      assertNotNull("graph.json not found ", graphHandle);
+      JSONObject graphJO = new JSONObject(graphHandle.toString()
+      );
+
+      JSONObject payloadJO = new JSONObject();
+      payloadJO.put("jsonGraph", graphJO);
+      payloadJO.put("collectionRandom", false);
+      payloadJO.put("previewUri", preview);
+      String request = "/v1/resources/vppBackendServices?rs:action=ExecuteGraph&rs:compiler=" + compiler + "&rs:database=" + MLTESTDATABASE;
+
+      MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(request).content(payloadJO.toString())
+        .session(session);
+
+      ResultActions resultActions = this.mockMvc.perform(builder)
+        .andExpect(status().isOk());
+
+      MvcResult result = resultActions.andReturn();
+
+      JSONObject responseJson = new JSONObject(result.getResponse().getContentAsString());
+      ObjectNode actualResponseResultJson = (ObjectNode) responseJson.getNode("result");
+      JsonNode resultNode = actualResponseResultJson.findValue("result");
+      assertNotNull("result not available", resultNode);
+      String currentDate = resultNode.textValue();
+      try {
+        LocalDate localDate = LocalDate.parse​(currentDate);
+      } catch (Exception e) {
+        fail("Invalid date=" + currentDate);
+      }
+    } finally {
+      removeTestDocuments();
+    }
+  }
+
   @ParameterizedTest(name = "Interpreter: #{index} : {0}")
   @MethodSource("getDirectoryNames")
   void genericGraphTestsInterpreter(String argument) throws Exception {
     runGrahTests(argument,false);
   }
+
   @ParameterizedTest(name = "Compiler: #{index} : {0}")
   @MethodSource("getDirectoryNames")
   void genericGraphTestsCompiler(String argument) throws Exception {
     runGrahTests(argument,true);
   }
-*/
+
   private void runGrahTests(String argument,boolean compiler) throws Exception {
     try {
       String ext = "json";
@@ -399,7 +450,7 @@ class GraphTest {
     InputStreamHandle ism= getClasspathInputStreamHandle("ExecuteGraphTests");
     String dirs[]=ism.toString().split("\n");
     // limit the test set
-   //   dirs=new String[]{"Subgraph"};
+    //  dirs=new String[]{"Subgraph"};
     return Arrays.stream(dirs);
   }
 

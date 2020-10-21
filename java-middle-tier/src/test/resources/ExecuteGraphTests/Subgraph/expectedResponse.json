@@ -7,7 +7,7 @@
         "instance": {
           "value": "5"
         },
-        "attachments": {}
+        "attachments": null
       }
     },
     "uri": "5",
@@ -22,7 +22,7 @@
         "instance": {
           "value": "6"
         },
-        "attachments": {}
+        "attachments": null
       }
     },
     "uri": "6",
