@@ -108,11 +108,9 @@ function init(LiteGraph){
             let obj = {};
             let keys = parseInt(this.nbKeys.value); 
             for ( let i = 0 ; i < keys ; i++ ) {
-                const key = this['key'+i].value;
-                xdmp.log("KEY "+key);
+                const key = this['key'+i].value; 
                 if ( key && key.length > 0 ) {
-                    obj[key] = this.getInputData(i);
-                    xdmp.log("VALUE "+obj[key])
+                    obj[key] = this.getInputData(i); 
                 }
             } 
             this.setOutputData(0,obj);
