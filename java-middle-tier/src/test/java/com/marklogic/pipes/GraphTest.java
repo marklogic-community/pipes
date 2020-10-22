@@ -227,10 +227,10 @@ class GraphTest {
         String expectedResultJson = getFileInputStreamHandle(exepectedOutcomeFile).toString();
         String uri = "/final/test/"+exepectedOutcomeFile.getName();
         JacksonHandle actualResponseResultJson = getFinalDocByURI(uri);
-        System.err.println("EXPECTED ");
-        System.err.println(expectedResultJson);
-        System.err.println("GOT");
-        System.err.println(actualResponseResultJson);
+        //System.err.println("EXPECTED ");
+        //System.err.println(expectedResultJson);
+        //System.err.println("GOT");
+        //System.err.println(actualResponseResultJson);
         assertEquals("Response doesn't match expected",mapper.readTree(expectedResultJson.toString()), mapper.readTree(actualResponseResultJson.toString()));
       }
     } finally {
@@ -435,11 +435,6 @@ class GraphTest {
 
       // compare strings as JSON objects using Jackson ObjectMapper
       ObjectMapper mapper = new ObjectMapper();
-      System.err.println("EXPECTED ");
-      System.err.println(expectedResultJson.toString());
-      System.err.println("GOT");
-      System.err.println(actualResponseResultJson.toString());
-
       assertEquals("Response doesn't match expected",mapper.readTree(expectedResultJson.toString()), mapper.readTree(actualResponseResultJson.toString()));
     } finally {
       removeTestDocuments();

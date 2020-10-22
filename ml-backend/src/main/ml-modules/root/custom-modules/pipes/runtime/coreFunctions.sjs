@@ -287,23 +287,13 @@ function executeLookupByValue(propertiesAndWidgets,var1) {
       collectionQuery = cts.collectionQuery(collection)
     }
     const query = cts.andQuery([collectionQuery, cts.jsonPropertyValueQuery(property, arr)]);
-    xdmp.log("QUERY");
-    xdmp.log(query);
     return cts.search(query, ["unfiltered", "score-zero"], 0);
   }, { database: xdmp.database(propertiesAndWidgets.widgets.database) }));
-  xdmp.log("FOUND");
   if (!fn.empty(foundDoc)) {
-    xdmp.log(propertiesAndWidgets.widgets);
-    xdmp.log(propertiesAndWidgets.widgets.nbOutputValues);
-    xdmp.log(parseInt(propertiesAndWidgets.widgets.nbOutputValues));
     for (let i = 0; i < parseInt(propertiesAndWidgets.widgets.nbOutputValues); i++) {
       let path = propertiesAndWidgets.widgets["value" + i + "Path"];
-      xdmp.log("PATRH")
-      xdmp.log(path);
       if ( path != null && path  != "") {
         const r = foundDoc.xpath(path);
-        xdmp.log("R ")
-        xdmp.log(r);
         retArray.push(r);
       } else {
         retArray.push(undefined);
@@ -386,8 +376,6 @@ function executeSourceBlockInputAsList() {
 }
 
 function executeSourceBlock(propertiesAndWidgets,inputs) {
-  xdmp.log("Enter executeSourceBlock");
-  xdmp.log(propertiesAndWidgets);
   const blockData = propertiesAndWidgets.properties.blockData;
   let outputMap = new Map()
   let max = -1;
@@ -770,12 +758,9 @@ function executeEnvelope(propertiesAndWidgets,iHeaders,iTriples,iInstance,iAttac
       iHeaders = iHeaders[0];
     }
   }
-  xdmp.log(iInstance instanceof Sequence);
   iTriples = iTriples && iTriples instanceof Sequence ? iTriples.toArray() : iTriples;
   if ( iInstance && iInstance instanceof Sequence ) {
     iInstance = iInstance.toArray();
-    xdmp.log("HERE2");
-    xdmp.log(iInstance.length);
     if (iInstance && iInstance.length === 1) {
       iInstance = iInstance[0];
     }
@@ -795,9 +780,6 @@ function executeEnvelope(propertiesAndWidgets,iHeaders,iTriples,iInstance,iAttac
   let triples = iTriples ? iTriples : [];
   let instance = iInstance ? iInstance : {};
 
-  xdmp.log("INSTANCEHERE");
-  xdmp.log(instance);
-  xdmp.log(instance.constructor.name );
   headers = headers.toObject ? headers.toObject() : headers;
   instance = instance.toObject ? instance.toObject() : instance;
   triples = triples.toObject ?  triples.toObject() : triples;
@@ -808,8 +790,6 @@ function executeEnvelope(propertiesAndWidgets,iHeaders,iTriples,iInstance,iAttac
 
   let hasAttachments = typeof iAttachments !== 'undefined' && iAttachments !== null;
   let attachments = iAttachments ? iAttachments : {};
-xdmp.log("hasAttachments");
-xdmp.log(hasAttachments);
   if (propertiesAndWidgets.widgets.format == "json" && hasAttachments) {
     if (instance) {
       if (instance.toObject) instance = instance.toObject()
@@ -1153,7 +1133,6 @@ function executeLog(propertiesAndWidgets,inputs) {
     }
   }
   let d = Sequence.from(arr);
-  xdmp.log(d,level);
   return inputs;
 }
 
@@ -1196,10 +1175,6 @@ function executeBlock(block) {
   }
   const functionName = block.getRuntimeLibraryFunctionName();
   const library = "getRuntimeLibraryPath" in  block ? "/custom-modules/pipes/runtime/"+block.getRuntimeLibraryPath() : "/custom-modules/pipes/runtime/coreFunctions.sjs";
-  xdmp.log("LIBRARY");
-  xdmp.log(library)
-  xdmp.log("getRuntimeLibraryPath" in  block );
-  xdmp.log(Object.keys(block));
   const inputs = getInputs(block);
   let propertiesAndWidgets = getPropertiesAndWidgets(block);
   if ( functionName === "executeSourceBlock") {
@@ -1340,8 +1315,6 @@ function getPropertiesAndWidgets(block) {
     properties : block.properties,
     widgets : {}
   }
-  xdmp.log("BLOCK WIDGETS");
-  xdmp.log(block.widgets);
   for ( let widget of block.widgets || [] ) {
     const name = widget.name;
     const value=widget.value;

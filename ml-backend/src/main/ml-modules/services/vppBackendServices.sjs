@@ -405,9 +405,7 @@ function InvokeExecuteGraph (input,compiler) {
             code += "const permissions = "+JSON.stringify(permissions)+";\n";
             code += "const context = "+JSON.stringify(context)+";\n";
             code += compiled.sourceCode;
-            code += "executeCustomStep(input,uri,collections,context,permissions);"
-            xdmp.log("EXECUTE CODE");
-            xdmp.log(code);
+            code += "executeCustomStep(input,uri,collections,context,permissions);";
             graphResult = eval(code);
           } else {
             graphResult = gHelper.executeGraphFromJson(
@@ -772,7 +770,6 @@ function post (context, params, input) {
   let config = {};
 
   let ctx = JSON.parse(input);
-  //xdmp.log(Sequence.from(["POST", params, input]));
 
   switch (params.action) {
     case "compile":
@@ -784,8 +781,6 @@ function post (context, params, input) {
       } else {
         output.sourceCode = null;
       }
-      xdmp.log("COMPILE OUTPUT");
-      xdmp.log(output);
       return output;
     case "config":
       config.databases = getDatabases();

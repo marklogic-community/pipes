@@ -52,10 +52,7 @@ function initLiteGraph(jsonGraph) {
   const userBlocks = require("/custom-modules/pipes/runtime/user.sjs");
   const coreBlocks = require("/custom-modules/pipes/designtime/core.sjs");
   const gHelper  = require("/custom-modules/pipes/designtime/graphHelper.sjs");
-  xdmp.log("MODELS");
-  xdmp.log(jsonGraph.models);
   for (let model of jsonGraph.models || []) {
-    xdmp.log("CREATE MODEL "+model.source + "/" + model.collection);
     const block = gHelper.createGraphNodeFromModel(model)
     LiteGraph.registerNodeType(model.source + "/" + model.collection, block);
   }
@@ -195,10 +192,7 @@ function generateFunctionForGraph(options,graph,outputFunctions,title,functionPo
   const inSubgraph = addSubgraphLoop(graph,func,variablePool);
   for (const nodeId of graph.nodeGenerationOrder ) {
     const node = getNode(graph.nodes,nodeId);
-    xdmp.log("TYPE "+node.type);
     if ( node.type === SUBGRAPH_TYPE ) {
-      xdmp.log("LOOP");
-      xdmp.log(node.subgraph);
       generateFunctionForGraph(options,node.subgraph,outputFunctions,node.title,functionPool,dependencies);
     } else if ( node.type === "Graph/input" || node.type === "Graph/output") {
       // nothing to emit
@@ -206,12 +200,9 @@ function generateFunctionForGraph(options,graph,outputFunctions,title,functionPo
     }
     const inputs = determineInputVariables(graph,node,variablePool);
     const outputs = determineOutputVariables(graph,node,variablePool);
-    xdmp.log("HERE44 POOL");
-    xdmp.log(functionPool);
-    xdmp.log("CLEAR");
     let code = generateCode(options,graph,node,inputs,outputs,lib,functionPool,dependencies);
     if ( inSubgraph ) {
-      let identSpace = options.identSpaceCount ? options.identSpaceCount : 1;
+      let identSpace = options && options.identSpaceCount ? options.identSpaceCount : 1;
       code = ident(code,identSpace);
     }
     func.body.push(...code);
@@ -246,8 +237,6 @@ function addSubgraphEndLoop(graph,func,variablePool,options) {
     outputNodes.sort((a, b) => a.id - b.id);
     let counter = 0;
     for ( const v of func.returnVar) {
-      xdmp.log("OUTPUTNODE");
-      xdmp.log(outputNodes[counter]);
       const link = outputNodes[counter].inputs[0].link;
       const variableName = getNodeWithOutputLink(graph,link,variablePool).variableName
       const line = ""+v+".push("+variableName+");";
@@ -314,7 +303,8 @@ function generateFunctionName(graph,title,functionPool) {
     functionName = "executeCustomStep";
     functionPool.push({ subgraphPath: null , name: functionName } );
   } else {
-    let addTitle = title ? title : "";
+    // extra space to convert to camel case. 
+    let addTitle = title ? " "+title : "";
     addTitle=addTitle.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, function(match, chr) { return chr.toUpperCase();});
     functionName = "executeSubgraph"+addTitle;
     if ( functionPool.some( x => x.name === functionName ) ) {
@@ -356,7 +346,6 @@ function generateFunctionArguments(graph,variablePool) {
 function getVariableNameForSubgraphInput(graph,subgraphInputNode,variablePool) {
   const nodeId = subgraphInputNode.id;
   const lookupName = subgraphInputNode.properties.name;
-  xdmp.log("NodeID="+nodeId+" lookup="+lookupName);
   const found =  variablePool.find(x=>x.lookup === lookupName  && x.nodeId === nodeId );
   if ( found ) {
     return found.varName;
@@ -388,8 +377,6 @@ function ident(sourceCodeArray,identSpace) {
   let ident = " ".repeat(identSpace);
   let arr=[];
   for ( const line of sourceCodeArray ) {
-    xdmp.log("LINE2");
-    xdmp.log(line);
     const identiation = ident.repeat(line.search(/\S|$/) + 1);
     arr.push(identiation+line);
   }
@@ -411,11 +398,7 @@ function createVariableName(node,index,inputOutput,variablePool) {
   return  name;
 }
 
-function dumpVariablePool(variablePool) {
-  xdmp.log(Sequence.from(["start variable pool dump",...variablePool,"end variable pool"]));
-}
 function getNodeWithOutputLink(graph,link,variablePool) {
-  xdmp.log("getNodeWithOutputLink")
   for ( const node of graph.nodes || [] ) {
     let i = 0;
     for (const output of node.outputs || [] ) {
@@ -424,8 +407,6 @@ function getNodeWithOutputLink(graph,link,variablePool) {
           if ( node.type === "Graph/input") {
             return {nodeId : node.id,variableName : getVariableNameForSubgraphInput(graph,node,variablePool)};
           } else {
-            dumpVariablePool(variablePool);
-            xdmp.log("getNodeWithOutputLink for NodeId="+node.id+" node type="+node.type);
             return {nodeId : node.id,variableName : createVariableName(node,i,output,variablePool) }
           }
         }
@@ -512,7 +493,6 @@ function generateCode(options,graph,node,ins,outs,lib,functionPool,dependencies)
   }
   if ( "addBlockDataAsProperties" in bc ) {
     const blockData = bc.addBlockDataAsProperties();
-    xdmp.log(blockData);
     p.blockData = blockData;
     i++;
   }
@@ -556,8 +536,6 @@ function generateCode(options,graph,node,ins,outs,lib,functionPool,dependencies)
     const inputAsList = inputAsListFunction in req && typeof req[inputAsListFunction] === "function" ? req[inputAsListFunction]() : false;
     const returnAlwaysAnArrayFunction = bc.getRuntimeLibraryFunctionName()  + "ReturnAlwaysAnArray"
     const returnAlwaysAnArray = returnAlwaysAnArrayFunction in cf && typeof cf[returnAlwaysAnArrayFunction] === "function" ? cf[returnAlwaysAnArrayFunction]() : false;
-    xdmp.log("FUNCTION "+returnAlwaysAnArrayFunction);
-    xdmp.log(returnAlwaysAnArray);
     if ( library == "coreFunctions.sjs" ) {
       lib.core = true;
       prefix = "r";

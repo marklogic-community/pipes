@@ -10691,13 +10691,6 @@ LGraphNode.prototype.executeAction = function(action)
               for (var i = 0; i < this.outputs.length; i++) {
                 let output = this.outputs[i];
                 let value = this.subgraph.getOutputData(output.name);
-                xdmp.log("EXECUTE SUBGRAPH");
-                xdmp.log(i);
-                xdmp.log("OUTPUT");
-                xdmp.log(output);
-                xdmp.log("VALUE");
-                xdmp.log(value);
-                xdmp.log("===");
                 if (value != null && typeof (value) == "object" && !value.toObject)
                   value = JSON.parse(JSON.stringify(value))
                 if (outputs[i] == null) outputs[i] = [];
@@ -10708,10 +10701,6 @@ LGraphNode.prototype.executeAction = function(action)
             this.subgraph.stop()
           }
           Object.keys(outputs).map(item => {
-              xdmp.log("OUTPUT SET");
-              xdmp.log(item);
-              xdmp.log("VAL");
-              xdmp.log(outputs[item]);
               this.setOutputData(item, outputs[item])
             }
           )
@@ -11008,9 +10997,7 @@ LGraphNode.prototype.executeAction = function(action)
   };
 
   GraphInput.prototype.onExecute = function() {
-    xdmp.log("GraphInput.prototype.onExecute")
     var name = this.properties.name;
-    xdmp.log("NAME  "+name);
     //read from global input
     var data = this.graph.inputs[name];
     if (!data) {
@@ -11106,10 +11093,6 @@ LGraphNode.prototype.executeAction = function(action)
   GraphOutput.desc = "Output of the graph";
 
   GraphOutput.prototype.onExecute = function() {
-    xdmp.log("GraphOutput.prototype.onExecute");
-    xdmp.log("NAME: "+this.properties.name);
-    xdmp.log("VALUE: ");
-    xdmp.log(this._value);
     this._value = this.getInputData(0);
     this.graph.setOutputData(this.properties.name, this._value);
   };
