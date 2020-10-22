@@ -29,7 +29,6 @@ function extractModelByCollectionMatch(collectionsRoot){
 
 function createGraphNodeFromModel(blockDef) {
   let block = function () {
-    xdmp.log("INITIALIZE BLOCKDEF");
     this.blockData = {}
     this.blockData.prov = new Set()
     this.blockData.blockDef = Object.assign({}, blockDef, {})
@@ -92,9 +91,6 @@ function createGraphNodeFromModel(blockDef) {
   }
 
   block.prototype.onExecute = function(){
-    xdmp.log("JOSTEST");
-    xdmp.log(this.blockData.blockDef);
-    xdmp.log("KLAAR");
     coreFunctions.executeBlock(this);
   }
   return block;

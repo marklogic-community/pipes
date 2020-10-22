@@ -70,7 +70,7 @@
       />
       <q-btn
         label="Export"
-        :disable="isCompilerError"
+        :disable="showExport"
         icon="archive"
         @click="exportDHFModule"
       />
@@ -104,6 +104,7 @@ export default {
       showDialog: false,
       compilerOutput: null,
       isCompilerError: false,
+      showExport: false,
       selectedOptions: ["download"],
       generationOptions: [
         { label: "Download main.sjs file", value: "download" },
@@ -198,6 +199,7 @@ export default {
     this.$axios.post('/v1/resources/vppBackendServices?rs:action=compile', jsonGraph).then((response) => {
       console.log(response);
       this.isCompilerError = response.data.errors != null && response.data.errors.length > 0;
+      this.showExport = !this.isCompilerError;
       this.compilerOutput = response.data;
       if (this.isCompilerError) {
         this.compilerErrors = response.data.errors.map(x => x.errorDescription)
