@@ -1,0 +1,688 @@
+<!doctype html>
+<!--[if lt IE 7 ]><html itemscope itemtype="http://schema.org/Organization" id="ie6" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 7 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie7" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 8 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie8" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 9 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie9" class="ie" lang="en-US"><![endif]-->
+<!--[if gt IE 9]><!--><html itemscope itemtype="http://schema.org/Organization" lang="en-US"><!--<![endif]-->
+<head>
+
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <title>How to Use Pipes - Pipes</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- Favicons -->
+    <link rel="shortcut icon" sizes="16x16 24x24 32x32 48x48 64x64 96x96" href="/pipes/favicon.ico">
+    <meta name="application-name" content="Pipes - Pipes">
+    <link type="text/css" rel="stylesheet" href="/pipes/assets/bundle.css">
+</head>
+<body class="">
+
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/pipes">
+                  <span class="logo">
+                    <img src="/pipes/images/logo-marklogic.svg" width="180px" height="38px" alt="MarkLogic" title="MarkLogic" scale="0">
+                  </span>
+                  Pipes
+                </a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    
+                        <li  >
+                            
+                            <a href="/pipes/">Getting Started</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="https://github.com/marklogic-community/pipes">GitHub</a>
+                            
+                        </li>
+                    
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+
+
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="side-nav col-md-3 hide-small">
+          <div class="panel panel-default">
+  <div class="panel-heading">Navigation</div>
+  <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/">Installing Pipes</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/#download-pipes">Download Pipes</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/#configure-pipes">Configure Pipes</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/custom-blocks#use-custom-blocks">Use custom blocks</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item active"  >
+    
+    <a href="/pipes/how-to-use/">How Do I Use it?</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/how-to-use#data-model">Define the data model in QuickStart UI</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/how-to-use#custom-step">Add a custom step in QuickStart UI</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/how-to-use#minimal-graph">Build a minimal graph in Pipes</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/how-to-use#run-preview">Run the graph preview</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/how-to-use#entity-blocks">Create entity blocks</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/how-to-use#source-blocks">Create source data blocks</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/how-to-use#map-values">Mapping values</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/how-to-use#custom-uris">Create custom URIs</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/how-to-use#1-to-many">1-to-many Mapping</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/how-to-use#save-custom-step">Export the custom step</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/how-to-use#run-custom-step">Run the custom step</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/blocks/">Block library</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/how-to-use#source-blocks">Source Blocks</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/how-to-use#entity-blocks">Entity Blocks</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/how-to-use#custom-step-input">Custom Step Input</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/how-to-use#custom-step-output">Custom Step Output</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/how-to-use#envelope-block">Envelope</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/custom-blocks/">How to create and use custom blocks</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/faqs/">FAQs</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/troubleshooting/">Troubleshooting</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://github.com/marklogic-community/pipes">Pipes on GitHub</a>
+    
+    
+  </li>
+  
+</ul>
+
+</div>
+
+        </div>
+        <div class="col-md-9">
+          <h1 id="how-do-i-use-it">How Do I Use It?</h1>
+
+<p><a name="data-model"></a></p>
+<h2 id="define-the-entities-model-in-dhf">Define the entities model in DHF</h2>
+
+<p>Pipes creates custom step code for your MarkLogic DataHub flows.</p>
+
+<p>Let’s create a custom code which will read in sample customer records and produce instances of Customer and Address entities, based on this data.</p>
+
+<p>As a basis, we’ll use a sample DHF project defined in <a href="https://github.com/marklogic-community/pipes/tree/master/Examples/Customer360">Examples/Customer360</a>.</p>
+
+<p>If we deploy this project on a MarkLogic server and run DHF QS UI, we’ll see the definition of Customer and Address entities, like below:</p>
+
+<p><img src="../images/how-to-use/dhf-entities.png" alt="" /></p>
+
+<p>The Customer360 project already comes with pre-defined flow and steps so you can skip ahed to <a href="#Ingest-Data">Ingest Data</a></p>
+
+<h2 id="create-the-flow">Create the flow</h2>
+
+<p>Now that we have the data model defined, let’s create a flow to ingest data and transform it using a custom step created with Pipes.</p>
+
+<p>In the DHF QuickStart, click on the Flows tab and then on the “NEW FLOW” button. Create a flow called Customer360. You should see this:</p>
+
+<p><img src="../images/how-to-use/dhf-flow-empty.png" alt="" /></p>
+
+<h2 id="add-ingest-and-custom-steps">Add ingest and custom steps</h2>
+
+<p>Now click on the flow name (Customer360) to go into the flow definition. It will be empty and look like this:</p>
+
+<p><img src="../images/how-to-use/dhf-flow-inside-empty.png" alt="" /></p>
+
+<p>Now, let’s add an Ingest step. Click on “NEW STEP” and define the step as shown in the picture below:</p>
+
+<p><img src="../images/how-to-use/dhf-flow-new-ingest-step.png" alt="" /></p>
+
+<p>When you clean on “SAVE”, you should see this:</p>
+
+<p><img src="../images/how-to-use/dhf-flow-ingest-step.png" alt="" /></p>
+
+<p>Configure the Source Directory Path to the folder that contains the MOCK_DATA.csv file. Set “Delimited Text” as Source Format, Field Separator is “,” and Target Format should be “JSON”.</p>
+
+<p><a name="custom-step"></a>
+Let’s add a custom step now. As before, click on “NEW STEP” and define a Custom (type: Other) step.</p>
+
+<p>Let’s name it “customer-address-custom”, and select “Customer-Source” as the Source Collection. Select “Customer” or “Address” as the Target Entity:</p>
+
+<p><img src="../images/how-to-use/dhf-flow-creating-custom-step.png" alt="" /></p>
+
+<p>Click on save and you will see:</p>
+
+<p><img src="../images/how-to-use/dhf-flow-full.png" alt="" /></p>
+
+<h2 id="ingest-data">Ingest data</h2>
+
+<p>Click on the “RUN”, deselect the “customer-address-custom” checkbox and click the “RUN” button.</p>
+
+<p><img src="../images/how-to-use/dhf-flow-run-ingest.png" alt="" /></p>
+
+<p>Once the ingest finishes, click on the “Browse Data” tab to check that the data has been ingested as expected. You should see 1000 documents in the “customer-source” collection:</p>
+
+<p><img src="../images/how-to-use/dhf-browse-staging-data.png" alt="" /></p>
+
+<p>Congratulations, you’ve ingested data into MarkLogic. Now, let’s transform it with Pipes.</p>
+
+<h2 id="build-a-graph-in-pipes-for-the-custom-step-using-ingested-data">Build a graph in Pipes for the custom step using ingested data</h2>
+
+<p><a name="minimal-graph"></a></p>
+<h3 id="log-in">Log in</h3>
+
+<p>Assuming that Pipes is running on localhost and port 9085, open http://localhost:9085 in your browser and log into Pipes:</p>
+
+<p><img src="../images/how-to-use/pipes-1-login.png" alt="" /></p>
+
+<p>Enter the username and password of one of the DHF users (such as flow-developer or flow-operator) and, after logging in, you should see:</p>
+
+<p><img src="../images/how-to-use/pipes-2-new-graph.png" alt="" /></p>
+
+<p>The biggest part of the UI is taken by the canvas. On the canvas we can see 2 blocks. <strong>Any Pipes graph we build must contain these blocks</strong>.</p>
+
+<p><a name="custom-step-input"></a></p>
+<h3 id="custom-step-input-block"><strong>Custom Step Input</strong> block:</h3>
+
+<p><img src="../images/how-to-use/pipes-3-input.png" alt="" /></p>
+
+<p>This block represents the input to the custom step we’re designing here. As the input into the custom step, we specified collection “Customer-Source” as we were defining the custom step in the DHF QuickStart. The <em>Custom Step Input</em> block has 3 nodes on the right side. That means it provides 3 different things:</p>
+
+<ul>
+  <li>
+    <p><strong>input</strong>: Provides the content of the document(s) in the “Customer-Source” collection. That’s the content we will be transforming in the graph into our data model entities.</p>
+  </li>
+  <li>
+    <p><strong>uri</strong>: provides the URI of the incoming document. This can be useful for storing provenance information, for instance.</p>
+  </li>
+  <li>
+    <p><strong>collections</strong>: provides the collections of the incoming document as an array. This, too, is a useful provenance information that can be passed down into the final data model.</p>
+  </li>
+</ul>
+
+<p><a name="custom-step-output"></a></p>
+<h3 id="custom-step-output-block"><strong>Custom Step Output</strong> block</h3>
+
+<p><img src="../images/how-to-use/pipes-4-output.png" alt="" /></p>
+
+<p>This block represents the content that will be generated by the custom step. Everything we feed into it’s output node will be outputed by the custom step.</p>
+
+<h3 id="the-minimal-graph-and-running-the-graph-preview">The minimal graph and running the graph preview</h3>
+
+<p>Let’s connect these 2 blocks: click and hold the left mouse button on the <strong>input</strong> node of the <em>Custom Step Input</em> block, move it to the <strong>output</strong> node of the <em>Custom Step Output</em> block and release the mouse button there.</p>
+
+<p><img src="../images/how-to-use/min-graph-connect.gif" alt="" /></p>
+
+<p><a name="run-preview"></a>
+Great job.
+As we build our graph, we can always preview its output. We do that by doing following:</p>
+
+<ul>
+  <li>In the top bar menu, click on the “Play” button</li>
+  <li>The “Preview Graph Execution” wizard will open</li>
+  <li>The wizard requires to know which database and collection to use as a source. Since we’ve already defined our Custom Step in the QuickStart UI, we can select the “Custom DHF Step” option and click on “Continue”</li>
+  <li>In the drop-down, we’ll select the our custom step “customer-address-custom” (we defined it earlier 👆)</li>
+  <li>We’ll also check the “Random document” checkbox. This will allow us to execute the preview multiple times, each time using another document as the source</li>
+  <li>Click “Continue”</li>
+  <li>On the “Save result to Database?” question, we’ll leave the checkbox unchecked and click “Continue”</li>
+</ul>
+
+<p>Now, we’ll see a summary of our selection:
+<img src="../images/how-to-use/preview-summary.png" alt="" /></p>
+
+<p>The source database and collection have been determined based on the information in the custom step.</p>
+
+<p>Click on “Execute Preview” and scroll down to check the results. Notice that the graph produced the input document at its output. This is because we didn’t define any transformation yet but simply connected the input with the output.</p>
+
+<p>Click again on “Execute Preview”, scroll down to check the result and notice that another source document was used. This is the result of the “Random Document” checkbox. If we uncheck that, we’ll be getting the same source document each time we click on “Execute Preview”. This can be useful when we’re developing the graph and want to understand how the output has changed since the last time we ran the preview.</p>
+
+<p>Here’s the summary of our actions in an animated GIF:</p>
+
+<p><img src="../images/how-to-use/preview-minimal.gif" alt="" /></p>
+
+<p><a name="envelope-block"></a></p>
+<h3 id="envelope-block">Envelope block</h3>
+
+<p>To add en Evelope block:</p>
+
+<ul>
+  <li>Hover over an empty place on the canvas and right-click</li>
+  <li>Now, left-click on the “Add Node”</li>
+  <li>Left-click on the “DHF” group and another sub-group will open</li>
+  <li>Left-click on “Evelope.</li>
+  <li>The Envelope block will appear on the canvas</li>
+</ul>
+
+<p><img src="../images/how-to-use/adding-envelope.gif" alt="" /></p>
+
+<p>When creating data hub with MarkLogic using the Data Hub Framework, we  use the envelope data pattern to group data and meta-data together. The Enevelope block in Pipes enforces this pattern.</p>
+
+<p><img src="../images/how-to-use/envelope.png" alt="" /></p>
+
+<p>As we build our graph, we will be directing our data into the Envelope nodes.</p>
+
+<p>Let’s connect the Evenlope into the graph.</p>
+
+<ul>
+  <li>Click the <strong>output</strong> node of the <em>Custom Step Output</em> block to lose the connection</li>
+  <li>Connect the <strong>output</strong> node of the <em>Envelope</em> to the <strong>output</strong> node of the <em>Custom Step Output</em></li>
+  <li>Connect the <strong>input</strong> node of the <em>Custom Step Input</em> to the <strong>instance</strong> node of the <em>Envelope</em></li>
+</ul>
+
+<p>That’s it, we’re now producing an envelope at the output of our custom step. Run the preview to see how the output has changed.</p>
+
+<p><img src="../images/how-to-use/connect-envelope.gif" alt="" /></p>
+
+<p><a name="entity-blocks"></a></p>
+<h3 id="entity-block">Entity block</h3>
+
+<p>The data model is defined by the entities and their relationships we created in the QuickStart UI. An Entity block represents the DHF Entities in Pipes. Let’s create it:</p>
+
+<ul>
+  <li>In the upper-left corner, click on the “Setting and Block Creation button”</li>
+  <li>Click on the “ENTITY BLOCKS” tab</li>
+  <li>In the drop-down, select “Customer”</li>
+  <li>The properties of the Customer Entity, as defined in QuickStart UI, will be shown</li>
+  <li>Click on “CREATE ENTITY BLOCK”</li>
+  <li>Do the same for the Address entity by selecting it in the drop-down and clicking on the “CREATE ENTITY BLOCK” button</li>
+</ul>
+
+<p><img src="../images/how-to-use/create-entity-blocks.gif" alt="" /></p>
+
+<p>Let’s add Entity blocks to our graph.</p>
+
+<ul>
+  <li>Hover over an empty place on the canvas and right-click</li>
+  <li>Now, left-click on the “Add Node”</li>
+  <li>Letf-click on “Entities” (all the way at the bottom)</li>
+  <li>Select <em>Customer</em></li>
+  <li>Connect the <em>Customer</em> <strong>Node</strong> with the <em>Envelope</em> <strong>Instance</strong></li>
+</ul>
+
+<p><img src="../images/how-to-use/adding-entity-block.gif" alt="" /></p>
+
+<p><a name="source-blocks"></a></p>
+<h3 id="source-block">Source block</h3>
+
+<p>We nwanted to map some source data into our Entity block. We’ll do that by creating a Source block. Source blocks capture parts of the data and we will use it as input for the  <em>Customer</em> block.</p>
+
+<ul>
+  <li>In the upper-left corner, click on the “Setting and Block Creation button”</li>
+  <li>Click on the “SOURCE BLOCKS” tab</li>
+  <li>Click on the “START NEW BLOCK” button</li>
+  <li>Enter a name for the block: “customer-source”</li>
+  <li>(Optionally, add a description)</li>
+  <li>Click “NEXT”</li>
+  <li>From the drop-down, select the name of the custom step we created earlier: “customer-address-custom”</li>
+  <li>Click “NEXT”</li>
+  <li>Click on the gray triangle next to “Document Fields”</li>
+  <li>Repeat the same for “envelope” and “instance”</li>
+  <li>Notice that you’ve partially expanded the document tree now</li>
+  <li>Check the boxes next to values we want to capture from the source: “dob”, “email”, “first_name”, “gender”, “id” and “last_name”</li>
+  <li>Click “NEXT”</li>
+  <li>You’ll see a block preview, on the left there should be <strong>Node</strong> and on the right there should be the field names we’ve selected in the previous step</li>
+  <li>Finally, click the “CREATE SOURCE BLOCK”</li>
+</ul>
+
+<p>Here’s the summary of our actions in an animated GIF:</p>
+
+<p><img src="../images/how-to-use/create-source-block.gif" alt="" /></p>
+
+<p><a name="map-values"></a></p>
+<h3 id="map-values">Map values</h3>
+
+<p>Let’s add the source block we’ve just created to the graph and connect it.</p>
+
+<ul>
+  <li>Hover over an empty place on the canvas and right-click</li>
+  <li>Now, left-click on the “Add Node”</li>
+  <li>Click on “Sources” (at the bottom)</li>
+  <li>Click on “customer-source”, the block that we just defined</li>
+  <li>Connect the nodes between <em>customer-source</em> and <em>Customer</em> in the following way</li>
+  <li>
+    <ul>
+      <li>dob -&gt; dateOfBirth</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li>email -&gt; email</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li>id -&gt; externalId</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li>first_name -&gt; firstName</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li>gender -&gt; gender</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li>last_name -&gt; last_name</li>
+    </ul>
+  </li>
+  <li>Finally, connect the <em>Custom Step Input</em> <strong>input</strong> to <em>customer-source</em> <strong>node</strong></li>
+</ul>
+
+<p>Here’s the summary of our actions in an animated GIF:</p>
+
+<p><img src="../images/how-to-use/adding-source-block.gif" alt="" /></p>
+
+<p>Let’s run the preview and see what our graph will output.</p>
+
+<p><img src="../images/how-to-use/source-entity-blocks-preview.gif" alt="" /></p>
+
+<h3 id="add-the-address-entity-and-map-values">Add the address entity and map values</h3>
+
+<ul>
+  <li>Add the Address Entity block to the canvas</li>
+  <li>Create the “address-source” source block, similar to how you created the “customer-source” source block</li>
+  <li>Add the <em>address-source</em> to the canvas</li>
+  <li>Map the values between <em>address-source</em> and <em>Address</em> block. The <strong>customerId</strong> should be mapped from <em>customer_source</em> <strong>id</strong> node.</li>
+  <li>Connect <em>Custom Step Input</em> <strong>Input</strong> with <em>address-source</em> <strong>Node</strong></li>
+  <li>On the <em>Address</em> block uncheck/disable the WithInstanceRoot toggle</li>
+  <li>Connect <em>Address</em> <strong>Node</strong> to <em>Customer</em> <strong>address</strong></li>
+</ul>
+
+<p>Here’s the summary of our actions in an animated GIF:</p>
+
+<p><img src="../images/how-to-use/adding-address.gif" alt="" /></p>
+
+<p>Now, let’s run the preview and have a look at the result.</p>
+
+<p><img src="../images/how-to-use/customer-address-preview.gif" alt="" /></p>
+
+<p><a name="custom-uris"></a></p>
+<h3 id="create-custom-uris">Create custom URIs</h3>
+
+<p>The Envelope block contains an URI node. However, if that node remains unmapped, the resulting document will have the same URI as the source document. In many situations, we’d like to be able to change the URI.</p>
+
+<ul>
+  <li>Add a “Unique ID” block to the canvas (Generate-&gt;Unique ID), below the <em>Customer</em> block</li>
+  <li>Click on the field with the prefix and clear the content</li>
+  <li>Add a “String Template” block to the canvas (Generate-&gt;String Template)</li>
+  <li>Connect <em>Unique ID</em> <strong>uuid</strong> with <em>String Template</em> <strong>v1</strong></li>
+  <li>On the <em>String Template</em>, click on the template field and define the template as “/customer/${v1}.json”</li>
+  <li>Connect <em>String Template</em> <strong>newString</strong> to the <em>Envelope</em> <strong>uri</strong></li>
+  <li>Connect Connect <em>Unique ID</em> <strong>uuid</strong> to the <em>Customer</em> <strong>id</strong> to re-use the same uuid for the Customer id</li>
+  <li>Run the preview to see how the URI of the resulting document changed but also the “id” property in the Customer instance</li>
+</ul>
+
+<p>Now, let’s run the preview and have a look at the result. Observe the new URI and the Customer’s id.</p>
+
+<p><img src="../images/how-to-use/customer-address-uri.gif" alt="" /></p>
+
+<p><a name="1-to-many"></a></p>
+<h3 id="create-multiple-entity-instances-1-to-many-mapping">Create multiple Entity instances (1 to many mapping)</h3>
+
+<p>Sometimes, we want to create a more normalized model of the data. For instance, the address is a business domain entity that can be independent from the customer’s personal details and have a separate life cycle.</p>
+
+<p>Let’s see how we use Pipes to create multiple Entity instances.</p>
+
+<ul>
+  <li>Add another Envelope block to the canvas</li>
+  <li>Enable the WithInstanceRoot toggle on the <em>Address</em></li>
+  <li>Connect <em>Address</em> <strong>Node</strong> to new <em>Envelope’s</em> <strong>instance</strong></li>
+  <li>Add a “Generate Array” block to the canvas (Join-&gt;Generate Array)</li>
+  <li>Connect <em>both</em> Envelopes to this block: Customer Envelope to <strong>item1</strong> and Address Envelope to <strong>item2</strong></li>
+  <li>Connect <em>Generate Array</em> <strong>array</strong> to <em>Custom Step Output</em> <strong>output</strong></li>
+  <li>Create a unique URI for the Address Envelope</li>
+  <li>Optionally, map the <em>Custom Step Input</em> <strong>uri</strong> to both Envelope’s <strong>uri</strong>, this will add provenance information (the originating uri) to the resulting documents</li>
+  <li>Run the preview and observe that the graph is now producing an array of 2 json documents - a document per Entity from our data model</li>
+</ul>
+
+<p><img src="../images/how-to-use/multiple-instances.gif" alt="" /></p>
+
+<p><a name="save-custom-step"></a></p>
+<h2 id="export-the-custom-step-code-from-pipes-into-the-dhf-project">Export the custom step code from Pipes into the DHF project</h2>
+
+<p>With Pipes, we have defined our custom transformation and now we’d like to run it as a custom step in a DHF flow. To export the code to our previously created custom step, do following:</p>
+
+<ul>
+  <li>In the top bar, click the “Export DHF custom step module” button: <img src="../images/how-to-use/export-button.png" alt="drawing" width="30x" /></li>
+  <li>In the dialogue:</li>
+  <li>
+    <ul>
+      <li>Check “Save to project code” - this will will save the main.sjs into your local DHF project</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li>(optionally) Uncheck the “Download main.sjs file” if you don’t want the file to be additionally downloaded into the download folder your browser is pointing to</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li>Check “Deploy to MarkLogic” (this will push the module to your MODULES database)</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li>From the drop-down, select the name of the custom step we’re exporting the code for: “customer-address-custom”</li>
+    </ul>
+  </li>
+  <li>
+    <ul>
+      <li>Click “Export”</li>
+    </ul>
+  </li>
+  <li>If successful, you’ll see a message in a green bar poping-up near the top of the canvas</li>
+</ul>
+
+<p><img src="../images/how-to-use/export-custom-step.gif" alt="" /></p>
+
+<p><a name="run-custom-step"></a></p>
+<h2 id="run-the-custom-step">Run the custom step</h2>
+
+<p>Once the custom code has been exported from Pipes, you can go back to QuickStart UI and run that step in the Customer360 flow:</p>
+
+<p><img src="../images/how-to-use/run-custom-step.gif" alt="" /></p>
+
+<p>As a result, we’ll now see 1000 documents with the customer information and 1000 documents with address information.</p>
+
+
+        </div>
+      </div>
+    </div>
+  </article>
+
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <p>
+                    Copyright © 2020 MarkLogic Corporation. All Rights Reserved. MARKLOGIC® is a registered trademark of MarkLogic Corporation.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <!--[if lt IE 9]>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="/pipes/js/respond.min.js"></script>
+    <![endif]-->
+
+    <script type="text/javascript" src="/pipes/assets/bundle.js" id="1"></script>
+  </body>
+</html>
+

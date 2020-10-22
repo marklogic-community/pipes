@@ -1,0 +1,483 @@
+<!doctype html>
+<!--[if lt IE 7 ]><html itemscope itemtype="http://schema.org/Organization" id="ie6" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 7 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie7" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 8 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie8" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 9 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie9" class="ie" lang="en-US"><![endif]-->
+<!--[if gt IE 9]><!--><html itemscope itemtype="http://schema.org/Organization" lang="en-US"><!--<![endif]-->
+<head>
+
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <title>How to create and use custom blocks? - Pipes</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- Favicons -->
+    <link rel="shortcut icon" sizes="16x16 24x24 32x32 48x48 64x64 96x96" href="/pipes/favicon.ico">
+    <meta name="application-name" content="Pipes - Pipes">
+    <link type="text/css" rel="stylesheet" href="/pipes/assets/bundle.css">
+</head>
+<body class="">
+
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/pipes">
+                  <span class="logo">
+                    <img src="/pipes/images/logo-marklogic.svg" width="180px" height="38px" alt="MarkLogic" title="MarkLogic" scale="0">
+                  </span>
+                  Pipes
+                </a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    
+                        <li  >
+                            
+                            <a href="/pipes/">Getting Started</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="https://github.com/marklogic-community/pipes">GitHub</a>
+                            
+                        </li>
+                    
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+
+
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="side-nav col-md-3 hide-small">
+          <div class="panel panel-default">
+  <div class="panel-heading">Navigation</div>
+  <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/">Installing Pipes</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/#download-pipes">Download Pipes</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/#configure-pipes">Configure Pipes</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/custom-blocks#use-custom-blocks">Use custom blocks</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/how-to-use/">How Do I Use it?</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/how-to-use#data-model">Define the data model in QuickStart UI</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/how-to-use#custom-step">Add a custom step in QuickStart UI</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/how-to-use#minimal-graph">Build a minimal graph in Pipes</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/how-to-use#run-preview">Run the graph preview</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/how-to-use#entity-blocks">Create entity blocks</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/how-to-use#source-blocks">Create source data blocks</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/how-to-use#map-values">Mapping values</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/how-to-use#custom-uris">Create custom URIs</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/how-to-use#1-to-many">1-to-many Mapping</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/how-to-use#save-custom-step">Export the custom step</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/how-to-use#run-custom-step">Run the custom step</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/blocks/">Block library</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/how-to-use#source-blocks">Source Blocks</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/how-to-use#entity-blocks">Entity Blocks</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/how-to-use#custom-step-input">Custom Step Input</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/how-to-use#custom-step-output">Custom Step Output</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/how-to-use#envelope-block">Envelope</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item active"  >
+    
+    <a href="/pipes/custom-blocks/">How to create and use custom blocks</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/faqs/">FAQs</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/pipes/troubleshooting/">Troubleshooting</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://github.com/marklogic-community/pipes">Pipes on GitHub</a>
+    
+    
+  </li>
+  
+</ul>
+
+</div>
+
+        </div>
+        <div class="col-md-9">
+          <h1 id="user-defined-custom-blocks">User defined (custom) blocks</h1>
+
+<p>In order to define your own blocks without having to modify and build the front-end you can just update the following 2 files:</p>
+
+<p>./Examples/CustomModules/user.json
+./Examples/CustomModules/user.sjs</p>
+
+<h2 id="block-interfaces-definition-its-used-to-display-the-block-and-its-inputsoutputs">Block interfaces definition: It’s used to display the block and its inputs/outputs</h2>
+
+<p><strong>./Examples/CustomModules/user.json</strong></p>
+
+<p>This example describes an Object block. In Pipes 2.0 this is not needed anymore, you can achieve the same using a “reverse” source block (fields in, node out with the root toggle on false).</p>
+
+<p>Add a new block definition in the array like this:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[
+  {
+    "functionName": "Object",
+    "blockName": "Object",
+    "library": "user",
+    "events": {
+      "onConfigure": "let v = this.widgets[0].value;if (this.widgets.length == (parseInt(v) + 1)) return; this.widgets=this.widgets.slice(0,1);for (let x=0;x &lt; v ;x++) {this.addWidget(\"text\", \"key\" + x , this.widgets_values[x+1], function (v) {})};return;"
+    },
+    "inputs": [
+      {
+        "name": "var0",
+        "type": null
+      }
+    ],
+    "properties": [
+    ],
+    "widgets": [
+      {
+        "type": "text",
+        "name": "nbKeys",
+        "default": "1",
+        "values": "1",
+        "callback": "let nb = this.inputs.length;let vInt = parseInt(v); if (vInt &lt; nb) {for (let i=0;i&lt;(nb - vInt);i++){this.removeInput(this.inputs.length-1);this.widgets.pop()}}else if (vInt &gt; nb) { this.widgets=this.widgets.slice(0,1 + nb);for(let i=nb;i&lt;vInt;i++) {this.addInput('var' + i,null);this.addWidget(\"text\", \"key\" + i  , '', function (v) {})};}"
+      },
+      {
+        "type": "text",
+        "name": "key0",
+        "default": "",
+        "values": []
+
+      }
+    ],
+    "outputs": [
+      {
+        "name": "obj0",
+        "type": null
+      }
+    ],
+    "function": {
+      "ref": null,
+      "code": ""
+    }
+  }
+]
+</code></pre></div></div>
+
+<h2 id="block-implementation-">Block implementation :</h2>
+<p>It’s used to execute the logic of the block in MarkLogic</p>
+
+<p>The code is located in :</p>
+
+<p><strong>./Examples/CustomModules/user.sjs</strong></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>function init(LiteGraph){
+
+    function ObjectBlock() {
+        this.addInput("var0");
+        this.nbKeys = this.addWidget("text","nbKeys", "string", function(v){},  { } );
+        const OUTPUTS = 20;
+        for (let vp = 0; vp &lt; OUTPUTS; vp++ ) {
+            var varName = 'key' + vp;
+            this[varName] = this.addWidget("text",varName, "", function(v){},  { } );
+            this.addInput("var" + vp);
+        }
+    }
+
+    ObjectBlock.title = "Object";
+
+    // New in Pipes 2: This should be fixed on "user.sjs", that is this file.
+    ObjectBlock.prototype.getRuntimeLibraryPath = function() {
+        return "user.sjs";
+    }
+
+    // New in Pipes 2: This returns the method name which should be in the 
+    // getRuntimeLibraryPath() module. 
+    ObjectBlock.prototype.getRuntimeLibraryFunctionName = function() {
+        return "executeObjectBlock";
+    }
+
+   /*
+
+       Old Pipes 1.x implementation for reference. 
+
+         ObjectBlock.prototype.onExecute = function()  {
+            let obj = {};
+            let keys = parseInt(this.nbKeys.value); 
+            for ( let i = 0 ; i &lt; keys ; i++ ) {
+                const key = this['key'+i].value; 
+                if ( key &amp;&amp; key.length &gt; 0 ) {
+                    obj[key] = this.getInputData(i); 
+                }
+            } 
+            this.setOutputData(0,obj);
+        }
+    */
+
+    // This should be fixed to this. In case of interpretation, executeBlock will call the delegate. 
+    ObjectBlock.prototype.onExecute = function()  {
+        require("/custom-modules/pipes/runtime/coreFunctions.sjs").executeBlock(this);
+    }
+    LiteGraph.registerNodeType("user/Object", ObjectBlock );
+}
+
+// BEWARE, this is outside the object:
+
+// Optional function named &lt;executionMethod&gt;InputAsList. 
+// If not present: false.
+// Return true if you want to get the inputs as a list (executeMethod(propertiesAnmdWidgets,inputsAsLost)
+// Return false if you want the inputs as args: (executeMethod(propertiesAnmdWidgets,inp1,inp2,inp3)
+//
+function executeObjectBlockInputAsList() {
+  return true;
+}
+
+// Optional function named &lt;executionMethod&gt;ReturnAlwaysAnArray.
+// If not present: false
+// Return true: &lt;executionMethod&gt; should always return [output1,output2,output3...]
+// Return false: If nr of outputs = 1 -&gt; return output, if outputs &gt; 1 return [output1,output2,....]
+
+function executeObjectBlockReturnAlwaysAnArray() { 
+    return false;
+}
+
+// This is the execution block
+function executeObjectBlock(propertiesAndWidgets,inputs) { 
+    let obj = {};
+    let keys = parseInt(propertiesAndWidgets.widgets.nbKeys);
+    for ( let i = 0 ; i &lt; keys ; i++ ) {
+        const key = propertiesAndWidgets.widgets['key'+i];
+        if ( inputs &amp;&amp; key &amp;&amp; key.length &gt; 0 &amp;&amp; i &lt; inputs.length ) {
+            obj[key] = inputs[i];
+        }
+    }
+    return obj;
+}
+
+// BE SURE to export it, else it is not visible. 
+module.exports = {
+    init:init,
+    executeObjectBlock,
+    executeObjectBlockInputAsList,
+    executeObjectBlockReturnAlwaysAnArray
+};
+
+</code></pre></div></div>
+
+<p>You must then run gradle mlloadmodules
+You can also find details on block implementation here: <a href="https://github.com/jagenjo/litegraph.js/tree/master/guides">Litegraph guides</a></p>
+
+<p><a name="use-custom-blocks"></a></p>
+<h2 id="how-to-tell-pipes-to-use-these-blocks">How to tell Pipes to use these blocks</h2>
+
+<ul>
+  <li>Put these files in a separate directory. Don’t put them in the src/ directory of your DHF project. For instance, if your DHF project is in
+<code class="highlighter-rouge">/usr/dev/my-dhf-project</code>, create a folder
+<code class="highlighter-rouge">/usr/dev/my-dhf-project/user-modules</code> and put the files there</li>
+  <li>Now, to tell Pipes you want to include the user blocks defined in these files, you have to use the <code class="highlighter-rouge">customModulesRoot</code> property. There are 2 ways to do it:
+    <ul>
+      <li><code class="highlighter-rouge">java -jar marklogic-pipes-1.2-release.jar --customModulesRoot=/usr/dev/my-dhf-project/user-modules</code></li>
+      <li>Or, put <code class="highlighter-rouge">customModulesRoot=/usr/dev/my-dhf-project/user-modules</code> in application.properties. The application.properties file should be put in the same folder from which you’re running the Pipes jar so that it can be read in on start.</li>
+    </ul>
+  </li>
+  <li>In the Pipes blocks menu, you should now see a “user” group. If you don’t see it, you probably have to refresh your browser or even clear the browser history:</li>
+</ul>
+
+<p><img src="../images/how-custom-blocks/user-menu.png" alt="" /></p>
+
+        </div>
+      </div>
+    </div>
+  </article>
+
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <p>
+                    Copyright © 2020 MarkLogic Corporation. All Rights Reserved. MARKLOGIC® is a registered trademark of MarkLogic Corporation.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <!--[if lt IE 9]>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="/pipes/js/respond.min.js"></script>
+    <![endif]-->
+
+    <script type="text/javascript" src="/pipes/assets/bundle.js" id="1"></script>
+  </body>
+</html>
+
