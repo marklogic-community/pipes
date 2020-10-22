@@ -95,7 +95,8 @@ function init(LiteGraph){
         return "user.sjs";
     }
 
-    // New in Pipes 2: This returns the method name which should be in the getRuntimeLibraryPath() module. 
+    // New in Pipes 2: This returns the method name which should be in the 
+    // getRuntimeLibraryPath() module. 
     ObjectBlock.prototype.getRuntimeLibraryFunctionName = function() {
         return "executeObjectBlock";
     }
