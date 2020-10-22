@@ -16,31 +16,55 @@ In order to define your own blocks without having to modify and build the front-
 
 **./Examples/CustomModules/user.json**
 
+This example describes an Object block. In Pipes 2.0 this is not needed anymore, you can achieve the same using a "reverse" source block (fields in, node out with the root toggle on false).
+
 Add a new block definition in the array like this:
 
 ```
-{
-  "functionName": "MyFunction", //Name of the function of the block
-  "blockName": "MyFunction", //Name if the block
-  "library": "user",  //Name of the menu entry
-  "inputs": [.   //List of inputs
-    {
-      "name": "myInput1",
-      "type": null
-    }
-  ],
-  "outputs": [ //List of outputs
-    {
-      name: "myOutput1",
-      type: null
-    }
-  ],
-  "function": {
-    "ref": null,
-    "code": ""
-  }
+[
+  {
+    "functionName": "Object",
+    "blockName": "Object",
+    "library": "user",
+    "events": {
+      "onConfigure": "let v = this.widgets[0].value;if (this.widgets.length == (parseInt(v) + 1)) return; this.widgets=this.widgets.slice(0,1);for (let x=0;x < v ;x++) {this.addWidget(\"text\", \"key\" + x , this.widgets_values[x+1], function (v) {})};return;"
+    },
+    "inputs": [
+      {
+        "name": "var0",
+        "type": null
+      }
+    ],
+    "properties": [
+    ],
+    "widgets": [
+      {
+        "type": "text",
+        "name": "nbKeys",
+        "default": "1",
+        "values": "1",
+        "callback": "let nb = this.inputs.length;let vInt = parseInt(v); if (vInt < nb) {for (let i=0;i<(nb - vInt);i++){this.removeInput(this.inputs.length-1);this.widgets.pop()}}else if (vInt > nb) { this.widgets=this.widgets.slice(0,1 + nb);for(let i=nb;i<vInt;i++) {this.addInput('var' + i,null);this.addWidget(\"text\", \"key\" + i  , '', function (v) {})};}"
+      },
+      {
+        "type": "text",
+        "name": "key0",
+        "default": "",
+        "values": []
 
-}
+      }
+    ],
+    "outputs": [
+      {
+        "name": "obj0",
+        "type": null
+      }
+    ],
+    "function": {
+      "ref": null,
+      "code": ""
+    }
+  }
+]
 ```
 
 ## Block implementation : 
@@ -51,24 +75,99 @@ The code is located in :
 **./Examples/CustomModules/user.sjs**
 
 ```
-function myBlock() //Any unique function is the module
-{
-   this.addInput("MyInput1"); //Add Inputs, same as the one in the son definition
-   this.addOutput("myOutput1");//Add Outputs, same as the one in the son definition
+function init(LiteGraph){
+
+    function ObjectBlock() {
+        this.addInput("var0");
+        this.nbKeys = this.addWidget("text","nbKeys", "string", function(v){},  { } );
+        const OUTPUTS = 20;
+        for (let vp = 0; vp < OUTPUTS; vp++ ) {
+            var varName = 'key' + vp;
+            this[varName] = this.addWidget("text",varName, "", function(v){},  { } );
+            this.addInput("var" + vp);
+        }
+    }
+
+    ObjectBlock.title = "Object";
+
+    // This should be fixed on "user.sjs", that is this file.
+
+    ObjectBlock.prototype.getRuntimeLibraryPath = function() {
+        return "user.sjs";
+    }
+
+    // This returns the method name which should be in the getRuntimeLibraryPath() module. 
+    ObjectBlock.prototype.getRuntimeLibraryFunctionName = function() {
+        return "executeObjectBlock";
+    }
+
+/*
+
+   Old Pipes 1.x implementation for reference. 
+
+     ObjectBlock.prototype.onExecute = function()  {
+        let obj = {};
+        let keys = parseInt(this.nbKeys.value); 
+        for ( let i = 0 ; i < keys ; i++ ) {
+            const key = this['key'+i].value;
+            xdmp.log("KEY "+key);
+            if ( key && key.length > 0 ) {
+                obj[key] = this.getInputData(i);
+                xdmp.log("VALUE "+obj[key])
+            }
+        }
+        xdmp.log("SET ");
+        xdmp.log(obj);
+        this.setOutputData(0,obj);
+    }
+    */
+
+    // This should be fixed to this. In case of interpretation, executeBlock will call the delegate. 
+    ObjectBlock.prototype.onExecute = function()  {
+        require("/custom-modules/pipes/runtime/coreFunctions.sjs").executeBlock(this);
+    }
+    LiteGraph.registerNodeType("user/Object", ObjectBlock );
 }
 
-myBlock.title = "MyFunction";
-myBlock.desc = "MyFunction";
+// BEWARE, this is outside the object:
 
-myBlock.prototype.onExecute = function()
-{
-   let myInput1 = this.getInputData(0) //Add Outputs, same as the one in the son definition
-   // Code any logic you want or call external lib
-   // Code any logic you want or call external lib
-   // Code any logic you want or call external lib
-   this.setOutputData(0, outputValueFromLogic ) //Set output(s) value(s)
+// Optional function named <executionMethod>InputAsList. 
+// If not present: false.
+// Return true if you want to get the inputs as a list (executeMethod(propertiesAnmdWidgets,inputsAsLost)
+// Return false if you want the inputs as a argument: (executeMethod(propertiesAnmdWidgets,input1,input2,input3)
+//
+function executeObjectBlockInputAsList() {
+  return true;
 }
-LiteGraph.registerNodeType("user/MyFunction", myBlock ); //The first parameter must be equal to library/blockName of the block definition.
+
+// Optional function named <executionMethod>ReturnAlwaysAnArray.
+// If not present: false
+// Return true: <executionMethod> should always return [output1,output2,output3...]
+// Return false: If nr of outputs = 1 -> return output, if outputs > 1 return [output1,output2,....]
+
+function executeObjectBlockReturnAlwaysAnArray() { 
+    return false;
+}
+
+// This is the execution block
+function executeObjectBlock(propertiesAndWidgets,inputs) { 
+        let obj = {};
+        let keys = parseInt(propertiesAndWidgets.widgets.nbKeys);
+        for ( let i = 0 ; i < keys ; i++ ) {
+            const key = propertiesAndWidgets.widgets['key'+i];
+            if ( inputs && key && key.length > 0 && i < inputs.length ) {
+                obj[key] = inputs[i];
+            }
+        }
+    return obj;
+}
+
+module.exports = {
+    init:init,
+    executeObjectBlock,
+    executeObjectBlockInputAsList,
+    executeObjectBlockReturnAlwaysAnArray
+};
 ```
 
 You must then run gradle mlloadmodules
