@@ -70,7 +70,7 @@
       />
       <q-btn
         label="Export"
-        :disable="showExport"
+        :disable="!showExport"
         icon="archive"
         @click="exportDHFModule"
       />

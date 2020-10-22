@@ -202,7 +202,7 @@ function generateFunctionForGraph(options,graph,outputFunctions,title,functionPo
     const outputs = determineOutputVariables(graph,node,variablePool);
     let code = generateCode(options,graph,node,inputs,outputs,lib,functionPool,dependencies);
     if ( inSubgraph ) {
-      let identSpace = options.identSpaceCount ? options.identSpaceCount : 1;
+      let identSpace = options && options.identSpaceCount ? options.identSpaceCount : 1;
       code = ident(code,identSpace);
     }
     func.body.push(...code);
@@ -303,7 +303,8 @@ function generateFunctionName(graph,title,functionPool) {
     functionName = "executeCustomStep";
     functionPool.push({ subgraphPath: null , name: functionName } );
   } else {
-    let addTitle = title ? title : "";
+    // extra space to convert to camel case. 
+    let addTitle = title ? " "+title : "";
     addTitle=addTitle.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, function(match, chr) { return chr.toUpperCase();});
     functionName = "executeSubgraph"+addTitle;
     if ( functionPool.some( x => x.name === functionName ) ) {
