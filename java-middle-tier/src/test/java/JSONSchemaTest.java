@@ -9,8 +9,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static com.sun.tools.doclint.Entity.not;
-import static java.util.function.Predicate.not;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class JSONSchemaTest {

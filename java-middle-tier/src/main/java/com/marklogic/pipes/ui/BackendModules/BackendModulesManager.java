@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,7 +53,8 @@ public class BackendModulesManager {
 
   final String resourcesDhfRoot = "/dhf/src/main/ml-modules";
   final String destinationDhfRoot = "/src/main/ml-modules";
-  final String customModulesPathPrefix = "/root/custom-modules/pipes";
+  final String customModulesPipesDesigntimePathPrefix = "/root/custom-modules/pipes/designtime";
+  final String customModulesPipesRuntimePathPrefix = "/root/custom-modules/pipes/runtime";
 
   private enum fileOperation {
     Copy,
@@ -60,6 +62,12 @@ public class BackendModulesManager {
   }
 
   public void checkModulesVersion(AuthService authService) {
+    boolean forceReload = System.getProperty("deployBackend") != null && System.getProperty("deployBackend").equals("true");
+
+    // for now forceReload = true hardcoded because we need to ensure we load user.sjs
+    forceReload = true;
+
+    logger.info("Force reload modules="+forceReload);
     // since the user is not running with deployBackend=true,
     // let's check if the user has backend installed and
     // if the versions in front-end (java) and backe-end (MarkLogic) match
@@ -75,18 +83,17 @@ public class BackendModulesManager {
       output = pipesBackendService.get(params, new StringHandle().withFormat(Format.TEXT));
     }
     catch (FailedRequestException failedRequestException){
-      logger.info("Pipes REST extension not installed");
+        logger.error("Pipes REST extension not installed");
       }
     catch (Exception e) {
       logger.error("Unknown exception occurred");
       logger.error(e.toString());
+      forceReload = true;
     }
-
 
     // get the version info from front end
     String javaVersionInfo= null;
-      javaVersionInfo = versionService.get();
-
+    javaVersionInfo = versionService.get();
 
     // compare and stop the service if not working
 
@@ -100,6 +107,7 @@ public class BackendModulesManager {
         outputJson = new JSONObject(output.toString());
       } catch (IOException e) {
         e.printStackTrace();
+        forceReload = true;
       }
       version= outputJson!=null ? outputJson.getString("Version") : "Error reading version";
       build=outputJson!=null ? outputJson.getString("Build") : "Error reading build";
@@ -107,16 +115,17 @@ public class BackendModulesManager {
     else {
       version="Not avaiable";
       build="Not avaiable";
+      forceReload = true;
     }
 
     // output version information
-      System.out.println("--------------------\n"+ javaVersionInfo+"--------------------");
+      logger.info("--------------------\n"+ javaVersionInfo+"--------------------");
 
     // it will deploy modules if versions mismatch
     // and if using custom blocks
-    if (!javaVersionInfo.contains(version) || !javaVersionInfo.contains(build) || clientConfig.getCustomModulesRoot()!=null) {
 
-      logger.info("{} missmatch with Pipes backend modules, Version: {} | Build: {}",
+    if (forceReload || !javaVersionInfo.contains(version) || !javaVersionInfo.contains(build) || clientConfig.getCustomModulesRoot()!=null) {
+      logger.info("{} missmatch with Pipes backend modules or force reload, Version: {} | Build: {}",
         javaVersionInfo, version, build);
 
       try {
@@ -128,7 +137,6 @@ public class BackendModulesManager {
       }
       deployModules(authService);
     }
-
   }
 
   private void copyModules() throws Exception {
@@ -186,21 +194,21 @@ public class BackendModulesManager {
 
     ArrayList<String> filePaths = new ArrayList<String>(
       Arrays.asList(
-        customModulesPathPrefix+"/core.sjs",
-        customModulesPathPrefix+"/coreFunctions.sjs",
-        customModulesPathPrefix+"/compiler.sjs",
-        customModulesPathPrefix+"/compilerFlowControlGraph.sjs",
-        customModulesPathPrefix+"/entity-services-lib-vpp.sjs",
-        customModulesPathPrefix+"/google-libphonenumber.sjs",
-        customModulesPathPrefix+"/graphHelper.sjs",
-        customModulesPathPrefix+"/litegraph.sjs",
-        customModulesPathPrefix+"/moment-with-locales.min.sjs",
-//        customModulesPathPrefix+"/user.sjs",
+        customModulesPipesDesigntimePathPrefix+"/CustomStepMainTemplate.sjs",
+        customModulesPipesDesigntimePathPrefix+"/compiler.sjs",
+        customModulesPipesDesigntimePathPrefix+"/compilerFlowControlGraph.sjs",
+        customModulesPipesDesigntimePathPrefix+"/graphHelper.sjs",
+        customModulesPipesDesigntimePathPrefix+"/litegraph.sjs",
+        customModulesPipesDesigntimePathPrefix+"/core.sjs",
+
+        customModulesPipesRuntimePathPrefix+"/entity-services-lib-vpp.sjs",
+        customModulesPipesRuntimePathPrefix+"/google-libphonenumber.sjs",
+        customModulesPipesRuntimePathPrefix+"/moment-with-locales.min.sjs",
+        customModulesPipesRuntimePathPrefix+"/coreFunctions.sjs",
+
         "/services/vppBackendServices.sjs"
+
       ));
-
-
-
 
     Boolean includeCustomUserModule=false;
     final String CUSTOMSJSNAME="user.sjs";
@@ -211,6 +219,7 @@ public class BackendModulesManager {
       logger.info("getCustomModulesRoot is defined: " + clientConfig.getCustomModulesRoot());
 
       if( (new File(CUSTOMSJSPATH)).exists() ) {
+        logger.info("Custom user.sjs found. We will add this.");
         includeCustomUserModule = true;
       }
       else {
@@ -221,8 +230,8 @@ public class BackendModulesManager {
     }
 
     if (!includeCustomUserModule) {
-      logger.info("Adding " + customModulesPathPrefix+"/user.sjs");
-      filePaths.add( customModulesPathPrefix+"/user.sjs");
+      logger.info("Adding " + customModulesPipesRuntimePathPrefix+"/user.sjs");
+      filePaths.add( customModulesPipesRuntimePathPrefix+"/user.sjs");
     }
     // do the same for the custom user module
     else {
@@ -230,13 +239,13 @@ public class BackendModulesManager {
       final File sjsSource = new File(CUSTOMSJSPATH);
       logger.info("Adding " + sjsSource.toPath());
 
-      final File sjsDest = new File(clientConfig.getMlDhfRoot() + File.separator+".pipes" + customModulesPathPrefix + File.separator +CUSTOMSJSNAME);
+      final File sjsDest = new File(clientConfig.getMlDhfRoot() + File.separator+".pipes" + customModulesPipesRuntimePathPrefix + File.separator +CUSTOMSJSNAME);
 
       try {
         if (operation== fileOperation.Copy) {
-          //FileUtils.copyFile(source,dest, false);
-          Files.createDirectories(Paths.get(clientConfig.getMlDhfRoot() + File.separator +".pipes" + customModulesPathPrefix));
-          Files.copy(sjsSource.toPath(), sjsDest.toPath());
+          Files.createDirectories(Paths.get(clientConfig.getMlDhfRoot() + File.separator +".pipes"));
+          Files.createDirectories(Paths.get(clientConfig.getMlDhfRoot() + File.separator +".pipes" + customModulesPipesRuntimePathPrefix));
+          Files.copy(sjsSource.toPath(), sjsDest.toPath(),StandardCopyOption.REPLACE_EXISTING);
           logger.info("Copied "+sjsSource.getAbsolutePath()+" to "+sjsDest.getAbsolutePath());
         }
         else if (operation== fileOperation.Remove) {
@@ -256,6 +265,9 @@ public class BackendModulesManager {
 
     for (final String filePath : filePaths) {
       final InputStream is = Application.class.getResourceAsStream(resourcesDhfRoot + filePath);
+      if ( is == null ) {
+        throw new IOException("Could not find " + filePath);
+      }
       final File dest = new File(clientConfig.getMlDhfRoot() +  File.separator+".pipes" + File.separator + filePath);
 
       try {
@@ -282,18 +294,35 @@ public class BackendModulesManager {
 
     // also delete the pipes folder
     if (operation== fileOperation.Remove) {
-      String folderPath=clientConfig.getMlDhfRoot() + destinationDhfRoot + customModulesPathPrefix;
+      String folderPath=clientConfig.getMlDhfRoot() + destinationDhfRoot + customModulesPipesRuntimePathPrefix;
       FileUtils.deleteDirectory(new File(folderPath));
 
-      logger.info(
-        String.format("Deleted folder "+folderPath));
+      logger.info( String.format("Deleted folder "+folderPath));
+      folderPath=clientConfig.getMlDhfRoot() + destinationDhfRoot + customModulesPipesDesigntimePathPrefix;
+      FileUtils.deleteDirectory(new File(folderPath));
+      logger.info( String.format("Deleted folder "+folderPath));
     }
 
     else if (operation== fileOperation.Copy) {
-      logger.info(
-        String.format("MarkLogic backend modules copied to your DHF project."));
+      logger.info(String.format("MarkLogic backend modules copied to your DHF project."));
     }
+  }
 
+  /**
+   * Copy a list of (runtime) dependencies to the Project folder
+   *
+   * @param dependencies
+   * @throws IOException
+   */
+  public void copyDepdenciesToDHfSource(String[] dependencies) throws IOException {
+    for (String dependency : dependencies ){
+      dependency = "/root"+dependency;
+      String target = clientConfig.getMlDhfRoot() + destinationDhfRoot + dependency;
+      final InputStream is = Application.class.getResourceAsStream(resourcesDhfRoot + dependency);
+      String targetDirectory = new File(target).getParent();
+      Files.createDirectories(Paths.get(targetDirectory));
+      FileUtils.copyInputStreamToFile(is, new File(target));
+    }
   }
 
   public void deployMlBackendModulesToModulesDatabase(String patternString, AuthService authService) {

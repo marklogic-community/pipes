@@ -1,0 +1,433 @@
+{
+  "pipesFileVersion": 2,
+  "models": [
+    {
+      "label": "QueryOutput",
+      "collection": "QueryOutput",
+      "source": "Sources",
+      "fields": [
+        {
+          "label": "one",
+          "children": [],
+          "field": "one",
+          "path": "//one",
+          "type": "custom"
+        },
+        {
+          "label": "two",
+          "children": [],
+          "field": "two",
+          "path": "//two",
+          "type": "custom"
+        },
+        {
+          "label": "three",
+          "children": [],
+          "field": "three",
+          "path": "//three",
+          "type": "custom"
+        },
+        {
+          "label": "four",
+          "children": [],
+          "field": "four",
+          "path": "//four",
+          "type": "custom"
+        },
+        {
+          "label": "five",
+          "children": [],
+          "field": "five",
+          "path": "//five",
+          "type": "custom"
+        },
+        {
+          "label": "six",
+          "children": [],
+          "field": "six",
+          "path": "//six",
+          "type": "custom"
+        }
+      ],
+      "options": [
+        "fieldsInputs",
+        "nodeOutput"
+      ],
+      "metadata": {
+        "description": "",
+        "dateCreated": "2020-10-16T11:06:47.872Z",
+        "blockCreatedFrom": "none",
+        "sourceDHFStep": null,
+        "sourceDatabase": "",
+        "sourceCollection": "",
+        "customURIs": ""
+      }
+    }
+  ],
+  "executionGraph": {
+    "last_node_id": 7,
+    "last_link_id": 13,
+    "nodes": [
+      {
+        "id": 1,
+        "type": "DHF/input",
+        "pos": [
+          248,
+          489
+        ],
+        "size": [
+          180,
+          100
+        ],
+        "flags": {},
+        "order": 0,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "input",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "uri",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "collections",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "permissions",
+            "type": "",
+            "links": null
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 5,
+        "type": "Generate/multiConstant",
+        "pos": [
+          221,
+          654
+        ],
+        "size": {
+          "0": 255,
+          "1": 82
+        },
+        "flags": {},
+        "order": 1,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "output",
+            "links": [
+              4
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "number",
+          "5"
+        ]
+      },
+      {
+        "id": 2,
+        "type": "DHF/output",
+        "pos": [
+          1308,
+          434
+        ],
+        "size": [
+          180,
+          60
+        ],
+        "flags": {},
+        "order": 6,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "output",
+            "type": 0,
+            "link": 13
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 3,
+        "type": "Advanced/AdvancedQuery",
+        "pos": [
+          506,
+          285
+        ],
+        "size": {
+          "0": 255,
+          "1": 102
+        },
+        "flags": {},
+        "order": 2,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "v0",
+            "type": 0,
+            "link": null
+          }
+        ],
+        "outputs": [
+          {
+            "name": "documents",
+            "links": [
+              9
+            ]
+          },
+          {
+            "name": "ctsQuery",
+            "links": []
+          }
+        ],
+        "properties": {
+          "query": "cts.documentQuery(\"/test/input.json\")",
+          "editProp": "query",
+          "editWindowTitle": "Edit Query"
+        },
+        "widgets_values": [
+          "1",
+          "test-data-hub-STAGING"
+        ]
+      },
+      {
+        "id": 4,
+        "type": "Query/LookupByValue",
+        "pos": [
+          529,
+          466
+        ],
+        "size": {
+          "0": 255,
+          "1": 178
+        },
+        "flags": {},
+        "order": 4,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "var1",
+            "type": 0,
+            "link": 4
+          }
+        ],
+        "outputs": [
+          {
+            "name": "value0",
+            "links": [
+              10
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "1",
+          "test-data-hub-STAGING",
+          "ingest-unit-test",
+          "a",
+          "number",
+          "/b"
+        ]
+      },
+      {
+        "id": 6,
+        "type": "Query/ExpertQueryBuilder",
+        "pos": [
+          555,
+          733
+        ],
+        "size": {
+          "0": 255,
+          "1": 102
+        },
+        "flags": {},
+        "order": 3,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "v0",
+            "type": 0,
+            "link": null
+          }
+        ],
+        "outputs": [
+          {
+            "name": "documents",
+            "links": [
+              11
+            ]
+          },
+          {
+            "name": "ctsQuery",
+            "links": [
+              12
+            ]
+          }
+        ],
+        "properties": {
+          "queryBuilder": {
+            "logicalOperator": "all",
+            "children": [
+              {
+                "type": "query-builder-rule",
+                "query": {
+                  "rule": "cts.collectionQuery",
+                  "operand": "collectionQuery",
+                  "value": {
+                    "label": "ingest-unit-test",
+                    "value": "ingest-unit-test",
+                    "sublabel": "1 documents"
+                  }
+                }
+              }
+            ],
+            "selectedDB": {
+              "value": "2235663151177905983",
+              "label": "test-data-hub-STAGING"
+            }
+          },
+          "hoverText": "Double click block to use the query builder"
+        },
+        "widgets_values": [
+          "1",
+          "test-data-hub-STAGING"
+        ]
+      },
+      {
+        "id": 7,
+        "type": "Sources/QueryOutput",
+        "pos": [
+          967,
+          550
+        ],
+        "size": [
+          305,
+          188
+        ],
+        "flags": {},
+        "order": 5,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "one",
+            "type": 0,
+            "link": 9
+          },
+          {
+            "name": "two",
+            "type": 0,
+            "link": 10
+          },
+          {
+            "name": "three",
+            "type": 0,
+            "link": 11
+          },
+          {
+            "name": "four",
+            "type": 0,
+            "link": 12
+          },
+          {
+            "name": "five",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "six",
+            "type": 0,
+            "link": null
+          }
+        ],
+        "outputs": [
+          {
+            "name": "Node",
+            "type": "Node",
+            "links": [
+              13
+            ]
+          },
+          {
+            "name": "Prov",
+            "type": null,
+            "links": null
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          true
+        ]
+      }
+    ],
+    "links": [
+      [
+        4,
+        5,
+        0,
+        4,
+        0,
+        0
+      ],
+      [
+        9,
+        3,
+        0,
+        7,
+        0,
+        0
+      ],
+      [
+        10,
+        4,
+        0,
+        7,
+        1,
+        0
+      ],
+      [
+        11,
+        6,
+        0,
+        7,
+        2,
+        0
+      ],
+      [
+        12,
+        6,
+        1,
+        7,
+        3,
+        0
+      ],
+      [
+        13,
+        7,
+        0,
+        2,
+        0,
+        0
+      ]
+    ],
+    "groups": [],
+    "config": {},
+    "version": 0.4
+  },
+  "name": "Query",
+  "metadata": {
+    "version": "00.01",
+    "author": "",
+    "title": "Query",
+    "dateExported": "16/10/2020, 13:07:15"
+  }
+}

@@ -7,14 +7,11 @@
         "instance": {
           "value": "5"
         },
-        "attachments": {}
+        "attachments": null
       }
     },
     "uri": "5",
     "context": {
-      "collections": null,
-
-    "permissions":null
     }
   },
   {
@@ -25,14 +22,11 @@
         "instance": {
           "value": "6"
         },
-        "attachments": {}
+        "attachments": null
       }
     },
     "uri": "6",
-    "context": {
-      "collections": null
-    ,
-    "permissions":null
+    "context": { 
     }
   }
 ]

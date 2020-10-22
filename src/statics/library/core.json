@@ -321,44 +321,6 @@
     }
   },
   {
-    "functionName": "GeoReproject",
-    "blockName": "GeoReproject",
-    "library": "Transform",
-    "title": "Re-project geo coordinates",
-    "description": "Converts geo coordinates from one system to another",
-    "inputs": [
-      {
-        "name": "srcCoordinateSystem",
-        "type": "xs:string",
-        "mandatory": true,
-        "description": "Source coordinate system"
-      },
-      {
-        "name": "targetCoordinateSystem",
-        "type": "xs:string",
-        "mandatory": true,
-        "description": "Target coordinate system"
-      },
-      {
-        "name": "strWKT",
-        "type": "xs:string",
-        "mandatory": true,
-        "description": "Geo shape"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "strWKT",
-        "type": "node",
-        "description": "Converted geo shape"
-      }
-    ],
-    "function": {
-      "ref": "fn.doc",
-      "code": null
-    }
-  },
-  {
     "functionName": "fn_doc",
     "blockName": "doc",
     "title": "Document by URI",
@@ -377,7 +339,7 @@
       }
     ],
     "function": {
-      "ref": "fn.doc",
+      "ref": null,
       "code": null
     }
   },
@@ -474,7 +436,7 @@
       {
         "type": "text",
         "name": "format",
-        "default": "DD/MM/YYYY",
+        "default": "DD/MM/YYYY hh:mm:ss",
         "values": []
       }
     ],
@@ -1012,7 +974,7 @@
     ],
     "function": {
       "ref": null,
-      "code": "let stringJoined = fn.stringJoin(this.getInputData(0), this.properties['separator']);this.setOutputData(0, stringJoined);"
+      "code": null
     }
   },
   {
@@ -1510,12 +1472,6 @@
       }
     ],
     "widgets": [
-      {
-        "type": "text",
-        "name": "xpath",
-        "default": "//prop",
-        "values": []
-      }
     ],
     "properties": [],
     "outputs": [
@@ -1737,6 +1693,121 @@
       {
         "name": "nodes",
         "type": "nodes"
+      }
+    ],
+    "function": {
+      "ref": null,
+      "code": null
+    }
+  },
+  {
+    "functionName": "Log",
+    "blockName": "Log",
+    "title": "Log",
+    "description": "Log",
+    "library": "Debug",
+    "widgets": [
+      {
+        "type": "combo",
+        "name": "Level",
+        "default": "info",
+        "values": ["info","emergency", "alert", "critical", "error", "warning", "notice","config", "debug", "fine", "finer", "finest"]
+      },
+      {
+        "type": "text",
+        "name": "Message",
+        "default": ""
+      },
+      {
+        "type": "toggle",
+        "name": "LogRequestId",
+        "default": true,
+        "values": []
+      }
+    ],
+    "inputs": [
+      {
+        "name": "input0"
+      },
+      {
+        "name": "input1"
+      },
+      {
+        "name": "input2"
+      },
+      {
+        "name": "input3"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "output0"
+      },
+      {
+        "name": "output1"
+      },
+      {
+        "name": "output2"
+      },
+      {
+        "name": "output3"
+      }
+    ],
+    "function": {
+      "ref": null,
+      "code": null
+    }
+  },
+  {
+    "functionName": "Trace",
+    "blockName": "Trace",
+    "title": "Trace",
+    "description": "Trace",
+    "library": "Debug",
+    "widgets": [
+      {
+        "type": "text",
+        "name": "Trace",
+        "default": ""
+      },
+      {
+        "type": "text",
+        "name": "Message",
+        "default": ""
+      },
+      {
+        "type": "toggle",
+        "name": "LogRequestId",
+        "default": true,
+        "values": []
+      }
+    ],
+    "inputs": [
+      {
+        "name": "input0"
+      },
+      {
+        "name": "input1"
+      },
+      {
+        "name": "input2"
+      },
+      {
+        "name": "input3"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "output0"
+      },
+      {
+        "name": "output1"
+      },
+      {
+        "name": "output2"
+      },
+      {
+        "name": "output3"
       }
     ],
     "function": {

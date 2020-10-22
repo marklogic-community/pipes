@@ -1,5 +1,7 @@
 <configuration>
 
+
+
 <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter">
     <level value="DEBUG" />
 </logger>
@@ -15,6 +17,11 @@
   <root level="WARN">
     <appender-ref ref="STDOUT" />
   </root>
+
+  <logger name="org.springframework.boot.SpringApplication"
+          level="INFO" additivity="false">
+    <appender-ref ref="STDOUT"/>
+  </logger>
 
     <logger name="com.marklogic.pipes.ui.BackendModules.BackendModulesAppRunner" level="INFO" additivity="false">
       <appender-ref ref="STDOUT" />

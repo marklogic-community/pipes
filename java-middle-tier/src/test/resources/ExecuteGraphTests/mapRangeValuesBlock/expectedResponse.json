@@ -9,15 +9,11 @@
         "instance": {
           "value": "LOW"
         },
-        "attachments": {}
+        "attachments": null
       }
     },
     "uri": "/test/LOW.json",
     "context": {
-      "collections": [
-        "ingest-unit-test"
-      ],
-      "permissions":[]
     }
   },
   {
@@ -28,15 +24,11 @@
         "instance": {
           "value": "HIGH"
         },
-        "attachments": {}
+        "attachments": null
       }
     },
     "uri": "/test/HIGH.json",
     "context": {
-      "collections": [
-        "ingest-unit-test"
-      ],
-      "permissions":[]
     }
   }
 ]

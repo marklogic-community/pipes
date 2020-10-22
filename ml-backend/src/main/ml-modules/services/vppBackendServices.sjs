@@ -9,6 +9,8 @@ const PIPESBUILD = "@PIPESBUILDTOKEN@";
 const TRACE_ID = "pipes-vpp";
 const TRACE_ID_DETAILS = "pipes-vpp-details";
 
+const DHF_CUSTOM_STEP_TEMPLATE = "/custom-modules/pipes/designtime/CustomStepMainTemplate.sjs"
+
 function mapper (item, cfg) {
 
   if (cfg.entities != null) {
@@ -314,14 +316,14 @@ function isIterable (obj) {
   return typeof obj[Symbol.iterator] === 'function';
 }
 
-function InvokeExecuteGraph (input) {
+function InvokeExecuteGraph (input,compiler) {
 
 
   return {
     execute: function execute () {
       var previewUri = ''
       var result = null
-      let gHelper = require("/custom-modules/pipes/graphHelper")
+      let gHelper = require("/custom-modules/pipes/designtime/graphHelper.sjs")
       let execContext = JSON.parse(input)
       let doc = null
       let uri = ''
@@ -373,14 +375,46 @@ function InvokeExecuteGraph (input) {
 
           var startTime = new Date();
 
-          graphResult = gHelper.executeGraphFromJson(
-            execContext.jsonGraph,
-            uri,
-            doc,
-            {
-              collections: xdmp.documentGetCollections(uri),
-              permissions: xdmp.documentGetPermissions(uri)
-            });
+          const collections =  xdmp.documentGetCollections(uri);
+          const permissions = xdmp.documentGetPermissions(uri);
+          const context = {
+            collections,
+            permissions,
+          }
+          if ( compiler ) {
+            const compiler =require("/custom-modules/pipes/designtime/compiler.sjs")
+            const options = {identSpaceCount : 1 };
+            const graph = execContext.jsonGraph;
+            xdmp.trace("pipes-compiler","Invoking compiler:");
+            xdmp.trace("pipes-compiler","Graph:");
+            xdmp.trace("pipes-compiler",graph);
+            xdmp.trace("pipes-compiler","Options:");
+            xdmp.trace("pipes-compiler",options);
+            xdmp.trace("pipes-compiler","End Invoking compiler dump");
+            const compiled = compiler.compileGraphToJavaScript(graph,options)
+            xdmp.trace("pipes-compiler","Start Compiler output:");
+            xdmp.trace("pipes-compier",compiled);
+            xdmp.trace("pipes-compiler","End Compiler output:");
+            if ( compiled.errors && compiled.errors.length > 0 ) {
+              xdmp.log(Sequence.from(["Error while compiling",compiled.errors]),"error");
+              throw new Error("Compiler error: "+JSON.stringify(compiled.errors));
+            }
+            let code = "const uri = "+JSON.stringify(uri)+";\n";
+            code += "const input = cts.doc(uri);\n";
+            code += "const collections = "+JSON.stringify(collections)+";\n";
+            code += "const permissions = "+JSON.stringify(permissions)+";\n";
+            code += "const context = "+JSON.stringify(context)+";\n";
+            code += compiled.sourceCode;
+            code += "executeCustomStep(input,uri,collections,context,permissions);";
+            graphResult = eval(code);
+          } else {
+            graphResult = gHelper.executeGraphFromJson(
+              execContext.jsonGraph,
+              uri,
+              doc,
+              context
+              );
+          }
 
           var endTime = new Date();
           var executionTime = endTime - startTime;
@@ -395,13 +429,11 @@ function InvokeExecuteGraph (input) {
           }
 
         } catch (e) {
-
-          xdmp.log("Exception occured during graph execution: " + e, "error")
-
+          xdmp.log(Sequence.from(["Exception occured during graph execution: " + e.message,e.stack,"End"]), "error")
           result = {
             uri: uri,
             result: graphResult,
-            error: e
+            error: "Error during graph execution. Check the log for details: "+e.message
           }
 
         }
@@ -425,8 +457,8 @@ function InvokeExecuteGraph (input) {
 }
 
 function executeGraph (input, params) {
-
-  const invokeExecuteGraph = InvokeExecuteGraph(input)
+  const compiler = (params.compiler != null) ? params.compiler.toString().trim().toLowerCase() === "true" : false;
+  const invokeExecuteGraph = InvokeExecuteGraph(input,compiler)
   let db = (params.database != null) ? xdmp.database(params.database) : xdmp.database()
   let targetDb = (params.toDatabase != null) ? xdmp.database(params.toDatabase) : xdmp.database()
   let result = fn.head(xdmp.invokeFunction(invokeExecuteGraph.execute, { database: db }))
@@ -738,13 +770,17 @@ function post (context, params, input) {
   let config = {};
 
   let ctx = JSON.parse(input);
-  //xdmp.log(Sequence.from(["POST", params, input]));
 
   switch (params.action) {
     case "compile":
-      let compiler = require("/custom-modules/pipes/compiler.sjs");
+      let compiler = require("/custom-modules/pipes/designtime/compiler.sjs");
       let output = compiler.compileGraphToJavaScript(ctx);
-      //xdmp.log(Sequence.from(["COMPILER OUTPUT", output]));
+      if ( output.errors == null || output.errors.length > 0 ) {
+        const template = xdmp.invokeFunction(x=>cts.doc(DHF_CUSTOM_STEP_TEMPLATE),{database:xdmp.modulesDatabase()}).toString();
+        output.sourceCode = template+output.sourceCode;
+      } else {
+        output.sourceCode = null;
+      }
       return output;
     case "config":
       config.databases = getDatabases();

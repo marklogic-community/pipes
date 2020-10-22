@@ -1,0 +1,25 @@
+{
+"envelope": {
+"headers": {
+}, 
+"triples": [
+], 
+"instance": {
+"OutputBlock": {
+"first": "5", 
+"second": "6", 
+"third": "7",
+"fourth": "2012-12-30"
+}, 
+"info": {
+"title": "OutputBlock", 
+"version": "0.0.1"
+}
+}, 
+"attachments": {
+"a": 5, 
+"b": 6, 
+"c": 7
+}
+}
+}

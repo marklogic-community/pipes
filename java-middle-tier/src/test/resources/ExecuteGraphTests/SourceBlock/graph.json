@@ -1,0 +1,304 @@
+{
+  "pipesFileVersion": 2,
+  "models": [
+    {
+      "label": "InputSource",
+      "collection": "InputSource",
+      "source": "Sources",
+      "fields": [
+        {
+          "label": "a",
+          "children": [],
+          "field": "a",
+          "path": "//a",
+          "type": "custom"
+        },
+        {
+          "label": "b",
+          "children": [],
+          "field": "b",
+          "path": "//b",
+          "type": "custom"
+        },
+        {
+          "label": "c",
+          "children": [],
+          "field": "c",
+          "path": "//c",
+          "type": "custom"
+        }
+      ],
+      "options": [
+        "nodeInput",
+        "fieldsOutputs"
+      ],
+      "metadata": {
+        "description": "",
+        "dateCreated": "2020-10-16T08:38:03.059Z",
+        "blockCreatedFrom": "none",
+        "sourceDHFStep": null,
+        "sourceDatabase": "",
+        "sourceCollection": "",
+        "customURIs": ""
+      }
+    },
+    {
+      "label": "OutputBlock",
+      "collection": "OutputBlock",
+      "source": "Sources",
+      "fields": [
+        {
+          "label": "first",
+          "children": [],
+          "field": "first",
+          "path": "//first",
+          "type": "custom"
+        },
+        {
+          "label": "second",
+          "children": [],
+          "field": "second",
+          "path": "//second",
+          "type": "custom"
+        },
+        {
+          "label": "third",
+          "children": [],
+          "field": "third",
+          "path": "//third",
+          "type": "custom"
+        }
+      ],
+      "options": [
+        "nodeOutput",
+        "fieldsInputs"
+      ],
+      "metadata": {
+        "description": "",
+        "dateCreated": "2020-10-16T08:39:12.573Z",
+        "blockCreatedFrom": "none",
+        "sourceDHFStep": null,
+        "sourceDatabase": "",
+        "sourceCollection": "",
+        "customURIs": ""
+      }
+    }
+  ],
+  "executionGraph": {
+    "last_node_id": 4,
+    "last_link_id": 5,
+    "nodes": [
+      {
+        "id": 2,
+        "type": "DHF/output",
+        "pos": [
+          1308,
+          434
+        ],
+        "size": [
+          180,
+          60
+        ],
+        "flags": {},
+        "order": 3,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "output",
+            "type": 0,
+            "link": 5
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 1,
+        "type": "DHF/input",
+        "pos": [
+          225,
+          368
+        ],
+        "size": [
+          180,
+          100
+        ],
+        "flags": {},
+        "order": 0,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "input",
+            "type": "",
+            "links": [
+              1
+            ]
+          },
+          {
+            "name": "uri",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "collections",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "permissions",
+            "type": "",
+            "links": null
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 3,
+        "type": "Sources/InputSource",
+        "pos": [
+          491,
+          361
+        ],
+        "size": [
+          305,
+          128
+        ],
+        "flags": {},
+        "order": 1,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "Node",
+            "type": 0,
+            "link": 1
+          }
+        ],
+        "outputs": [
+          {
+            "name": "a",
+            "links": [
+              2
+            ]
+          },
+          {
+            "name": "b",
+            "links": [
+              3
+            ]
+          },
+          {
+            "name": "c",
+            "links": [
+              4
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          true
+        ]
+      },
+      {
+        "id": 4,
+        "type": "Sources/OutputBlock",
+        "pos": [
+          885,
+          368
+        ],
+        "size": [
+          305,
+          128
+        ],
+        "flags": {},
+        "order": 2,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "first",
+            "type": 0,
+            "link": 2
+          },
+          {
+            "name": "second",
+            "type": 0,
+            "link": 3
+          },
+          {
+            "name": "third",
+            "type": 0,
+            "link": 4
+          }
+        ],
+        "outputs": [
+          {
+            "name": "Node",
+            "type": "Node",
+            "links": [
+              5
+            ]
+          },
+          {
+            "name": "Prov",
+            "type": null,
+            "links": null
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          true
+        ]
+      }
+    ],
+    "links": [
+      [
+        1,
+        1,
+        0,
+        3,
+        0,
+        0
+      ],
+      [
+        2,
+        3,
+        0,
+        4,
+        0,
+        0
+      ],
+      [
+        3,
+        3,
+        1,
+        4,
+        1,
+        0
+      ],
+      [
+        4,
+        3,
+        2,
+        4,
+        2,
+        0
+      ],
+      [
+        5,
+        4,
+        0,
+        2,
+        0,
+        0
+      ]
+    ],
+    "groups": [],
+    "config": {},
+    "version": 0.4
+  },
+  "name": "source",
+  "metadata": {
+    "version": "00.01",
+    "author": "",
+    "title": "source",
+    "dateExported": "16/10/2020, 10:41:02"
+  }
+}
