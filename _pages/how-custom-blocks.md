@@ -157,6 +157,7 @@ function executeObjectBlock(propertiesAndWidgets,inputs) {
     return obj;
 }
 
+// BE SURE to export it, else it is not visible. 
 module.exports = {
     init:init,
     executeObjectBlock,
