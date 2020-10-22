@@ -90,36 +90,33 @@ function init(LiteGraph){
 
     ObjectBlock.title = "Object";
 
-    // This should be fixed on "user.sjs", that is this file.
-
+    // New in Pipes 2: This should be fixed on "user.sjs", that is this file.
     ObjectBlock.prototype.getRuntimeLibraryPath = function() {
         return "user.sjs";
     }
 
-    // This returns the method name which should be in the getRuntimeLibraryPath() module. 
+    // New in Pipes 2: This returns the method name which should be in the getRuntimeLibraryPath() module. 
     ObjectBlock.prototype.getRuntimeLibraryFunctionName = function() {
         return "executeObjectBlock";
     }
 
-/*
+   /*
 
-   Old Pipes 1.x implementation for reference. 
+       Old Pipes 1.x implementation for reference. 
 
-     ObjectBlock.prototype.onExecute = function()  {
-        let obj = {};
-        let keys = parseInt(this.nbKeys.value); 
-        for ( let i = 0 ; i < keys ; i++ ) {
-            const key = this['key'+i].value;
-            xdmp.log("KEY "+key);
-            if ( key && key.length > 0 ) {
-                obj[key] = this.getInputData(i);
-                xdmp.log("VALUE "+obj[key])
-            }
+         ObjectBlock.prototype.onExecute = function()  {
+            let obj = {};
+            let keys = parseInt(this.nbKeys.value); 
+            for ( let i = 0 ; i < keys ; i++ ) {
+                const key = this['key'+i].value;
+                xdmp.log("KEY "+key);
+                if ( key && key.length > 0 ) {
+                    obj[key] = this.getInputData(i);
+                    xdmp.log("VALUE "+obj[key])
+                }
+            } 
+            this.setOutputData(0,obj);
         }
-        xdmp.log("SET ");
-        xdmp.log(obj);
-        this.setOutputData(0,obj);
-    }
     */
 
     // This should be fixed to this. In case of interpretation, executeBlock will call the delegate. 
@@ -134,7 +131,7 @@ function init(LiteGraph){
 // Optional function named <executionMethod>InputAsList. 
 // If not present: false.
 // Return true if you want to get the inputs as a list (executeMethod(propertiesAnmdWidgets,inputsAsLost)
-// Return false if you want the inputs as a argument: (executeMethod(propertiesAnmdWidgets,input1,input2,input3)
+// Return false if you want the inputs as args: (executeMethod(propertiesAnmdWidgets,inp1,inp2,inp3)
 //
 function executeObjectBlockInputAsList() {
   return true;
@@ -151,14 +148,14 @@ function executeObjectBlockReturnAlwaysAnArray() {
 
 // This is the execution block
 function executeObjectBlock(propertiesAndWidgets,inputs) { 
-        let obj = {};
-        let keys = parseInt(propertiesAndWidgets.widgets.nbKeys);
-        for ( let i = 0 ; i < keys ; i++ ) {
-            const key = propertiesAndWidgets.widgets['key'+i];
-            if ( inputs && key && key.length > 0 && i < inputs.length ) {
-                obj[key] = inputs[i];
-            }
+    let obj = {};
+    let keys = parseInt(propertiesAndWidgets.widgets.nbKeys);
+    for ( let i = 0 ; i < keys ; i++ ) {
+        const key = propertiesAndWidgets.widgets['key'+i];
+        if ( inputs && key && key.length > 0 && i < inputs.length ) {
+            obj[key] = inputs[i];
         }
+    }
     return obj;
 }
 
@@ -168,6 +165,7 @@ module.exports = {
     executeObjectBlockInputAsList,
     executeObjectBlockReturnAlwaysAnArray
 };
+
 ```
 
 You must then run gradle mlloadmodules
