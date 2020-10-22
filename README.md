@@ -16,5 +16,5 @@ https://marklogic-community.github.io/pipes/
 
 Great! You should get in touch with the Pipes team to discuss your contribution.
 On this page you can learn how to run and debug Pipes locally:
-
+ 
 https://github.com/marklogic-community/pipes/wiki/Run-and-debug-Pipes-locally
