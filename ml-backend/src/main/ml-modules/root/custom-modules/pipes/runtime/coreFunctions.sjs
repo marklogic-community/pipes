@@ -301,7 +301,7 @@ function executeLookupByValue(propertiesAndWidgets,var1) {
     }
     return retArray;
   }
-  return undefined;
+  return [undefined];
 }
 
 function executeExpertQueryBuilderInputAsList() {
@@ -689,11 +689,7 @@ function executeSelectCase(propertiesAndWidgets,inputs) {
     r = inputs[index];
   } else {
     const defaultValue = inputs[1];
-    if (defaultValue == null) {
-      r = value2test;
-    } else {
-      r = defaultValue;
-    }
+    r = defaultValue;
   }
   return r;
 }
@@ -730,14 +726,16 @@ function executeFilterArray(propertiesAndWidgets,unfiltered,patterns) {
   xdmp.trace(TRACE_ID, "++++++++++++++++++FilterArray++++++++++++++++++++++++++++++");
   let include = propertiesAndWidgets.widgets.include;
   let filtered = []
+  if ( unfiltered instanceof Sequence ) {
+    unfiltered = unfiltered.toArray();
+  }
   if ( !unfiltered.constructor.name === "Array") {
-    filtered = [unfiltered];
-  } else
-  {
+    unfiltered = [unfiltered];
+  }
     let patternArray = patterns.constructor.name === "Array" ? patterns : [patterns]
     filtered = unfiltered.filter(function (item) {
       for (let p of patternArray) {
-        if (item.includes(p)) {
+        if (item.toString().includes(p)) {
           return include;
         }
       }
@@ -748,7 +746,6 @@ function executeFilterArray(propertiesAndWidgets,unfiltered,patterns) {
     xdmp.trace(TRACE_ID, "include=" + include);
     xdmp.trace(TRACE_ID, filtered);
     xdmp.trace(TRACE_ID, "++++++++++++++++++FilterArray++++++++++++++++++++++++++++++");
-  }
   return filtered;
 }
 function executeEnvelope(propertiesAndWidgets,iHeaders,iTriples,iInstance,iAttachments,iUri,iCollections,iPermissions) {
