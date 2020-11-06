@@ -616,16 +616,16 @@ function executeMapRangeValues(propertiesAndWidgets,input1,input2) {
   return output;
 }
 
-function executeMapValues(propertiesAndWidgets,input) {
-  let val = String(input);
+function executeMapValues(propertiesAndWidgets,input,defaultValue) {
+  let val = null;
   if (val === undefined) {
     val = "#NULL#";
-  }
-  if (val === null) {
+  } else if (val === null) {
     val = "#NULL#";
-  }
-  if (val === "") {
+  } else if (val === "") {
     val = "#EMPTY#";
+  } else {
+    val = String(input);
   }
   let mappedValue = null;
   if (propertiesAndWidgets.widgets.wildcarded) {
@@ -642,20 +642,25 @@ function executeMapValues(propertiesAndWidgets,input) {
       return item.source === val;
     });
   }
-  let output = input;
+  let output = null;
   if (mappedValue != null && mappedValue.length > 0) {
     output = mappedValue[0].target;
+  } else {
+    output = defaultValue ? String(defaultValue) : null;
   }
   if (propertiesAndWidgets.widgets.castOutput === 'bool') {
     if (output === "true") {
       output = true;
-    } else if (output === "false") {
+    } else {
       output = false;
     }
   } else if (propertiesAndWidgets.widgets.castOutput === 'string') {
-    output = output.toString();
+    output = output ? output.toString() : "";
   } else if (propertiesAndWidgets.widgets.castOutput == 'number') {
-    output = Number(output.toString());
+    output = output ? Number(output.toString()) : -1;
+    if ( isNaN(output) ) {
+      output = -1;
+    }
   }
 
   if (output === "#NULL#") output = null;

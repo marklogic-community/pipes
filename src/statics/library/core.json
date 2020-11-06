@@ -1079,7 +1079,8 @@
         "default": "string",
         "values": [
           "string",
-          "bool"
+          "bool",
+          "number"
         ]
       },
       {
