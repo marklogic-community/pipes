@@ -620,9 +620,9 @@ function executeMapValues(propertiesAndWidgets,input,defaultValue) {
   let val = null;
   if (val === undefined) {
     val = "#NULL#";
-  } else if (val === null) {
+  } else if (input === null) {
     val = "#NULL#";
-  } else if (val === "") {
+  } else if (input === "") {
     val = "#EMPTY#";
   } else {
     val = String(input);
