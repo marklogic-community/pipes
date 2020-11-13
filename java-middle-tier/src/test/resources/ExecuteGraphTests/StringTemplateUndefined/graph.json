@@ -1,0 +1,183 @@
+{
+  "pipesFileVersion": 2,
+  "models": [],
+  "executionGraph": {
+    "last_node_id": 4,
+    "last_link_id": 3,
+    "nodes": [
+      {
+        "id": 1,
+        "type": "DHF/input",
+        "pos": [
+          248,
+          489
+        ],
+        "size": [
+          180,
+          100
+        ],
+        "flags": {},
+        "order": 0,
+        "mode": 0,
+        "outputs": [
+          {
+            "name": "input",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "uri",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "collections",
+            "type": "",
+            "links": null
+          },
+          {
+            "name": "permissions",
+            "type": "",
+            "links": null
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 2,
+        "type": "DHF/output",
+        "pos": [
+          1307,
+          433
+        ],
+        "size": [
+          180,
+          60
+        ],
+        "flags": {},
+        "order": 3,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "output",
+            "type": 0,
+            "link": 3
+          }
+        ],
+        "properties": {}
+      },
+      {
+        "id": 4,
+        "type": "Enrich/AddProperty",
+        "pos": [
+          1097,
+          526
+        ],
+        "size": {
+          "0": 170,
+          "1": 46
+        },
+        "flags": {},
+        "order": 2,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "doc",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "value",
+            "type": 0,
+            "link": 2
+          }
+        ],
+        "outputs": [
+          {
+            "name": "doc",
+            "links": [
+              3
+            ]
+          }
+        ],
+        "properties": {
+          "propertyName": "output"
+        }
+      },
+      {
+        "id": 3,
+        "type": "Generate/Templating",
+        "pos": [
+          571.8000030517578,
+          407.6000061035156
+        ],
+        "size": {
+          "0": 255,
+          "1": 146
+        },
+        "flags": {},
+        "order": 1,
+        "mode": 0,
+        "inputs": [
+          {
+            "name": "v1",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "v2",
+            "type": 0,
+            "link": null
+          },
+          {
+            "name": "v3",
+            "type": 0,
+            "link": null
+          }
+        ],
+        "outputs": [
+          {
+            "name": "newString",
+            "links": [
+              2
+            ]
+          }
+        ],
+        "properties": {},
+        "widgets_values": [
+          "",
+          "",
+          "${v1}${v2}${v3}"
+        ]
+      }
+    ],
+    "links": [
+      [
+        2,
+        3,
+        0,
+        4,
+        1,
+        0
+      ],
+      [
+        3,
+        4,
+        0,
+        2,
+        0,
+        0
+      ]
+    ],
+    "groups": [],
+    "config": {},
+    "version": 0.4
+  },
+  "name": "UndefinedStringTemplate",
+  "metadata": {
+    "version": "00.01",
+    "author": "",
+    "title": "UndefinedStringTemplate",
+    "dateExported": "13/11/2020, 10:04:55"
+  }
+}
