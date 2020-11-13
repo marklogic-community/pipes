@@ -908,6 +908,21 @@ function executeNormalizeSpace(propertiesAndWidgets,input) {
 function executeTemplating(propertiesAndWidgets,v1,v2,v3) {
     let v4 = propertiesAndWidgets.widgets.v4;
     let v5 = propertiesAndWidgets.widgets.v5;
+    if ( !v1 ) {
+      v1 = "";
+    }
+    if ( !v2 ) {
+      v2 = "";
+    }
+    if ( !v3 ) {
+      v3 = "";
+    }
+    if ( !v4 ) {
+      v4 = "";
+    }
+    if ( !v5 ) {
+      v5 = "";
+    }
     let template = "`" + propertiesAndWidgets.widgets.template + "`";
     let result = eval(template);
     return result;

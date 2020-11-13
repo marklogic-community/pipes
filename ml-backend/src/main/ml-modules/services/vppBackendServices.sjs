@@ -296,14 +296,14 @@ function getDHFEntityProperties (entity) {
   }
 
   entityModel.children = sem.sparql(
-    "PREFIX es: <http://marklogic.com/entity-services#>\
-       SELECT * WHERE {\
-        ?entity <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> es:EntityType.\
-        ?entity es:property ?property.\
-        ?property es:title ?label.\
-        OPTIONAL {?property es:datatype|es:ref ?type.}\
-        OPTIONAL { ?property es:description ?description }\
-        }",
+    `PREFIX es: <http://marklogic.com/entity-services#>
+       SELECT * WHERE {
+        ?entity <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> es:EntityType.
+        ?entity es:property ?property.
+        ?property es:title ?label.
+        OPTIONAL {?property es:datatype|es:ref ?type.}
+        OPTIONAL { ?property es:description ?description }
+        } ORDER BY ASC(?property)`,
     { "entity": sem.iri(entityModel.label) }).toArray()
   return entityModel
 }

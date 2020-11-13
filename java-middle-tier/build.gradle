@@ -206,6 +206,7 @@ task runLocal(type: JavaExec) {
   description = "Run the main class with JavaExecTask"
   classpath = sourceSets.main.runtimeClasspath
   main = "com.marklogic.pipes.ui.Application"
+  args  "--spring.config.location=local-env.properties"
 }
 
 
