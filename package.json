@@ -13,7 +13,7 @@
     "@json-editor/json-editor": "^1.4.0-beta.0",
     "@quasar/extras": "^1.3.3",
     "autoprefixer": "^9.7.4",
-    "axios": "^0.18.1",
+    "axios": ">=0.21.1",
     "file-saver": "^2.0.2",
     "litegraph.js": "^0.7.0",
     "quasar": "^1.12.8",

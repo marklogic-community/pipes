@@ -274,17 +274,19 @@ function getCollectionDetails () {
 function getDHFEntities () {
 
   return sem.sparql("PREFIX es: <http://marklogic.com/entity-services#>\
-    SELECT DISTINCT ?value ?label ?description WHERE {\
-      ?value a es:EntityType ;\
-             es:title ?label .\
-      OPTIONAL {\
-        ?value es:description ?description .\
-      }\
-      ?def es:definitions ?value. optional { ?def es:description ?description }\
-      FILTER NOT EXISTS {\
-        ?any es:ref ?value .\
-      }\
-    }").toArray()
+          SELECT DISTINCT ?value ?label ?description WHERE {\
+            ?value a es:EntityType ;\
+                   es:title ?label .\
+            BIND( REPLACE(?value, '/[^/]*$','') as ?ent)\
+            OPTIONAL {\
+              ?value es:description ?description\
+            }\
+            ?def es:definitions ?value. optional { ?def es:description ?description }\
+            FILTER NOT EXISTS {\
+              ?any es:ref ?value .\
+              FILTER ( strstarts(?any, ?ent))\
+            }\
+          }").toArray()
 
 }
 
