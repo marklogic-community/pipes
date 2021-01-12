@@ -43,7 +43,7 @@ https://github.com/quasarframework/quasar
 Made available under the MIT License. See Appendix for full text.
 https://spdx.org/licenses/MIT.html
 
-axios 0.18.1
+axios 0.21.1
 Copyright (c) 2014-present Matt Zabriskie
 https://github.com/axios/axios
 Made available under the MIT License. See Appendix for full text.
